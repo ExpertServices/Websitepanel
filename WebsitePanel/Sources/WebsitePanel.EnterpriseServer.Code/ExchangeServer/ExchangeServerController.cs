@@ -1967,6 +1967,86 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static int ExportMailBox(int itemId, int accountId, string path)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "EXPORT_MAILBOX", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // export mailbox
+                int serviceExchangeId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
+                exchange.ExportMailBox(org.OrganizationId, account.UserPrincipalName, path);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int SetDeletedMailbox(int itemId, int accountId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "SET_DELETED_MAILBOX", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                if (BlackBerryController.CheckBlackBerryUserExists(accountId))
+                {
+                    BlackBerryController.DeleteBlackBerryUser(itemId, accountId);
+                }
+
+                // delete mailbox
+                int serviceExchangeId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
+                exchange.DisableMailbox(account.UserPrincipalName);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         public static int DeleteMailbox(int itemId, int accountId)
         {
@@ -2998,7 +3078,7 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
                                                         mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
-                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct);
+                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
             }
             catch (Exception ex)
             {
@@ -3068,9 +3148,8 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg,
-                                                        mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
-                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
+                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
             }
             catch (Exception ex)
             {

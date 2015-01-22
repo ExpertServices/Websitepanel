@@ -120,6 +120,8 @@
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUser.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUsersPaged.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="OS\MappedDrivesPaged.cs" />
     <Compile Include="OS\MappedDrive.cs" />

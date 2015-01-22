@@ -169,8 +169,12 @@ namespace WebsitePanel.Portal.UserControls
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, Cntx))
                     items.Add(CreateMenuItem("DomainNames", "org_domains"));
             }
+            
             if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, Cntx))
                 items.Add(CreateMenuItem("Users", "users", @"Icons/user_48.png"));
+
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, Cntx))
+                items.Add(CreateMenuItem("DeletedUsers", "deleted_users", @"Icons/deleted_user_48.png"));
 
             if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, Cntx))
                 items.Add(CreateMenuItem("SecurityGroups", "secur_groups", @"Icons/group_48.png"));

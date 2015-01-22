@@ -207,4 +207,7 @@
   <data name="lblEnterpriseStorage.Text" xml:space="preserve">
     <value>Enterprise Storage, MB:</value>
   </data>
+  <data name="lblDeletedUsers.Text" xml:space="preserve">
+    <value>Deleted Users:</value>
+  </data>
 </root>

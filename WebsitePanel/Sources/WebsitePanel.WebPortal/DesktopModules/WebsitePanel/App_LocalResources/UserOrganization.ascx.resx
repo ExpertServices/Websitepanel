@@ -261,4 +261,7 @@
   <data name="Text.RDSServers" xml:space="preserve">
     <value>RDS Servers</value>
   </data>
+  <data name="Text.DeletedUsers" xml:space="preserve">
+    <value>Deleted Users</value>
+  </data>
 </root>

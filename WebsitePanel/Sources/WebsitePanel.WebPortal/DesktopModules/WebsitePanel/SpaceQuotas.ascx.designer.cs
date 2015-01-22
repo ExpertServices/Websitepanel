@@ -212,6 +212,33 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaUserAccounts;
         
         /// <summary>
+        /// pnlDeletedUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlDeletedUsers;
+        
+        /// <summary>
+        /// lblDeletedUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDeletedUsers;
+        
+        /// <summary>
+        /// quotaDeletedUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaDeletedUsers;
+        
+        /// <summary>
         /// pnlExchangeAccounts control.
         /// </summary>
         /// <remarks>

@@ -19,10 +19,10 @@ namespace WebsitePanel.EnterpriseServer {
     using System;
     using System.Diagnostics;
     using System.Data;
-    using WebsitePanel.Providers;
     using WebsitePanel.Providers.HostedSolution;
-    using WebsitePanel.Providers.ResultObjects;
     using WebsitePanel.Providers.Common;
+    using WebsitePanel.Providers.ResultObjects;
+    using WebsitePanel.Providers;
     
     
     /// <remarks/>
@@ -33,6 +33,10 @@ namespace WebsitePanel.EnterpriseServer {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(BaseStatistics))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esExchangeServer : Microsoft.Web.Services3.WebServicesClientProtocol {
+        
+        private System.Threading.SendOrPostCallback DeleteDistributionListMemberOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetMobileDevicesOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetMobileDeviceOperationCompleted;
         
@@ -196,6 +200,10 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback SetMailboxPermissionsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback ExportMailBoxOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetDeletedMailboxOperationCompleted;
+        
         private System.Threading.SendOrPostCallback CreateContactOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteContactOperationCompleted;
@@ -236,14 +244,16 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback AddDistributionListMemberOperationCompleted;
         
-        private System.Threading.SendOrPostCallback DeleteDistributionListMemberOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GetMobileDevicesOperationCompleted;
-        
         /// <remarks/>
         public esExchangeServer() {
             this.Url = "http://localhost:9002/esExchangeServer.asmx";
         }
+        
+        /// <remarks/>
+        public event DeleteDistributionListMemberCompletedEventHandler DeleteDistributionListMemberCompleted;
+        
+        /// <remarks/>
+        public event GetMobileDevicesCompletedEventHandler GetMobileDevicesCompleted;
         
         /// <remarks/>
         public event GetMobileDeviceCompletedEventHandler GetMobileDeviceCompleted;
@@ -489,6 +499,12 @@ namespace WebsitePanel.EnterpriseServer {
         public event SetMailboxPermissionsCompletedEventHandler SetMailboxPermissionsCompleted;
         
         /// <remarks/>
+        public event ExportMailBoxCompletedEventHandler ExportMailBoxCompleted;
+        
+        /// <remarks/>
+        public event SetDeletedMailboxCompletedEventHandler SetDeletedMailboxCompleted;
+        
+        /// <remarks/>
         public event CreateContactCompletedEventHandler CreateContactCompleted;
         
         /// <remarks/>
@@ -549,10 +565,95 @@ namespace WebsitePanel.EnterpriseServer {
         public event AddDistributionListMemberCompletedEventHandler AddDistributionListMemberCompleted;
         
         /// <remarks/>
-        public event DeleteDistributionListMemberCompletedEventHandler DeleteDistributionListMemberCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteDistributionListMember", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId) {
+            object[] results = this.Invoke("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId});
+            return ((int)(results[0]));
+        }
         
         /// <remarks/>
-        public event GetMobileDevicesCompletedEventHandler GetMobileDevicesCompleted;
+        public System.IAsyncResult BeginDeleteDistributionListMember(int itemId, string distributionListName, int memberId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndDeleteDistributionListMember(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId) {
+            this.DeleteDistributionListMemberAsync(itemId, distributionListName, memberId, null);
+        }
+        
+        /// <remarks/>
+        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId, object userState) {
+            if ((this.DeleteDistributionListMemberOperationCompleted == null)) {
+                this.DeleteDistributionListMemberOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDistributionListMemberOperationCompleted);
+            }
+            this.InvokeAsync("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId}, this.DeleteDistributionListMemberOperationCompleted, userState);
+        }
+        
+        private void OnDeleteDistributionListMemberOperationCompleted(object arg) {
+            if ((this.DeleteDistributionListMemberCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteDistributionListMemberCompleted(this, new DeleteDistributionListMemberCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetMobileDevices", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeMobileDevice[] GetMobileDevices(int itemId, int accountId) {
+            object[] results = this.Invoke("GetMobileDevices", new object[] {
+                        itemId,
+                        accountId});
+            return ((ExchangeMobileDevice[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetMobileDevices(int itemId, int accountId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetMobileDevices", new object[] {
+                        itemId,
+                        accountId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ExchangeMobileDevice[] EndGetMobileDevices(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ExchangeMobileDevice[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetMobileDevicesAsync(int itemId, int accountId) {
+            this.GetMobileDevicesAsync(itemId, accountId, null);
+        }
+        
+        /// <remarks/>
+        public void GetMobileDevicesAsync(int itemId, int accountId, object userState) {
+            if ((this.GetMobileDevicesOperationCompleted == null)) {
+                this.GetMobileDevicesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetMobileDevicesOperationCompleted);
+            }
+            this.InvokeAsync("GetMobileDevices", new object[] {
+                        itemId,
+                        accountId}, this.GetMobileDevicesOperationCompleted, userState);
+        }
+        
+        private void OnGetMobileDevicesOperationCompleted(object arg) {
+            if ((this.GetMobileDevicesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetMobileDevicesCompleted(this, new GetMobileDevicesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetMobileDevice", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -4459,6 +4560,97 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ExportMailBox", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int ExportMailBox(int itemId, int accountId, string path) {
+            object[] results = this.Invoke("ExportMailBox", new object[] {
+                        itemId,
+                        accountId,
+                        path});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginExportMailBox(int itemId, int accountId, string path, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ExportMailBox", new object[] {
+                        itemId,
+                        accountId,
+                        path}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndExportMailBox(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ExportMailBoxAsync(int itemId, int accountId, string path) {
+            this.ExportMailBoxAsync(itemId, accountId, path, null);
+        }
+        
+        /// <remarks/>
+        public void ExportMailBoxAsync(int itemId, int accountId, string path, object userState) {
+            if ((this.ExportMailBoxOperationCompleted == null)) {
+                this.ExportMailBoxOperationCompleted = new System.Threading.SendOrPostCallback(this.OnExportMailBoxOperationCompleted);
+            }
+            this.InvokeAsync("ExportMailBox", new object[] {
+                        itemId,
+                        accountId,
+                        path}, this.ExportMailBoxOperationCompleted, userState);
+        }
+        
+        private void OnExportMailBoxOperationCompleted(object arg) {
+            if ((this.ExportMailBoxCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ExportMailBoxCompleted(this, new ExportMailBoxCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetDeletedMailbox", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int SetDeletedMailbox(int itemId, int accountId) {
+            object[] results = this.Invoke("SetDeletedMailbox", new object[] {
+                        itemId,
+                        accountId});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetDeletedMailbox(int itemId, int accountId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetDeletedMailbox", new object[] {
+                        itemId,
+                        accountId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndSetDeletedMailbox(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SetDeletedMailboxAsync(int itemId, int accountId) {
+            this.SetDeletedMailboxAsync(itemId, accountId, null);
+        }
+        
+        /// <remarks/>
+        public void SetDeletedMailboxAsync(int itemId, int accountId, object userState) {
+            if ((this.SetDeletedMailboxOperationCompleted == null)) {
+                this.SetDeletedMailboxOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDeletedMailboxOperationCompleted);
+            }
+            this.InvokeAsync("SetDeletedMailbox", new object[] {
+                        itemId,
+                        accountId}, this.SetDeletedMailboxOperationCompleted, userState);
+        }
+        
+        private void OnSetDeletedMailboxOperationCompleted(object arg) {
+            if ((this.SetDeletedMailboxCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetDeletedMailboxCompleted(this, new SetDeletedMailboxCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CreateContact", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public int CreateContact(int itemId, string displayName, string email) {
             object[] results = this.Invoke("CreateContact", new object[] {
@@ -5583,99 +5775,60 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteDistributionListMember", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId) {
-            object[] results = this.Invoke("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId});
-            return ((int)(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginDeleteDistributionListMember(int itemId, string distributionListName, int memberId, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId}, callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public int EndDeleteDistributionListMember(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((int)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId) {
-            this.DeleteDistributionListMemberAsync(itemId, distributionListName, memberId, null);
-        }
-        
-        /// <remarks/>
-        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId, object userState) {
-            if ((this.DeleteDistributionListMemberOperationCompleted == null)) {
-                this.DeleteDistributionListMemberOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDistributionListMemberOperationCompleted);
-            }
-            this.InvokeAsync("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId}, this.DeleteDistributionListMemberOperationCompleted, userState);
-        }
-        
-        private void OnDeleteDistributionListMemberOperationCompleted(object arg) {
-            if ((this.DeleteDistributionListMemberCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.DeleteDistributionListMemberCompleted(this, new DeleteDistributionListMemberCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetMobileDevices", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangeMobileDevice[] GetMobileDevices(int itemId, int accountId) {
-            object[] results = this.Invoke("GetMobileDevices", new object[] {
-                        itemId,
-                        accountId});
-            return ((ExchangeMobileDevice[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginGetMobileDevices(int itemId, int accountId, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("GetMobileDevices", new object[] {
-                        itemId,
-                        accountId}, callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public ExchangeMobileDevice[] EndGetMobileDevices(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((ExchangeMobileDevice[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetMobileDevicesAsync(int itemId, int accountId) {
-            this.GetMobileDevicesAsync(itemId, accountId, null);
-        }
-        
-        /// <remarks/>
-        public void GetMobileDevicesAsync(int itemId, int accountId, object userState) {
-            if ((this.GetMobileDevicesOperationCompleted == null)) {
-                this.GetMobileDevicesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetMobileDevicesOperationCompleted);
-            }
-            this.InvokeAsync("GetMobileDevices", new object[] {
-                        itemId,
-                        accountId}, this.GetMobileDevicesOperationCompleted, userState);
-        }
-        
-        private void OnGetMobileDevicesOperationCompleted(object arg) {
-            if ((this.GetMobileDevicesCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetMobileDevicesCompleted(this, new GetMobileDevicesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteDistributionListMemberCompletedEventHandler(object sender, DeleteDistributionListMemberCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteDistributionListMemberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DeleteDistributionListMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetMobileDevicesCompletedEventHandler(object sender, GetMobileDevicesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetMobileDevicesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetMobileDevicesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ExchangeMobileDevice[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ExchangeMobileDevice[])(this.results[0]));
+            }
         }
     }
     
@@ -7699,6 +7852,58 @@ namespace WebsitePanel.EnterpriseServer {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ExportMailBoxCompletedEventHandler(object sender, ExportMailBoxCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ExportMailBoxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ExportMailBoxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetDeletedMailboxCompletedEventHandler(object sender, SetDeletedMailboxCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetDeletedMailboxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SetDeletedMailboxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CreateContactCompletedEventHandler(object sender, CreateContactCompletedEventArgs e);
     
     /// <remarks/>
@@ -8213,58 +8418,6 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    public delegate void DeleteDistributionListMemberCompletedEventHandler(object sender, DeleteDistributionListMemberCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteDistributionListMemberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteDistributionListMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    public delegate void GetMobileDevicesCompletedEventHandler(object sender, GetMobileDevicesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetMobileDevicesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetMobileDevicesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ExchangeMobileDevice[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ExchangeMobileDevice[])(this.results[0]));
             }
         }
     }
