@@ -148,7 +148,7 @@ namespace WebsitePanel.WebDav.Core
             public IResource GetResource(string name)
             {
                 IHierarchyItem item =
-                    _children.Single(i => i.ItemType == ItemType.Resource && i.DisplayName.Trim('/') == name.Trim('/'));
+                    _children.Single(i => i.DisplayName.Trim('/') == name.Trim('/'));
                 var resource = new WebDavResource();
                 resource.SetCredentials(_credentials);
                 resource.SetHierarchyItem(item);

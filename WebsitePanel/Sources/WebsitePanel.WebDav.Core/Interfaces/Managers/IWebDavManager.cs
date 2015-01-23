@@ -12,5 +12,6 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Managers
         void UploadFile(string path, HttpPostedFileBase file);
         IResource GetResource(string path);
         string GetFileUrl(string path);
+        void DeleteResource(string path);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.WebDav.Core.Config.WebConfigSections;
 using WebsitePanel.WebDavPortal.WebConfigSections;
 
 namespace WebsitePanel.WebDav.Core.Config.Entities
@@ -29,6 +31,26 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
             {
                 SessionKeysElement sessionKey =
                     _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.WebDavManagerKey);
+                return sessionKey != null ? sessionKey.Value : null;
+            }
+        }
+
+        public string UserGroupsKey
+        {
+            get
+            {
+                SessionKeysElement sessionKey =
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.UserGroupsKey);
+                return sessionKey != null ? sessionKey.Value : null;
+            }
+        }
+
+        public string WebDavRootFoldersPermissions
+        {
+            get
+            {
+                SessionKeysElement sessionKey =
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.WebDavRootFolderPermissionsKey);
                 return sessionKey != null ? sessionKey.Value : null;
             }
         }

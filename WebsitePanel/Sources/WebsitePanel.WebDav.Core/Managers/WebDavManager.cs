@@ -13,6 +13,7 @@ using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
 using WebsitePanel.WebDav.Core.Extensions;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
+using WebsitePanel.WebDav.Core.Resources;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDav.Core.Wsp.Framework;
 
@@ -70,7 +71,7 @@ namespace WebsitePanel.WebDav.Core.Managers
                         _cryptography.Decrypt(WspContext.User.EncryptedPassword),
                         WebDavAppConfigManager.Instance.UserDomain);
 
-                    _currentFolder = _webDavSession.OpenFolder(string.Format("{0}{1}/{2}", WebDavAppConfigManager.Instance.WebdavRoot, WspContext.User.OrganizationId, pathPart));
+                    _currentFolder = _webDavSession.OpenFolder(string.Format("{0}{1}/{2}", WebDavAppConfigManager.Instance.WebdavRoot, WspContext.User.OrganizationId, pathPart.TrimStart('/')));
                 }
 
                 children = _currentFolder.GetChildren().Where(x => !WebDavAppConfigManager.Instance.ElementsRendering.ElementsToIgnore.Contains(x.DisplayName.Trim('/'))).ToArray();
@@ -95,15 +96,9 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             OpenFolder(folder);
 
-            try
-            {
-                IResource resource = _currentFolder.GetResource(resourceName);
+            IResource resource = _currentFolder.GetResource(resourceName);
 
-                return true;
-            }
-            catch (Exception e){}
-
-            return false;
+            return resource.ItemType != ItemType.Folder;
         }
 
 
@@ -146,6 +141,27 @@ namespace WebsitePanel.WebDav.Core.Managers
             var bytes = ReadFully(file.InputStream);
 
             resource.Upload(bytes);
+        }
+
+        public void DeleteResource(string path)
+        {
+            path = RemoveLeadingFromPath(path, "office365");
+            path = RemoveLeadingFromPath(path, WspContext.User.OrganizationId);
+
+            string folderPath = GetFileFolder(path);
+
+            OpenFolder(folderPath);
+
+            var resourceName = GetResourceName(path);
+
+            IResource resource = _currentFolder.GetResource(resourceName);
+
+            if (resource.ItemType == ItemType.Folder && GetFoldersItemsCount(path) > 0)
+            {
+                throw new WebDavException(string.Format(WebDavResources.FolderIsNotEmptyFormat, resource.DisplayName));
+            }
+
+            resource.Delete();
         }
 
         public IResource GetResource(string path)
@@ -210,7 +226,19 @@ namespace WebsitePanel.WebDav.Core.Managers
             return rootFolders;
         }
 
+        private int GetFoldersItemsCount(string path)
+        {
+            var items = OpenFolder(path);
+
+            return items.Count();
+        }
+
         #region Helpers
+
+        private string RemoveLeadingFromPath(string pathPart, string toRemove)
+        {
+            return pathPart.StartsWith('/' + toRemove) ? pathPart.Substring(toRemove.Length + 1) : pathPart;
+        }
 
         private byte[] ReadFully(Stream input)
         {

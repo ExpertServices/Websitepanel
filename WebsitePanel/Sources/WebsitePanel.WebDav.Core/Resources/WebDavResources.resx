@@ -117,49 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Actions" xml:space="preserve">
-    <value>Actions</value>
-  </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="Close" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="DeleteFileQuestion" xml:space="preserve">
-    <value>Delete File?</value>
-  </data>
-  <data name="DialogsContentConfrimFileDeletion" xml:space="preserve">
-    <value>Are you sure you want to delete {0} item(s)?</value>
-  </data>
-  <data name="FileUpload" xml:space="preserve">
-    <value>File Upload</value>
-  </data>
-  <data name="GigabyteShort" xml:space="preserve">
-    <value>Gb</value>
-  </data>
-  <data name="ItemsWasRemovedFormat" xml:space="preserve">
-    <value>{0} items was removed.</value>
-  </data>
-  <data name="NoFilesAreSelected" xml:space="preserve">
-    <value>No files are selected.</value>
-  </data>
-  <data name="Processing" xml:space="preserve">
-    <value>Processing</value>
-  </data>
-  <data name="ProcessingWithDots" xml:space="preserve">
-    <value>Processing...</value>
-  </data>
-  <data name="Upload" xml:space="preserve">
-    <value>Upload</value>
-  </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+  <data name="FolderIsNotEmptyFormat" xml:space="preserve">
+    <value>Folder {0} is not empty.</value>
   </data>
 </root>

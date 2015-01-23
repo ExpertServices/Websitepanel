@@ -432,6 +432,15 @@ namespace WebsitePanel.WebDav.Core
             ///     For internal use only.
             /// </summary>
             /// <param name="comment"></param>
+            public void SetItemType(ItemType type)
+            {
+                _itemType = type;
+            }
+
+            /// <summary>
+            ///     For internal use only.
+            /// </summary>
+            /// <param name="comment"></param>
             public void SetProperty(Property property)
             {
                 if (property.Name.Name == "resourcetype" && property.StringValue != String.Empty)
@@ -541,6 +550,7 @@ namespace WebsitePanel.WebDav.Core
                 SetHref(item.Href);
                 SetLastModified(item.LastModified);
                 SetProperties(item.Properties);
+                SetItemType(item.ItemType);
             }
         }
     }

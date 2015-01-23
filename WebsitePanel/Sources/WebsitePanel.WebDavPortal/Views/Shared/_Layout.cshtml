@@ -1,9 +1,11 @@
-﻿@using Ninject
+﻿@using System.Web.Script.Serialization
+@using Ninject
 @using WebsitePanel.WebDav.Core
 @using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
 @using WebsitePanel.WebDavPortal.UI.Routes;
+@model WebsitePanel.WebDavPortal.Models.Common.BaseModel
 
 <!DOCTYPE html>
 <html>
@@ -15,8 +17,8 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <div class="navbar navbar-inverse navbar-fixed-top prevent-deselect">
+        <div class="container top-container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
@@ -32,27 +34,43 @@
                         <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
                         <h4 id="username" class="nav navbar-text navbar-right">@WspContext.User.Login</h4>
                     }
-}
+                }
             </div>
         </div>
     </div>
     <div class="container body-content">
+        <div id="message-area" class="container prevent-deselect"> </div>
         @RenderBody()
     </div>
     
-    @RenderSection("popups", required: false)
+    <div class="prevent-deselect">
+        @RenderSection("popups", required: false)
+    </div>
 
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/appScripts")
+
     
+
     @if (WspContext.User != null)
     {
         @Scripts.Render("~/bundles/authScripts")
-
+        
         <script>
             StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
         </script>
     }
+
+    @if (Model != null)
+    {
+        <script>
+            wsp.messages.showMessages(@Html.Raw(Json.Encode(Model.Messages)));
+        </script>
+    }
+
+
 
     @RenderSection("scripts", required: false)
     

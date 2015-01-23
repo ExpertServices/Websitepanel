@@ -43,6 +43,12 @@ namespace WebsitePanel.WebDavPortal
             #endregion
 
             routes.MapRoute(
+                name: FileSystemRouteNames.DeleteFiles,
+                url: "files-group-action/delete",
+                defaults: new { controller = "FileSystem", action = "DeleteFiles" }
+                );
+
+            routes.MapRoute(
                 name: FileSystemRouteNames.UploadFile,
                 url: "upload-file/{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "UploadFile" }
