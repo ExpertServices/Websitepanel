@@ -24,6 +24,7 @@ td.NormalBold span {}
 td.Normal > br {display:none;}
 .NormalTextBox + br + span {font-size:11px; color:#888;}
 td.Normal .NormalTextBox + span {display:inline-block; padding:0;}
+.FormSimpleLabel {padding:9px 8px 14px 0; color:#555; vertical-align:top;}
 .FormLabel150, .FormLabel200 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
 .FormLabel150 {width:150px;}
 .FormLabel200 {width:200px;}
@@ -81,6 +82,7 @@ input[type=text]:hover, input[type=password]:hover {border-color:#999;}
 input.NormalTextBox {min-width:130px;}
 input.TextBox50 {width:40px;}
 input.TextBox100 {width:80px;}
+input.TextBox300 {width:300px;}
 /* selectbox */
 select {height:34px; font-family:inherit; font-size:inherit; color:inherit; background:#fff; border:1px solid #ccc; cursor:pointer; padding:6px; margin:0 3px 4px 0; vertical-align:middle;}
 select:hover {border-color:#999;}

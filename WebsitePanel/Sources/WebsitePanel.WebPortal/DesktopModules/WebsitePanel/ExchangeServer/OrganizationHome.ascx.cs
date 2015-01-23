@@ -189,12 +189,21 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 userStats.QuotaUsedValue = orgStats.CreatedUsers;
                 userStats.QuotaValue = orgStats.AllocatedUsers;
-                if (orgStats.AllocatedUsers != -1) userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+                if (orgStats.AllocatedUsers != -1)
+                    userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+
+                deletedUserStats.QuotaUsedValue = orgStats.DeletedUsers;
+                deletedUserStats.QuotaValue = orgStats.AllocatedDeletedUsers;
+                if (orgStats.AllocatedDeletedUsers != -1)
+                    userStats.QuotaAvailable = tenantStats.AllocatedDeletedUsers - tenantStats.DeletedUsers;
 
                 lnkDomains.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains",
                     "SpaceID=" + PanelSecurity.PackageId);
 
                 lnkUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "users",
+                    "SpaceID=" + PanelSecurity.PackageId);
+
+                lnkDeletedUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "deleted_users",
                     "SpaceID=" + PanelSecurity.PackageId);
 
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))

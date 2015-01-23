@@ -43,7 +43,13 @@ namespace WebsitePanel.WebDavPortal
             #endregion
 
             routes.MapRoute(
-                name: "Office365DocumentRoute",
+                name: FileSystemRouteNames.UploadFile,
+                url: "upload-file/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "UploadFile" }
+                );
+
+            routes.MapRoute(
+                name: FileSystemRouteNames.ShowOfficeOnlinePath,
                 url: "office365/{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "ShowOfficeDocument", pathPart = UrlParameter.Optional }
                 );
@@ -55,7 +61,7 @@ namespace WebsitePanel.WebDavPortal
                 );
 
             routes.MapRoute(
-                name: FileSystemRouteNames.FilePath,
+                name: FileSystemRouteNames.ShowContentPath,
                 url: "{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional }
                 );

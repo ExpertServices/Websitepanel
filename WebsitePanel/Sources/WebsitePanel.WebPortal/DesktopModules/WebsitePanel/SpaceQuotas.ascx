@@ -37,6 +37,10 @@
         <td class="SubHead" nowrap><asp:Label ID="lblUserAccounts" runat="server" meta:resourcekey="lblUserAccounts" Text="User Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaUserAccounts" runat="server" QuotaName="HostedSolution.Users" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlDeletedUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblDeletedUsers" runat="server" meta:resourcekey="lblDeletedUsers" Text="Deleted Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaDeletedUsers" runat="server" QuotaName="HostedSolution.DeletedUsers" DisplayGauge="True" /></td>
+    </tr>
     <tr ID="pnlExchangeAccounts" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblExchangeAccounts" runat="server" meta:resourcekey="lblExchangeAccounts" Text="Exchange Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaExchangeAccounts" runat="server" QuotaName="Exchange2007.Mailboxes" DisplayGauge="True" /></td>

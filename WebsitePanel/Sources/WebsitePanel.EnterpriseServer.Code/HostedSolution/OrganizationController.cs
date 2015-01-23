@@ -49,6 +49,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
+using System.Text.RegularExpressions;
+using WebsitePanel.Server.Client;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -65,6 +67,21 @@ namespace WebsitePanel.EnterpriseServer
             if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers))
             {
                 errorCode = BusinessErrorCodes.ERROR_USERS_RESOURCE_QUOTA_LIMIT;
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool CheckDeletedUserQuota(int orgId, out int errorCode)
+        {
+            errorCode = 0;
+            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+
+
+            if (stats.AllocatedDeletedUsers != -1 && (stats.DeletedUsers >= stats.AllocatedDeletedUsers))
+            {
+                errorCode = BusinessErrorCodes.ERROR_DELETED_USERS_RESOURCE_QUOTA_LIMIT;
                 return false;
             }
 
@@ -942,6 +959,7 @@ namespace WebsitePanel.EnterpriseServer
                     stats.CreatedUsers = tempStats.CreatedUsers;
                     stats.CreatedDomains = tempStats.CreatedDomains;
                     stats.CreatedGroups = tempStats.CreatedGroups;
+                    stats.DeletedUsers = tempStats.DeletedUsers;
 
                     PackageContext cntxTmp = PackageController.GetPackageContext(org.PackageId);
 
@@ -1090,6 +1108,7 @@ namespace WebsitePanel.EnterpriseServer
                 // allocated quotas                               
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
                 stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValue;
+                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValue;
                 stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
                 stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
 
@@ -1357,8 +1376,64 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Users
 
+        public static List<OrganizationDeletedUser> GetOrganizationDeletedUsers(int itemId)
+        {
+            var result = new List<OrganizationDeletedUser>();
 
+            var orgDeletedUsers = ObjectUtils.CreateListFromDataReader<OrganizationUser>(
+                DataProvider.GetExchangeAccounts(itemId, (int)ExchangeAccountType.DeletedUser));
 
+            foreach (var orgDeletedUser in orgDeletedUsers)
+            {
+                OrganizationDeletedUser deletedUser = GetDeletedUser(orgDeletedUser.AccountId);
+
+                if (deletedUser == null)
+                    continue;
+
+                deletedUser.User = orgDeletedUser;
+
+                result.Add(deletedUser);
+            }
+
+            return result;
+        }
+
+        public static OrganizationDeletedUsersPaged GetOrganizationDeletedUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            DataSet ds =
+                DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, ((int)ExchangeAccountType.DeletedUser).ToString(),
+                filterColumn, filterValue, sortColumn, startRow, maximumRows, false);
+
+            OrganizationDeletedUsersPaged result = new OrganizationDeletedUsersPaged();
+            result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
+
+            List<OrganizationUser> Tmpaccounts = new List<OrganizationUser>();
+            ObjectUtils.FillCollectionFromDataView(Tmpaccounts, ds.Tables[1].DefaultView);
+
+            List<OrganizationDeletedUser> deletedUsers = new List<OrganizationDeletedUser>();
+
+            foreach (OrganizationUser user in Tmpaccounts.ToArray())
+            {
+                OrganizationDeletedUser deletedUser = GetDeletedUser(user.AccountId);
+
+                if (deletedUser == null)
+                    continue;
+
+                OrganizationUser tmpUser = GetUserGeneralSettings(itemId, user.AccountId);
+
+                if (tmpUser != null)
+                {
+                    deletedUser.User = tmpUser;
+
+                    deletedUsers.Add(deletedUser);
+                }
+            }
+
+            result.PageDeletedUsers = deletedUsers.ToArray();
+
+            return result;
+        }
 
         public static OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
             int startRow, int maximumRows)
@@ -1752,9 +1827,255 @@ namespace WebsitePanel.EnterpriseServer
             }
             else
                 return true;
-
-
         }
+
+        #region Deleted Users
+
+        public static int SetDeletedUser(int itemId, int accountId, bool enableForceArchive)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "SET_DELETED_USER", itemId);
+
+            try
+            {
+                Guid crmUserId = CRMController.GetCrmUserId(accountId);
+                if (crmUserId != Guid.Empty)
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_CRM_USER;
+                }
+
+                if (DataProvider.CheckOCSUserExists(accountId))
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER;
+                }
+
+                if (DataProvider.CheckLyncUserExists(accountId))
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER;
+                }
+
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                int errorCode;
+                if (!CheckDeletedUserQuota(org.Id, out errorCode))
+                    return errorCode;
+
+                // load account
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
+                string accountName = GetAccountName(account.AccountName);
+
+                var deletedUser = new OrganizationDeletedUser
+                {
+                    AccountId = account.AccountId,
+                    OriginAT = account.AccountType,
+                    ExpirationDate = DateTime.UtcNow.AddHours(1)
+                };
+
+                if (account.AccountType == ExchangeAccountType.User)
+                {
+                    Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                    //Disable user in AD
+                    orgProxy.DisableUser(accountName, org.OrganizationId);
+                }
+                else
+                {
+                    if (enableForceArchive)
+                    {
+                        var serviceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.HostedOrganizations);
+
+                        if (serviceId != 0)
+                        {
+                            var settings = ServerController.GetServiceSettings(serviceId);
+
+                            deletedUser.StoragePath = settings["ArchiveStoragePath"];
+
+                            if (!string.IsNullOrEmpty(deletedUser.StoragePath))
+                            {
+                                deletedUser.FolderName = org.OrganizationId;
+
+                                if (!CheckFolderExists(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName))
+                                {
+                                    CreateFolder(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName);
+                                }
+
+                                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(org.PackageId, Quotas.ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE);
+
+                                if (diskSpaceQuota.QuotaAllocatedValue != -1)
+                                {
+                                    SetFRSMQuotaOnFolder(org.PackageId, deletedUser.StoragePath, org.OrganizationId, diskSpaceQuota, QuotaType.Hard);
+                                }
+
+                                deletedUser.FileName = string.Format("{0}.pst", account.UserPrincipalName);
+
+                                ExchangeServerController.ExportMailBox(itemId, accountId,
+                                    FilesController.ConvertToUncPath(serviceId,
+                                        Path.Combine(GetDirectory(deletedUser.StoragePath), deletedUser.FolderName, deletedUser.FileName)));
+                            }
+                        }
+                    }
+                    
+                    //Set Deleted Mailbox
+                    ExchangeServerController.SetDeletedMailbox(itemId, accountId);
+                }
+
+                AddDeletedUser(deletedUser);
+
+                account.AccountType = ExchangeAccountType.DeletedUser;
+
+                UpdateAccount(account);
+
+                var taskId = "SCHEDULE_TASK_DELETE_EXCHANGE_ACCOUNTS";
+
+                if (!CheckScheduleTaskRun(org.PackageId, taskId))
+                {
+                    AddScheduleTask(org.PackageId, taskId, "Auto Delete Exchange Account");
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        {
+            var os = GetOS(packageId);
+
+            if (os != null && os.CheckFileServicesInstallation())
+            {
+                return os.GetFileBinaryChunk(path, offset, length);
+            }
+
+            return null;
+        }
+
+        private static bool CheckScheduleTaskRun(int packageId, string taskId)
+        {
+            var schedules = new List<ScheduleInfo>();
+
+            ObjectUtils.FillCollectionFromDataSet(schedules, SchedulerController.GetSchedules(packageId));
+
+            foreach(var schedule in schedules)
+            {
+                if (schedule.TaskId == taskId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static int AddScheduleTask(int packageId, string taskId, string taskName)
+        {
+            return SchedulerController.AddSchedule(new ScheduleInfo
+                {
+                    PackageId = packageId,
+                    TaskId = taskId,
+                    ScheduleName = taskName,
+                    ScheduleTypeId = "Daily",
+                    FromTime = new DateTime(2000, 1, 1, 0, 0, 0),
+                    ToTime = new DateTime(2000, 1, 1, 23, 59, 59),
+                    Interval = 3600,
+                    StartTime = new DateTime(2000, 01, 01, 0, 30, 0),
+                    MaxExecutionTime = 3600,
+                    PriorityId = "Normal",
+                    Enabled = true,
+                    WeekMonthDay = 1,
+                    HistoriesNumber = 0
+                });
+        }
+
+        private static bool CheckFolderExists(int packageId, string path, string folderName)
+        {
+            var os = GetOS(packageId);
+
+            if (os != null && os.CheckFileServicesInstallation())
+            {
+                return os.DirectoryExists(Path.Combine(path, folderName));
+            }
+
+            return false;
+        }
+
+        private static void CreateFolder(int packageId, string path, string folderName)
+        {
+            var os = GetOS(packageId);
+
+            if (os != null && os.CheckFileServicesInstallation())
+            {
+                os.CreateDirectory(Path.Combine(path, folderName));
+            }
+        }
+
+        private static void RemoveArchive(int packageId, string path, string folderName, string fileName)
+        {
+            var os = GetOS(packageId);
+
+            if (os != null && os.CheckFileServicesInstallation())
+            {
+                os.DeleteFile(Path.Combine(path, folderName, fileName));
+            }
+        }
+
+        private static string GetLocationDrive(string path)
+        {
+            var drive = System.IO.Path.GetPathRoot(path);
+
+            return drive.Split(':')[0];
+        }
+
+        private static string GetDirectory(string path)
+        {
+            var drive = System.IO.Path.GetPathRoot(path);
+            
+            return path.Replace(drive, string.Empty);
+        }
+
+        private static void SetFRSMQuotaOnFolder(int packageId, string path, string folderName, QuotaValueInfo quotaInfo, QuotaType quotaType)
+        {
+            var os = GetOS(packageId);
+
+            if (os != null && os.CheckFileServicesInstallation())
+            {
+                #region figure Quota Unit
+
+                // Quota Unit
+                string unit = string.Empty;
+                if (quotaInfo.QuotaDescription.ToLower().Contains("gb"))
+                    unit = "GB";
+                else if (quotaInfo.QuotaDescription.ToLower().Contains("mb"))
+                    unit = "MB";
+                else
+                    unit = "KB";
+
+                #endregion
+
+                os.SetQuotaLimitOnFolder(
+                    Path.Combine(GetDirectory(path), folderName),
+                    GetLocationDrive(path), quotaType,
+                    quotaInfo.QuotaAllocatedValue.ToString() + unit,
+                    0, String.Empty, String.Empty);
+            }
+        }
+
+        #endregion
 
         public static int DeleteUser(int itemId, int accountId)
         {
@@ -1763,7 +2084,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "DELETE_USER", itemId);
+            TaskManager.StartTask("ORGANIZATION", "REMOVE_USER", itemId);
 
             try
             {
@@ -1791,13 +2112,32 @@ namespace WebsitePanel.EnterpriseServer
                     return -1;
 
                 // load account
-                OrganizationUser user = GetAccount(itemId, accountId);
-
+                ExchangeAccount user = ExchangeServerController.GetAccount(itemId, accountId);
+                
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string account = GetAccountName(user.AccountName);
 
-                if (user.AccountType == ExchangeAccountType.User)
+                var accountType = user.AccountType;
+
+                if (accountType == ExchangeAccountType.DeletedUser)
+                {
+                    var deletedUser = GetDeletedUser(user.AccountId);
+
+                    if (deletedUser != null)
+                    {
+                        accountType = deletedUser.OriginAT;
+
+                        if (!deletedUser.IsArchiveEmpty)
+                        {
+                            RemoveArchive(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName, deletedUser.FileName);
+                        }
+
+                        RemoveDeletedUser(deletedUser.Id);
+                    }
+                }
+
+                if (user.AccountType == ExchangeAccountType.User )
                 {
                     //Delete user from AD
                     orgProxy.DeleteUser(account, org.OrganizationId);
@@ -1819,6 +2159,30 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        public static OrganizationDeletedUser GetDeletedUser(int accountId)
+        {
+            OrganizationDeletedUser deletedUser = ObjectUtils.FillObjectFromDataReader<OrganizationDeletedUser>(
+                DataProvider.GetOrganizationDeletedUser(accountId));
+
+            if (deletedUser == null)
+                return null;
+
+            deletedUser.IsArchiveEmpty = string.IsNullOrEmpty(deletedUser.FileName);
+
+            return deletedUser;
+        }
+
+        private static int AddDeletedUser(OrganizationDeletedUser deletedUser)
+        {
+            return DataProvider.AddOrganizationDeletedUser(
+                deletedUser.AccountId, (int)deletedUser.OriginAT, deletedUser.StoragePath, deletedUser.FolderName, deletedUser.FileName, deletedUser.ExpirationDate);
+        }
+
+        private static void RemoveDeletedUser(int id)
+        {
+            DataProvider.DeleteOrganizationDeletedUser(id);
         }
 
         public static OrganizationUser GetAccount(int itemId, int userId)
@@ -3107,6 +3471,22 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckServiceLevelUsage(int levelID)
         {
             return DataProvider.CheckServiceLevelUsage(levelID);
+        }
+
+        #endregion
+
+        #region OS
+
+        private static WebsitePanel.Providers.OS.OperatingSystem GetOS(int packageId)
+        {
+            int sid = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+            if (sid <= 0)
+                return null;
+
+            var os = new WebsitePanel.Providers.OS.OperatingSystem();
+            ServiceProviderProxy.Init(os, sid);
+
+            return os;
         }
 
         #endregion

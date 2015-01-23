@@ -44,6 +44,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			Unselected
 		}
 
+        public bool Disabled
+        {
+            get { return ViewState["Disabled"] != null ? (bool)ViewState["Disabled"] : false; }
+            set { ViewState["Disabled"] = value; }
+        }
+
 	    public bool EnableMailboxOnly
 	    {
             get {return ViewState["EnableMailboxOnly"] != null ? (bool)ViewState["EnableMailboxOnly"]: false; }
@@ -116,6 +122,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			// toggle controls
 			if (!IsPostBack)
 			{
+                if (Disabled)
+                {
+                    btnAdd.Visible = btnDelete.Visible = gvAccounts.Columns[0].Visible = false;
+                }
+
 				chkIncludeMailboxes.Visible = chkIncludeRooms.Visible = chkIncludeEquipment.Visible = MailboxesEnabled;
                 chkIncludeMailboxes.Checked = chkIncludeRooms.Checked = chkIncludeEquipment.Checked = MailboxesEnabled;
 				

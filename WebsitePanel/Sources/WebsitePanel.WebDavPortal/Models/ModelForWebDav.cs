@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WebsitePanel.WebDav.Core.Client;
+using WebsitePanel.WebDav.Core.Security.Authorization.Enums;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
@@ -8,5 +9,6 @@ namespace WebsitePanel.WebDavPortal.Models
         public IEnumerable<IHierarchyItem> Items { get; set; }
         public string UrlSuffix { get; set; }
         public string Error { get; set; }
+        public WebDavPermissions Permissions { get; set; }
     }
 }

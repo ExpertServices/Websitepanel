@@ -46,3 +46,12 @@ textarea {
 #logout :hover {
     color: white;
 }
+
+
+.web-dav-folder-progress {
+    margin-bottom: 0px;
+}
+
+.modal-vertical-centered {
+    margin-top: 25%;
+}

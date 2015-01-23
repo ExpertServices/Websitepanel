@@ -33,7 +33,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
 
             var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
 
-            if (_principalContext.ValidateCredentials(login, password) == false && user != null)
+            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
             {
                 return null;
             }
