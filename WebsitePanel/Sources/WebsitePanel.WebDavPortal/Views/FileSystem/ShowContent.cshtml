@@ -21,12 +21,12 @@
 }
 else
 {
-    <div class="container">
+    <div class="container prevent-deselect">
         @if (Model != null)
         {
             string header = WspContext.User.OrganizationId;
             <a href="/@header/" class="btn btn-primary btn-sm active" role="button">@header</a>
-            string[] elements = Model.UrlSuffix.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] elements = Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < elements.Length; i++)
             {
                 <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
@@ -34,7 +34,7 @@ else
             }
         }
     </div>
-    <div class="container file-actions-menu">
+    <div class="container file-actions-menu prevent-deselect">
         @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
         {
             <div class="file-deletion navbar-left">
@@ -45,16 +45,6 @@ else
                    data-target-content="@Resources.DialogsContentConfrimFileDeletion">@Resources.Delete</a>
             </div>
             <a id="upload-button" class="btn btn-success btn-sm active navbar-right" data-toggle="modal" data-target="#file-upload" role="button">@Resources.FileUpload</a>
-
-            @*<div class="dropdown navbar-right">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                        @Resources.Actions
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <li role="presentation"><a id="upload-button" data-toggle="modal" data-target="#file-upload" role="menuitem" tabindex="-1" href="#">@Resources.FileUpload</a></li>
-                    </ul>
-                </div>*@
         }
     </div>
     <br />

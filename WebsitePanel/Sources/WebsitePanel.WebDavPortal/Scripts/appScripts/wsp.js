@@ -44,3 +44,11 @@ $(document).on('click', '.file-deletion #delete-button', function (e) {
 
     wsp.dialogs.showConfirmDialog(title, content, buttonText, wsp.fileBrowser.deleteSelectedItems, dialogId);
 });
+
+
+$(document).click(function (event) {
+    if (!$(event.target).closest('.element-container, .prevent-deselect').length) {
+        wsp.fileBrowser.clearAllSelectedItems();
+        wsp.fileBrowser.refreshDeletionBlock();
+    }
+})
