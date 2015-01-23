@@ -43,6 +43,18 @@ namespace WebsitePanel.Portal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                gvIPAddresses.PageIndex = PageIndex;
+            }
+        }
+
+        public int PageIndex
+        {
+            get
+            {
+                return PanelRequest.GetInt("IpAddressesPage", 0);
+            }
         }
 
         public string EditModuleUrl(string key, string keyVal, string ctrlKey)
@@ -57,7 +69,10 @@ namespace WebsitePanel.Portal
 
         public string GetReturnUrl()
         {
-            var returnUrl = Utils.AddParameterToUrl(Request.Url, "IpAddressesCollapsed", "False");
+            var returnUrl = Request.Url
+                .AddParameter("IpAddressesCollapsed", "False")
+                .AddParameter("IpAddressesPage", gvIPAddresses.PageIndex.ToString());
+
             return Uri.EscapeDataString("~" + returnUrl.PathAndQuery);
         }
 

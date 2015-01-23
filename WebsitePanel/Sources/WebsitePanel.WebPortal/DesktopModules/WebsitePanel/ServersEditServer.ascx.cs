@@ -58,9 +58,9 @@ namespace WebsitePanel.Portal
                     ShowErrorMessage("SERVER_GET_SERVER", ex);
                     return;
                 }
-            }
 
-            IPAddressesHeader.IsCollapsed = IsIpAddressesCollapsed;
+                IPAddressesHeader.IsCollapsed = IsIpAddressesCollapsed;
+            }
         }
 
         private void BindTools()
