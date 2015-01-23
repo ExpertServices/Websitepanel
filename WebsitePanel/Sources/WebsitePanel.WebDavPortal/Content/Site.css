@@ -40,6 +40,7 @@ textarea {
       -moz-box-sizing:border-box;
       -webkit-box-sizing:border-box;
       border: 1px solid rgb(80, 152, 249);
+      padding: 3px;
 }
 
 .selected-file .element div.selected-element-overlay {
