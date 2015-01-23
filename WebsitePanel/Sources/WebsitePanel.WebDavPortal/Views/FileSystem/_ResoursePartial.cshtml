@@ -17,12 +17,12 @@
     {
         case FileOpenerType.OfficeOnline:
             isTargetBlank = true;
-            var pathPart = Model.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "");
+            var pathPart = Model.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/'); 
             href = string.Concat(Url.RouteUrl(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
             break;
         default:
             isTargetBlank = false;
-            href = Model.Href.AbsolutePath; 
+            href = Model.Href.LocalPath; 
             break;
     }
 
@@ -39,17 +39,22 @@
 }
 
 <div class="col-sm-2 element-container">
-    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) title="@name">
-        <img class="icon-size" src="@Url.Content(actualPath)" />
+    <img class="icon-size" src="@Url.Content(actualPath)" />
+    
+    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link" title="@name">
         <p style="word-wrap: break-word;">@name</p>
     </a>
+
     @if (showStatistic)
     {
         <div class="progress web-dav-folder-progress">
             <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-                @percent%
+                <p class="progress-text">@percent%</p>
             </div>
         </div>
         <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @Resources.GigabyteShort</p>
     }
+    
+    <div class="selected-element-overlay">
+    </div>
 </div>

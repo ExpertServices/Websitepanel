@@ -19,6 +19,10 @@ using WebsitePanel.WebDavPortal.CustomAttributes;
 using WebsitePanel.WebDavPortal.Extensions;
 using WebsitePanel.WebDavPortal.Models;
 using System.Net;
+using WebsitePanel.WebDavPortal.Models.Common;
+using WebsitePanel.WebDavPortal.Models.Common.Enums;
+using WebsitePanel.WebDavPortal.Models.FileSystem;
+using WebsitePanel.WebDavPortal.UI;
 using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal.Controllers
@@ -72,7 +76,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
                 return View(model);
             }
-            catch (UnauthorizedException)
+            catch (UnauthorizedException e)
             {
                 throw new HttpException(404, "Not Found");
             }
@@ -120,6 +124,52 @@ namespace WebsitePanel.WebDavPortal.Controllers
             }
 
             return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteFiles(IEnumerable<string> filePathes = null)
+        {
+            var model = new DeleteFilesModel();
+
+            if (filePathes == null)
+            {
+                model.Messages.Add(new Message
+                {
+                    Type = MessageType.Error,
+                    Value = Resources.NoFilesAreSelected
+                });
+
+                return Json(model);
+            }
+
+            foreach (var file in filePathes)
+            {
+                try
+                {
+                    _webdavManager.DeleteResource(Server.UrlDecode(file));
+
+                    model.DeletedFiles.Add(file);
+                }
+                catch (WebDavException exception)
+                {
+                    model.Messages.Add(new Message
+                    {
+                        Type = MessageType.Error,
+                        Value = exception.Message
+                    });
+                }
+            }
+
+            if (model.DeletedFiles.Any())
+            {
+                model.Messages.Insert(0, new Message
+                {
+                    Type = MessageType.Success,
+                    Value = string.Format(Resources.ItemsWasRemovedFormat, model.DeletedFiles.Count)
+                });
+            }
+
+            return Json(model);
         }
     }
 }

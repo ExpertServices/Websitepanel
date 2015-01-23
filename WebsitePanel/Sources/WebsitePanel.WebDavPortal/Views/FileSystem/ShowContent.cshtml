@@ -12,12 +12,7 @@
     var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
     ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/appScripts")
 
-<script>
-    recalculateResourseHeight();
-</script>
 
 <br />
 @if (Model != null && !string.IsNullOrEmpty(Model.Error))
@@ -37,12 +32,21 @@ else
                 <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
                 <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))" class="btn btn-primary btn-sm active" role="button">@elements[i]</a>
             }
+        }
+    </div>
+    <div class="container file-actions-menu">
+        @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
+        {
+            <div class="file-deletion navbar-left">
+                <a id="delete-button" class="btn btn-danger btn-sm active" role="button"
+                   data-target="#confirm-dialog"
+                   data-target-positive-button-text="@Resources.Delete"
+                   data-target-title-text="@Resources.DeleteFileQuestion"
+                   data-target-content="@Resources.DialogsContentConfrimFileDeletion">@Resources.Delete</a>
+            </div>
+            <a id="upload-button" class="btn btn-success btn-sm active navbar-right" data-toggle="modal" data-target="#file-upload" role="button">@Resources.FileUpload</a>
 
-            if (Model.Permissions.HasFlag(WebDavPermissions.Write))
-            {
-                @*<a id="upload-button" class="btn btn-success btn-sm active" data-toggle="modal" data-target="#file-upload" role="button">@Resources.FileUpload</a>*@
-                    
-                <div class="dropdown navbar-right">
+            @*<div class="dropdown navbar-right">
                     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                         @Resources.Actions
                         <span class="caret"></span>
@@ -50,12 +54,12 @@ else
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                         <li role="presentation"><a id="upload-button" data-toggle="modal" data-target="#file-upload" role="menuitem" tabindex="-1" href="#">@Resources.FileUpload</a></li>
                     </ul>
-                </div>
-            }
+                </div>*@
         }
     </div>
     <br />
     <div class="container">
+        
         <div class="row" id="resourcesDiv">
             @if (Model != null)
             {
@@ -68,6 +72,13 @@ else
     </div>
 }
 
+@section scripts{
+    <script>
+        wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+        recalculateResourseHeight();
+
+    </script>
+}
 
 @section popups
 {
@@ -93,4 +104,5 @@ else
     </div>
     
     @Html.Partial("_ProcessDialog", null)
+    @Html.Partial("_ConfirmDialog")
 }

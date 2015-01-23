@@ -70,11 +70,56 @@ namespace WebsitePanel.WebDavPortal.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Close {
             get {
                 return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
+        public static string Confirm {
+            get {
+                return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete File?.
+        /// </summary>
+        public static string DeleteFileQuestion {
+            get {
+                return ResourceManager.GetString("DeleteFileQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete {0} item(s)?.
+        /// </summary>
+        public static string DialogsContentConfrimFileDeletion {
+            get {
+                return ResourceManager.GetString("DialogsContentConfrimFileDeletion", resourceCulture);
             }
         }
         
@@ -93,6 +138,24 @@ namespace WebsitePanel.WebDavPortal.UI {
         public static string GigabyteShort {
             get {
                 return ResourceManager.GetString("GigabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} items was removed..
+        /// </summary>
+        public static string ItemsWasRemovedFormat {
+            get {
+                return ResourceManager.GetString("ItemsWasRemovedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No files are selected..
+        /// </summary>
+        public static string NoFilesAreSelected {
+            get {
+                return ResourceManager.GetString("NoFilesAreSelected", resourceCulture);
             }
         }
         
@@ -120,6 +183,15 @@ namespace WebsitePanel.WebDavPortal.UI {
         public static string Upload {
             get {
                 return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }
