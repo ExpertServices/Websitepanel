@@ -29,14 +29,20 @@ textarea {
     cursor: pointer;
 }
 
-.selected-file {
+.element-container .element {
+    position: relative;
+    text-align:center;
+}
+
+.selected-file .element {
+      position: relative;
       box-sizing:border-box;
       -moz-box-sizing:border-box;
       -webkit-box-sizing:border-box;
       border: 1px solid rgb(80, 152, 249);
 }
 
-.selected-file div.selected-element-overlay {
+.selected-file .element div.selected-element-overlay {
     position:absolute; 
     top:0px;
     left: 0px;

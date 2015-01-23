@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using WebsitePanel.WebDavPortal.Models.Common.Enums;
 
 namespace WebsitePanel.WebDavPortal.Models.Common
 {
@@ -11,5 +12,14 @@ namespace WebsitePanel.WebDavPortal.Models.Common
         }
 
         public List<Message> Messages { get; private set; }
+
+        public void AddMessage(MessageType type, string value)
+        {
+            Messages.Add(new Message
+            {
+                Type =type,
+                Value = value
+            });
+        }
     }
 }

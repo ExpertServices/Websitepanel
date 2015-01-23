@@ -39,22 +39,24 @@
 }
 
 <div class="col-sm-2 element-container">
-    <img class="icon-size" src="@Url.Content(actualPath)" />
-    
-    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link" title="@name">
-        <p style="word-wrap: break-word;">@name</p>
-    </a>
+    <div class="element">
+        <img class="icon-size" src="@Url.Content(actualPath)" />
 
-    @if (showStatistic)
-    {
-        <div class="progress web-dav-folder-progress">
-            <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-                <p class="progress-text">@percent%</p>
+        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link" title="@name">
+            <p style="word-wrap: break-word;">@name</p>
+        </a>
+
+        @if (showStatistic)
+        {
+            <div class="progress web-dav-folder-progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+                    <p class="progress-text">@percent%</p>
+                </div>
             </div>
+            <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @Resources.GigabyteShort</p>
+        }
+
+        <div class="selected-element-overlay">
         </div>
-        <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @Resources.GigabyteShort</p>
-    }
-    
-    <div class="selected-element-overlay">
     </div>
 </div>

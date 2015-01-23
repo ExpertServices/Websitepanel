@@ -133,11 +133,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (filePathes == null)
             {
-                model.Messages.Add(new Message
-                {
-                    Type = MessageType.Error,
-                    Value = Resources.NoFilesAreSelected
-                });
+                model.AddMessage(MessageType.Error, Resources.NoFilesAreSelected);
 
                 return Json(model);
             }
@@ -152,21 +148,13 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 }
                 catch (WebDavException exception)
                 {
-                    model.Messages.Add(new Message
-                    {
-                        Type = MessageType.Error,
-                        Value = exception.Message
-                    });
+                    model.AddMessage(MessageType.Error, exception.Message);
                 }
             }
 
             if (model.DeletedFiles.Any())
             {
-                model.Messages.Insert(0, new Message
-                {
-                    Type = MessageType.Success,
-                    Value = string.Format(Resources.ItemsWasRemovedFormat, model.DeletedFiles.Count)
-                });
+                model.AddMessage(MessageType.Success, string.Format(Resources.ItemsWasRemovedFormat, model.DeletedFiles.Count));
             }
 
             return Json(model);
