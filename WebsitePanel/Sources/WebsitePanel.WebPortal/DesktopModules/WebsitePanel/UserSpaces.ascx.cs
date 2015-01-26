@@ -48,6 +48,7 @@ namespace WebsitePanel.Portal
     {
         XmlNodeList xmlIcons = null;
         DataSet myPackages;
+        int currentPackage;
         protected void Page_Load(object sender, EventArgs e)
         {
             
@@ -68,6 +69,15 @@ namespace WebsitePanel.Portal
                     ddlPackageSelect.DataTextField = myPackages.Tables[0].Columns[2].ColumnName;
                     ddlPackageSelect.DataValueField = myPackages.Tables[0].Columns[0].ColumnName;
                     ddlPackageSelect.DataBind();
+                    if(Session["currentPackage"] == null) {
+                        if(ddlPackageSelect.Items.Count > 0) {
+                            Session["currentPackage"] = ddlPackageSelect.Items[0].Value;
+                            currentPackage = int.Parse(Session["currentPackage"].ToString());
+                        }
+                    } else {
+                        currentPackage = int.Parse(Session["currentPackage"].ToString());
+                        ddlPackageSelect.SelectedValue = currentPackage.ToString();
+                    }
                 }
                 // USER
                 UserPackagesPanel.Visible = true;
@@ -78,7 +88,7 @@ namespace WebsitePanel.Portal
                         EmptyPackagesList.Visible = true;
                     } else {
                         ddlPackageSelect.Visible = true;
-                        myPackages = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
+                        myPackages = new PackagesHelper().GetMyPackage(currentPackage);
                         PackagesList.DataSource = myPackages;
                         PackagesList.DataBind();
                     }
@@ -241,8 +251,8 @@ namespace WebsitePanel.Portal
         }
 
         public void openSelectedPackage(Object sender, EventArgs e) {
-            PackagesList.DataSource = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
-            PackagesList.DataBind();
+            Session["currentPackage"] = int.Parse(ddlPackageSelect.SelectedValue);
+            Response.Redirect(Request.RawUrl);
         }
     }
 }
