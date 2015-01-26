@@ -147,6 +147,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HttpErrors.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\WebDavResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WebDavResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Security\Authorization\Enums\WebDavPermissions.cs" />
     <Compile Include="Security\Authorization\WebDavAuthorizationService.cs" />
     <Compile Include="Security\Cryptography\CryptoUtils.cs" />
@@ -174,6 +179,10 @@
     <EmbeddedResource Include="Resources\HttpErrors.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>HttpErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\WebDavResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WebDavResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

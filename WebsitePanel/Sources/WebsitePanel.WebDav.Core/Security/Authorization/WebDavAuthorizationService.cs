@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
 using WebsitePanel.WebDav.Core.Security.Authorization.Enums;
@@ -27,18 +32,9 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
 
             var rootFolder = GetRootFolder(path);
 
-            var userGroups = WSP.Services.Organizations.GetSecurityGroupsByMember(principal.ItemId, principal.AccountId);
+            var userGroups = GetUserSecurityGroups(principal);
 
-            var rootFolders = WSP.Services.EnterpriseStorage.GetEnterpriseFolders(principal.ItemId);
-
-            var esRootFolder = rootFolders.FirstOrDefault(x => x.Name == rootFolder);
-
-            if (esRootFolder == null)
-            {
-                return WebDavPermissions.None;
-            }
-
-            var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(principal.ItemId, esRootFolder.Name);
+            var permissions = GetFolderEsPermissions(principal, rootFolder);
 
             foreach (var permission in permissions)
             {
@@ -64,6 +60,45 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
         private string GetRootFolder(string path)
         {
             return path.Split(new[]{'/'}, StringSplitOptions.RemoveEmptyEntries)[0];
+        }
+
+        private IEnumerable<ESPermission> GetFolderEsPermissions(WspPrincipal principal, string rootFolderName)
+        {
+            var dictionary = HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] as
+                    Dictionary<string, IEnumerable<ESPermission>>;
+
+            if (dictionary == null)
+            {
+                dictionary = new Dictionary<string, IEnumerable<ESPermission>>();
+
+                var rootFolders = WSP.Services.EnterpriseStorage.GetEnterpriseFolders(principal.ItemId);
+
+                foreach (var rootFolder in rootFolders)
+                {
+                    var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(principal.ItemId, rootFolder.Name);
+
+                    dictionary.Add(rootFolder.Name, permissions);
+                }
+
+                HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] = dictionary;
+            }
+
+            return dictionary.ContainsKey(rootFolderName) ? dictionary[rootFolderName] : new ESPermission[0];
+        }
+
+        private IEnumerable<ExchangeAccount> GetUserSecurityGroups(WspPrincipal principal)
+        {
+            var groups = HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] as
+                    IEnumerable<ExchangeAccount>;
+
+            if (groups == null)
+            {
+                 groups = WSP.Services.Organizations.GetSecurityGroupsByMember(principal.ItemId, principal.AccountId);
+
+                 HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] = groups;
+            }
+
+            return groups ?? new ExchangeAccount[0];
         }
     }
 }

@@ -145,6 +145,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="Controllers\OwaController.cs" />
+    <Compile Include="CustomAttributes\FormValueRequiredAttribute.cs" />
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
     <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />
     <Compile Include="DependencyInjection\PortalDependencies.cs" />
@@ -159,8 +160,12 @@
     </Compile>
     <Compile Include="HttpHandlers\FileTransferRequestHandler.cs" />
     <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\Common\BaseModel.cs" />
+    <Compile Include="Models\Common\Enums\MessageType.cs" />
+    <Compile Include="Models\Common\Message.cs" />
     <Compile Include="Models\DirectoryIdentity.cs" />
     <Compile Include="Models\ErrorModel.cs" />
+    <Compile Include="Models\FileSystem\DeleteFilesModel.cs" />
     <Compile Include="Models\ModelForWebDav.cs" />
     <Compile Include="Models\OfficeOnlineModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -225,8 +230,11 @@
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\appScripts\authentication.js" />
     <Content Include="Scripts\appScripts\dialogs.js" />
+    <Content Include="Scripts\appScripts\fileBrowsing.js" />
+    <Content Include="Scripts\appScripts\messages.js" />
     <Content Include="Scripts\appScripts\recalculateResourseHeight.js" />
     <Content Include="Scripts\appScripts\uploadingData2.js" />
+    <Content Include="Scripts\appScripts\wsp.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
@@ -265,6 +273,7 @@
     <Content Include="Views\FileSystem\_ResourseCollectionPartial.cshtml" />
     <Content Include="Views\FileSystem\_ResoursePartial.cshtml" />
     <Content Include="Views\Shared\_ProcessDialog.cshtml" />
+    <Content Include="Views\Shared\_ConfirmDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Owa\" />

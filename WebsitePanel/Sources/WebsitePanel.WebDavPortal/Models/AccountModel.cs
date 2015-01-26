@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class AccountModel
+    public class AccountModel : BaseModel
     {
         [Required]
         [Display(Name = @"Login")]
