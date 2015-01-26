@@ -2072,7 +2072,7 @@ namespace WebsitePanel.Providers.Web
 		public new void GrantWebDeployPublishingAccess(string siteName, string accountName, string accountPassword)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			//GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
+			GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
 			//
 			EnforceDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -2086,7 +2086,7 @@ namespace WebsitePanel.Providers.Web
 		public new void RevokeWebDeployPublishingAccess(string siteName, string accountName)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			//RevokeWebManagementAccess(siteName, accountName);
+			RevokeWebManagementAccess(siteName, accountName);
 			//
 			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -4336,12 +4336,12 @@ namespace WebsitePanel.Providers.Web
 
 		protected string GetFullQualifiedAccountName(string accountName)
 		{
+			if (accountName.IndexOf("\\") != -1)
+				return accountName; // already has domain information
+
 			//
 			if (!ServerSettings.ADEnabled)
 				return String.Format(@"{0}\{1}", Environment.MachineName, accountName);
-
-			if (accountName.IndexOf("\\") != -1)
-				return accountName; // already has domain information
 
 			// DO IT FOR ACTIVE DIRECTORY MODE ONLY
 			string domainName = null;

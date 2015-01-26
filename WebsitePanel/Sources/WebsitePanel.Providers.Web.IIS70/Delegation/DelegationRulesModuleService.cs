@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using WebsitePanel.Providers.Web.Iis.Common;
 using Microsoft.Web.Administration;
@@ -45,8 +46,12 @@ namespace WebsitePanel.Providers.Web.Delegation
 			using (var srvman = new ServerManager())
 			{
 				var adminConfig = srvman.GetAdministrationConfiguration();
-				//
-				var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
+
+                // return if system.webServer/management/delegation section is not exist in config file 
+                if (!HasDelegationSection(adminConfig))
+			        return;
+				
+                var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
 				//
 				var rulesCollection = delegationSection.GetCollection();
 				// Update rule if exists
@@ -103,8 +108,12 @@ namespace WebsitePanel.Providers.Web.Delegation
 			using (var srvman = new ServerManager())
 			{
 				var adminConfig = srvman.GetAdministrationConfiguration();
-				//
-				var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
+              
+                // return if system.webServer/management/delegation section is not exist in config file 
+                if (!HasDelegationSection(adminConfig))
+                    return;
+
+                var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
 				//
 				var rulesCollection = delegationSection.GetCollection();
 				// Update rule if exists
@@ -142,8 +151,12 @@ namespace WebsitePanel.Providers.Web.Delegation
 			using (var srvman = new ServerManager())
 			{
 				var adminConfig = srvman.GetAdministrationConfiguration();
-				//
-				var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
+
+                // return if system.webServer/management/delegation section is not exist in config file 
+                if (!HasDelegationSection(adminConfig))
+                    return false;
+
+                var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
 				//
 				var rulesCollection = delegationSection.GetCollection();
 				// Update rule if exists
@@ -171,8 +184,12 @@ namespace WebsitePanel.Providers.Web.Delegation
 			using (var srvman = GetServerManager())
 			{
 				var adminConfig = srvman.GetAdministrationConfiguration();
-				//
-				var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
+
+                // return if system.webServer/management/delegation section is not exist in config file 
+                if (!HasDelegationSection(adminConfig))
+                    return;
+
+                var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
 				//
 				var rulesCollection = delegationSection.GetCollection();
 				// Update rule if exists
@@ -245,8 +262,12 @@ namespace WebsitePanel.Providers.Web.Delegation
 			using (var srvman = GetServerManager())
 			{
 				var adminConfig = srvman.GetAdministrationConfiguration();
-				//
-				var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
+
+                // return if system.webServer/management/delegation section is not exist in config file 
+                if (!HasDelegationSection(adminConfig))
+                    return;
+
+                var delegationSection = adminConfig.GetSection("system.webServer/management/delegation");
 				//
 				var rulesCollection = delegationSection.GetCollection();
 				// Remove rule if exists
@@ -264,5 +285,21 @@ namespace WebsitePanel.Providers.Web.Delegation
 				}
 			}
 		}
+
+        private bool HasDelegationSection(Configuration adminConfig)
+        {
+            // try to get delegation section in config file (C:\Windows\system32\inetsrv\config\administration.config)
+            try
+            {
+                adminConfig.GetSection("system.webServer/management/delegation");
+            }
+            catch (Exception ex)
+            {
+                /* skip */
+                return false;
+            }
+
+            return true;
+        }
 	}
 }

@@ -546,7 +546,7 @@ namespace WebsitePanel.Portal
 					WDeployPublishingConfirmPasswordTextBox,
 					WDeployPublishingAccountRequiredFieldValidator);
 
-                WDeployPublishingAccountTextBox.Text = AutoSuggestWmSvcAccontName(item, "_dploy");
+                WDeployPublishingAccountTextBox.Text = AutoSuggestWmSvcAccontName(item, "_deploy");
 				//
 				WDeployPublishingAccountRequiredFieldValidator.Enabled = true;
 				//
