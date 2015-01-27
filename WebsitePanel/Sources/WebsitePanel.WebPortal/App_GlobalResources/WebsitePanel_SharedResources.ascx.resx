@@ -5638,4 +5638,7 @@
   <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
     <value>Collection not created</value>
   </data>
+  <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
+    <value>RDS Collection settings not updated</value>
+  </data>
 </root>

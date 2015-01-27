@@ -6184,7 +6184,7 @@ CREATE PROCEDURE [dbo].[UpdateRDSCollectionSettings]
 )
 AS
 
-UPDATE UpdateRDSCollectionSettings
+UPDATE RDSCollectionSettings
 SET
 	RDSCollectionId = @RDSCollectionId,
 	DisconnectedSessionLimitMin = @DisconnectedSessionLimitMin,

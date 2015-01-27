@@ -58,6 +58,11 @@ namespace WebsitePanel.EnterpriseServer
             return GetRdsCollectionInternal(collectionId);
         }
 
+        public static RdsCollectionSettings GetRdsCollectionSettings(int collectionId)
+        {
+            return GetRdsCollectionSettingsInternal(collectionId);
+        }
+
         public static List<RdsCollection> GetOrganizationRdsCollections(int itemId)
         {
             return GetOrganizationRdsCollectionsInternal(itemId);
@@ -71,6 +76,11 @@ namespace WebsitePanel.EnterpriseServer
         public static ResultObject EditRdsCollection(int itemId, RdsCollection collection)
         {
             return EditRdsCollectionInternal(itemId, collection);
+        }
+
+        public static ResultObject EditRdsCollectionSettings(int itemId, RdsCollection collection)
+        {
+            return EditRdsCollectionSettingsInternal(itemId, collection);
         }
 
         public static RdsCollectionPaged GetRdsCollectionsPaged(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
@@ -226,13 +236,15 @@ namespace WebsitePanel.EnterpriseServer
         private static RdsCollection GetRdsCollectionInternal(int collectionId)
         {
             var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
+            var collectionSettings = ObjectUtils.FillObjectFromDataReader<RdsCollectionSettings>(DataProvider.GetRdsCollectionSettingsByCollectionId(collectionId));
+            collection.Settings = collectionSettings;
 
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "ADD_RDS_COLLECTION");
 
             try
             {
                 // load organization
-                Organization org = OrganizationController.GetOrganization(4115);
+                Organization org = OrganizationController.GetOrganization(collection.ItemId);
                 if (org == null)
                 {
                     result.IsSuccess = false;
@@ -251,6 +263,13 @@ namespace WebsitePanel.EnterpriseServer
             FillRdsCollection(collection);
 
             return collection;
+        }
+
+        private static RdsCollectionSettings GetRdsCollectionSettingsInternal(int collectionId)
+        {
+            var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
+            
+            return ObjectUtils.FillObjectFromDataReader<RdsCollectionSettings>(DataProvider.GetRdsCollectionSettingsByCollectionId(collectionId));                        
         }
 
         private static List<RdsCollection> GetOrganizationRdsCollectionsInternal(int itemId)
@@ -280,8 +299,37 @@ namespace WebsitePanel.EnterpriseServer
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
                 collection.Name = GetFormattedCollectionName(collection.DisplayName, org.OrganizationId);
+
+                collection.Settings = new RdsCollectionSettings
+                {
+                    DisconnectedSessionLimitMin = 0,
+                    ActiveSessionLimitMin = 0,
+                    IdleSessionLimitMin = 0,
+                    BrokenConnectionAction = BrokenConnectionActionValues.Disconnect.ToString(),
+                    AutomaticReconnectionEnabled = true,
+                    TemporaryFoldersDeletedOnExit = true,
+                    TemporaryFoldersPerSession = true,
+                    ClientDeviceRedirectionOptions = string.Join(",", new List<string>
+                    {
+                        ClientDeviceRedirectionOptionValues.AudioVideoPlayBack.ToString(),
+                        ClientDeviceRedirectionOptionValues.AudioRecording.ToString(),
+                        ClientDeviceRedirectionOptionValues.SmartCard.ToString(),
+                        ClientDeviceRedirectionOptionValues.Clipboard.ToString(),
+                        ClientDeviceRedirectionOptionValues.Drive.ToString(),
+                        ClientDeviceRedirectionOptionValues.PlugAndPlayDevice.ToString()
+                    }.ToArray()),
+                    ClientPrinterRedirected = true,
+                    ClientPrinterAsDefault = true,
+                    RDEasyPrintDriverEnabled = true,
+                    MaxRedirectedMonitors = 16
+                };                
+
                 rds.CreateCollection(org.OrganizationId, collection);                
-                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);
+                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);                
+                
+                collection.Settings.RdsCollectionId = collection.Id;
+                int settingsId = DataProvider.AddRdsCollectionSettings(collection.Settings);
+                collection.Settings.Id = settingsId;                
 
                 foreach (var server in collection.Servers)
                 {
@@ -343,6 +391,54 @@ namespace WebsitePanel.EnterpriseServer
             catch (Exception ex)
             {
                 result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_COLLECTION", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        private static ResultObject EditRdsCollectionSettingsInternal(int itemId, RdsCollection collection)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "EDIT_RDS_COLLECTION_SETTINGS");
+
+            try
+            {
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+                
+                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+                rds.EditRdsCollectionSettings(collection);
+                var collectionSettings = ObjectUtils.FillObjectFromDataReader<RdsCollectionSettings>(DataProvider.GetRdsCollectionSettingsByCollectionId(collection.Id));
+
+                if (collectionSettings == null)
+                {
+                    DataProvider.AddRdsCollectionSettings(collection.Settings);
+                }
+                else
+                {
+                    DataProvider.UpdateRDSCollectionSettings(collection.Settings);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_COLLECTION", ex);
+                throw TaskManager.WriteError(ex);
             }
             finally
             {

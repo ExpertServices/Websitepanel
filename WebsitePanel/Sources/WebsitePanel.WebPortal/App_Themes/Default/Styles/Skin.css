@@ -25,9 +25,10 @@ td.Normal > br {display:none;}
 .NormalTextBox + br + span {font-size:11px; color:#888;}
 td.Normal .NormalTextBox + span {display:inline-block; padding:0;}
 .FormSimpleLabel {padding:9px 8px 14px 0; color:#555; vertical-align:top;}
-.FormLabel150, .FormLabel200 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
+.FormLabel150, .FormLabel200, .FormLabel260 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
 .FormLabel150 {width:150px;}
 .FormLabel200 {width:200px;}
+.FormLabel260 {width:260px;}
 .Huge {font-family:'Segoe UI Light','Open Sans',Arial!important; font-size:36px; font-weight:300; color:#333; background:none !important; border:none !important; padding:0 !important; letter-spacing:-1px;}
 .FormBody .Huge {font-size:18px; font-weight:600; letter-spacing:0;}
 .Right .SubHead {width:80px;}
