@@ -32,11 +32,15 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetRdsCollectionOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetRdsCollectionSettingsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetOrganizationRdsCollectionsOperationCompleted;
         
         private System.Threading.SendOrPostCallback AddRdsCollectionOperationCompleted;
         
         private System.Threading.SendOrPostCallback EditRdsCollectionOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback EditRdsCollectionSettingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetRdsCollectionsPagedOperationCompleted;
         
@@ -105,6 +109,9 @@ namespace WebsitePanel.EnterpriseServer {
         public event GetRdsCollectionCompletedEventHandler GetRdsCollectionCompleted;
         
         /// <remarks/>
+        public event GetRdsCollectionSettingsCompletedEventHandler GetRdsCollectionSettingsCompleted;
+        
+        /// <remarks/>
         public event GetOrganizationRdsCollectionsCompletedEventHandler GetOrganizationRdsCollectionsCompleted;
         
         /// <remarks/>
@@ -112,6 +119,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event EditRdsCollectionCompletedEventHandler EditRdsCollectionCompleted;
+        
+        /// <remarks/>
+        public event EditRdsCollectionSettingsCompletedEventHandler EditRdsCollectionSettingsCompleted;
         
         /// <remarks/>
         public event GetRdsCollectionsPagedCompletedEventHandler GetRdsCollectionsPagedCompleted;
@@ -242,6 +252,47 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollectionSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RdsCollectionSettings GetRdsCollectionSettings(int collectionId) {
+            object[] results = this.Invoke("GetRdsCollectionSettings", new object[] {
+                        collectionId});
+            return ((RdsCollectionSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsCollectionSettings(int collectionId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsCollectionSettings", new object[] {
+                        collectionId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public RdsCollectionSettings EndGetRdsCollectionSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((RdsCollectionSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsCollectionSettingsAsync(int collectionId) {
+            this.GetRdsCollectionSettingsAsync(collectionId, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsCollectionSettingsAsync(int collectionId, object userState) {
+            if ((this.GetRdsCollectionSettingsOperationCompleted == null)) {
+                this.GetRdsCollectionSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsCollectionSettingsOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsCollectionSettings", new object[] {
+                        collectionId}, this.GetRdsCollectionSettingsOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsCollectionSettingsOperationCompleted(object arg) {
+            if ((this.GetRdsCollectionSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsCollectionSettingsCompleted(this, new GetRdsCollectionSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetOrganizationRdsCollections", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public RdsCollection[] GetOrganizationRdsCollections(int itemId) {
             object[] results = this.Invoke("GetOrganizationRdsCollections", new object[] {
@@ -367,6 +418,50 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.EditRdsCollectionCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.EditRdsCollectionCompleted(this, new EditRdsCollectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/EditRdsCollectionSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject EditRdsCollectionSettings(int itemId, RdsCollection collection) {
+            object[] results = this.Invoke("EditRdsCollectionSettings", new object[] {
+                        itemId,
+                        collection});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginEditRdsCollectionSettings(int itemId, RdsCollection collection, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("EditRdsCollectionSettings", new object[] {
+                        itemId,
+                        collection}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndEditRdsCollectionSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void EditRdsCollectionSettingsAsync(int itemId, RdsCollection collection) {
+            this.EditRdsCollectionSettingsAsync(itemId, collection, null);
+        }
+        
+        /// <remarks/>
+        public void EditRdsCollectionSettingsAsync(int itemId, RdsCollection collection, object userState) {
+            if ((this.EditRdsCollectionSettingsOperationCompleted == null)) {
+                this.EditRdsCollectionSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnEditRdsCollectionSettingsOperationCompleted);
+            }
+            this.InvokeAsync("EditRdsCollectionSettings", new object[] {
+                        itemId,
+                        collection}, this.EditRdsCollectionSettingsOperationCompleted, userState);
+        }
+        
+        private void OnEditRdsCollectionSettingsOperationCompleted(object arg) {
+            if ((this.EditRdsCollectionSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.EditRdsCollectionSettingsCompleted(this, new EditRdsCollectionSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1739,6 +1834,32 @@ namespace WebsitePanel.EnterpriseServer {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsCollectionSettingsCompletedEventHandler(object sender, GetRdsCollectionSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsCollectionSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsCollectionSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RdsCollectionSettings Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RdsCollectionSettings)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetOrganizationRdsCollectionsCompletedEventHandler(object sender, GetOrganizationRdsCollectionsCompletedEventArgs e);
     
     /// <remarks/>
@@ -1802,6 +1923,32 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal EditRdsCollectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void EditRdsCollectionSettingsCompletedEventHandler(object sender, EditRdsCollectionSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class EditRdsCollectionSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal EditRdsCollectionSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

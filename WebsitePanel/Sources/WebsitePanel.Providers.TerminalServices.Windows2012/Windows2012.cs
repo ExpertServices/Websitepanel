@@ -35,6 +35,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.Remoting;
 using System.Text;
+using System.Reflection;
 using Microsoft.Win32;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Server.Utils;
@@ -258,6 +259,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     throw new Exception("Collection not created");
                 }
 
+                EditRdsCollectionSettingsInternal(collection, runSpace);
                 var orgPath = GetOrganizationPath(organizationId);
 
                 if (!ActiveDirectoryUtils.AdObjectExists(GetComputerGroupPath(organizationId, collection.Name)))
@@ -308,6 +310,30 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return result;
+        }
+
+        public void EditRdsCollectionSettings(RdsCollection collection)
+        {            
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                if (collection.Settings != null)
+                {
+                    var errors = EditRdsCollectionSettingsInternal(collection, runSpace);
+
+                    if (errors.Count > 0)
+                    {
+                        throw new Exception(string.Format("Settings not setted:\r\n{0}", string.Join("r\\n\\", errors.ToArray())));
+                    }
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
         }
 
         public List<string> GetServersExistingInCollections()
@@ -1616,6 +1642,38 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             //}
 
             return existingHosts;
+        }
+
+        internal List<string> EditRdsCollectionSettingsInternal(RdsCollection collection, Runspace runspace)
+        {
+            object[] errors;
+            Command cmd = new Command("Set-RDSessionCollectionConfiguration");
+            cmd.Parameters.Add("CollectionName", collection.Name);            
+            cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
+
+            var properties = collection.Settings.GetType().GetProperties();
+
+            foreach(var prop in properties)
+            {
+                if (prop.Name.ToLower() != "id" && prop.Name.ToLower() != "rdscollectionid")
+                {
+                    var value = prop.GetValue(collection.Settings, null);
+
+                    if (value != null)
+                    {
+                    cmd.Parameters.Add(prop.Name, value);
+                    }
+                }
+            }
+
+            ExecuteShellCommand(runspace, cmd, false, out errors);
+
+            if (errors != null)
+            {
+                return errors.Select(e => e.ToString()).ToList();
+            }
+
+            return new List<string>();
         }
 
         #endregion

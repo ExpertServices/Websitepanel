@@ -131,6 +131,8 @@
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsCollectionSettings.cs" />
+    <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />

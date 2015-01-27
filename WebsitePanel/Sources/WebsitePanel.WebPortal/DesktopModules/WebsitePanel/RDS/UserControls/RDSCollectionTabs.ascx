@@ -5,13 +5,13 @@
             <asp:DataList ID="rdsTabs" runat="server" RepeatDirection="Horizontal" RepeatLayout="Flow" EnableViewState="false">
                 <ItemStyle Wrap="False" />
                 <ItemTemplate >
-                    <asp:HyperLink ID="lnkTab" runat="server" CssClass="Tab" NavigateUrl='<%# Eval("Url") %>'>
+                    <asp:HyperLink ID="lnkTab" runat="server" CssClass="Tab" NavigateUrl='<%# Eval("Url") %>' OnClientClick="ShowProgressDialog('Adding server...'); return false;">
                         <%# Eval("Name") %>
                     </asp:HyperLink>
                 </ItemTemplate>
                 <SelectedItemStyle Wrap="False" />
                 <SelectedItemTemplate>
-                    <asp:HyperLink ID="lnkSelTab" runat="server" CssClass="ActiveTab" NavigateUrl='<%# Eval("Url") %>'>
+                    <asp:HyperLink ID="lnkSelTab" runat="server" CssClass="ActiveTab" NavigateUrl='<%# Eval("Url") %>' OnClientClick="ShowProgressDialog('Adding server...'); return false;">
                         <%# Eval("Name") %>
                     </asp:HyperLink>
                 </SelectedItemTemplate>                

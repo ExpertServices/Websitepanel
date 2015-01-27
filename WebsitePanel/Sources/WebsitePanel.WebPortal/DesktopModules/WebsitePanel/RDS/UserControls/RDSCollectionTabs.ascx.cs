@@ -19,8 +19,9 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
         private void BindTabs()
         {
-            List<Tab> tabsList = new List<Tab>();
+            List<Tab> tabsList = new List<Tab>();            
             tabsList.Add(CreateTab("rds_edit_collection", "Tab.RdsServers"));
+            tabsList.Add(CreateTab("rds_edit_collection_settings", "Tab.Settings"));
             tabsList.Add(CreateTab("rds_collection_edit_apps", "Tab.RdsApplications"));
             tabsList.Add(CreateTab("rds_collection_edit_users", "Tab.RdsUsers"));
             

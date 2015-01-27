@@ -59,6 +59,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public RdsCollectionSettings GetRdsCollectionSettings(int collectionId)
+        {
+            return RemoteDesktopServicesController.GetRdsCollectionSettings(collectionId);
+        }
+
+        [WebMethod]
         public List<RdsCollection> GetOrganizationRdsCollections(int itemId)
         {
             return RemoteDesktopServicesController.GetOrganizationRdsCollections(itemId);
@@ -74,6 +80,12 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject EditRdsCollection(int itemId, RdsCollection collection)
         {
             return RemoteDesktopServicesController.EditRdsCollection(itemId, collection);
+        }
+
+        [WebMethod]
+        public ResultObject EditRdsCollectionSettings(int itemId, RdsCollection collection)
+        {
+            return RemoteDesktopServicesController.EditRdsCollectionSettings(itemId, collection);
         }
 
         [WebMethod]
