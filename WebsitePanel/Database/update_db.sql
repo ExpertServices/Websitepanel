@@ -5477,6 +5477,30 @@ GO
 
 UPDATE [dbo].[RDSCollections] SET DisplayName = [Name]	 WHERE DisplayName IS NULL
 
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCollectionSettings')
+CREATE TABLE [dbo].[RDSCollectionSettings](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[RDSCollectionId] [int] NOT NULL,
+	[DisconnectedSessionLimitMin] [int] NULL,
+	[ActiveSessionLimitMin] [int] NULL,
+	[IdleSessionLimitMin] [int] NULL,
+	[BrokenConnectionAction] [nvarchar](20) NULL,
+	[AutomaticReconnectionEnabled] [bit] NULL,
+	[TemporaryFoldersDeletedOnExit] [bit] NULL,
+	[TemporaryFoldersPerSession] [bit] NULL,
+	[ClientDeviceRedirectionOptions] [nvarchar](250) NULL,
+	[ClientPrinterRedirected] [bit] NULL,
+	[ClientPrinterAsDefault] [bit] NULL,
+	[RDEasyPrintDriverEnabled] [bit] NULL,
+	[MaxRedirectedMonitors] [int] NULL,
+ CONSTRAINT [PK_RDSCollectionSettings] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 ALTER TABLE [dbo].[RDSCollectionUsers]
 DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
@@ -5504,6 +5528,15 @@ GO
 
 ALTER TABLE [dbo].[RDSServers]  WITH CHECK ADD  CONSTRAINT [FK_RDSServers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_RDSCollectionSettings_RDSCollections')
+ALTER TABLE [dbo].[RDSCollectionSettings]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionSettings_RDSCollections] FOREIGN KEY([RDSCollectionId])
+REFERENCES [dbo].[RDSCollections] ([ID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [dbo].[RDSCollectionSettings] CHECK CONSTRAINT [FK_RDSCollectionSettings_RDSCollections]
 GO
 
 /*Remote Desktop Services Procedures*/
@@ -6037,6 +6070,150 @@ SELECT
   @TotalNumber = Count([Id])
   FROM [dbo].[RDSServers] WHERE [ItemId]  = @ItemId
 RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionSettingsByCollectionId')
+DROP PROCEDURE GetRDSCollectionSettingsByCollectionId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionSettingsByCollectionId]
+(
+	@RDSCollectionID INT
+)
+AS
+
+SELECT TOP 1
+	Id,
+	RDSCollectionId,
+	DisconnectedSessionLimitMin, 
+	ActiveSessionLimitMin,
+	IdleSessionLimitMin,
+	BrokenConnectionAction,
+	AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected,
+	ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors
+	FROM RDSCollectionSettings
+	WHERE RDSCollectionID = @RDSCollectionID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCollectionSettings')
+DROP PROCEDURE AddRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[AddRDSCollectionSettings]
+(
+	@RDSCollectionSettingsID INT OUTPUT,
+	@RDSCollectionId INT,
+	@DisconnectedSessionLimitMin INT, 
+	@ActiveSessionLimitMin INT,
+	@IdleSessionLimitMin INT,
+	@BrokenConnectionAction NVARCHAR(20),
+	@AutomaticReconnectionEnabled BIT,
+	@TemporaryFoldersDeletedOnExit BIT,
+	@TemporaryFoldersPerSession BIT,
+	@ClientDeviceRedirectionOptions NVARCHAR(250),
+	@ClientPrinterRedirected BIT,
+	@ClientPrinterAsDefault BIT,
+	@RDEasyPrintDriverEnabled BIT,
+	@MaxRedirectedMonitors INT
+)
+AS
+
+INSERT INTO RDSCollectionSettings
+(
+	RDSCollectionId,
+	DisconnectedSessionLimitMin, 
+	ActiveSessionLimitMin,
+	IdleSessionLimitMin,
+	BrokenConnectionAction,
+	AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected,
+	ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors
+)
+VALUES
+(
+	@RDSCollectionId,
+	@DisconnectedSessionLimitMin, 
+	@ActiveSessionLimitMin,
+	@IdleSessionLimitMin,
+	@BrokenConnectionAction,
+	@AutomaticReconnectionEnabled,
+	@TemporaryFoldersDeletedOnExit,
+	@TemporaryFoldersPerSession,
+	@ClientDeviceRedirectionOptions,
+	@ClientPrinterRedirected,
+	@ClientPrinterAsDefault,
+	@RDEasyPrintDriverEnabled,
+	@MaxRedirectedMonitors
+)
+
+SET @RDSCollectionSettingsID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSCollectionSettings')
+DROP PROCEDURE UpdateRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateRDSCollectionSettings]
+(
+	@ID INT,
+	@RDSCollectionId INT,
+	@DisconnectedSessionLimitMin INT, 
+	@ActiveSessionLimitMin INT,
+	@IdleSessionLimitMin INT,
+	@BrokenConnectionAction NVARCHAR(20),
+	@AutomaticReconnectionEnabled BIT,
+	@TemporaryFoldersDeletedOnExit BIT,
+	@TemporaryFoldersPerSession BIT,
+	@ClientDeviceRedirectionOptions NVARCHAR(250),
+	@ClientPrinterRedirected BIT,
+	@ClientPrinterAsDefault BIT,
+	@RDEasyPrintDriverEnabled BIT,
+	@MaxRedirectedMonitors INT
+)
+AS
+
+UPDATE UpdateRDSCollectionSettings
+SET
+	RDSCollectionId = @RDSCollectionId,
+	DisconnectedSessionLimitMin = @DisconnectedSessionLimitMin,
+	ActiveSessionLimitMin = @ActiveSessionLimitMin,
+	IdleSessionLimitMin = @IdleSessionLimitMin,
+	BrokenConnectionAction = @BrokenConnectionAction,
+	AutomaticReconnectionEnabled = @AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit = @TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession = @TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions = @ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected = @ClientPrinterRedirected,
+	ClientPrinterAsDefault = @ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled = @RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors = @MaxRedirectedMonitors
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSCollectionSettings')
+DROP PROCEDURE DeleteRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[DeleteRDSCollectionSettings]
+(
+	@Id  int
+)
+AS
+
+DELETE FROM DeleteRDSCollectionSettings
+WHERE Id = @Id
 GO
 
 -- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
@@ -7751,12 +7928,12 @@ GO
 --add Deleted Users Quota
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.DeletedUsers')
 BEGIN
-	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (477, 13, 6, N'HostedSolution.DeletedUsers', N'Deleted Users', 2, 0, NULL, NULL)
+	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (495, 13, 6, N'HostedSolution.DeletedUsers', N'Deleted Users', 2, 0, NULL, NULL)
 END
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.DeletedUsersBackupStorageSpace')
 BEGIN
-	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (478, 13, 6, N'HostedSolution.DeletedUsersBackupStorageSpace', N'Deleted Users Backup Storage Space, Mb', 2, 0, NULL, NULL)
+	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (496, 13, 6, N'HostedSolution.DeletedUsersBackupStorageSpace', N'Deleted Users Backup Storage Space, Mb', 2, 0, NULL, NULL)
 END
 GO
 
@@ -8003,7 +8180,7 @@ AS
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (8,9))
-		ELSE IF @QuotaID = 477 -- HostedSolution.DeletedUsers
+		ELSE IF @QuotaID = 495 -- HostedSolution.DeletedUsers
 			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
