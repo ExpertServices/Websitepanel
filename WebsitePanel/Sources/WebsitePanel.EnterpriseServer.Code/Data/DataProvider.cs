@@ -4556,6 +4556,95 @@ namespace WebsitePanel.EnterpriseServer
 
         #region RDS
 
+        public static IDataReader GetRdsCollectionSettingsByCollectionId(int collectionId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionSettingsByCollectionId",
+                new SqlParameter("@RDSCollectionID", collectionId)
+            );
+        }
+
+        public static int AddRdsCollectionSettings(RdsCollectionSettings settings)
+        {
+            return AddRdsCollectionSettings(settings.RdsCollectionId, settings.DisconnectedSessionLimitMin, settings.ActiveSessionLimitMin, settings.IdleSessionLimitMin, settings.BrokenConnectionAction,
+                settings.AutomaticReconnectionEnabled, settings.TemporaryFoldersDeletedOnExit, settings.TemporaryFoldersPerSession, settings.ClientDeviceRedirectionOptions, settings.ClientPrinterRedirected,
+                settings.ClientPrinterAsDefault, settings.RDEasyPrintDriverEnabled, settings.MaxRedirectedMonitors);
+        }
+
+        private static int AddRdsCollectionSettings(int rdsCollectionId, int disconnectedSessionLimitMin, int activeSessionLimitMin, int idleSessionLimitMin, string brokenConnectionAction,
+            bool automaticReconnectionEnabled, bool temporaryFoldersDeletedOnExit, bool temporaryFoldersPerSession, string clientDeviceRedirectionOptions, bool ClientPrinterRedirected,
+            bool clientPrinterAsDefault, bool rdEasyPrintDriverEnabled, int maxRedirectedMonitors)
+        {
+            SqlParameter rdsCollectionSettingsId = new SqlParameter("@RDSCollectionSettingsID", SqlDbType.Int);
+            rdsCollectionSettingsId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSCollectionSettings",
+                rdsCollectionSettingsId,
+                new SqlParameter("@RdsCollectionId", rdsCollectionId),
+                new SqlParameter("@DisconnectedSessionLimitMin", disconnectedSessionLimitMin),
+                new SqlParameter("@ActiveSessionLimitMin", activeSessionLimitMin),
+                new SqlParameter("@IdleSessionLimitMin", idleSessionLimitMin),
+                new SqlParameter("@BrokenConnectionAction", brokenConnectionAction),
+                new SqlParameter("@AutomaticReconnectionEnabled", automaticReconnectionEnabled),
+                new SqlParameter("@TemporaryFoldersDeletedOnExit", temporaryFoldersDeletedOnExit),
+                new SqlParameter("@TemporaryFoldersPerSession", temporaryFoldersPerSession),
+                new SqlParameter("@ClientDeviceRedirectionOptions", clientDeviceRedirectionOptions),
+                new SqlParameter("@ClientPrinterRedirected", ClientPrinterRedirected),
+                new SqlParameter("@ClientPrinterAsDefault", clientPrinterAsDefault),
+                new SqlParameter("@RDEasyPrintDriverEnabled", rdEasyPrintDriverEnabled),
+                new SqlParameter("@MaxRedirectedMonitors", maxRedirectedMonitors)
+            );
+            
+            return Convert.ToInt32(rdsCollectionSettingsId.Value);
+        }
+
+        public static void UpdateRDSCollectionSettings(RdsCollectionSettings settings)
+        {
+            UpdateRDSCollectionSettings(settings.Id, settings.RdsCollectionId, settings.DisconnectedSessionLimitMin, settings.ActiveSessionLimitMin, settings.IdleSessionLimitMin, settings.BrokenConnectionAction,
+                settings.AutomaticReconnectionEnabled, settings.TemporaryFoldersDeletedOnExit, settings.TemporaryFoldersPerSession, settings.ClientDeviceRedirectionOptions, settings.ClientPrinterRedirected,
+                settings.ClientPrinterAsDefault, settings.RDEasyPrintDriverEnabled, settings.MaxRedirectedMonitors);
+        }
+
+        public static void UpdateRDSCollectionSettings(int id, int rdsCollectionId, int disconnectedSessionLimitMin, int activeSessionLimitMin, int idleSessionLimitMin, string brokenConnectionAction,
+            bool automaticReconnectionEnabled, bool temporaryFoldersDeletedOnExit, bool temporaryFoldersPerSession, string clientDeviceRedirectionOptions, bool ClientPrinterRedirected,
+            bool clientPrinterAsDefault, bool rdEasyPrintDriverEnabled, int maxRedirectedMonitors)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateRDSCollectionSettings",
+                new SqlParameter("@Id", id),
+                new SqlParameter("@RdsCollectionId", rdsCollectionId),
+                new SqlParameter("@DisconnectedSessionLimitMin", disconnectedSessionLimitMin),
+                new SqlParameter("@ActiveSessionLimitMin", activeSessionLimitMin),
+                new SqlParameter("@IdleSessionLimitMin", idleSessionLimitMin),
+                new SqlParameter("@BrokenConnectionAction", brokenConnectionAction),
+                new SqlParameter("@AutomaticReconnectionEnabled", automaticReconnectionEnabled),
+                new SqlParameter("@TemporaryFoldersDeletedOnExit", temporaryFoldersDeletedOnExit),
+                new SqlParameter("@TemporaryFoldersPerSession", temporaryFoldersPerSession),
+                new SqlParameter("@ClientDeviceRedirectionOptions", clientDeviceRedirectionOptions),
+                new SqlParameter("@ClientPrinterRedirected", ClientPrinterRedirected),
+                new SqlParameter("@ClientPrinterAsDefault", clientPrinterAsDefault),
+                new SqlParameter("@RDEasyPrintDriverEnabled", rdEasyPrintDriverEnabled),
+                new SqlParameter("@MaxRedirectedMonitors", maxRedirectedMonitors)                
+            );
+        }
+
+        public static void DeleteRDSCollectionSettings(int id)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteRDSCollectionSettings",
+                new SqlParameter("@Id", id)
+            );
+        }
+
         public static IDataReader GetRDSCollectionsByItemId(int itemId)
         {
             return SqlHelper.ExecuteReader(
@@ -4614,7 +4703,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
                 new SqlParameter("@Description", description),
-                new SqlParameter("DisplayName", displayName)
+                new SqlParameter("@DisplayName", displayName)
             );
 
             // read identity

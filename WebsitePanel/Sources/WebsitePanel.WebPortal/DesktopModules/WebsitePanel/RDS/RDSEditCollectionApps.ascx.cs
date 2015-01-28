@@ -37,8 +37,7 @@ using WebsitePanel.Providers.RemoteDesktopServices;
 namespace WebsitePanel.Portal.RDS
 {
     public partial class RDSEditCollectionApps : WebsitePanelModuleBase
-    {
-        
+    {        
         protected void Page_Load(object sender, EventArgs e)
         {
             remoreApps.Module = Module;
