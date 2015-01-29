@@ -336,6 +336,50 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
         }
 
+        public List<RdsUserSession> GetRdsUserSessions(string collectionName)
+        {
+            Runspace runSpace = null;
+            var result = new List<RdsUserSession>();
+
+            try
+            {
+                runSpace = OpenRunspace();
+                result = GetRdsUserSessionsInternal(collectionName, runSpace);                              
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return result;
+        }
+
+        public void LogOffRdsUser(string unifiedSessionId, string hostServer)
+        {            
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+                object[] errors;
+                Command cmd = new Command("Invoke-RDUserLogoff");
+                cmd.Parameters.Add("HostServer", hostServer);
+                cmd.Parameters.Add("UnifiedSessionID", unifiedSessionId);
+                cmd.Parameters.Add("Force", true);
+
+                ExecuteShellCommand(runSpace, cmd, false, out errors);
+
+                if (errors != null && errors.Length > 0)
+                {
+                    throw new Exception(string.Join("r\\n\\", errors.Select(e => e.ToString()).ToArray()));
+                }
+            }            
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+        }
+
         public List<string> GetServersExistingInCollections()
         {
             Runspace runSpace = null;
@@ -1674,6 +1718,35 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return new List<string>();
+        }
+
+        internal List<RdsUserSession> GetRdsUserSessionsInternal(string collectionName, Runspace runSpace)
+        {
+            var result = new List<RdsUserSession>();
+            var scripts = new List<string>();
+            scripts.Add(string.Format("Get-RDUserSession -ConnectionBroker {0} - CollectionName {1} | ft CollectionName, Username, UnifiedSessionId, SessionState, HostServer", ConnectionBroker, collectionName));            
+            object[] errors;
+            Command cmd = new Command("Get-RDUserSession");
+            cmd.Parameters.Add("CollectionName", collectionName);
+            cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
+            var userSessions = ExecuteShellCommand(runSpace, cmd, false, out errors);
+
+            //var userSessions = ExecuteShellCommand(runSpace, scripts, out errors);
+            var properties = typeof(RdsUserSession).GetProperties();
+
+            foreach(var userSession in  userSessions)
+            {
+                var session = new RdsUserSession();                                
+
+                foreach(var prop in properties)
+                {
+                    prop.SetValue(session, GetPSObjectProperty(userSession, prop.Name).ToString(), null);
+                }
+
+                result.Add(session);
+            }
+
+            return result;
         }
 
         #endregion

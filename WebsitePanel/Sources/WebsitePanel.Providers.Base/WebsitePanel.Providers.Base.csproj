@@ -136,6 +136,7 @@
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsUserSession.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />
     <Compile Include="RemoteDesktopServices\SessionHostServer.cs" />
     <Compile Include="RemoteDesktopServices\StartMenuApp.cs" />

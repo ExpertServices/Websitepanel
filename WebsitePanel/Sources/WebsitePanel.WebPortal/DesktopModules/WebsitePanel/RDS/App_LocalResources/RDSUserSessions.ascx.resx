@@ -117,19 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Tab.RdsApplications" xml:space="preserve">
-    <value>Remote Applications</value>
+  <data name="gvHostServer.HeaderText" xml:space="preserve">
+    <value>Host Server</value>
   </data>
-  <data name="Tab.RdsServers" xml:space="preserve">
-    <value>RDS Servers</value>
+  <data name="gvRDSUserSessions.Empty" xml:space="preserve">
+    <value>No user sessions.</value>
   </data>
-  <data name="Tab.RdsUsers" xml:space="preserve">
-    <value>RDS Users</value>
+  <data name="gvSessionState.HeaderText" xml:space="preserve">
+    <value>Session State</value>
   </data>
-  <data name="Tab.Settings" xml:space="preserve">
-    <value>Settings</value>
+  <data name="gvUserName.HeaderText" xml:space="preserve">
+    <value>User Name</value>
   </data>
-  <data name="Tab.UserSessions" xml:space="preserve">
-    <value>User Sessions</value>
+  <data name="locTitle" xml:space="preserve">
+    <value>Edit RDS Collection</value>
+  </data>
+  <data name="secRdsUserSessions" xml:space="preserve">
+    <value>RDS User Sessions</value>
+  </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>RDS User Sessions</value>
+  </data>
+  <data name="cmdLogOff.OnClientClick" xml:space="preserve">
+    <value>if(!confirm('Are you sure you want to log off user?')) return false; else ShowProgressDialog('Logging off user...');</value>
+  </data>
+  <data name="cmdLogOff.Text" xml:space="preserve">
+    <value>Log Off</value>
+  </data>
+  <data name="cmdLogOff.ToolTip" xml:space="preserve">
+    <value>Log Off</value>
   </data>
 </root>

@@ -33,6 +33,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback EditRdsCollectionSettingsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetRdsUserSessionsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddRdsServersToDeploymentOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetCollectionOperationCompleted;
@@ -75,6 +77,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback GetServersExistingInCollectionsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback LogOffRdsUserOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -85,6 +89,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event EditRdsCollectionSettingsCompletedEventHandler EditRdsCollectionSettingsCompleted;
+        
+        /// <remarks/>
+        public event GetRdsUserSessionsCompletedEventHandler GetRdsUserSessionsCompleted;
         
         /// <remarks/>
         public event AddRdsServersToDeploymentCompletedEventHandler AddRdsServersToDeploymentCompleted;
@@ -148,6 +155,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event GetServersExistingInCollectionsCompletedEventHandler GetServersExistingInCollectionsCompleted;
+        
+        /// <remarks/>
+        public event LogOffRdsUserCompletedEventHandler LogOffRdsUserCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -231,6 +241,48 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             if ((this.EditRdsCollectionSettingsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.EditRdsCollectionSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetRdsUserSessions", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RdsUserSession[] GetRdsUserSessions(string collectionName) {
+            object[] results = this.Invoke("GetRdsUserSessions", new object[] {
+                        collectionName});
+            return ((RdsUserSession[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsUserSessions(string collectionName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsUserSessions", new object[] {
+                        collectionName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public RdsUserSession[] EndGetRdsUserSessions(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((RdsUserSession[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsUserSessionsAsync(string collectionName) {
+            this.GetRdsUserSessionsAsync(collectionName, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsUserSessionsAsync(string collectionName, object userState) {
+            if ((this.GetRdsUserSessionsOperationCompleted == null)) {
+                this.GetRdsUserSessionsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsUserSessionsOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsUserSessions", new object[] {
+                        collectionName}, this.GetRdsUserSessionsOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsUserSessionsOperationCompleted(object arg) {
+            if ((this.GetRdsUserSessionsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsUserSessionsCompleted(this, new GetRdsUserSessionsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1158,6 +1210,49 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/LogOffRdsUser", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void LogOffRdsUser(string unifiedSessionId, string hostServer) {
+            this.Invoke("LogOffRdsUser", new object[] {
+                        unifiedSessionId,
+                        hostServer});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginLogOffRdsUser(string unifiedSessionId, string hostServer, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("LogOffRdsUser", new object[] {
+                        unifiedSessionId,
+                        hostServer}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndLogOffRdsUser(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void LogOffRdsUserAsync(string unifiedSessionId, string hostServer) {
+            this.LogOffRdsUserAsync(unifiedSessionId, hostServer, null);
+        }
+        
+        /// <remarks/>
+        public void LogOffRdsUserAsync(string unifiedSessionId, string hostServer, object userState) {
+            if ((this.LogOffRdsUserOperationCompleted == null)) {
+                this.LogOffRdsUserOperationCompleted = new System.Threading.SendOrPostCallback(this.OnLogOffRdsUserOperationCompleted);
+            }
+            this.InvokeAsync("LogOffRdsUser", new object[] {
+                        unifiedSessionId,
+                        hostServer}, this.LogOffRdsUserOperationCompleted, userState);
+        }
+        
+        private void OnLogOffRdsUserOperationCompleted(object arg) {
+            if ((this.LogOffRdsUserCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.LogOffRdsUserCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1192,6 +1287,32 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void EditRdsCollectionSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsUserSessionsCompletedEventHandler(object sender, GetRdsUserSessionsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsUserSessionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsUserSessionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RdsUserSession[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RdsUserSession[])(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
@@ -1628,4 +1749,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void LogOffRdsUserCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
