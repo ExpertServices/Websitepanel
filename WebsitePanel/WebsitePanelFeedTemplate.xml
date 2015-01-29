@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <webpiFile version="4.0.0.0" />
+
+  <title>WebsitePanel :: Web Platform Installer 4.0 Feed</title>
+  <updated>${ReleaseDate}</updated>
+  <author>
+    <name>Outercurve Foundation</name>
+    <uri>http://www.outercurve.org/</uri>
+  </author>
+  <id>http://www.websitepanel.net/web/webpi/4.0/WebsitePanelFeed.xml</id>
+  <entry>
+    <productId>WebsitePanel</productId>
+    <title>${ProductTitle}</title>
+    <version>${ProductVersion}</version>
+    <summary>WebsitePanel is an easy to use control panel for Windows hosting. It allows you to manage multiple servers, it has a robust, scalable and secure architecture. With WebsitePanel you can easily manage all your web sites, FTP accounts, databases and other resources from a single place.</summary>
+    <id>http://www.websitepanel.net/web/webpi/wsp/${ProductVersion}</id>
+    <updated>${ReleaseDate}</updated>
+    <longSummary>WebsitePanel is an easy to use control panel for Windows hosting. It allows you to manage multiple servers, it has a robust, scalable and secure architecture. With WebsitePanel you can easily manage all your web sites, FTP accounts, databases and other resources from a single place.</longSummary>
+    <published>${ReleaseDate}</published>
+    <link href="http://www.websitepanel.net" />
+    <images>
+      <icon>http://www.websitepanel.net/files/wsp_screenshot.png</icon>
+    </images>
+    <author>
+      <name>Outercurve Foundation</name>
+      <uri>http://www.websitepanel.net/contact</uri>
+    </author>
+
+    <keywords>
+      <keywordId>Server</keywordId>
+      <keywordId>ProductSpotlight</keywordId>
+    </keywords>
+
+    <discoveryHint>
+      <or>
+        <discoveryHint>
+          <file>
+            <filePath>%ProgramFiles%\WebsitePanel Installer\WebsitePanel.Installer.exe</filePath>
+          </file>
+        </discoveryHint>
+        <discoveryHint>
+          <file>
+            <filePath>%ProgramFiles(x86)%\WebsitePanel Installer\WebsitePanel.Installer.exe</filePath>
+          </file>
+        </discoveryHint>
+      </or>
+    </discoveryHint>
+    <dependency>
+      <and>
+        <dependency>
+          <productId>IIS7</productId>
+        </dependency>
+        <dependency>
+          <productId>ManagementService</productId>
+        </dependency>
+        <dependency>
+          <!-- This installs .NET v4 on Windows Server 2008 -->
+          <productId>NETFramework4</productId>
+        </dependency>
+        <dependency>
+          <!-- This enables IIS to host ASP.NET v4 content on Windows Server 2012 -->
+          <productId>ASPNET45</productId>
+        </dependency>
+        <dependency>
+          <!-- This enables IIS to host ASP.NET v4 content on Windows Server 2008/R2 -->
+          <productId>ASPNET_REGIIS_NET4</productId>
+        </dependency>
+        <dependency>
+          <productId>SQLExpress</productId>
+        </dependency>
+        <dependency>
+          <!-- Installs the latest Web Deploy without bundled SQL support -->
+          <productId>WDeployNoSMO</productId>
+        </dependency>
+      </and>
+    </dependency>
+
+    <incompatibilities />
+
+    <terms>
+      <termsText resourceName="Terms_WebsitePanel_Text">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</termsText>
+      <termsLink>http://www.websitepanel.net/License</termsLink>
+      <termsLinkText resourceName="Terms_WebsitePanel_LinkText">Terms of Use</termsLinkText>
+    </terms>
+
+    <installers>
+      <!-- x86 architecture installer -->
+      <installer>
+        <id>1</id>
+        <languageId>en</languageId>
+        <architectures>
+          <x86 />
+        </architectures>
+        <osList>
+          <os>
+            <minimumVersion>
+              <osMajorVersion>5</osMajorVersion>
+              <osMinorVersion>2</osMinorVersion>
+              <spMajorVersion>2</spMajorVersion>
+            </minimumVersion>
+            <maximumVersion>
+              <osMajorVersion>5</osMajorVersion>
+              <osMinorVersion>2</osMinorVersion>
+            </maximumVersion>
+          </os>
+          <os>
+            <minimumVersion>
+              <osMajorVersion>6</osMajorVersion>
+              <osMinorVersion>0</osMinorVersion>
+              <spMajorVersion>0</spMajorVersion>
+            </minimumVersion>
+            <osTypes>
+              <Server />
+            </osTypes>
+          </os>
+        </osList>
+        <eulaURL>http://www.websitepanel.net/License</eulaURL>
+        <installerFile>
+          <!-- size in KBs -->
+          <fileSize>${InstallerFileSize}</fileSize>
+          <installerURL>${InstallerFileUrl}</installerURL>
+          <sha1>${InstallerFileSHA1}</sha1>
+          <trackingURL />
+        </installerFile>
+        <installCommands>
+          <cmdLine>
+            <exe>msiexec.exe</exe>
+            <commandLineArguments>/i "%InstallerFile%" /q</commandLineArguments>
+          </cmdLine>
+          <cmdLine>
+            <exe>%ProgramFiles%\WebsitePanel Installer\WebsitePanel.SilentInstaller.exe</exe>
+            <commandLineArguments>/cname:"standalone"</commandLineArguments>
+            <returnCodeMappings>
+              <mapping>
+                <returnCode>0</returnCode>
+                <success>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_0_DetailedInformation">Installation operation completed successfully.</detailedInformation>
+                </success>
+              </mapping>
+              <mapping>
+                <returnCode>-1000</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_1000_DetailedInformation">Failed to install WebsitePanel Standalone Setup package</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-999</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_999_DetailedInformation">Unknown component name has been supplied</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-998</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_998_DetailedInformation">Another instance of WebsitePanel installation is in progress</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-997</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_997_DetailedInformation">Not enough permissions to install run the installation</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-996</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_996_DetailedInformation">No input parameters supplied</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-995</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_995_DetailedInformation">WebsitePanel Standalone Setup or one of its parts has been already installed</detailedInformation>
+                </failure>
+              </mapping>
+            </returnCodeMappings>
+          </cmdLine>
+        </installCommands>
+        <helpLink>http://www.websitepanel.net/support</helpLink>
+      </installer>
+      <!-- x64 architecture installer -->
+      <installer>
+        <id>2</id>
+        <languageId>en</languageId>
+        <architectures>
+          <x64 />
+        </architectures>
+        <osList>
+          <os>
+            <minimumVersion>
+              <osMajorVersion>5</osMajorVersion>
+              <osMinorVersion>2</osMinorVersion>
+              <spMajorVersion>2</spMajorVersion>
+            </minimumVersion>
+            <maximumVersion>
+              <osMajorVersion>5</osMajorVersion>
+              <osMinorVersion>2</osMinorVersion>
+            </maximumVersion>
+          </os>
+          <os>
+            <minimumVersion>
+              <osMajorVersion>6</osMajorVersion>
+              <osMinorVersion>0</osMinorVersion>
+              <spMajorVersion>0</spMajorVersion>
+            </minimumVersion>
+            <osTypes>
+              <Server />
+            </osTypes>
+          </os>
+        </osList>
+        <eulaURL>http://www.websitepanel.net/License</eulaURL>
+        <installerFile>
+          <!-- size in KBs -->
+          <fileSize>${InstallerFileSize}</fileSize>
+          <installerURL>${InstallerFileUrl}</installerURL>
+          <sha1>${InstallerFileSHA1}</sha1>
+          <trackingURL />
+        </installerFile>
+        <installCommands>
+          <cmdLine>
+            <exe>msiexec.exe</exe>
+            <commandLineArguments>/i "%InstallerFile%" /q</commandLineArguments>
+          </cmdLine>
+          <cmdLine>
+            <exe>%ProgramFiles(x86)%\WebsitePanel Installer\WebsitePanel.SilentInstaller.exe</exe>
+            <commandLineArguments>/cname:"standalone"</commandLineArguments>
+            <returnCodeMappings>
+              <mapping>
+                <returnCode>0</returnCode>
+                <success>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_0_DetailedInformation">Installation operation completed successfully.</detailedInformation>
+                </success>
+              </mapping>
+              <mapping>
+                <returnCode>-1000</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_1000_DetailedInformation">Failed to install WebsitePanel Standalone Setup package</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-999</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_999_DetailedInformation">Unknown component name has been supplied</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-998</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_998_DetailedInformation">Another instance of WebsitePanel installation is in progress</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-997</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_997_DetailedInformation">Not enough permissions to install run the installation</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-996</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_996_DetailedInformation">No input parameters supplied</detailedInformation>
+                </failure>
+              </mapping>
+              <mapping>
+                <returnCode>-995</returnCode>
+                <failure>
+                  <detailedInformation resourceName="Mapping_WebsitePanel_995_DetailedInformation">WebsitePanel Standalone Setup or one of its parts has been already installed</detailedInformation>
+                </failure>
+              </mapping>
+            </returnCodeMappings>
+          </cmdLine>
+        </installCommands>
+        <helpLink>http://www.websitepanel.net/support</helpLink>
+      </installer>
+    </installers>
+  </entry>
+</feed>
