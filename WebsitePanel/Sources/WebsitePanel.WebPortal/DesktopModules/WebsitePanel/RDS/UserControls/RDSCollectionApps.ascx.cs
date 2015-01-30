@@ -176,6 +176,10 @@ namespace WebsitePanel.Portal.RDS.UserControls
             {
                 btnFullDesktopConnection.Enabled = false;
             }
+            else
+            {
+                btnFullDesktopConnection.Enabled = true;
+            }
 
             gvApps.DataSource = apps;
             gvApps.DataBind();
