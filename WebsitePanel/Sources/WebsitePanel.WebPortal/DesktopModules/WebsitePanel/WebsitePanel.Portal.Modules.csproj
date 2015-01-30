@@ -330,6 +330,13 @@
     <Compile Include="RDS\RDSCollections.ascx.designer.cs">
       <DependentUpon>RDSCollections.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\RDSUserSessions.ascx.cs">
+      <DependentUpon>RDSUserSessions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSUserSessions.ascx.designer.cs">
+      <DependentUpon>RDSUserSessions.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\UserControls\RDSCollectionApps.ascx.cs">
       <DependentUpon>RDSCollectionApps.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4365,6 +4372,7 @@
     <Content Include="RDS\RDSEditCollectionUsers.ascx" />
     <Content Include="RDS\RDSCreateCollection.ascx" />
     <Content Include="RDS\RDSCollections.ascx" />
+    <Content Include="RDS\RDSUserSessions.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
@@ -4386,6 +4394,7 @@
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionTabs.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="RDS\App_LocalResources\RDSUserSessions.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
@@ -5702,7 +5711,9 @@
     <Content Include="RDS\App_LocalResources\RDSEditCollectionUsers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionUsers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />

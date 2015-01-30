@@ -5644,4 +5644,10 @@
   <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
     <value>RDS Collection settings not updated</value>
   </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
+    <value>RDS User logging off error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
+    <value>GEtting RDS User sessions error</value>
+  </data>
 </root>

@@ -103,6 +103,11 @@ namespace WebsitePanel.EnterpriseServer
             return GetRdsServersPagedInternal(filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
 
+        public static List<RdsUserSession> GetRdsUserSessions(int collectionId)
+        {
+            return GetRdsUserSessionsInternal(collectionId);
+        }
+
         public static RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
             return GetFreeRdsServersPagedInternal(packageId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
@@ -231,6 +236,11 @@ namespace WebsitePanel.EnterpriseServer
         public static ResultObject SetApplicationUsers(int itemId, int collectionId, RemoteApplication remoteApp, List<string> users)
         {
             return SetApplicationUsersInternal(itemId, collectionId, remoteApp, users);
+        }
+
+        public static ResultObject LogOffRdsUser(int itemId, string unifiedSessionId, string hostServer)
+        {
+            return LogOffRdsUserInternal(itemId, unifiedSessionId, hostServer);
         }
 
         private static RdsCollection GetRdsCollectionInternal(int collectionId)
@@ -577,6 +587,22 @@ namespace WebsitePanel.EnterpriseServer
             result.Servers = tmpServers.ToArray();
 
             return result;
+        }
+
+        private static List<RdsUserSession> GetRdsUserSessionsInternal(int collectionId)
+        {
+            var result = new List<RdsUserSession>();
+            var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
+            var organization = OrganizationController.GetOrganization(collection.ItemId);
+
+            if (organization == null)
+            {
+                return result;
+            }
+
+            var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(organization.PackageId));
+
+            return rds.GetRdsUserSessions(collection.Name).ToList();
         }
 
         private static RdsServersPaged GetFreeRdsServersPagedInternal(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
@@ -1089,6 +1115,44 @@ namespace WebsitePanel.EnterpriseServer
             catch (Exception ex)
             {
                 result.AddError("REMOTE_DESKTOP_SERVICES_SET_REMOTE_APP_USERS", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        private static ResultObject LogOffRdsUserInternal(int itemId, string unifiedSessionId, string hostServer)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "LOG_OFF_RDS_USER");
+
+            try
+            {                
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("LOG_OFF_RDS_USER", new NullReferenceException("Organization not found"));
+
+                    return result;
+                }
+                
+                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+                rds.LogOffRdsUser(unifiedSessionId, hostServer);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("REMOTE_DESKTOP_SERVICES_LOG_OFF_RDS_USER", ex);
             }
             finally
             {
