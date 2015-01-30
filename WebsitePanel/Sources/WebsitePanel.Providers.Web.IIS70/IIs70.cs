@@ -4133,6 +4133,9 @@ namespace WebsitePanel.Providers.Web
                 // Restore setting back
                 ServerSettings.ADEnabled = adEnabled;
             }
+
+            //
+			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
 
 		private void ReadWebDeployPublishingAccessDetails(WebVirtualDirectory iisObject)
