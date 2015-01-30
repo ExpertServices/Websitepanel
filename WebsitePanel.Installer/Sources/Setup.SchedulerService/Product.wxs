@@ -103,7 +103,7 @@
             <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallLocationDlg" Order="3">
               LicenseAccepted = "1"
             </Publish>
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg">SKIPCONNECTIONSTRINGSTEP = "1"</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg">SKIPCONNECTIONSTRINGSTEP = "0"</Publish>
           <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallLocationDlg">SKIPCONNECTIONSTRINGSTEP = "1"</Publish>
             <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
         </UI>
