@@ -147,4 +147,7 @@
   <data name="cmdLogOff.ToolTip" xml:space="preserve">
     <value>Log Off</value>
   </data>
+  <data name="btnRefresh.Text" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
 </root>

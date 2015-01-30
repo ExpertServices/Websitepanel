@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AjaxControlToolkit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -17,7 +18,7 @@ namespace WebsitePanel.Portal.RDS
             if (!IsPostBack)
             {
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-                litCollectionName.Text = collection.Name;
+                litCollectionName.Text = collection.DisplayName;
                 BindGrid();
             }
         }
@@ -34,7 +35,7 @@ namespace WebsitePanel.Portal.RDS
                 {
                     ES.Services.RDS.LogOffRdsUser(PanelRequest.ItemID, unifiedSessionId, hostServer);                    
                     BindGrid();
-
+                    ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
                 }
                 catch (Exception ex)
                 {
@@ -49,6 +50,8 @@ namespace WebsitePanel.Portal.RDS
             {
                 return;
             }
+
+            BindGrid();
         }
 
         protected void btnSaveExit_Click(object sender, EventArgs e)
@@ -59,6 +62,17 @@ namespace WebsitePanel.Portal.RDS
             }
 
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
+        }
+
+        protected void btnRefresh_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            BindGrid();
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
         }
 
         private void BindGrid()
@@ -72,6 +86,16 @@ namespace WebsitePanel.Portal.RDS
             catch(Exception ex)
             {
                 ShowErrorMessage("REMOTE_DESKTOP_SERVICES_USER_SESSIONS", ex);
+            }
+
+            foreach(var userSession in userSessions)
+            {
+                var states = userSession.SessionState.Split('_');
+
+                if (states.Length == 2)
+                {
+                    userSession.SessionState = states[1];
+                }
             }
 
             gvRDSUserSessions.DataSource = userSessions;

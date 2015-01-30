@@ -104,39 +104,45 @@ namespace WebsitePanel.Portal.RDS.UserControls
             List<RemoteApplication> selectedApps = GetPopUpGridViewApps();
 
             BindApps(selectedApps.ToArray(), true);
-		}
-
-        protected void btnFullDesktopConnection_Click(object sender, EventArgs e)
-        {            
-            var newApps = new RemoteApplication[]
-            {
-                new RemoteApplication
-                {
-                    DisplayName = "Session Host",
-                    FilePath = "%SystemRoot%\\system32\\mstsc.exe",
-                    Alias = "mstsc",
-                    RequiredCommandLine = "/v:",
-                    ShowInWebAccess = true                    
-                }
-            };
-
-            BindApps(newApps, true);
-        }
+		}        
 
         protected void BindPopupApps()
 		{
             RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-            StartMenuApp[] apps = ES.Services.RDS.GetAvailableRemoteApplications(PanelRequest.ItemID, collection.Name);
+            List<StartMenuApp> apps = ES.Services.RDS.GetAvailableRemoteApplications(PanelRequest.ItemID, collection.Name).ToList();
 
-            apps = apps.Where(x => !GetApps().Select(p => p.DisplayName).Contains(x.DisplayName)).ToArray();
-            Array.Sort(apps, CompareAccount);
+            var fullRemote = new StartMenuApp
+            {
+                DisplayName = "Session Host",
+                FilePath = "%SystemRoot%\\system32\\mstsc.exe",
+                RequiredCommandLine = string.Format("/v:{0}", collection.Servers.First().FqdName)
+            };
+
+            var displayNames = GetApps().Select(p => p.DisplayName);
+            apps = apps.Where(x => !displayNames.Contains(x.DisplayName)).ToList();          
+
             if (Direction == SortDirection.Ascending)
             {
-                Array.Reverse(apps);
+                apps = apps.OrderBy(a => a.DisplayName).ToList();
                 Direction = SortDirection.Descending;
             }
             else
+            {
+                apps = apps.OrderByDescending(a => a.DisplayName).ToList();
                 Direction = SortDirection.Ascending;
+            }
+
+            if (!displayNames.Contains(fullRemote.DisplayName))
+            {
+                if (apps.Count > 0)
+                {
+                    apps.Insert(0, fullRemote);
+                }
+                else
+                {
+                    apps.Add(fullRemote);
+                }
+            }
 
             gvPopupApps.DataSource = apps;
             gvPopupApps.DataBind();
@@ -170,16 +176,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                     apps.Add(newApp);
 				}
-			}
-
-            if (apps.Any(a => a.DisplayName.Equals("session host", StringComparison.CurrentCultureIgnoreCase)))
-            {
-                btnFullDesktopConnection.Enabled = false;
-            }
-            else
-            {
-                btnFullDesktopConnection.Enabled = true;
-            }
+			}            
 
             gvApps.DataSource = apps;
             gvApps.DataBind();
@@ -226,7 +223,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     {
                         Alias = (string)gvPopupApps.DataKeys[i][0],
                         DisplayName = ((Literal)row.FindControl("litName")).Text,
-                        FilePath = ((HiddenField)row.FindControl("hfFilePathPopup")).Value
+                        FilePath = ((HiddenField)row.FindControl("hfFilePathPopup")).Value,
+                        RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLinePopup")).Value
                     });
                 }
             }

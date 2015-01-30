@@ -1738,9 +1738,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             Command cmd = new Command("Get-RDUserSession");
             cmd.Parameters.Add("CollectionName", collectionName);
             cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
-            var userSessions = ExecuteShellCommand(runSpace, cmd, false, out errors);
-
-            //var userSessions = ExecuteShellCommand(runSpace, scripts, out errors);
+            var userSessions = ExecuteShellCommand(runSpace, cmd, false, out errors);            
             var properties = typeof(RdsUserSession).GetProperties();
 
             foreach(var userSession in  userSessions)

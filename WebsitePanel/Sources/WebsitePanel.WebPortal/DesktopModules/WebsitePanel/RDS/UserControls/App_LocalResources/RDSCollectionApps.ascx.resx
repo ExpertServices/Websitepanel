@@ -138,9 +138,6 @@
   <data name="btnDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="btnFullDesktopConnection.Text" xml:space="preserve">
-    <value>Add Full Desktop Connection</value>
-  </data>
   <data name="gvAppName.HeaderText" xml:space="preserve">
     <value>Remote Application Name</value>
   </data>
