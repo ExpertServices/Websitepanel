@@ -109,12 +109,9 @@ namespace WebsitePanel.Portal
                 gvMailboxPlans.DataBind();
             }
 
-            //check if organization has only one default domain or less
-            if (gvMailboxPlans.Rows.Count <= 1)
-            {
-                btnSetDefaultMailboxPlan.Enabled = false;
-            }
-
+            // enable set default plan button if organization has two or more plans
+            btnSetDefaultMailboxPlan.Enabled = gvMailboxPlans.Rows.Count > 1;
+        
             btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
         }
 
