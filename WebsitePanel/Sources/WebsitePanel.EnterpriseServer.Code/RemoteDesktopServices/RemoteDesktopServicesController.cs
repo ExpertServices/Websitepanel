@@ -1300,6 +1300,11 @@ namespace WebsitePanel.EnterpriseServer
                 List<RemoteApplication> remoteAppsToAdd = remoteApps.Where(x => !existingCollectionApps.Select(p => p.DisplayName).Contains(x.DisplayName)).ToList();
                 foreach (var app in remoteAppsToAdd)
                 {
+                    if (!string.IsNullOrEmpty(app.RequiredCommandLine))
+                    {
+                        app.RequiredCommandLine = string.Format("/v:{0}", collection.Servers.First().FqdName);
+                    }
+
                     AddRemoteApplicationToCollection(itemId, collection, app);
                 }
 
