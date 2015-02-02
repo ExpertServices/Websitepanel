@@ -249,4 +249,7 @@
   <data name="secRetentionPolicy.Text" xml:space="preserve">
     <value>Retention policy</value>
   </data>
+  <data name="lblDefaultMailboxPlan.Text" xml:space="preserve">
+    <value>Default</value>
+  </data>
 </root>

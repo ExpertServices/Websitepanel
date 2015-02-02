@@ -881,7 +881,7 @@ namespace WebsitePanel.Providers.Web
 			#endregion
 
 			#region PHP 5 script mappings
-		    if (virtualDir.PhpInstalled.StartsWith(PHP_5))
+		    if (!string.IsNullOrEmpty(virtualDir.PhpInstalled) && virtualDir.PhpInstalled.StartsWith(PHP_5))
 		    {
 		        if (PhpMode == Constants.PhpMode.FastCGI && virtualDir.PhpInstalled.Contains('|'))
 		        {
@@ -4133,6 +4133,9 @@ namespace WebsitePanel.Providers.Web
                 // Restore setting back
                 ServerSettings.ADEnabled = adEnabled;
             }
+
+            //
+			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
 
 		private void ReadWebDeployPublishingAccessDetails(WebVirtualDirectory iisObject)

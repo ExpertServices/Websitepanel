@@ -28,6 +28,15 @@
 					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# PortalAntiXSS.Encode((string)Eval("MailboxPlan"))%></asp:Label>
                  </ItemTemplate>
 			</asp:TemplateField>
+			<asp:TemplateField >
+				<ItemStyle Width="15%"></ItemStyle>
+				<ItemTemplate>
+				    &nbsp;<label>
+				        <input type="radio" name="DefaultMailboxPlan" value='<%# Eval("MailboxPlanId") %>' <%# IsChecked((bool) Eval("IsDefault")) %>/>
+                        <asp:Label runat="server" meta:resourcekey="lblDefaultMailboxPlan" Text="Default"></asp:Label>
+				    </label>
+				</ItemTemplate>
+			</asp:TemplateField>
 			<asp:TemplateField>
 				<ItemTemplate>
 					&nbsp;<asp:ImageButton id="imgDelMailboxPlan" runat="server" Text="Delete" SkinID="ExchangeDelete"
@@ -52,7 +61,11 @@
 
 		</Columns>
 	</asp:GridView>
-	<br />
+    <br />
+	<div style="text-align: center">
+		<asp:Button ID="btnSetDefaultMailboxPlan" runat="server" meta:resourcekey="btnSetDefaultMailboxPlan"
+            Text="Set Default Mailboxplan" CssClass="Button1" OnClick="btnSetDefaultMailboxPlan_Click" />
+    </div>
     	<wsp:CollapsiblePanel id="secMailboxPlan" runat="server"
             TargetControlID="MailboxPlan" meta:resourcekey="secMailboxPlan" Text="Mailboxplan">
         </wsp:CollapsiblePanel>
