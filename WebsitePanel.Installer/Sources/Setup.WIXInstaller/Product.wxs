@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include Config.wxi?>
-  <?define VERSION="2.1"?>
   <Product Id="*" Name="WebsitePanel" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" 
            UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
 
     <Package InstallerVersion="200" Compressed="yes" />
     <Media Id="1" EmbedCab="yes" Cabinet="websitepanel.cab" />
 
-    <Property Id="INSTALLSERVICEFOLDER" Value="c:\WebsitePanel\SchedulerService" />
-    <Property Id="INSTALLSERVERFOLDER" Value="c:\WebsitePanel\Server" />
-    <Property Id="INSTALLENTERPRISESERVERFOLDER" Value="c:\WebsitePanel\Enterprise Server" />
-    <Property Id="INSTALLPORTALFOLDER" Value="c:\WebsitePanel\Portal" />
-
-    <Feature Id="ServerFeature" Title="Server" Level="1" ConfigurableDirectory="INSTALLSERVERFOLDER"
+    <Feature Id="ServerFeature" Title="Server" Level="1" ConfigurableDirectory="INSTALLSERVERFOLDER" AllowAdvertise="no"
              Description="WebsitePanel Server is a set of services running on the remote server to be controlled. Server application should be reachable from Enterprise Server one.">
       <ComponentGroupRef Id="ServerFiles" />
     </Feature>
-    <Feature Id="EnterpriseServerFeature" Title="Enterprise Server" Level="1" ConfigurableDirectory="INSTALLENTERPRISESERVERFOLDER"
+    
+    <Feature Id="EnterpriseServerFeature" Title="Enterprise Server" Level="1" ConfigurableDirectory="INSTALLENTERPRISESERVERFOLDER" AllowAdvertise="no"
              Description="Enterprise Server is the heart of WebsitePanel system. It includes all business logic of the application. Enterprise Server should have access to Server and be accessible from Portal applications.">
       <ComponentGroupRef Id="EnterpriseServerFiles" />
     </Feature>
-    <Feature Id="PortalFeature" Title="Portal" Level="1" ConfigurableDirectory="INSTALLPORTALFOLDER"
+    
+    <Feature Id="PortalFeature" Title="Portal" Level="1" ConfigurableDirectory="INSTALLPORTALFOLDER" AllowAdvertise="no"
              Description="WebsitePanel Portal is a control panel itself with user interface which allows managing user accounts, hosting spaces, web sites, FTP accounts, files, etc.">
       <ComponentGroupRef Id="PortalFiles" />
     </Feature>
-    <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="INSTALLSERVICEFOLDER" Description="WebsitePanel scheduler Service">
+    
+    <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="INSTALLSERVICEFOLDER" AllowAdvertise="no"
+             Description="WebsitePanel scheduler Service">
       <ComponentGroupRef Id="SchedulerServiceFiles" />
     </Feature>
 
@@ -51,8 +49,8 @@
     <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
     
     <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
+    
     <Property Id="SERVERNAME" Value="localhost\SQLExpress" />
-
     <Property Id="CONNECTIONSTRING" Value="1" />
     <Property Id="DATABASENAME" Value="WebsitePanel" />
     <Property Id="AUTHENTICATIONTYPE" Value="Windows Authentication" />
@@ -171,11 +169,13 @@
   
   <Fragment>
       <Directory Id="TARGETDIR" Name="SourceDir">
-        <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
-        <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
-        <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
-        <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />        
+        <Directory Id="WEBSITEPANELDIR" Name="WebsitePanel">
+          <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
+          <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
+          <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
+          <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />        
+        </Directory>
       </Directory>
-  </Fragment>
+    </Fragment>
   
 </Wix>
