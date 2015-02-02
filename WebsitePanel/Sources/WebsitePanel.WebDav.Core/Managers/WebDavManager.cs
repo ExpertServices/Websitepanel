@@ -173,6 +173,20 @@ namespace WebsitePanel.WebDav.Core.Managers
             resource.Upload(bytes);
         }
 
+        public void LockFile(string path)
+        {
+            var resource = new WebDavResource();
+
+            var fileUrl = new Uri(WebDavAppConfigManager.Instance.WebdavRoot)
+                .Append(WspContext.User.OrganizationId)
+                .Append(path);
+
+            resource.SetHref(fileUrl);
+            resource.SetCredentials(new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword)));
+
+            resource.Lock();
+        }
+
         public void DeleteResource(string path)
         {
             path = RemoveLeadingFromPath(path, "office365");

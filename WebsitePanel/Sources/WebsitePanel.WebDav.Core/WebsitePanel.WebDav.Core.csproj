@@ -148,7 +148,7 @@
     <Compile Include="ItemType.cs" />
     <Compile Include="LockUriTokenPair.cs" />
     <Compile Include="Managers\WebDavManager.cs" />
-    <Compile Include="Owa\CobaltFileManager.cs" />
+    <Compile Include="Owa\CobaltSessionManager.cs" />
     <Compile Include="Owa\CobaltHostLockingStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />

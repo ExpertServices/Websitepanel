@@ -163,7 +163,6 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="Controllers\Api\OwaController.cs" />
-    <Compile Include="Controllers\WopiSession.cs" />
     <Compile Include="CustomAttributes\FormValueRequiredAttribute.cs" />
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
     <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />

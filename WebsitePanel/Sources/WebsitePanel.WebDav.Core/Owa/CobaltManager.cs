@@ -27,7 +27,7 @@ namespace WebsitePanel.WebDav.Core.Owa
 
             var requestBatch = new RequestBatch();
 
-            var cobaltFile = _fileManager.Get(accessTokenId) ?? _fileManager.Create(accessTokenId);
+            var cobaltFile = _fileManager.Get(token.FilePath) ?? _fileManager.Create(accessTokenId);
 
             Object ctx;
             ProtocolVersion protocolVersion;

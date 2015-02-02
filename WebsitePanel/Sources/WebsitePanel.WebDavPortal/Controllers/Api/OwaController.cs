@@ -34,7 +34,6 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccessTokenManager _tokenManager;
         private readonly ICryptography _cryptography;
-        //private static WopiSession _session;
         private readonly ICobaltManager _cobaltManager;
 
         public OwaController(IWopiServer wopiServer, IWebDavManager webDavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, ICryptography cryptography, ICobaltManager cobaltManager)
@@ -105,6 +104,10 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         [HttpPost]
         public HttpResponseMessage Lock(int accessTokenId)
         {
+           // var token = _tokenManager.GetToken(accessTokenId);
+
+            //_webDavManager.LockFile(token.FilePath);
+
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
 

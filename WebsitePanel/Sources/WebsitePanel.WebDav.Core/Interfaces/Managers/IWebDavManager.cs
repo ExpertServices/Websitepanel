@@ -16,5 +16,6 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Managers
         IResource GetResource(string path);
         string GetFileUrl(string path);
         void DeleteResource(string path);
+        void LockFile(string path);
     }
 }

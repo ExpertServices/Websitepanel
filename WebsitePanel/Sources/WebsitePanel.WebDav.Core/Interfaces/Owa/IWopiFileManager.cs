@@ -5,8 +5,8 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Owa
     public interface IWopiFileManager
     {
         CobaltFile Create(int accessTokenId);
-        CobaltFile Get(int accessTokenId);
-        bool Add(int accessTokenId, CobaltFile file);
-        bool Delete(int accessTokenId);
+        CobaltFile Get(string filePath);
+        bool Add(string filePath, CobaltFile file);
+        bool Delete(string filePath);
     }
 }

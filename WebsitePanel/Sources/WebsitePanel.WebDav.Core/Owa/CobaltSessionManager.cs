@@ -13,13 +13,13 @@ using WebsitePanel.WebDav.Core.Interfaces.Storages;
 
 namespace WebsitePanel.WebDav.Core.Owa
 {
-    public class CobaltFileManager : IWopiFileManager
+    public class CobaltSessionManager : IWopiFileManager
     {
         private readonly IWebDavManager _webDavManager;
         private readonly IAccessTokenManager _tokenManager;
         private readonly ITtlStorage _storage;
 
-        public CobaltFileManager(IWebDavManager webDavManager, IAccessTokenManager tokenManager, ITtlStorage storage)
+        public CobaltSessionManager(IWebDavManager webDavManager, IAccessTokenManager tokenManager, ITtlStorage storage)
         {
             _webDavManager = webDavManager;
 
@@ -80,29 +80,29 @@ namespace WebsitePanel.WebDav.Core.Owa
             cobaltFile.GetCobaltFilePartition(FilePartitionId.Content).SetStream(RootId.Default.Value, atom, out o1);
             cobaltFile.GetCobaltFilePartition(FilePartitionId.Content).GetStream(RootId.Default.Value).Flush();
 
-            Add(accessTokenId, cobaltFile);
+            Add(token.FilePath, cobaltFile);
 
             return cobaltFile;
         }
 
-        public CobaltFile Get(int accessTokenId)
+        public CobaltFile Get(string filePath)
         {
-            return _storage.Get<CobaltFile>(GetFileKey(accessTokenId)); 
+            return _storage.Get<CobaltFile>(GetSessionKey(filePath)); 
         }
 
-        public bool Add(int accessTokenId, CobaltFile file)
+        public bool Add(string filePath, CobaltFile file)
         {
-            return _storage.Add(GetFileKey(accessTokenId), file);
+            return _storage.Add(GetSessionKey(filePath), file);
         }
 
-        public bool Delete(int accessTokenId)
+        public bool Delete(string filePath)
         {
-            return _storage.Delete(GetFileKey(accessTokenId));
+            return _storage.Delete(GetSessionKey(filePath));
         }
 
-        private string GetFileKey(int accessTokenId)
+        private string GetSessionKey(string filePath)
         {
-            return string.Format("{0}", accessTokenId);
+            return string.Format("{0}/{1}", WspContext.User.AccountId, filePath);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
             kernel.Bind<IWebDavManager>().To<WebDavManager>();
             kernel.Bind<IAccessTokenManager>().To<AccessTokenManager>();
             kernel.Bind<IWopiServer>().To<WopiServer>();
-            kernel.Bind<IWopiFileManager>().To<CobaltFileManager>();
+            kernel.Bind<IWopiFileManager>().To<CobaltSessionManager>();
             kernel.Bind<IWebDavAuthorizationService>().To<WebDavAuthorizationService>();
             kernel.Bind<ICobaltManager>().To<CobaltManager>();
             kernel.Bind<ITtlStorage>().To<CacheTtlStorage>();

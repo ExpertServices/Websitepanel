@@ -301,6 +301,36 @@ namespace WebsitePanel.WebDav.Core
                                                                         XmlCurrentPropNode.NamespaceURI),
                                                                     XmlCurrentPropNode.InnerXml));
                                                             break;
+                                                        //case "lockdiscovery":
+                                                        //{
+                                                        //    if (XmlCurrentPropNode.HasChildNodes == false)
+                                                        //    {
+                                                        //        break;
+                                                        //    }
+
+                                                        //    foreach (XmlNode activeLockNode in XmlCurrentPropNode.FirstChild)
+                                                        //    {
+                                                        //        switch (activeLockNode.LocalName)
+                                                        //        {
+                                                        //            case "owner":
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("owner",
+                                                        //                            activeLockNode.NamespaceURI),
+                                                        //                        activeLockNode.InnerXml));
+                                                        //                break;
+                                                        //            case "locktoken":
+                                                        //                var lockTokenNode = activeLockNode.FirstChild;
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("locktoken",
+                                                        //                            lockTokenNode.NamespaceURI),
+                                                        //                        lockTokenNode.InnerXml));
+                                                        //                break;
+                                                        //        }
+                                                        //    }
+                                                        //    break;
+                                                        //}
                                                     }
                                                 }
                                                 break;
