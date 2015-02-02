@@ -396,7 +396,7 @@ namespace WebsitePanel.EnterpriseServer
                     DataProvider.RemoveRDSServerFromCollection(server.Id);
                 }
 
-                rds.AddRdsServersToDeployment(newServers.ToArray());
+                rds.AddSessionHostServersToCollection(org.OrganizationId, collection.Name, newServers.ToArray());
 
                 foreach (var server in newServers)
                 {                    
