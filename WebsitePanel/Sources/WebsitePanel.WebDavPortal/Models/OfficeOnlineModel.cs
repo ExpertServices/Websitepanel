@@ -1,6 +1,8 @@
-﻿namespace WebsitePanel.WebDavPortal.Models
+﻿using WebsitePanel.WebDavPortal.Models.Common;
+
+namespace WebsitePanel.WebDavPortal.Models
 {
-    public class OfficeOnlineModel
+    public class OfficeOnlineModel : BaseModel
     {
         public string Url { get; set; }
         public string FileName { get; set; }

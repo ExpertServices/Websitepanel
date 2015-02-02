@@ -1,16 +1,18 @@
-﻿@using WebsitePanel.WebDav.Core.Client
+﻿@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Client
 @using Ninject
+@using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDav.Core.Interfaces.Managers
+@using WebsitePanel.WebDav.Core.Security.Authorization.Enums
+@using WebsitePanel.WebDavPortal.UI
+@using WebsitePanel.WebDavPortal.UI.Routes
+
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    var webDavManager = (new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule())).Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
-    ViewBag.Title = (string.IsNullOrEmpty(Model.UrlSuffix) ? webDavManager.OrganizationName : Model.UrlSuffix);
+    var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
+    ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
 }
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/appScripts")
 
-<script>
-    recalculateResourseHeight();
-</script>
 
 <br />
 @if (Model != null && !string.IsNullOrEmpty(Model.Error))
@@ -19,12 +21,12 @@
 }
 else
 {
-    <div class="container">
+    <div class="container prevent-deselect">
         @if (Model != null)
         {
-            string header = webDavManager.OrganizationName;
+            string header = WspContext.User.OrganizationId;
             <a href="/@header/" class="btn btn-primary btn-sm active" role="button">@header</a>
-            string[] elements = Model.UrlSuffix.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
+            string[] elements = Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < elements.Length; i++)
             {
                 <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
@@ -32,8 +34,22 @@ else
             }
         }
     </div>
+    <div class="container file-actions-menu prevent-deselect">
+        @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
+        {
+            <div class="file-deletion navbar-left">
+                <a id="delete-button" class="btn btn-danger btn-sm active" role="button"
+                   data-target="#confirm-dialog"
+                   data-target-positive-button-text="@Resources.Delete"
+                   data-target-title-text="@Resources.DeleteFileQuestion"
+                   data-target-content="@Resources.DialogsContentConfrimFileDeletion">@Resources.Delete</a>
+            </div>
+            <a id="upload-button" class="btn btn-success btn-sm active navbar-right" data-toggle="modal" data-target="#file-upload" role="button">@Resources.FileUpload</a>
+        }
+    </div>
     <br />
     <div class="container">
+        
         <div class="row" id="resourcesDiv">
             @if (Model != null)
             {
@@ -44,4 +60,39 @@ else
             }
         </div>
     </div>
+}
+
+@section scripts{
+    <script>
+        wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+        recalculateResourseHeight();
+
+    </script>
+}
+
+@section popups
+{
+    <div id="file-upload" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-file-upload-title" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="modal-file-upload-title">@Resources.FileUpload</h4>
+                </div>
+                @using (Html.BeginRouteForm(FileSystemRouteNames.UploadFile, FormMethod.Post, new {enctype = "multipart/form-data"}))
+                {
+                    <div class="modal-body">
+                        <input type="file" name="file" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Close</button>
+                        <button type="submit" class="btn btn-primary processing-dialog">@Resources.Upload</button>
+                    </div>
+                }
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    
+    @Html.Partial("_ProcessDialog", null)
+    @Html.Partial("_ConfirmDialog")
 }

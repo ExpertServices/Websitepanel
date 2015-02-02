@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		}
 
         public void SetApps(RemoteApplication[] apps)
-		{
+		{            
             BindApps(apps, false);
 		}
 
@@ -104,30 +104,59 @@ namespace WebsitePanel.Portal.RDS.UserControls
             List<RemoteApplication> selectedApps = GetPopUpGridViewApps();
 
             BindApps(selectedApps.ToArray(), true);
-
-		}
+		}        
 
         protected void BindPopupApps()
 		{
             RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-            StartMenuApp[] apps = ES.Services.RDS.GetAvailableRemoteApplications(PanelRequest.ItemID, collection.Name);
+            List<StartMenuApp> apps = ES.Services.RDS.GetAvailableRemoteApplications(PanelRequest.ItemID, collection.Name).ToList();
+            var sessionHosts = ES.Services.RDS.GetRdsCollectionSessionHosts(PanelRequest.CollectionID);            
 
-            apps = apps.Where(x => !GetApps().Select(p => p.DisplayName).Contains(x.DisplayName)).ToArray();
-            Array.Sort(apps, CompareAccount);
+            var addedApplications = GetApps();
+            var displayNames = addedApplications.Select(p => p.DisplayName);
+            apps = apps.Where(x => !displayNames.Contains(x.DisplayName)).ToList();          
+
             if (Direction == SortDirection.Ascending)
             {
-                Array.Reverse(apps);
+                apps = apps.OrderBy(a => a.DisplayName).ToList();
                 Direction = SortDirection.Descending;
             }
             else
+            {
+                apps = apps.OrderByDescending(a => a.DisplayName).ToList();
                 Direction = SortDirection.Ascending;
+            }
+
+            var requiredParams = addedApplications.Select(a => a.RequiredCommandLine.ToLower());
+
+            foreach (var host in sessionHosts)
+            {
+                if (!requiredParams.Contains(string.Format("/v:{0}", host.ToLower())))
+                {
+                    var fullRemote = new StartMenuApp
+                    {
+                        DisplayName = string.Format("Full Desktop - {0}", host.ToLower()),
+                        FilePath = "%SystemRoot%\\system32\\mstsc.exe",
+                        RequiredCommandLine = string.Format("/v:{0}", host.ToLower())
+                    };
+
+                    if (apps.Count > 0)
+                    {
+                        apps.Insert(0, fullRemote);
+                    }
+                    else
+                    {
+                        apps.Add(fullRemote);
+                    }
+                }
+            }
 
             gvPopupApps.DataSource = apps;
             gvPopupApps.DataBind();
 		}
 
         protected void BindApps(RemoteApplication[] newApps, bool preserveExisting)
-		{
+		{            
 			// get binded addresses
             List<RemoteApplication> apps = new List<RemoteApplication>();
 			if(preserveExisting)
@@ -154,7 +183,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                     apps.Add(newApp);
 				}
-			}
+			}            
 
             gvApps.DataSource = apps;
             gvApps.DataBind();
@@ -174,6 +203,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 app.Alias = (string)gvApps.DataKeys[i][0];
                 app.DisplayName = ((Literal)row.FindControl("litDisplayName")).Text;
                 app.FilePath = ((HiddenField)row.FindControl("hfFilePath")).Value;
+                app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||
@@ -200,7 +230,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     {
                         Alias = (string)gvPopupApps.DataKeys[i][0],
                         DisplayName = ((Literal)row.FindControl("litName")).Text,
-                        FilePath = ((HiddenField)row.FindControl("hfFilePathPopup")).Value
+                        FilePath = ((HiddenField)row.FindControl("hfFilePathPopup")).Value,
+                        RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLinePopup")).Value
                     });
                 }
             }

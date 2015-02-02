@@ -45,6 +45,12 @@ namespace WebsitePanel.Portal.RDS
             if (!IsPostBack)
             {
             }
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_COLLECTIONS))
+            {
+                btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
+            }
         }
 
         public string GetServerName(string collectionId)
@@ -96,20 +102,6 @@ namespace WebsitePanel.Portal.RDS
             gvRDSCollections.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
 
             gvRDSCollections.DataBind();
-        }
-
-        public string GetCollectionAppsEditUrl(string collectionId)
-        {
-            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps",
-                    "CollectionId=" + collectionId,
-                    "ItemID=" + PanelRequest.ItemID);
-        }
-
-        public string GetCollectionUsersEditUrl(string collectionId)
-        {
-            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_users",
-                    "CollectionId=" + collectionId,
-                    "ItemID=" + PanelRequest.ItemID);
         }
 
         public string GetCollectionEditUrl(string collectionId)

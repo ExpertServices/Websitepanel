@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -57,7 +57,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask topTask = TaskManager.TopTask;
             var domainUsers = new Dictionary<int, UserInfo>();
-            var checkedDomains = new List<int>();
+            var checkedDomains = new List<DomainInfo>();
             var expiredDomains = new List<DomainInfo>();
             var nonExistenDomains = new List<DomainInfo>();
             var allDomains = new List<DomainInfo>();
@@ -101,12 +101,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (var domain in domains)
                 {
-                    if (checkedDomains.Contains(domain.DomainId))
+                    if (checkedDomains.Any(x=> x.DomainId == domain.DomainId))
                     {
                         continue;
                     }
 
-                    checkedDomains.Add(domain.DomainId);
+                    checkedDomains.Add(domain);
 
                     ServerController.UpdateDomainWhoisData(domain);
 
@@ -124,12 +124,11 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            var subDomains = allDomains.Where(x => x.ExpirationDate == null || CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
-            allTopLevelDomains = allTopLevelDomains.GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
+            var subDomains = allDomains.Where(x => !checkedDomains.Any(z => z.DomainId == x.DomainId && z.ExpirationDate != null)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
 
             foreach (var subDomain in subDomains)
             {
-                var mainDomain = allTopLevelDomains.Where(x => subDomain.DomainId != x.DomainId && subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
+                var mainDomain = checkedDomains.Where(x => subDomain.DomainId != x.DomainId && subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
 
                 if (mainDomain != null)
                 {

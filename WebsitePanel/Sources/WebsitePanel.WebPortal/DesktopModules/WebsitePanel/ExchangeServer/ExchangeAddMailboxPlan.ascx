@@ -248,7 +248,11 @@
 						            <wsp:SizeBox id="archiveWarningQuota" runat="server" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="true" RequireValidatorEnabled="true"/>
 					            </td>
 				            </tr>
-
+                            <tr>
+					            <td class="FormLabel200" colspan="2">
+						            <asp:CheckBox ID="chkEnableForceArchiveDeletion" runat="server" meta:resourcekey="chkEnableForceArchiveDeletion" Text="Force Archive on Mailbox Deletion"></asp:CheckBox>
+					            </td>
+				            </tr>
 			            </table>
 			            <br />
 		            </asp:Panel>

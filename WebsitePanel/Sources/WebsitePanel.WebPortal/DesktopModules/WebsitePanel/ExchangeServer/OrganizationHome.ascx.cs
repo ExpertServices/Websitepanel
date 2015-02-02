@@ -189,12 +189,21 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 userStats.QuotaUsedValue = orgStats.CreatedUsers;
                 userStats.QuotaValue = orgStats.AllocatedUsers;
-                if (orgStats.AllocatedUsers != -1) userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+                if (orgStats.AllocatedUsers != -1)
+                    userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+
+                deletedUserStats.QuotaUsedValue = orgStats.DeletedUsers;
+                deletedUserStats.QuotaValue = orgStats.AllocatedDeletedUsers;
+                if (orgStats.AllocatedDeletedUsers != -1)
+                    userStats.QuotaAvailable = tenantStats.AllocatedDeletedUsers - tenantStats.DeletedUsers;
 
                 lnkDomains.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains",
                     "SpaceID=" + PanelSecurity.PackageId);
 
                 lnkUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "users",
+                    "SpaceID=" + PanelSecurity.PackageId);
+
+                lnkDeletedUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "deleted_users",
                     "SpaceID=" + PanelSecurity.PackageId);
 
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
@@ -305,6 +314,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 serviceLevelsStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
+            {
+                remoteDesktopStatsPanel.Visible = true;
+                BindRemoteDesktopStats(orgStats, tenantStats);
+            }
+            else
+            {
+                remoteDesktopStatsPanel.Visible = false;
+            }
         }
 
         private void BindCRMStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
@@ -447,5 +466,34 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private void BindRemoteDesktopStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        {
+            rdsServers.QuotaValue = stats.AllocatedRdsServers;
+            rdsServers.QuotaUsedValue = stats.CreatedRdsServers;
+            if (stats.AllocatedRdsServers != -1)
+            {
+                rdsServers.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
+            }
+
+            rdsCollections.QuotaValue = stats.AllocatedRdsCollections;
+            rdsCollections.QuotaUsedValue = stats.CreatedRdsCollections;
+
+            if (stats.AllocatedRdsCollections != -1)
+            {
+                rdsCollections.QuotaAvailable = tenantStats.AllocatedRdsCollections - tenantStats.CreatedRdsCollections;
+            }                       
+
+            rdsUsers.QuotaValue = stats.AllocatedRdsUsers;
+            rdsUsers.QuotaUsedValue = stats.CreatedRdsUsers;
+
+            if (stats.AllocatedRdsCollections != -1)
+            {
+                rdsUsers.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+            }
+
+            lnkRdsServers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+            lnkRdsCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+            lnkRdsUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+        }
     }
 }

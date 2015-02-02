@@ -169,8 +169,12 @@ namespace WebsitePanel.Portal.UserControls
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, Cntx))
                     items.Add(CreateMenuItem("DomainNames", "org_domains"));
             }
+            
             if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, Cntx))
                 items.Add(CreateMenuItem("Users", "users", @"Icons/user_48.png"));
+
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, Cntx))
+                items.Add(CreateMenuItem("DeletedUsers", "deleted_users", @"Icons/deleted_user_48.png"));
 
             if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, Cntx))
                 items.Add(CreateMenuItem("SecurityGroups", "secur_groups", @"Icons/group_48.png"));
@@ -472,13 +476,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareEnterpriseStorageMenu(MenuItemCollection enterpriseStorageItems)
         {
-            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));
-
-            //if (ShortMenu) return;
-
-            if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
-                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
-
+            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));            
         }
 
         private void PrepareRDSMenuRoot(MenuItemCollection items)
@@ -507,7 +505,14 @@ namespace WebsitePanel.Portal.UserControls
             rdsItems.Add(CreateMenuItem("RDSCollections", "rds_collections", null));
 
             if (Utils.CheckQouta(Quotas.RDS_SERVERS, Cntx) && (PanelSecurity.LoggedUser.Role != UserRole.User))
-            rdsItems.Add(CreateMenuItem("RDSServers", "rds_servers", null));
+            {
+                rdsItems.Add(CreateMenuItem("RDSServers", "rds_servers", null));
+            }
+
+            if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
+            {
+                rdsItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
+            }
         }
 
         private MenuItem CreateMenuItem(string text, string key)

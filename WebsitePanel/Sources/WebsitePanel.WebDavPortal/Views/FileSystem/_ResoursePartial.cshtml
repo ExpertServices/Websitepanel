@@ -1,12 +1,15 @@
-﻿@using WebsitePanel.WebDav.Core.Client
-@using WebsitePanel.WebDavPortal.Config
+﻿@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Client
+@using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.FileOperations
 @using Ninject;
+@using WebsitePanel.WebDavPortal.UI
+@using WebsitePanel.WebDavPortal.UI.Routes
 @model IHierarchyItem
   
 @{
     string actualPath = Model.ItemType == ItemType.Folder ? "~/Content/Images/folder_100x100.png" : WebDavAppConfigManager.Instance.FileIcons[Path.GetExtension(Model.DisplayName.Trim('/'))];
-    string name = Model.ItemType == ItemType.Folder ? Model.DisplayName.Trim('/') : Path.GetFileNameWithoutExtension(Model.DisplayName);
+    string name = Model.DisplayName.Trim('/');
     var opener = new FileOpenerManager()[Path.GetExtension(Model.DisplayName)];
     bool isTargetBlank;
     string href = "/";
@@ -14,19 +17,46 @@
     {
         case FileOpenerType.OfficeOnline:
             isTargetBlank = true;
-            href = string.Concat(Url.Action("ShowOfficeDocument", "FileSystem"), Model.DisplayName); 
+            var pathPart = Model.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/'); 
+            href = string.Concat(Url.RouteUrl(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
             break;
         default:
             isTargetBlank = false;
-            IKernel _kernel = new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule());
-            var webDavManager = _kernel.Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
-            href = Model.Href.AbsolutePath; 
+            href = Model.Href.LocalPath; 
             break;
     }
+
+    var resource = Model as IResource;
+    
+    bool showStatistic = Model.ItemType == ItemType.Folder && Model.IsRootItem && resource != null;
+
+    int percent = 0;
+
+    if (showStatistic)
+    {
+        percent = (int)(resource.AllocatedSpace != 0 ? 100 * resource.ContentLength / resource.AllocatedSpace : 0);    
+    }
 }
+
 <div class="col-sm-2 element-container">
-    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) title="@Model.DisplayName.Trim('/')">
+    <div class="element">
         <img class="icon-size" src="@Url.Content(actualPath)" />
-        <p style="word-wrap: break-word;">@name</p>
-    </a>
+
+        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link" title="@name">
+            <p style="word-wrap: break-word;">@name</p>
+        </a>
+
+        @if (showStatistic)
+        {
+            <div class="progress web-dav-folder-progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+                    <p class="progress-text">@percent%</p>
+                </div>
+            </div>
+            <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @Resources.GigabyteShort</p>
+        }
+
+        <div class="selected-element-overlay">
+        </div>
+    </div>
 </div>

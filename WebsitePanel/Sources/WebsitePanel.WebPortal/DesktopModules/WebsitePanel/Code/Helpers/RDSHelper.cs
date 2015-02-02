@@ -71,9 +71,9 @@ namespace WebsitePanel.Portal
             return rdsServers.Servers;
         }
 
-        public RdsServer[] GetFreeRDSServers()
+        public RdsServer[] GetFreeRDSServers(int packageId)
         {
-            return ES.Services.RDS.GetFreeRdsServersPaged("", "", "", 0, 1000).Servers;
+            return ES.Services.RDS.GetFreeRdsServersPaged(packageId, "", "", "", 0, 1000).Servers;
         }
 
         #endregion

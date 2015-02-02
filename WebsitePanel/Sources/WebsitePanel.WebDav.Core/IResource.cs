@@ -64,6 +64,7 @@ namespace WebsitePanel.WebDav.Core
             public long ContentLength
             {
                 get { return _contentLength; }
+                set { _contentLength = value; }
             }
 
             public string ContentType
@@ -108,6 +109,23 @@ namespace WebsitePanel.WebDav.Core
                 webClient.Credentials = credentials;
                 webClient.Headers.Add("Authorization", auth);
                 webClient.UploadFile(Href, "PUT", filename);
+            }
+
+            /// <summary>
+            ///     Uploads content of a file specified by filename to the server
+            /// </summary>
+            /// <param name="data">Posted file data to be uploaded</param>
+            public void Upload(byte[] data)
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+                var webClient = new WebClient();
+                webClient.Credentials = credentials;
+                webClient.Headers.Add("Authorization", auth);
+
+                webClient.UploadData(Href, "PUT", data);
             }
 
             /// <summary>
@@ -233,14 +251,19 @@ namespace WebsitePanel.WebDav.Core
                 }
             }
 
+            public long AllocatedSpace { get; set; }
+            public bool IsRootItem { get; set; }
+
             public Uri Href
             {
                 get { return _href; }
+                set { SetHref(value.ToString(), new Uri(value.Scheme + "://" + value.Host + value.Segments[0] + value.Segments[1])); }
             }
 
             public ItemType ItemType
             {
                 get { return _itemType; }
+                set { _itemType = value; }
             }
 
             public DateTime LastModified
@@ -409,6 +432,15 @@ namespace WebsitePanel.WebDav.Core
             ///     For internal use only.
             /// </summary>
             /// <param name="comment"></param>
+            public void SetItemType(ItemType type)
+            {
+                _itemType = type;
+            }
+
+            /// <summary>
+            ///     For internal use only.
+            /// </summary>
+            /// <param name="comment"></param>
             public void SetProperty(Property property)
             {
                 if (property.Name.Name == "resourcetype" && property.StringValue != String.Empty)
@@ -518,6 +550,7 @@ namespace WebsitePanel.WebDav.Core
                 SetHref(item.Href);
                 SetLastModified(item.LastModified);
                 SetProperties(item.Properties);
+                SetItemType(item.ItemType);
             }
         }
     }

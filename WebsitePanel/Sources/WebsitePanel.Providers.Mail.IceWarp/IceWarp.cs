@@ -477,7 +477,7 @@ namespace WebsitePanel.Providers.Mail
 			        Log.WriteStart(String.Format("Calculating mail account '{0}' size", item.Name));
 			        // calculate disk space
 			        var accountObject = GetAccountObject(item.Name);
-			        var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize"));
+			        var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize")) * 1024;
 
                     var diskspace = new ServiceProviderItemDiskSpace {ItemId = item.Id, DiskSpace = size};
 			        itemsDiskspace.Add(diskspace);
@@ -564,8 +564,8 @@ namespace WebsitePanel.Providers.Mail
                                     Year = date.Year, 
                                     Month = date.Month, 
                                     Day = date.Day, 
-                                    BytesSent = line[mailSentField], 
-                                    BytesReceived = line[mailReceivedField]
+                                    BytesSent = Convert.ToInt64(fields[mailSentField])*1024, 
+                                    BytesReceived = Convert.ToInt64(fields[mailReceivedField])*1024
                                 };
                                 days.Add(dailyStats);
                                 continue;
@@ -836,7 +836,7 @@ namespace WebsitePanel.Providers.Mail
                 Enabled = Convert.ToInt32((object) accountObject.GetProperty("U_AccountDisabled")) == 0,
                 ForwardingEnabled = !string.IsNullOrWhiteSpace(accountObject.GetProperty("U_ForwardTo")) || string.IsNullOrWhiteSpace(accountObject.GetProperty("U_RemoteAddress")) && Convert.ToBoolean((object) accountObject.GetProperty("U_UseRemoteAddress")),
                 IsDomainAdmin = Convert.ToBoolean((object) accountObject.GetProperty("U_DomainAdmin")),
-                MaxMailboxSize = Convert.ToInt32((object) accountObject.GetProperty("U_MaxBoxSize"))/1024,
+                MaxMailboxSize = Convert.ToBoolean((object) accountObject.GetProperty("U_MaxBox")) ? Convert.ToInt32((object) accountObject.GetProperty("U_MaxBoxSize"))/1024 : 0,
                 Password = accountObject.GetProperty("U_Password"),
                 ResponderEnabled = Convert.ToInt32((object) accountObject.GetProperty("U_Respond")) > 0,
                 QuotaUsed = Convert.ToInt64((object) accountObject.GetProperty("U_MailBoxSize")),
@@ -923,7 +923,8 @@ namespace WebsitePanel.Providers.Mail
             accountObject.SetProperty("U_AccountDisabled", mailbox.IceWarpAccountState);
             accountObject.SetProperty("U_DomainAdmin", mailbox.IsDomainAdmin);
             accountObject.SetProperty("U_Password", mailbox.Password);
-            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize);
+            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize*1024);
+            accountObject.SetProperty("U_MaxBox", mailbox.MaxMailboxSize > 0 ? "1" : "0");
             accountObject.SetProperty("U_MaxMessageSize", mailbox.MaxMessageSizeMegaByte*1024);
             accountObject.SetProperty("U_MegabyteSendLimit", mailbox.MegaByteSendLimit);
             accountObject.SetProperty("U_NumberSendLimit", mailbox.NumberSendLimit);
@@ -1035,7 +1036,7 @@ namespace WebsitePanel.Providers.Mail
                 {
                     var forwardTo = GetForwardToAddressFromAccountObject(accountObject);
                     var aliases = GetAliasListFromAccountObject(accountObject) as IEnumerable<string>;
-                    aliasList.AddRange(aliases.Where(a => a != forwardTo).Select(alias => new MailAlias {Name = alias + "@" + domainName, ForwardTo = forwardTo + "@" + domainName}));
+                    aliasList.AddRange(aliases.Where(a => a + "@" + domainName != forwardTo).Select(alias => new MailAlias {Name = alias + "@" + domainName, ForwardTo = forwardTo}));
                 }
 
                 accountObject.FindDone();

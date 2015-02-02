@@ -11,7 +11,7 @@
 	<Columns>
 		<asp:TemplateField SortExpression="ExternalIP" HeaderText="gvIPAddressesExternalIP">
 			<ItemTemplate>
-				<asp:hyperlink NavigateUrl='<%# EditModuleUrl("AddressID", Eval("AddressID").ToString(), "edit_ip") %>' runat="server" ID="lnkEdit">
+				<asp:hyperlink NavigateUrl='<%# EditModuleUrl("AddressID", Eval("AddressID").ToString(), "edit_ip", "ReturnUrl", GetReturnUrl()) %>' runat="server" ID="lnkEdit">
 					<%# Eval("ExternalIP") %>
 				</asp:hyperlink>
 			</ItemTemplate>

@@ -123,7 +123,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                         chkEnableArchiving.Checked = plan.EnableArchiving;
                         archiveQuota.QuotaValue = plan.ArchiveSizeMB;
                         archiveWarningQuota.ValueKB = plan.ArchiveWarningPct;
-
+                        chkEnableForceArchiveDeletion.Checked = plan.EnableForceArchiveDeletion;
                     }
 
                     locTitle.Text = plan.MailboxPlan;
@@ -315,11 +315,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
 
                     plan.EnableArchiving = chkEnableArchiving.Checked;
-
                     plan.ArchiveSizeMB = archiveQuota.QuotaValue;
                     plan.ArchiveWarningPct = archiveWarningQuota.ValueKB;
-                    if ((plan.ArchiveWarningPct == 0)) plan.ArchiveWarningPct = 100;
-
+                    if ((plan.ArchiveWarningPct == 0))
+                    {
+                        plan.ArchiveWarningPct = 100;
+                    }
+                    plan.EnableForceArchiveDeletion = chkEnableForceArchiveDeletion.Checked;
                 }
 
                 int planId = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,

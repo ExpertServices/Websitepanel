@@ -43,6 +43,18 @@ namespace WebsitePanel.Portal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                gvIPAddresses.PageIndex = PageIndex;
+            }
+        }
+
+        public int PageIndex
+        {
+            get
+            {
+                return PanelRequest.GetInt("IpAddressesPage", 0);
+            }
         }
 
         public string EditModuleUrl(string key, string keyVal, string ctrlKey)
@@ -55,9 +67,18 @@ namespace WebsitePanel.Portal
             return HostModule.EditUrl(key, keyVal, ctrlKey, key2 + "=" + keyVal2);
         }
 
+        public string GetReturnUrl()
+        {
+            var returnUrl = Request.Url
+                .AddParameter("IpAddressesCollapsed", "False")
+                .AddParameter("IpAddressesPage", gvIPAddresses.PageIndex.ToString());
+
+            return Uri.EscapeDataString("~" + returnUrl.PathAndQuery);
+        }
+
         protected void btnAdd_Click(object sender, EventArgs e)
         {
-            Response.Redirect(HostModule.EditUrl("ServerID", PanelRequest.ServerId.ToString(), "add_ip"), true);
+            Response.Redirect(EditModuleUrl("ServerID", PanelRequest.ServerId.ToString(), "add_ip", "ReturnUrl", GetReturnUrl()), true);
         }
     }
 }

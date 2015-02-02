@@ -2,6 +2,9 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/RDSCollectionApps.ascx" TagName="CollectionApps" TagPrefix="wsp"%>
+<%@ Register Src="UserControls/RDSCollectionTabs.ascx" TagName="CollectionTabs" TagPrefix="wsp" %>
+<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
+<%@ Register Src="../UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
 <script type="text/javascript" src="/JavaScript/jquery.min.js?v=1.4.4"></script>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -15,30 +18,26 @@
 				<div class="Title">
 					<asp:Image ID="imgEditRDSCollection" SkinID="EnterpriseStorageSpace48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit RDS Collection"></asp:Localize>
+                    -
+					<asp:Literal ID="litCollectionName" runat="server" Text="" />
 				</div>
-				<div class="FormContentRDS">
-				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
+				<div class="FormBody">
+                    <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="rds_collection_edit_apps" />
+				    <wsp:SimpleMessageBox id="messageBox" runat="server" />                    
 
-					<table>
-					        <tr>
-						        <td class="FormLabel150" style="width: 100px;"><asp:Localize ID="locCollectionName" runat="server" meta:resourcekey="locCollectionName" Text="Collection Name"></asp:Localize></td>
-						        <td class="FormLabel150">
-                                    <asp:Localize ID="locCName" runat="server" Text="RDS Collection 1" />
-						        </td>
-					        </tr>
-					    </table> 
-
-                    <fieldset id="RemoteAppsPanel" runat="server">
-                        <legend><asp:Localize ID="locRemoteAppsSection" runat="server" meta:resourcekey="locRemoteAppsSection" Text="Remote Applications"></asp:Localize></legend>
+                    <wsp:CollapsiblePanel id="secRdsApplications" runat="server"
+                        TargetControlID="panelRdsApplications" meta:resourcekey="secRdsApplications" Text="">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelRdsApplications">                                                
                         <div style="padding: 10px;">
                             <wsp:CollectionApps id="remoreApps" runat="server" />
-                        </div>  
-                    </fieldset>
-                      
-				    <div class="FormFooter">
-					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="SaveRDSCollectoin" OnClick="btnSave_Click"></asp:Button>
-					    <asp:ValidationSummary ID="valSummary" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="SaveRDSCollectoin" />
-				    </div>
+                        </div>                            
+                    </asp:Panel>
+                    <div class="FormFooterClean">
+                        <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SaveRDSCollection" 
+                            OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
+			        </div>   
 				</div>
 			</div>
 		</div>

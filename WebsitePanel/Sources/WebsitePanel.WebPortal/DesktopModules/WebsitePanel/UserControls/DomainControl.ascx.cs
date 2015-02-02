@@ -77,11 +77,15 @@ namespace WebsitePanel.Portal.UserControls
             get
             {
                 var domainName = txtDomainName.Text.Trim();
-                if (IsSubDomain)
+                if (!IsSubDomain) return domainName;
+
+                if (string.IsNullOrEmpty(domainName))
                 {
-                    domainName += "." + DomainsList.SelectedValue;
+                    // Only return selected domain from DomainsList when no subdomain is entered yet
+                    return DomainsList.SelectedValue;
                 }
-                return domainName;
+
+                return domainName + "." + DomainsList.SelectedValue;
             }
             set { txtDomainName.Text = value; }
         }

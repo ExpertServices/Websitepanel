@@ -17,8 +17,9 @@ namespace WebsitePanel.WebDav.Core
             DateTime CreationDate { get; }
             string CreatorDisplayName { get; }
             string DisplayName { get; }
+            bool IsRootItem { get; set; }
             Uri Href { get; }
-            ItemType ItemType { get; }
+            ItemType ItemType { get;}
             DateTime LastModified { get; }
             Property[] Properties { get; }
 
@@ -59,7 +60,10 @@ namespace WebsitePanel.WebDav.Core
             {
                 get
                 {
-                    string displayName = _href.AbsoluteUri.Replace(_baseUri.AbsoluteUri, "");
+                    var href = HttpUtility.UrlDecode(_href.AbsoluteUri);
+                    var baseUri = HttpUtility.UrlDecode(_baseUri.AbsoluteUri);
+
+                    string displayName = href.Replace(baseUri, "");
                     displayName = Regex.Replace(displayName, "\\/$", "");
                     Match displayNameMatch = Regex.Match(displayName, "([\\/]+)$");
                     if (displayNameMatch.Success)
@@ -69,6 +73,8 @@ namespace WebsitePanel.WebDav.Core
                     return HttpUtility.UrlDecode(displayName);
                 }
             }
+
+            public bool IsRootItem { get; set; }
 
             public Uri Href
             {

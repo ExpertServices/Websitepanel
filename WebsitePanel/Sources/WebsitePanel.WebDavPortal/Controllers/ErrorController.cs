@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
-using WebsitePanel.WebDavPortal.Config;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDavPortal.Models;
 
 namespace WebsitePanel.WebDavPortal.Controllers

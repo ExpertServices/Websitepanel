@@ -11,6 +11,8 @@
     <AssemblyName>WebsitePanel.WebDav.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,35 +32,167 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Scheduler Domains\WebsitePanel\Bin\Microsoft.Web.Services3.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.2\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.2\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebsitePanel.EnterpriseServer.Base">
+      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.EnterpriseServer.Client">
+      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.Providers.Base">
+      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.Providers.Base.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\Entities\AbstractConfigCollection.cs" />
+    <Compile Include="Config\Entities\ElementsRendering.cs" />
+    <Compile Include="Config\Entities\FileIconsDictionary.cs" />
+    <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
+    <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
+    <Compile Include="Config\Entities\SessionKeysCollection.cs" />
+    <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
+    <Compile Include="Config\IWebDavAppConfig.cs" />
+    <Compile Include="Config\WebConfigSections\ApplicationNameElement.cs" />
+    <Compile Include="Config\WebConfigSections\AuthTimeoutCookieNameElement.cs" />
+    <Compile Include="Config\WebConfigSections\ElementsRenderingElement.cs" />
+    <Compile Include="Config\WebConfigSections\FileIconsElement.cs" />
+    <Compile Include="Config\WebConfigSections\FileIconsElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OfficeOnlineElement.cs" />
+    <Compile Include="Config\WebConfigSections\OfficeOnlineElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\SessionKeysElement.cs" />
+    <Compile Include="Config\WebConfigSections\SessionKeysElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\UserDomainElement.cs" />
+    <Compile Include="Config\WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
+    <Compile Include="Config\WebConfigSections\WebdavRootElement.cs" />
+    <Compile Include="Config\WebConfigSections\WebsitePanelConstantUserElement.cs" />
+    <Compile Include="Config\WebDavAppConfigManager.cs" />
+    <Compile Include="Entities\Owa\CheckFileInfo.cs" />
+    <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
+    <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="IConnectionSettings.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Interfaces\Security\IWebDavAuthorizationService.cs" />
+    <Compile Include="Managers\AccessTokenManager.cs" />
+    <Compile Include="Interfaces\Managers\IAccessTokenManager.cs" />
+    <Compile Include="Interfaces\Managers\IWebDavManager.cs" />
+    <Compile Include="Interfaces\Owa\IWopiServer.cs" />
+    <Compile Include="Interfaces\Security\IAuthenticationService.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="IResumableUpload.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="LockUriTokenPair.cs" />
+    <Compile Include="Managers\WebDavManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="PropertyName.cs" />
+    <Compile Include="Resources\HttpErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HttpErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\WebDavResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WebDavResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Authorization\Enums\WebDavPermissions.cs" />
+    <Compile Include="Security\Authorization\WebDavAuthorizationService.cs" />
+    <Compile Include="Security\Cryptography\CryptoUtils.cs" />
+    <Compile Include="Security\Cryptography\ICryptography.cs" />
+    <Compile Include="Security\Authentication\FormsAuthenticationService.cs" />
+    <Compile Include="Security\Authentication\Principals\WspPrincipal.cs" />
+    <Compile Include="Owa\WopiServer.cs" />
     <Compile Include="WebDavSession.cs" />
+    <Compile Include="WspContext.cs" />
+    <Compile Include="Wsp\Framework\WSP.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\ActiveDirectory\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebsitePanel.WebPortal\WebsitePanel.WebPortal.csproj">
+      <Project>{C99EFB18-FFE7-45BB-8CA8-29336F3E8C68}</Project>
+      <Name>WebsitePanel.WebPortal</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\HttpErrors.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>HttpErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\WebDavResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WebDavResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

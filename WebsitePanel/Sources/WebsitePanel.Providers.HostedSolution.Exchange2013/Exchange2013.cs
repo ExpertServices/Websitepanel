@@ -7482,6 +7482,43 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Archiving
 
+        public ResultObject ExportMailBox(string organizationId, string accountName, string storagePath)
+        {
+            return ExportMailBoxInternal(organizationId, accountName, storagePath);
+        }
+
+        public ResultObject ExportMailBoxInternal(string organizationId, string accountName, string storagePath)
+        {
+            ExchangeLog.LogStart("ExportMailBoxInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd = new Command("New-MailboxExportRequest");
+                cmd.Parameters.Add("Mailbox", accountName);
+                cmd.Parameters.Add("FilePath", storagePath);
+
+                ExecuteShellCommand(runSpace, cmd, res);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+
+            ExchangeLog.LogEnd("ExportMailBoxInternal");
+
+            return res;
+        }
+
         public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
             return SetMailBoxArchivingInternal(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);

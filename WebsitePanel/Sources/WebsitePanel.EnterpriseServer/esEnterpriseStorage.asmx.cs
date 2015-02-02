@@ -56,6 +56,29 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esEnterpriseStorage : WebService
     {
+        [WebMethod]
+        public int AddWebDavAccessToken(WebDavAccessToken accessToken)
+        {
+           return EnterpriseStorageController.AddWebDavAccessToken(accessToken);
+        }
+
+        [WebMethod]
+        public void DeleteExpiredWebDavAccessTokens()
+        {
+            EnterpriseStorageController.DeleteExpiredWebDavAccessTokens();
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenById(int id)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenById(id);
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenByAccessToken(accessToken);
+        }
 
         [WebMethod]
         public bool CheckFileServicesInstallation(int serviceId)
