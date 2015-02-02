@@ -48,6 +48,9 @@ namespace WebsitePanel.Portal
     {
         XmlNodeList xmlIcons = null;
         DataSet myPackages;
+        int currentPackage;
+        int currentUser;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             
@@ -68,17 +71,26 @@ namespace WebsitePanel.Portal
                     ddlPackageSelect.DataTextField = myPackages.Tables[0].Columns[2].ColumnName;
                     ddlPackageSelect.DataValueField = myPackages.Tables[0].Columns[0].ColumnName;
                     ddlPackageSelect.DataBind();
+                    if(Session["currentPackage"] == null || ((int)Session["currentUser"]) != PanelSecurity.SelectedUserId) {
+                        if(ddlPackageSelect.Items.Count > 0) {
+                            Session["currentPackage"] = ddlPackageSelect.Items[0].Value;
+                            Session["currentUser"] = PanelSecurity.SelectedUserId;
+                        }
+                    } else {
+                        currentPackage = int.Parse(Session["currentPackage"].ToString());
+                        currentUser = int.Parse(Session["currentUser"].ToString());
+                        ddlPackageSelect.SelectedValue = currentPackage.ToString();
+                    }
                 }
                 // USER
                 UserPackagesPanel.Visible = true;
-                if(!IsPostBack) 
-                {
+                if(ddlPackageSelect.UniqueID != Page.Request.Params["__EVENTTARGET"]) { 
                     if(ddlPackageSelect.Items.Count == 0) {
                         litEmptyList.Text = GetLocalizedString("gvPackages.Empty");
                         EmptyPackagesList.Visible = true;
                     } else {
                         ddlPackageSelect.Visible = true;
-                        myPackages = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
+                        myPackages = new PackagesHelper().GetMyPackage(int.Parse(Session["currentPackage"].ToString()));
                         PackagesList.DataSource = myPackages;
                         PackagesList.DataBind();
                     }
@@ -241,8 +253,8 @@ namespace WebsitePanel.Portal
         }
 
         public void openSelectedPackage(Object sender, EventArgs e) {
-            PackagesList.DataSource = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
-            PackagesList.DataBind();
+            Session["currentPackage"] = int.Parse(ddlPackageSelect.SelectedValue);
+            Response.Redirect(Request.RawUrl);
         }
     }
 }
