@@ -95,3 +95,55 @@ textarea {
 #message-area {
     margin-top: 15px;
 }
+
+/* Theme Mods */
+
+input,div{border-radius:0px!important;}
+.btn-primary:active,.btn-primary.active,.open>.dropdown-toggle.btn-primary {
+    background-image: none;
+	font-family: 'Segoe UI Light','Open Sans',Arial;    
+	color: #fff;    
+	border: 1px solid #5e86aa;    
+	background: #6598c5;    
+	font-weight: 300;    
+	text-align: center;    
+	vertical-align: middle;    
+	cursor: pointer;    
+	white-space: nowrap;    
+	padding: 6px 12px;    
+	font-size: 14px;    
+	line-height: 1.428571429;
+    border-radius: 0px;
+}
+
+.navbar-inverse .navbar-text {
+    color: #FFFFFF;
+}
+
+.navbar-inverse {
+  background-color: #2e8bcc;
+  border-color: #2e8bcc;
+}
+
+.navbar-inverse .navbar-brand, .navbar-text, #logout{
+  color: #FFFFFF;
+  opacity: 0.8;
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus, .navbar-text:hover, #logout:hover {
+  color: #fff;
+  background-color: transparent;
+  opacity: 1;
+}
+div#breadcrumb_wrapper {
+  padding: 10px 5px 12px 25px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+}
+
+div#breadcrumb_wrapper a:last-child {
+   color: #999;
+}
+.form-control {
+    border-radius: 4px;
+}
