@@ -13,6 +13,24 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         public long Size { get; set; }
         [DataMember]
         public string Version { get; set; }
+        [DataMember]
+        public bool SupportsCoauth { get; set; }
+        [DataMember]
+        public bool SupportsCobalt { get; set; }
+        [DataMember]
+        public bool SupportsFolders { get; set; }
+        [DataMember]
+        public bool SupportsLocks { get; set; }
+        [DataMember]
+        public bool SupportsScenarioLinks { get; set; }
+        [DataMember]
+        public bool SupportsSecureStore { get; set; }
+        [DataMember]
+        public bool SupportsUpdate { get; set; }
+        [DataMember]
+        public bool UserCanWrite { get; set; }
+        //[DataMember]
+        //public bool ReadOnly { get; set; }
 
         //[DataMember]
         //public string SHA256 { get; set; }
@@ -85,20 +103,7 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //[DataMember]
         //public string SignoutUrl { get; set; }
 
-        //[DataMember]
-        //public bool SupportsCoauth { get; set; }
-        //[DataMember]
-        //public bool SupportsCobalt { get; set; }
-        //[DataMember]
-        //public bool SupportsFolders { get; set; }
-        //[DataMember]
-        //public bool SupportsLocks { get; set; }
-        //[DataMember]
-        //public bool SupportsScenarioLinks { get; set; }
-        //[DataMember]
-        //public bool SupportsSecureStore { get; set; }
-        //[DataMember]
-        //public bool SupportsUpdate { get; set; }
+
         //[DataMember]
         //public string TenantId { get; set; }
         //[DataMember]

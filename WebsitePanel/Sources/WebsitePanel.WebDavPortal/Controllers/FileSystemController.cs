@@ -14,6 +14,7 @@ using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
+using WebsitePanel.WebDav.Core.Security.Authorization.Enums;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDavPortal.CustomAttributes;
 using WebsitePanel.WebDavPortal.Extensions;
@@ -84,14 +85,21 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
         public ActionResult ShowOfficeDocument(string org, string pathPart = "")
         {
+            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
             var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
 
             string fileUrl = WebDavAppConfigManager.Instance.WebdavRoot+ org + "/" + pathPart.TrimStart('/');
             var accessToken = _tokenManager.CreateToken(WspContext.User, pathPart);
 
-            string wopiSrc = Server.UrlDecode(Url.RouteUrl(OwaRouteNames.CheckFileInfo, new { accessTokenId = accessToken.Id }, Request.Url.Scheme));
+            var urlPart = Url.HttpRouteUrl(OwaRouteNames.CheckFileInfo, new {accessTokenId = accessToken.Id});
+            var url = new Uri(Request.Url, urlPart).ToString();
 
-            var uri = string.Format("{0}/{1}?WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpener.OwaOpener, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
+            string wopiSrc = Server.UrlDecode(url);
+
+            string owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaEditor : owaOpener.OwaView;
+
+            var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 
             return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
         }

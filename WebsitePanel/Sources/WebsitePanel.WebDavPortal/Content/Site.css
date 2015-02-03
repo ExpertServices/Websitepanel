@@ -147,3 +147,14 @@ div#breadcrumb_wrapper a:last-child {
 .form-control {
     border-radius: 4px;
 }
+
+.header-logo {
+    float: none;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.header-portal-title {
+    float: none;
+    display: inline-block;
+}
