@@ -26,22 +26,6 @@ namespace WebsitePanel.WebDavPortal
 
             #endregion
 
-            #region Owa
-
-            routes.MapRoute(
-                name: OwaRouteNames.GetFile,
-                url: "owa/wopi*/files/{accessTokenId}/contents",
-                defaults: new { controller = "Owa", action = "GetFile" }
-                );
-
-            routes.MapRoute(
-                name: OwaRouteNames.CheckFileInfo,
-                url: "owa/wopi*/files/{accessTokenId}",
-                defaults: new { controller = "Owa", action = "CheckFileInfo" }
-                );
-
-            #endregion
-
             routes.MapRoute(
                 name: FileSystemRouteNames.DeleteFiles,
                 url: "files-group-action/delete",
