@@ -19,6 +19,25 @@ $(document).on('click', '.element-container', function (e) {
 
     } else {
 
+        if (isMobileDevice()) {
+            var now = new Date().getTime();
+            var lastTouch = $(this).data('lastTouch') || now + 1;
+            var delta = now - lastTouch;
+
+            if (delta < 500 && delta > 0) {
+                wsp.fileBrowser.openItem(this);
+
+                $(this).data('lastTouch', 0);
+
+            } else {
+                wsp.fileBrowser.clearAllSelectedItems();
+
+                wsp.fileBrowser.selectItem(this);
+            }
+
+            $(this).data('lastTouch', now);
+        }
+
         wsp.fileBrowser.clearAllSelectedItems();
 
         wsp.fileBrowser.selectItem(this);
@@ -52,3 +71,7 @@ $(document).click(function (event) {
         wsp.fileBrowser.refreshDeletionBlock();
     }
 })
+
+function isMobileDevice() {
+    return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+}

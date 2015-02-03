@@ -97,7 +97,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             string wopiSrc = Server.UrlDecode(url);
 
-            string owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaEditor : owaOpener.OwaView;
+            string owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaView : owaOpener.OwaView;
 
             var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 

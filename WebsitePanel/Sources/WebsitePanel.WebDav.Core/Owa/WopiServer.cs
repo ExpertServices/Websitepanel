@@ -28,7 +28,7 @@ namespace WebsitePanel.WebDav.Core.Owa
             var cFileInfo = new CheckFileInfo
             {
                 BaseFileName = resource.DisplayName,
-                OwnerId = @"4257508bfe174aa28b461536d8b6b648",// WspContext.User.Login,
+                OwnerId = WspContext.User.Login,
                 Size = resource.ContentLength,
                 Version = DateTime.Now.ToString("s"),
                 SupportsCoauth = false,
