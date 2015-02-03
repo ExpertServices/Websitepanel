@@ -73,13 +73,9 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> Cobalt(int accessTokenId)
+        public HttpResponseMessage Cobalt(int accessTokenId)
         {
-            var memoryStream = new MemoryStream();
-
-            await Request.Content.CopyToAsync(memoryStream);
-
-            var responseBatch = _cobaltManager.ProcessRequest(accessTokenId, memoryStream);
+            var responseBatch = _cobaltManager.ProcessRequest(accessTokenId, HttpContext.Current.Request.InputStream);
 
             var correlationId = Request.Headers.GetValues("X-WOPI-CorrelationID").FirstOrDefault() ?? "";
 
@@ -90,11 +86,9 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
                 {
                     responseBatch.CopyTo(stream);
                     stream.Close();
-                });
+                }, "application/octet-stream");
 
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             response.Content.Headers.ContentLength = responseBatch.Length;
-
             response.Headers.Add("X-WOPI-CorellationID", correlationId);
             response.Headers.Add("request-id", correlationId);
 

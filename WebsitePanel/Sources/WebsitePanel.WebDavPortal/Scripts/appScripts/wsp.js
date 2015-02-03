@@ -19,31 +19,25 @@ $(document).on('click', '.element-container', function (e) {
 
     } else {
 
-        if (isMobileDevice()) {
-            var now = new Date().getTime();
-            var lastTouch = $(this).data('lastTouch') || now + 1;
-            var delta = now - lastTouch;
-
-            if (delta < 500 && delta > 0) {
-                wsp.fileBrowser.openItem(this);
-
-                $(this).data('lastTouch', 0);
-
-            } else {
-                wsp.fileBrowser.clearAllSelectedItems();
-
-                wsp.fileBrowser.selectItem(this);
-            }
-
-            $(this).data('lastTouch', now);
-        }
-
         wsp.fileBrowser.clearAllSelectedItems();
 
         wsp.fileBrowser.selectItem(this);
     }
 
     wsp.fileBrowser.refreshDeletionBlock();
+});
+
+$(document).on('touchstart', '.element-container', function(e) {
+    var now = new Date().getTime();
+    var lastTouch = $(this).data('lastTouch') || now + 1;
+    var delta = now - lastTouch;
+
+    if (delta < 300 && delta > 0) {
+        wsp.fileBrowser.openItem(this);
+        $(this).data('lastTouch', 0);
+    }
+
+    $(this).data('lastTouch', now);
 });
 
 //Double click file open
