@@ -272,6 +272,14 @@ namespace WebsitePanel.EnterpriseServer
 
                     // delete service item
                     PackageController.DeletePackageItem(zoneItemId);
+
+                    // Delete also all seconday service items
+                    var zoneItems = PackageController.GetPackageItemsByType(zoneItem.PackageId, ResourceGroups.Dns, typeof (SecondaryDnsZone));
+
+                    foreach (var item in zoneItems.Where(z => z.Name == zoneItem.Name))
+                    {
+                        PackageController.DeletePackageItem(item.Id);
+                    }
                 }
                 catch (Exception ex)
                 {

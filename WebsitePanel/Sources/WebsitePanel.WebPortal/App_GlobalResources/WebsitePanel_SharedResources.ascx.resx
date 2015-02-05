@@ -5335,6 +5335,9 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Success.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Succesfully set default mailbox plan.</value>
+  </data>
   <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
     <value>Lync plan update failed</value>
   </data>

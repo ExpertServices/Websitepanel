@@ -53,6 +53,8 @@ namespace WebsitePanel.SchedulerServiceInstaller
         {
             string testConnectionString = session["AUTHENTICATIONTYPE"].Equals("Windows Authentication") ? GetConnectionString(session["SERVERNAME"], "master") : GetConnectionString(session["SERVERNAME"], "master", session["LOGIN"], session["PASSWORD"]);
 
+            testConnectionString = testConnectionString.Replace(CustomDataDelimiter, ";");
+
             if (CheckConnection(testConnectionString))
             {
                 session["CORRECTCONNECTION"] = "1";
