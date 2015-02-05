@@ -82,6 +82,12 @@ namespace WebsitePanel.Providers.HostedSolution
         private int createdProfessionalCRMUsers;
         private int allocatedProfessionalCRMUsers;
 
+        private int allocatedDeletedUsers;
+        private int deletedUsers;
+
+        private int allocatedDeletedUsersBackupStorageSpace;
+        private int usedDeletedUsersBackupStorageSpace;
+
         public int CreatedProfessionalCRMUsers
         {
             get { return createdProfessionalCRMUsers; }
@@ -370,7 +376,35 @@ namespace WebsitePanel.Providers.HostedSolution
             set { createdResourceMailboxes = value; }
         }
 
+        public int AllocatedDeletedUsers
+        {
+            get { return allocatedDeletedUsers; }
+            set { allocatedDeletedUsers = value; }
+        }
 
+        public int DeletedUsers
+        {
+            get { return deletedUsers; }
+            set { deletedUsers = value; }
+        }
+
+        public int AllocatedDeletedUsersBackupStorageSpace
+        {
+            get { return allocatedDeletedUsersBackupStorageSpace; }
+            set { allocatedDeletedUsersBackupStorageSpace = value; }
+        }
+        public int UsedDeletedUsersBackupStorageSpace
+        {
+            get { return usedDeletedUsersBackupStorageSpace; }
+            set { usedDeletedUsersBackupStorageSpace = value; }
+        }
+        
+        public int CreatedRdsServers { get; set; }
+        public int CreatedRdsCollections { get; set; }
+        public int CreatedRdsUsers { get; set; }
+        public int AllocatedRdsServers { get; set; }
+        public int AllocatedRdsCollections { get; set; }
+        public int AllocatedRdsUsers { get; set; }               
 	}
 }
 

@@ -32,4 +32,8 @@
             </asp:DropDownList>
         </td>
     </tr>
+    <tr>
+        <td class="SubHead" nowrap="true"><asp:Label runat="server" ID="Label2" meta:resourcekey="lblArchiveStorageSpace" /></td>
+        <td><asp:TextBox  runat="server" ID="txtArchiveStorageSpace" MaxLength="100" Width="200px" /></td>
+    </tr>
 </table>

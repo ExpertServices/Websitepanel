@@ -120,6 +120,7 @@
     <Compile Include="HostedSolution\ServiceLevel.cs" />
     <Compile Include="HostedSolution\CRMLycenseTypes.cs" />
     <Compile Include="HostedSolution\ESPermission.cs" />
+    <Compile Include="HostedSolution\WebDavAccessToken.cs" />
     <Compile Include="Log\LogRecord.cs" />
     <Compile Include="Packages\ServiceLevelQuotaValueInfo.cs" />
     <Compile Include="Packages\HostingPlanContext.cs" />

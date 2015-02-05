@@ -120,6 +120,8 @@
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUser.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUsersPaged.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="OS\MappedDrivesPaged.cs" />
     <Compile Include="OS\MappedDrive.cs" />
@@ -129,9 +131,12 @@
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsCollectionSettings.cs" />
+    <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsUserSession.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />
     <Compile Include="RemoteDesktopServices\SessionHostServer.cs" />
     <Compile Include="RemoteDesktopServices\StartMenuApp.cs" />

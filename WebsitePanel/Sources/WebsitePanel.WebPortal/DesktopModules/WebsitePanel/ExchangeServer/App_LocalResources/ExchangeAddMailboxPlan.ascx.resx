@@ -222,4 +222,7 @@
   <data name="secMailboxPlanArchiving.Text" xml:space="preserve">
     <value>Retention policy</value>
   </data>
+  <data name="chkEnableForceArchiveDeletion" xml:space="preserve">
+    <value>Force Archive on Mailbox Deletion</value>
+  </data>
 </root>

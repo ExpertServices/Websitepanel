@@ -62,9 +62,9 @@ namespace WebsitePanel.Portal.RDS
                     return;
                 }
 
-                RdsCollection collection = new RdsCollection{ Name = txtCollectionName.Text, Servers = servers.GetServers(), Description = "" };
-                ES.Services.RDS.AddRdsCollection(PanelRequest.ItemID, collection);
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
+                RdsCollection collection = new RdsCollection{ Name = txtCollectionName.Text, DisplayName = txtCollectionName.Text, Servers = servers.GetServers(), Description = "" };
+                int collectionId = ES.Services.RDS.AddRdsCollection(PanelRequest.ItemID, collection);                
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID));
             }
             catch (Exception ex)
             {

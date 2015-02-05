@@ -65,5 +65,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         bool SetApplicationUsers(string collectionName, RemoteApplication remoteApp, string[] users);
         bool CheckRDSServerAvaliable(string hostname);
         List<string> GetServersExistingInCollections();
+        void EditRdsCollectionSettings(RdsCollection collection);
+        List<RdsUserSession> GetRdsUserSessions(string collectionName);
+        void LogOffRdsUser(string unifiedSessionId, string hostServer);
+        List<string> GetRdsCollectionSessionHosts(string collectionName);
     }
 }

@@ -4,8 +4,8 @@ using Ninject;
 using Ninject.Activation;
 using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Managers;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
-using WebsitePanel.WebDavPortal.Exceptions;
 using WebsitePanel.WebDavPortal.Models;
 
 namespace WebsitePanel.WebDavPortal.DependencyInjection.Providers

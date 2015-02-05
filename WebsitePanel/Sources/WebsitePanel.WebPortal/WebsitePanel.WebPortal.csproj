@@ -114,6 +114,7 @@
     <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_storage_settings_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\deleted_user_48.png" />
     <Content Include="App_Themes\Default\Icons\disclaimers_48.png" />
     <Content Include="App_Themes\Default\Icons\domains_48.png" />
     <Content Include="App_Themes\Default\Icons\enterprisestorage_drive_maps_48.png" />

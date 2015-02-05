@@ -3346,6 +3346,12 @@
   <data name="Quota.HostedSolution.SecurityGroups" xml:space="preserve">
     <value>Security Groups per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.DeletedUsers" xml:space="preserve">
+    <value>Deleted Users per Organization</value>
+  </data>
+  <data name="Quota.HostedSolution.DeletedUsersBackupStorageSpace" xml:space="preserve">
+    <value>Deleted Users Backup Storage Space per Organization, Mb</value>
+  </data>
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>
   </data>
@@ -5329,6 +5335,9 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Success.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Succesfully set default mailbox plan.</value>
+  </data>
   <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
     <value>Lync plan update failed</value>
   </data>
@@ -5590,6 +5599,9 @@
   <data name="Quota.RDS.Users" xml:space="preserve">
     <value>Remote Desktop Users</value>
   </data>
+  <data name="Quota.RDS.Collections" xml:space="preserve">
+    <value>Remote Desktop Collections</value>
+  </data>
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
@@ -5628,5 +5640,17 @@
   </data>
   <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
     <value>Collection not created</value>
+  </data>
+  <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
+    <value>RDS Collection settings not updated</value>
+  </data>
+  <data name="ERROR.REMOTEAPPUSERS_NOT_UPDATED" xml:space="preserve">
+    <value>Remote application users not updated</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
+    <value>RDS User logging off error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
+    <value>GEtting RDS User sessions error</value>
   </data>
 </root>

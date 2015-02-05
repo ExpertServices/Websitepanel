@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace WebsitePanel.WebDavPortal.WebConfigSections
+namespace WebsitePanel.WebDav.Core.Config.WebConfigSections
 {
     public class SessionKeysElement : ConfigurationElement
     {
@@ -10,6 +10,8 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         public const string AccountInfoKey = "AccountInfoSessionKey";
         public const string AuthTicketKey = "AuthTicketKey";
         public const string WebDavManagerKey = "WebDavManagerSessionKey";
+        public const string UserGroupsKey = "UserGroupsKey";
+        public const string WebDavRootFolderPermissionsKey = "WebDavRootFolderPermissionsKey";
         public const string ResourseRenderCountKey = "ResourseRenderCountSessionKey";
         public const string ItemIdSessionKey = "ItemId";
 

@@ -881,7 +881,7 @@ namespace WebsitePanel.Providers.Web
 			#endregion
 
 			#region PHP 5 script mappings
-		    if (virtualDir.PhpInstalled.StartsWith(PHP_5))
+		    if (!string.IsNullOrEmpty(virtualDir.PhpInstalled) && virtualDir.PhpInstalled.StartsWith(PHP_5))
 		    {
 		        if (PhpMode == Constants.PhpMode.FastCGI && virtualDir.PhpInstalled.Contains('|'))
 		        {
@@ -1207,6 +1207,25 @@ namespace WebsitePanel.Providers.Web
                         site.ColdFusionVersion = "9";
                         site.ColdFusionAvailable = true;
                     }
+					
+                    if (IsColdFusion10Installed())
+                    {
+                        site.ColdFusionVersion = "10";
+                        site.ColdFusionAvailable = true;
+                    }
+					
+                    if (IsColdFusion11Installed())
+                    {
+                        site.ColdFusionVersion = "11";
+                        site.ColdFusionAvailable = true;
+                    }
+					
+                    if (IsColdFusion12Installed())
+                    {
+                        site.ColdFusionVersion = "12";
+                        site.ColdFusionAvailable = true;
+                    }
+					
                 }
                 else
                 {
@@ -1477,17 +1496,20 @@ namespace WebsitePanel.Providers.Web
                 if (site.ColdFusionInstalled)
                 {
 
-                    var cfElement = handlersCollection.CreateElement("add");
-
-                    cfElement["name"] = "coldfusion";
-                    cfElement["modules"] = "IsapiModule";
-                    cfElement["path"] = "*";
-                    cfElement["scriptProcessor"] = base.ColdFusionPath;
-                    cfElement["verb"] = "*";
-                    cfElement["resourceType"] = "Unspecified";
-                    cfElement["requireAccess"] = "None";
-                    cfElement["preCondition"] = "bitness64";
-                    handlersCollection.AddAt(0, cfElement);
+                    if (IsColdFusion7Installed() || IsColdFusion8Installed() || IsColdFusion9Installed()) 
+					{
+						var cfElement = handlersCollection.CreateElement("add");
+	
+	                    cfElement["name"] = "coldfusion";
+	                    cfElement["modules"] = "IsapiModule";
+	                    cfElement["path"] = "*";
+	                    cfElement["scriptProcessor"] = base.ColdFusionPath;
+	                    cfElement["verb"] = "*";
+	                    cfElement["resourceType"] = "Unspecified";
+	                    cfElement["requireAccess"] = "None";
+	                    cfElement["preCondition"] = "bitness64";
+	                    handlersCollection.AddAt(0, cfElement);
+					}
 
 
                 }
@@ -2072,7 +2094,7 @@ namespace WebsitePanel.Providers.Web
 		public new void GrantWebDeployPublishingAccess(string siteName, string accountName, string accountPassword)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			//GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
+			GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
 			//
 			EnforceDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -2086,7 +2108,7 @@ namespace WebsitePanel.Providers.Web
 		public new void RevokeWebDeployPublishingAccess(string siteName, string accountName)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			//RevokeWebManagementAccess(siteName, accountName);
+			RevokeWebManagementAccess(siteName, accountName);
 			//
 			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -3336,7 +3358,14 @@ namespace WebsitePanel.Providers.Web
 			}
 
 			WebVirtualDirectory flashRemotingDir = new WebVirtualDirectory();
-			flashRemotingDir.Name = "JRunScripts";
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					flashRemotingDir.Name = "jakarta";
+				}
+			else
+				{
+					flashRemotingDir.Name = "JRunScripts";
+				}			
 			flashRemotingDir.ContentPath = CFFlashRemotingDirPath;
 			flashRemotingDir.EnableAnonymousAccess = true;
 			flashRemotingDir.EnableWindowsAuthentication = true;
@@ -3354,8 +3383,17 @@ namespace WebsitePanel.Providers.Web
 
 		public override void DeleteCFVirtualDirectories(string siteId)
 		{
-			DeleteVirtualDirectory(siteId, "CFIDE");
-			DeleteVirtualDirectory(siteId, "JRunScripts");
+			
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "jakarta");
+				}
+			else
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "JRunScripts");
+				}
 
 		}
 
@@ -3367,8 +3405,16 @@ namespace WebsitePanel.Providers.Web
 
 			foreach (WebVirtualDirectory dir in dirs)
 			{
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+				if (dir.FullQualifiedPath.Equals("CFIDE") || dir.FullQualifiedPath.Equals("jakarta"))
+					identifier++;
+				}
+			else
+				{
 				if (dir.FullQualifiedPath.Equals("CFIDE") || dir.FullQualifiedPath.Equals("JRunScripts"))
 					identifier++;
+				}
 			}
 			return identifier.Equals(2);
 		}
@@ -4133,6 +4179,9 @@ namespace WebsitePanel.Providers.Web
                 // Restore setting back
                 ServerSettings.ADEnabled = adEnabled;
             }
+
+            //
+			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
 
 		private void ReadWebDeployPublishingAccessDetails(WebVirtualDirectory iisObject)
@@ -4336,12 +4385,12 @@ namespace WebsitePanel.Providers.Web
 
 		protected string GetFullQualifiedAccountName(string accountName)
 		{
+			if (accountName.IndexOf("\\") != -1)
+				return accountName; // already has domain information
+
 			//
 			if (!ServerSettings.ADEnabled)
 				return String.Format(@"{0}\{1}", Environment.MachineName, accountName);
-
-			if (accountName.IndexOf("\\") != -1)
-				return accountName; // already has domain information
 
 			// DO IT FOR ACTIVE DIRECTORY MODE ONLY
 			string domainName = null;

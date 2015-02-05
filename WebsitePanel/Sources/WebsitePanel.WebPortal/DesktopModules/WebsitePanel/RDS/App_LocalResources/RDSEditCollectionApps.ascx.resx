@@ -127,7 +127,7 @@
     <value />
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Edit RDS Collection</value>
+    <value>RDS Apps</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Edit RDS Collection</value>
@@ -140,5 +140,8 @@
   </data>
   <data name="gvRDSServers.Empty" xml:space="preserve">
     <value>No RDS Servers have been added yet. To add a new RDS Servers click "Add RDS Server" button.</value>
+  </data>
+  <data name="secRdsApplications.Text" xml:space="preserve">
+    <value>Remote Applications</value>
   </data>
 </root>

@@ -121,7 +121,7 @@
     <value>ShowProgressDialog('Adding RDS Server ...');</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
-    <value>Save</value>
+    <value>Create</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
     <value />

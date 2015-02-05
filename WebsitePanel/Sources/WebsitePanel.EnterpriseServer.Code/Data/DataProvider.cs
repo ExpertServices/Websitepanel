@@ -1580,7 +1580,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DataSet UpdatePackage(int actorId, int packageId, int planId, string packageName,
             string packageComments, int statusId, DateTime purchaseDate,
-            bool overrideQuotas, string quotasXml)
+            bool overrideQuotas, string quotasXml, bool defaultTopPackage)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdatePackage",
@@ -1592,7 +1592,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@planId", planId),
                 new SqlParameter("@purchaseDate", purchaseDate),
                 new SqlParameter("@overrideQuotas", overrideQuotas),
-                new SqlParameter("@quotasXml", quotasXml));
+                new SqlParameter("@quotasXml", quotasXml),
+                new SqlParameter("@defaultTopPackage", defaultTopPackage));
         }
 
         public static void UpdatePackageName(int actorId, int packageId, string packageName,
@@ -2072,7 +2073,8 @@ namespace WebsitePanel.EnterpriseServer
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "GetSchedules",
                 new SqlParameter("@actorId", actorId),
-                new SqlParameter("@packageId", packageId));
+                new SqlParameter("@packageId", packageId),
+                new SqlParameter("@recursive", true));
         }
 
         public static DataSet GetSchedulesPaged(int actorId, int packageId, bool recursive,
@@ -2366,7 +2368,6 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Exchange Server
 
-
         public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
             string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
@@ -2394,7 +2395,6 @@ namespace WebsitePanel.EnterpriseServer
 
             return Convert.ToInt32(outParam.Value);
         }
-
 
         public static void AddExchangeAccountEmailAddress(int accountId, string emailAddress)
         {
@@ -2813,7 +2813,7 @@ namespace WebsitePanel.EnterpriseServer
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
                                                     bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-            bool archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
+                                                    bool archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct, bool enableForceArchiveDeletion)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2849,7 +2849,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Archiving", archiving),
                 new SqlParameter("@EnableArchiving", EnableArchiving),
                 new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
-                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct),
+                new SqlParameter("@EnableForceArchiveDeletion", enableForceArchiveDeletion)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -2860,8 +2861,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateExchangeMailboxPlan(int mailboxPlanID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                             bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                             int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-                                        bool Archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
+                                            bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
+                                            bool Archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct, bool enableForceArchiveDeletion)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2893,7 +2894,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Archiving", Archiving),
 	            new SqlParameter("@EnableArchiving", EnableArchiving),
                 new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
-                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct),
+                new SqlParameter("@EnableForceArchiveDeletion", enableForceArchiveDeletion)
             );
         }
 
@@ -3168,6 +3170,45 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Organizations
+
+        public static int AddOrganizationDeletedUser(int accountId, int originAT, string storagePath, string folderName, string fileName, DateTime expirationDate)
+        {
+            SqlParameter outParam = new SqlParameter("@ID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddOrganizationDeletedUser",
+                outParam,
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@OriginAT", originAT),
+                new SqlParameter("@StoragePath", storagePath),
+                new SqlParameter("@FolderName", folderName),
+                new SqlParameter("@FileName", fileName),
+                new SqlParameter("@ExpirationDate", expirationDate)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void DeleteOrganizationDeletedUser(int id)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteOrganizationDeletedUser",
+                new SqlParameter("@ID", id));
+        }
+
+        public static IDataReader GetOrganizationDeletedUser(int accountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationDeletedUser",
+                new SqlParameter("@AccountID", accountId)
+            );
+        }        
 
         public static IDataReader GetAdditionalGroups(int userId)
         {
@@ -4329,6 +4370,57 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Enterprise Storage
 
+        public static int AddWebDavAccessToken(Base.HostedSolution.WebDavAccessToken accessToken)
+        {
+            SqlParameter prmId = new SqlParameter("@TokenID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddWebDavAccessToken",
+                prmId,
+                new SqlParameter("@AccessToken", accessToken.AccessToken),
+                new SqlParameter("@FilePath", accessToken.FilePath),
+                new SqlParameter("@AuthData", accessToken.AuthData),
+                new SqlParameter("@ExpirationDate", accessToken.ExpirationDate),
+                new SqlParameter("@AccountID", accessToken.AccountId),
+                new SqlParameter("@ItemId", accessToken.ItemId)
+            );
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteExpiredWebDavAccessTokens()
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExpiredWebDavAccessTokens"
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenById(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenById",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken)
+            );
+        }
+
         public static int AddEntepriseFolder(int itemId, string folderName, int folderQuota, string locationDrive, string homeFolder, string domain)
         {
             SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);
@@ -4464,6 +4556,95 @@ namespace WebsitePanel.EnterpriseServer
 
         #region RDS
 
+        public static IDataReader GetRdsCollectionSettingsByCollectionId(int collectionId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionSettingsByCollectionId",
+                new SqlParameter("@RDSCollectionID", collectionId)
+            );
+        }
+
+        public static int AddRdsCollectionSettings(RdsCollectionSettings settings)
+        {
+            return AddRdsCollectionSettings(settings.RdsCollectionId, settings.DisconnectedSessionLimitMin, settings.ActiveSessionLimitMin, settings.IdleSessionLimitMin, settings.BrokenConnectionAction,
+                settings.AutomaticReconnectionEnabled, settings.TemporaryFoldersDeletedOnExit, settings.TemporaryFoldersPerSession, settings.ClientDeviceRedirectionOptions, settings.ClientPrinterRedirected,
+                settings.ClientPrinterAsDefault, settings.RDEasyPrintDriverEnabled, settings.MaxRedirectedMonitors);
+        }
+
+        private static int AddRdsCollectionSettings(int rdsCollectionId, int disconnectedSessionLimitMin, int activeSessionLimitMin, int idleSessionLimitMin, string brokenConnectionAction,
+            bool automaticReconnectionEnabled, bool temporaryFoldersDeletedOnExit, bool temporaryFoldersPerSession, string clientDeviceRedirectionOptions, bool ClientPrinterRedirected,
+            bool clientPrinterAsDefault, bool rdEasyPrintDriverEnabled, int maxRedirectedMonitors)
+        {
+            SqlParameter rdsCollectionSettingsId = new SqlParameter("@RDSCollectionSettingsID", SqlDbType.Int);
+            rdsCollectionSettingsId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSCollectionSettings",
+                rdsCollectionSettingsId,
+                new SqlParameter("@RdsCollectionId", rdsCollectionId),
+                new SqlParameter("@DisconnectedSessionLimitMin", disconnectedSessionLimitMin),
+                new SqlParameter("@ActiveSessionLimitMin", activeSessionLimitMin),
+                new SqlParameter("@IdleSessionLimitMin", idleSessionLimitMin),
+                new SqlParameter("@BrokenConnectionAction", brokenConnectionAction),
+                new SqlParameter("@AutomaticReconnectionEnabled", automaticReconnectionEnabled),
+                new SqlParameter("@TemporaryFoldersDeletedOnExit", temporaryFoldersDeletedOnExit),
+                new SqlParameter("@TemporaryFoldersPerSession", temporaryFoldersPerSession),
+                new SqlParameter("@ClientDeviceRedirectionOptions", clientDeviceRedirectionOptions),
+                new SqlParameter("@ClientPrinterRedirected", ClientPrinterRedirected),
+                new SqlParameter("@ClientPrinterAsDefault", clientPrinterAsDefault),
+                new SqlParameter("@RDEasyPrintDriverEnabled", rdEasyPrintDriverEnabled),
+                new SqlParameter("@MaxRedirectedMonitors", maxRedirectedMonitors)
+            );
+            
+            return Convert.ToInt32(rdsCollectionSettingsId.Value);
+        }
+
+        public static void UpdateRDSCollectionSettings(RdsCollectionSettings settings)
+        {
+            UpdateRDSCollectionSettings(settings.Id, settings.RdsCollectionId, settings.DisconnectedSessionLimitMin, settings.ActiveSessionLimitMin, settings.IdleSessionLimitMin, settings.BrokenConnectionAction,
+                settings.AutomaticReconnectionEnabled, settings.TemporaryFoldersDeletedOnExit, settings.TemporaryFoldersPerSession, settings.ClientDeviceRedirectionOptions, settings.ClientPrinterRedirected,
+                settings.ClientPrinterAsDefault, settings.RDEasyPrintDriverEnabled, settings.MaxRedirectedMonitors);
+        }
+
+        public static void UpdateRDSCollectionSettings(int id, int rdsCollectionId, int disconnectedSessionLimitMin, int activeSessionLimitMin, int idleSessionLimitMin, string brokenConnectionAction,
+            bool automaticReconnectionEnabled, bool temporaryFoldersDeletedOnExit, bool temporaryFoldersPerSession, string clientDeviceRedirectionOptions, bool ClientPrinterRedirected,
+            bool clientPrinterAsDefault, bool rdEasyPrintDriverEnabled, int maxRedirectedMonitors)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateRDSCollectionSettings",
+                new SqlParameter("@Id", id),
+                new SqlParameter("@RdsCollectionId", rdsCollectionId),
+                new SqlParameter("@DisconnectedSessionLimitMin", disconnectedSessionLimitMin),
+                new SqlParameter("@ActiveSessionLimitMin", activeSessionLimitMin),
+                new SqlParameter("@IdleSessionLimitMin", idleSessionLimitMin),
+                new SqlParameter("@BrokenConnectionAction", brokenConnectionAction),
+                new SqlParameter("@AutomaticReconnectionEnabled", automaticReconnectionEnabled),
+                new SqlParameter("@TemporaryFoldersDeletedOnExit", temporaryFoldersDeletedOnExit),
+                new SqlParameter("@TemporaryFoldersPerSession", temporaryFoldersPerSession),
+                new SqlParameter("@ClientDeviceRedirectionOptions", clientDeviceRedirectionOptions),
+                new SqlParameter("@ClientPrinterRedirected", ClientPrinterRedirected),
+                new SqlParameter("@ClientPrinterAsDefault", clientPrinterAsDefault),
+                new SqlParameter("@RDEasyPrintDriverEnabled", rdEasyPrintDriverEnabled),
+                new SqlParameter("@MaxRedirectedMonitors", maxRedirectedMonitors)                
+            );
+        }
+
+        public static void DeleteRDSCollectionSettings(int id)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteRDSCollectionSettings",
+                new SqlParameter("@Id", id)
+            );
+        }
+
         public static IDataReader GetRDSCollectionsByItemId(int itemId)
         {
             return SqlHelper.ExecuteReader(
@@ -4509,7 +4690,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static int AddRDSCollection(int itemId, string name, string description)
+        public static int AddRDSCollection(int itemId, string name, string description, string displayName)
         {
             SqlParameter rdsCollectionId = new SqlParameter("@RDSCollectionID", SqlDbType.Int);
             rdsCollectionId.Direction = ParameterDirection.Output;
@@ -4521,7 +4702,8 @@ namespace WebsitePanel.EnterpriseServer
                 rdsCollectionId,
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("@DisplayName", displayName)
             );
 
             // read identity
@@ -4542,12 +4724,40 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(count.Value);
         }
 
-        public static void UpdateRDSCollection(RdsCollection collection)
+        public static int GetOrganizationRdsCollectionsCount(int itemId)
         {
-            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description);
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsCollectionsCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
         }
 
-        public static void UpdateRDSCollection(int id, int itemId, string name, string description)
+        public static int GetOrganizationRdsServersCount(int itemId)
+        {
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsServersCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
+        }
+
+        public static void UpdateRDSCollection(RdsCollection collection)
+        {
+            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description, collection.DisplayName);
+        }
+
+        public static void UpdateRDSCollection(int id, int itemId, string name, string description, string displayName)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -4556,7 +4766,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Id", id),
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("@DisplayName", displayName)
             );
         }
 

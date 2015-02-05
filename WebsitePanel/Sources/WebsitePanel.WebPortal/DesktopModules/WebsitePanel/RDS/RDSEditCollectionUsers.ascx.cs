@@ -44,25 +44,48 @@ namespace WebsitePanel.Portal.RDS
             {
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-
-                locCName.Text = collection.Name;
-
+                
+                litCollectionName.Text = collection.DisplayName;
                 users.SetUsers(collectionUsers);
             }
+        }
+
+        private bool SaveRdsUsers()
+        {
+            try
+            {
+                ES.Services.RDS.SetUsersToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, users.GetUsers());                
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid)
-                return;
-            try
             {
-                ES.Services.RDS.SetUsersToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, users.GetUsers());
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                return;
             }
-            catch(Exception ex) { }
+
+            SaveRdsUsers();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            if (SaveRdsUsers())
+            {
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
+            }
         }
     }
 }

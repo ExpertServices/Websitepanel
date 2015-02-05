@@ -4,8 +4,8 @@
 <asp:UpdatePanel ID="UsersUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
 	<div class="FormButtonsBarClean">
-		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button2"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
-		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button2" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
+		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
+		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
 	</div>
 	<asp:GridView ID="gvUsers" runat="server" meta:resourcekey="gvUsers" AutoGenerateColumns="False"
 		Width="600px" CssSelectorClass="NormalGridView"
@@ -21,7 +21,7 @@
 				<ItemStyle Width="10px" />
 			</asp:TemplateField>
 			<asp:TemplateField meta:resourcekey="gvUsersAccount" HeaderText="gvUsersAccount">
-				<ItemStyle Width="60%" Wrap="false">
+				<ItemStyle Width="96%" Wrap="false" HorizontalAlign="Left">
 				</ItemStyle>
 				<ItemTemplate>
                     <asp:Literal ID="litAccount" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
@@ -75,14 +75,14 @@
 								<ItemStyle Width="10px" />
 							</asp:TemplateField>
 							<asp:TemplateField meta:resourcekey="gvAccountsDisplayName">
-								<ItemStyle Width="50%"></ItemStyle>
+								<ItemStyle Width="50%" HorizontalAlign="Left"></ItemStyle>
 								<ItemTemplate>
 									<asp:Image ID="imgAccount" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
 									<asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
 								</ItemTemplate>
 							</asp:TemplateField>
 							<asp:TemplateField meta:resourcekey="gvAccountsEmail">
-								<ItemStyle Width="50%"></ItemStyle>
+								<ItemStyle Width="50%" HorizontalAlign="Left"></ItemStyle>
 								<ItemTemplate>
 									<asp:Literal ID="litPrimaryEmailAddress" runat="server" Text='<%# Eval("PrimaryEmailAddress") %>'></asp:Literal>
 								</ItemTemplate>

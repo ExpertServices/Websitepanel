@@ -120,7 +120,7 @@
   <data name="btnCreateUser.Text" xml:space="preserve">
     <value>Create New User</value>
   </data>
-  <data name="cmdDelete.OnClientClick" xml:space="preserve">
+  <data name="cmdDelete1.OnClientClick" xml:space="preserve">
     <value>if(!confirm('Are you sure you want to delete this user?')) return false; else ShowProgressDialog('Deleting user...');</value>
   </data>
   <data name="cmdDelete.Text" xml:space="preserve">
@@ -182,5 +182,23 @@
   </data>
   <data name="gvServiceLevel.Header" xml:space="preserve">
     <value>Service Level</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btnDelete.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Deleting user...');</value>
+  </data>
+  <data name="btnDelete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="chkEnableForceArchiveMailbox.Text" xml:space="preserve">
+    <value>Archive Mailboxes</value>
+  </data>
+  <data name="headerDeleteUser.Text" xml:space="preserve">
+    <value>Delete User</value>
+  </data>
+  <data name="litDeleteUser.text" xml:space="preserve">
+    <value>Are you sure you want to delete this user?</value>
   </data>
 </root>

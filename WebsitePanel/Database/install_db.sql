@@ -35236,12 +35236,15 @@ EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
 DELETE FROM ServiceItemProperties
 WHERE ItemID = @ItemID
 
-INSERT INTO ServiceItemProperties
-(
-	ItemID,
-	PropertyName,
-	PropertyValue
-)
+-- Add the xml data into a temp table for the capability and robust
+IF OBJECT_ID('tempdb..#TempTable') IS NOT NULL DROP TABLE #TempTable
+
+CREATE TABLE #TempTable(
+	ItemID int,
+	PropertyName nvarchar(50),
+	PropertyValue  nvarchar(3000))
+
+INSERT INTO #TempTable (ItemID, PropertyName, PropertyValue)
 SELECT
 	@ItemID,
 	PropertyName,
@@ -35251,6 +35254,21 @@ FROM OPENXML(@idoc, '/properties/property',1) WITH
 	PropertyName nvarchar(50) '@name',
 	PropertyValue nvarchar(3000) '@value'
 ) as PV
+
+-- Move data from temp table to real table
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT 
+	ItemID, 
+	PropertyName, 
+	PropertyValue
+FROM #TempTable
+
+DROP TABLE #TempTable
 
 -- remove document
 exec sp_xml_removedocument @idoc

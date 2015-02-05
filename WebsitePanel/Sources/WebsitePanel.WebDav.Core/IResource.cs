@@ -64,6 +64,7 @@ namespace WebsitePanel.WebDav.Core
             public long ContentLength
             {
                 get { return _contentLength; }
+                set { _contentLength = value; }
             }
 
             public string ContentType
@@ -108,6 +109,23 @@ namespace WebsitePanel.WebDav.Core
                 webClient.Credentials = credentials;
                 webClient.Headers.Add("Authorization", auth);
                 webClient.UploadFile(Href, "PUT", filename);
+            }
+
+            /// <summary>
+            ///     Uploads content of a file specified by filename to the server
+            /// </summary>
+            /// <param name="data">Posted file data to be uploaded</param>
+            public void Upload(byte[] data)
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+                var webClient = new WebClient();
+                webClient.Credentials = credentials;
+                webClient.Headers.Add("Authorization", auth);
+
+                webClient.UploadData(Href, "PUT", data);
             }
 
             /// <summary>
@@ -233,14 +251,19 @@ namespace WebsitePanel.WebDav.Core
                 }
             }
 
+            public long AllocatedSpace { get; set; }
+            public bool IsRootItem { get; set; }
+
             public Uri Href
             {
                 get { return _href; }
+                set { SetHref(value.ToString(), new Uri(value.Scheme + "://" + value.Host + value.Segments[0] + value.Segments[1])); }
             }
 
             public ItemType ItemType
             {
                 get { return _itemType; }
+                set { _itemType = value; }
             }
 
             public DateTime LastModified
@@ -311,6 +334,69 @@ namespace WebsitePanel.WebDav.Core
                             }
                         } while (bytesRead > 0);
                     }
+                }
+            }
+
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public string Lock()
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string lockToken = string.Empty;
+
+
+                string lockXml =string.Format( "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                                 "<D:lockinfo xmlns:D='DAV:'>" +
+                                 "<D:lockscope><D:exclusive/></D:lockscope>" +
+                                 "<D:locktype><D:write/></D:locktype>" +
+                                 "<D:owner>{0}</D:owner>" +
+                                 "</D:lockinfo>", WspContext.User.Login);
+
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "LOCK";
+                webRequest.Credentials = credentials;
+                webRequest.Headers.Add("Authorization", auth);
+                webRequest.PreAuthenticate = true;
+                webRequest.ContentType = "application/xml";
+
+                // Retrieve the request stream.
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    // Write the lock XML to the destination.
+                    requestStream.Write(Encoding.UTF8.GetBytes(lockXml), 0, lockXml.Length);
+                }
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    lockToken = webResponse.Headers["Lock-Token"];
+                }
+
+                return lockToken;
+            }
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public void UnLock()
+            {
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "UNLOCK";
+                webRequest.Credentials = _credentials;
+                webRequest.PreAuthenticate = true;
+
+                webRequest.Headers.Add(@"Lock-Token", Properties.First(x => x.Name.Name == "locktoken").StringValue);
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    //TODO unlock
                 }
             }
 
@@ -403,6 +489,15 @@ namespace WebsitePanel.WebDav.Core
             public void SetLastModified(DateTime lastModified)
             {
                 _lastModified = lastModified;
+            }
+
+            /// <summary>
+            ///     For internal use only.
+            /// </summary>
+            /// <param name="comment"></param>
+            public void SetItemType(ItemType type)
+            {
+                _itemType = type;
             }
 
             /// <summary>
@@ -518,6 +613,7 @@ namespace WebsitePanel.WebDav.Core
                 SetHref(item.Href);
                 SetLastModified(item.LastModified);
                 SetProperties(item.Properties);
+                SetItemType(item.ItemType);
             }
         }
     }

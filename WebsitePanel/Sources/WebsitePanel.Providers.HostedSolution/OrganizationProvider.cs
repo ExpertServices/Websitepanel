@@ -526,6 +526,36 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
+        public void DisableUser(string loginName, string organizationId)
+        {
+            DisableUserInternal(loginName, organizationId);
+        }
+
+        public void DisableUserInternal(string loginName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("DisableUserInternal");
+            HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(loginName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            string path = GetUserPath(organizationId, loginName);
+
+            if (ActiveDirectoryUtils.AdObjectExists(path))
+            {
+                DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                entry.InvokeSet(ADAttributes.AccountDisabled, true);
+                
+                entry.CommitChanges();
+            }
+
+            HostedSolutionLog.LogEnd("DisableUserInternal");
+        }
 
         public void DeleteUser(string loginName, string organizationId)
         {

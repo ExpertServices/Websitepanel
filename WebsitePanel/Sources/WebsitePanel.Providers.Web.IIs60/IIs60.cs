@@ -145,6 +145,12 @@ namespace WebsitePanel.Providers.Web
 		public const string FRONTPAGE_ALLPORTS_REGLOC_X64 = @"SOFTWARE\Wow6432Node\Microsoft\Shared Tools\Web Server Extensions\All Ports\";
 
 		//ColdFusion related constants
+		public const string COLDFUSION_12_REGLOC = @"SOFTWARE\Adobe\Install Data\Adobe ColdFusion 12";
+		public const string COLDFUSION_12_REGLOC_X64 = @"SOFTWARE\Wow6432Node\Adobe\Install Data\Adobe ColdFusion 12";
+		public const string COLDFUSION_11_REGLOC = @"SOFTWARE\Adobe\Install Data\Adobe ColdFusion 11";
+		public const string COLDFUSION_11_REGLOC_X64 = @"SOFTWARE\Wow6432Node\Adobe\Install Data\Adobe ColdFusion 11";		
+		public const string COLDFUSION_10_REGLOC = @"SOFTWARE\Adobe\Install Data\Adobe ColdFusion 10";
+		public const string COLDFUSION_10_REGLOC_X64 = @"SOFTWARE\Wow6432Node\Adobe\Install Data\Adobe ColdFusion 10";
 		public const string COLDFUSION_9_REGLOC = @"SOFTWARE\Adobe\Install Data\Adobe ColdFusion 9";
 		public const string COLDFUSION_9_REGLOC_X64 = @"SOFTWARE\Wow6432Node\Adobe\Install Data\Adobe ColdFusion 9";
 		public const string COLDFUSION_8_REGLOC = @"SOFTWARE\Adobe\Install Data\Adobe ColdFusion 8";
@@ -422,6 +428,25 @@ namespace WebsitePanel.Providers.Web
 					site.ColdFusionVersion = "9";
 					site.ColdFusionAvailable = true;
 				}
+				
+				if (IsColdFusion10Installed())
+				{
+					site.ColdFusionVersion = "10";
+					site.ColdFusionAvailable = true;
+				}
+
+				if (IsColdFusion11Installed())
+				{
+					site.ColdFusionVersion = "11";
+					site.ColdFusionAvailable = true;
+				}
+				
+				if (IsColdFusion12Installed())
+				{
+					site.ColdFusionVersion = "12";
+					site.ColdFusionAvailable = true;
+				}
+				
 			}
 			else
 			{
@@ -430,11 +455,16 @@ namespace WebsitePanel.Providers.Web
 
 			WebVirtualDirectory[] virtdirs = GetVirtualDirectories(siteId);
 
-			if (VirtualDirectoryExists(siteId, "CFIDE") && VirtualDirectoryExists(siteId, "JRunScripts"))
-			{
-				site.CreateCFVirtualDirectories = true;
-			}
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					if (VirtualDirectoryExists(siteId, "CFIDE") && VirtualDirectoryExists(siteId, "jakarta"));
+					site.CreateCFVirtualDirectories = true;
+				}
 			else
+				{
+					if (VirtualDirectoryExists(siteId, "CFIDE") && VirtualDirectoryExists(siteId, "JRunScripts"));
+					site.CreateCFVirtualDirectories = true;
+				}
 			{
 				site.CreateCFVirtualDirectories = false;
 			}
@@ -808,7 +838,14 @@ namespace WebsitePanel.Providers.Web
 			WebVirtualDirectory[] virtdirs = GetVirtualDirectories(site.SiteId);
 			bool cfDirsinstalled = false;
 
-			if (VirtualDirectoryExists(site.SiteId, "CFIDE") && VirtualDirectoryExists(site.SiteId, "JRunScripts"))
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					if (VirtualDirectoryExists(site.SiteId, "CFIDE") && VirtualDirectoryExists(site.SiteId, "jakarta"));
+				}
+			else
+				{
+					if (VirtualDirectoryExists(site.SiteId, "CFIDE") && VirtualDirectoryExists(site.SiteId, "JRunScripts"));
+				}
 			{
 				cfDirsinstalled = true;
 			}
@@ -1077,7 +1114,14 @@ namespace WebsitePanel.Providers.Web
 			}
 
 			WebVirtualDirectory flashRemotingDir = new WebVirtualDirectory();
-			flashRemotingDir.Name = "JRunScripts";
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					flashRemotingDir.Name = "jakarta";
+				}
+			else
+				{
+					flashRemotingDir.Name = "JRunScripts";
+				}
 			flashRemotingDir.ContentPath = CFFlashRemotingDirPath;
 			flashRemotingDir.EnableAnonymousAccess = true;
 			flashRemotingDir.EnableWindowsAuthentication = true;
@@ -1095,8 +1139,16 @@ namespace WebsitePanel.Providers.Web
 
 		public virtual void DeleteCFVirtualDirectories(string siteId)
 		{
-			DeleteVirtualDirectory(siteId, "CFIDE");
-			DeleteVirtualDirectory(siteId, "JRunScripts");
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "jakarta");
+				}
+			else
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "JRunScripts");
+				}
 
 		}
 
@@ -1307,9 +1359,60 @@ namespace WebsitePanel.Providers.Web
 
 		public virtual bool IsColdFusionSystemInstalled()
 		{
-			return (IsColdFusion8Installed() || IsColdFusion7Installed() || IsColdFusion9Installed());
+			return (IsColdFusion8Installed() || IsColdFusion7Installed() || IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed() || IsColdFusion9Installed());
 		}
 
+		protected bool IsColdFusion12Installed()
+		{
+			RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_12_REGLOC);
+			if (keyColdFusion == null)
+			{
+				keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_12_REGLOC_X64);
+				if (keyColdFusion == null)
+					return false;
+			}
+
+			if (!String.IsNullOrEmpty((string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH)))
+			{
+				return true;
+			}
+			return false;
+		}
+		
+		protected bool IsColdFusion11Installed()
+		{
+			RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_11_REGLOC);
+			if (keyColdFusion == null)
+			{
+				keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_11_REGLOC_X64);
+				if (keyColdFusion == null)
+					return false;
+			}
+
+			if (!String.IsNullOrEmpty((string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH)))
+			{
+				return true;
+			}
+			return false;
+		}
+		
+		protected bool IsColdFusion10Installed()
+		{
+			RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_10_REGLOC);
+			if (keyColdFusion == null)
+			{
+				keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_10_REGLOC_X64);
+				if (keyColdFusion == null)
+					return false;
+			}
+
+			if (!String.IsNullOrEmpty((string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH)))
+			{
+				return true;
+			}
+			return false;
+		}
+		
 		protected bool IsColdFusion9Installed()
 		{
 			RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_9_REGLOC);
@@ -1399,6 +1502,49 @@ namespace WebsitePanel.Providers.Web
 			}
 
 			return String.Empty;
+			
+			if (IsColdFusion10Installed())
+			{
+				RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_10_REGLOC);
+				if (keyColdFusion == null)
+				{
+					keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_10_REGLOC_X64);
+					if (keyColdFusion == null)
+						return String.Empty;
+				}
+				return (string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH);
+			}
+
+			return String.Empty;
+			
+			if (IsColdFusion11Installed())
+			{
+				RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_11_REGLOC);
+				if (keyColdFusion == null)
+				{
+					keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_11_REGLOC_X64);
+					if (keyColdFusion == null)
+						return String.Empty;
+				}
+				return (string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH);
+			}
+
+			return String.Empty;
+
+			if (IsColdFusion12Installed())
+			{
+				RegistryKey keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_12_REGLOC);
+				if (keyColdFusion == null)
+				{
+					keyColdFusion = Registry.LocalMachine.OpenSubKey(COLDFUSION_12_REGLOC_X64);
+					if (keyColdFusion == null)
+						return String.Empty;
+				}
+				return (string)keyColdFusion.GetValue(COLDFUSION_ROOT_PATH);
+			}
+
+			return String.Empty;		
+			
 		}
 
 		protected void EnableColdFusionScripting(string siteName)

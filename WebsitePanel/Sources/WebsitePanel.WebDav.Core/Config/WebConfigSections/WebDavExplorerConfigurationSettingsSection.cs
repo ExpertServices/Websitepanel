@@ -6,6 +6,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
     public class WebDavExplorerConfigurationSettingsSection : ConfigurationSection
     {
         private const string UserDomainKey = "userDomain";
+        private const string WebdavRootKey = "webdavRoot";
         private const string AuthTimeoutCookieNameKey = "authTimeoutCookieName";
         private const string AppName = "applicationName";
         private const string WebsitePanelConstantUserKey = "websitePanelConstantUser";
@@ -14,6 +15,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string ConnectionStringsKey = "appConnectionStrings";
         private const string SessionKeysKey = "sessionKeys";
         private const string FileIconsKey = "fileIcons";
+        private const string OwaSupportedBrowsersKey = "owaSupportedBrowsers";
         private const string OfficeOnlineKey = "officeOnline";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
@@ -23,6 +25,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (AuthTimeoutCookieNameElement)this[AuthTimeoutCookieNameKey]; }
             set { this[AuthTimeoutCookieNameKey] = value; }
+        }
+
+        [ConfigurationProperty(WebdavRootKey, IsRequired = true)]
+        public WebdavRootElement WebdavRoot
+        {
+            get { return (WebdavRootElement)this[WebdavRootKey]; }
+            set { this[WebdavRootKey] = value; }
         }
 
         [ConfigurationProperty(UserDomainKey, IsRequired = true)]
@@ -65,6 +74,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (FileIconsElementCollection) this[FileIconsKey]; }
             set { this[FileIconsKey] = value; }
+        }
+
+        [ConfigurationProperty(OwaSupportedBrowsersKey, IsDefaultCollection = false)]
+        public OwaSupportedBrowsersElementCollection OwaSupportedBrowsers
+        {
+            get { return (OwaSupportedBrowsersElementCollection)this[OwaSupportedBrowsersKey]; }
+            set { this[OwaSupportedBrowsersKey] = value; }
         }
 
         [ConfigurationProperty(OfficeOnlineKey, IsDefaultCollection = false)]

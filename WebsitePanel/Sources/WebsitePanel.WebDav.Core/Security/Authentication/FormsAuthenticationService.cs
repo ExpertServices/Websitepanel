@@ -1,8 +1,10 @@
 ﻿using System;
 using System.DirectoryServices.AccountManagement;
+using System.Threading;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Security;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
@@ -24,13 +26,20 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
 
         public WspPrincipal LogIn(string login, string password)
         {
-            if (_principalContext.ValidateCredentials(login, password) == false)
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+            {
+                return null;
+            }
+
+            var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
+
+            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
             {
                 return null;
             }
 
             var principal = new WspPrincipal(login);
-
+            
             var exchangeAccount = WSP.Services.ExchangeServer.GetAccountByAccountNameWithoutItemId(login);
             var organization = WSP.Services.Organizations.GetOrganization(exchangeAccount.ItemId);
 
@@ -40,9 +49,12 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
             principal.DisplayName = exchangeAccount.DisplayName;
             principal.EncryptedPassword = _cryptography.Encrypt(password);
 
-            CreateAuthenticationTicket(principal);
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.User = principal;
+            }
 
-            HttpContext.Current.User = principal;
+            Thread.CurrentPrincipal = principal;
 
             return principal;
         }

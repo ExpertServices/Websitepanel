@@ -23,7 +23,7 @@
 					    <tr>
 						    <td class="FormLabel150" style="width: 100px;"><asp:Localize ID="locCollectionName" runat="server" meta:resourcekey="locCollectionName" Text="Collection Name"></asp:Localize></td>
 						    <td>
-                                <asp:TextBox ID="txtCollectionName" runat="server" CssClass="NormalTextBox" />
+                                <asp:TextBox ID="txtCollectionName" runat="server" CssClass="TextBox300" />
                                 <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName" ValidationGroup="SaveRDSCollection"></asp:RequiredFieldValidator>
 						    </td>
 					    </tr>

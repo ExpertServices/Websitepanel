@@ -238,7 +238,19 @@ namespace WebsitePanel.Portal
 				if (site.ColdFusionVersion.Equals("9"))
 					litCFUnavailable.Text = "ColdFusion 9.x is installed";
 				litCFUnavailable.Visible = true;
+				
+				if (site.ColdFusionVersion.Equals("10"))
+					litCFUnavailable.Text = "ColdFusion 10.x is installed";
+				litCFUnavailable.Visible = true;				
+				
+				if (site.ColdFusionVersion.Equals("11"))
+					litCFUnavailable.Text = "ColdFusion 11.x is installed";
+				litCFUnavailable.Visible = true;
 
+				if (site.ColdFusionVersion.Equals("12"))
+					litCFUnavailable.Text = "ColdFusion 12.x is installed";
+				litCFUnavailable.Visible = true;
+				
 			}
 
 			if (!PackagesHelper.CheckGroupQuotaEnabled(PackageId, ResourceGroups.Web, Quotas.WEB_CFVIRTUALDIRS))

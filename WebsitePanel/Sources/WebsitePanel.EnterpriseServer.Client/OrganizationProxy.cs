@@ -20,10 +20,11 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     using System.Diagnostics;
     using System.Data;
     using WebsitePanel.Providers.HostedSolution;
+    using WebsitePanel.Providers.Common;
     using WebsitePanel.EnterpriseServer.Base.HostedSolution;
     using WebsitePanel.Providers.ResultObjects;
-    using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers;
+    using WebsitePanel.Providers.Common;
     
     
     /// <remarks/>
@@ -78,6 +79,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         private System.Threading.SendOrPostCallback ImportUserOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetOrganizationDeletedUsersPagedOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetOrganizationUsersPagedOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetUserGeneralSettingsOperationCompleted;
@@ -89,6 +92,10 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         private System.Threading.SendOrPostCallback SetUserPasswordOperationCompleted;
         
         private System.Threading.SendOrPostCallback SearchAccountsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetDeletedUserOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetArchiveFileBinaryChunkOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteUserOperationCompleted;
         
@@ -202,6 +209,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public event ImportUserCompletedEventHandler ImportUserCompleted;
         
         /// <remarks/>
+        public event GetOrganizationDeletedUsersPagedCompletedEventHandler GetOrganizationDeletedUsersPagedCompleted;
+        
+        /// <remarks/>
         public event GetOrganizationUsersPagedCompletedEventHandler GetOrganizationUsersPagedCompleted;
         
         /// <remarks/>
@@ -218,6 +228,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event SearchAccountsCompletedEventHandler SearchAccountsCompleted;
+        
+        /// <remarks/>
+        public event SetDeletedUserCompletedEventHandler SetDeletedUserCompleted;
+        
+        /// <remarks/>
+        public event GetArchiveFileBinaryChunkCompletedEventHandler GetArchiveFileBinaryChunkCompleted;
         
         /// <remarks/>
         public event DeleteUserCompletedEventHandler DeleteUserCompleted;
@@ -1300,6 +1316,62 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationDeletedUsersPaged", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationDeletedUsersPaged GetOrganizationDeletedUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
+            object[] results = this.Invoke("GetOrganizationDeletedUsersPaged", new object[] {
+                        itemId,
+                        filterColumn,
+                        filterValue,
+                        sortColumn,
+                        startRow,
+                        maximumRows});
+            return ((OrganizationDeletedUsersPaged)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetOrganizationDeletedUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetOrganizationDeletedUsersPaged", new object[] {
+                        itemId,
+                        filterColumn,
+                        filterValue,
+                        sortColumn,
+                        startRow,
+                        maximumRows}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationDeletedUsersPaged EndGetOrganizationDeletedUsersPaged(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationDeletedUsersPaged)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationDeletedUsersPagedAsync(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
+            this.GetOrganizationDeletedUsersPagedAsync(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows, null);
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationDeletedUsersPagedAsync(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, object userState) {
+            if ((this.GetOrganizationDeletedUsersPagedOperationCompleted == null)) {
+                this.GetOrganizationDeletedUsersPagedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetOrganizationDeletedUsersPagedOperationCompleted);
+            }
+            this.InvokeAsync("GetOrganizationDeletedUsersPaged", new object[] {
+                        itemId,
+                        filterColumn,
+                        filterValue,
+                        sortColumn,
+                        startRow,
+                        maximumRows}, this.GetOrganizationDeletedUsersPagedOperationCompleted, userState);
+        }
+        
+        private void OnGetOrganizationDeletedUsersPagedOperationCompleted(object arg) {
+            if ((this.GetOrganizationDeletedUsersPagedCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetOrganizationDeletedUsersPagedCompleted(this, new GetOrganizationDeletedUsersPagedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationUsersPaged", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
             object[] results = this.Invoke("GetOrganizationUsersPaged", new object[] {
@@ -1804,6 +1876,104 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.SearchAccountsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SearchAccountsCompleted(this, new SearchAccountsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetDeletedUser", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int SetDeletedUser(int itemId, int accountId, bool enableForceArchive) {
+            object[] results = this.Invoke("SetDeletedUser", new object[] {
+                        itemId,
+                        accountId,
+                        enableForceArchive});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetDeletedUser(int itemId, int accountId, bool enableForceArchive, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetDeletedUser", new object[] {
+                        itemId,
+                        accountId,
+                        enableForceArchive}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndSetDeletedUser(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SetDeletedUserAsync(int itemId, int accountId, bool enableForceArchive) {
+            this.SetDeletedUserAsync(itemId, accountId, enableForceArchive, null);
+        }
+        
+        /// <remarks/>
+        public void SetDeletedUserAsync(int itemId, int accountId, bool enableForceArchive, object userState) {
+            if ((this.SetDeletedUserOperationCompleted == null)) {
+                this.SetDeletedUserOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDeletedUserOperationCompleted);
+            }
+            this.InvokeAsync("SetDeletedUser", new object[] {
+                        itemId,
+                        accountId,
+                        enableForceArchive}, this.SetDeletedUserOperationCompleted, userState);
+        }
+        
+        private void OnSetDeletedUserOperationCompleted(object arg) {
+            if ((this.SetDeletedUserCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetDeletedUserCompleted(this, new SetDeletedUserCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetArchiveFileBinaryChunk", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
+        public byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length) {
+            object[] results = this.Invoke("GetArchiveFileBinaryChunk", new object[] {
+                        packageId,
+                        path,
+                        offset,
+                        length});
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetArchiveFileBinaryChunk(int packageId, string path, int offset, int length, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetArchiveFileBinaryChunk", new object[] {
+                        packageId,
+                        path,
+                        offset,
+                        length}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public byte[] EndGetArchiveFileBinaryChunk(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetArchiveFileBinaryChunkAsync(int packageId, string path, int offset, int length) {
+            this.GetArchiveFileBinaryChunkAsync(packageId, path, offset, length, null);
+        }
+        
+        /// <remarks/>
+        public void GetArchiveFileBinaryChunkAsync(int packageId, string path, int offset, int length, object userState) {
+            if ((this.GetArchiveFileBinaryChunkOperationCompleted == null)) {
+                this.GetArchiveFileBinaryChunkOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetArchiveFileBinaryChunkOperationCompleted);
+            }
+            this.InvokeAsync("GetArchiveFileBinaryChunk", new object[] {
+                        packageId,
+                        path,
+                        offset,
+                        length}, this.GetArchiveFileBinaryChunkOperationCompleted, userState);
+        }
+        
+        private void OnGetArchiveFileBinaryChunkOperationCompleted(object arg) {
+            if ((this.GetArchiveFileBinaryChunkCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetArchiveFileBinaryChunkCompleted(this, new GetArchiveFileBinaryChunkCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3257,6 +3427,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetOrganizationDeletedUsersPagedCompletedEventHandler(object sender, GetOrganizationDeletedUsersPagedCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetOrganizationDeletedUsersPagedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetOrganizationDeletedUsersPagedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationDeletedUsersPaged Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationDeletedUsersPaged)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetOrganizationUsersPagedCompletedEventHandler(object sender, GetOrganizationUsersPagedCompletedEventArgs e);
     
     /// <remarks/>
@@ -3407,6 +3603,58 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((OrganizationUser[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetDeletedUserCompletedEventHandler(object sender, SetDeletedUserCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetDeletedUserCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SetDeletedUserCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetArchiveFileBinaryChunkCompletedEventHandler(object sender, GetArchiveFileBinaryChunkCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetArchiveFileBinaryChunkCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetArchiveFileBinaryChunkCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public byte[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((byte[])(this.results[0]));
             }
         }
     }

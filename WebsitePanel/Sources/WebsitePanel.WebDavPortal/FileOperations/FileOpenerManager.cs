@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Web;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDavPortal.Extensions;
 
@@ -12,7 +14,7 @@ namespace WebsitePanel.WebDavPortal.FileOperations
         public FileOpenerManager()
         {
             if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
-                _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x, y => FileOpenerType.OfficeOnline));
+                _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension, y => FileOpenerType.OfficeOnline));
         }
 
         public FileOpenerType this[string fileExtension]
@@ -20,10 +22,23 @@ namespace WebsitePanel.WebDavPortal.FileOperations
             get
             {
                 FileOpenerType result;
-                if (_operationTypes.TryGetValue(fileExtension, out result))
+                if (_operationTypes.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
                     return result;
                 return FileOpenerType.Download;
             }
+        }
+
+        private bool CheckBrowserSupport()
+        {
+            var request = HttpContext.Current.Request;
+            int supportedVersion;
+
+            if (WebDavAppConfigManager.Instance.OwaSupportedBrowsers.TryGetValue(request.Browser.Browser, out supportedVersion) == false)
+            {
+                return false;
+            }
+
+            return supportedVersion <= request.Browser.MajorVersion;
         }
     }
 }

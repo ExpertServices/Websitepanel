@@ -4,8 +4,8 @@
 <asp:UpdatePanel ID="UsersUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
 	<div class="FormButtonsBarClean">
-		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button2"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
-		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button2" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
+		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
+		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
 	</div>
 	<asp:GridView ID="gvServers" runat="server" meta:resourcekey="gvServers" AutoGenerateColumns="False"
 		Width="600px" CssSelectorClass="NormalGridView"

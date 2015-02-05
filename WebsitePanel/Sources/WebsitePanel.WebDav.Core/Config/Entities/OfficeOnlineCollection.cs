@@ -5,21 +5,23 @@ using WebsitePanel.WebDavPortal.WebConfigSections;
 
 namespace WebsitePanel.WebDav.Core.Config.Entities
 {
-    public class OfficeOnlineCollection : AbstractConfigCollection, IReadOnlyCollection<string>
+    public class OfficeOnlineCollection : AbstractConfigCollection, IReadOnlyCollection<OfficeOnlineElement>
     {
-        private readonly IList<string> _officeExtensions;
+        private readonly IList<OfficeOnlineElement> _officeExtensions;
 
         public OfficeOnlineCollection()
         {
             IsEnabled = ConfigSection.OfficeOnline.IsEnabled;
             Url = ConfigSection.OfficeOnline.Url;
-            _officeExtensions = ConfigSection.OfficeOnline.Cast<OfficeOnlineElement>().Select(x => x.Extension).ToList();
+            CobaltFileTtl = ConfigSection.OfficeOnline.CobaltFileTtl;
+            _officeExtensions = ConfigSection.OfficeOnline.Cast<OfficeOnlineElement>().ToList();
         }
 
         public bool IsEnabled { get; private set; }
         public string Url { get; private set; }
+        public int CobaltFileTtl { get; private set; }
 
-        public IEnumerator<string> GetEnumerator()
+        public IEnumerator<OfficeOnlineElement> GetEnumerator()
         {
             return _officeExtensions.GetEnumerator();
         }
@@ -36,7 +38,7 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
 
         public bool Contains(string extension)
         {
-            return _officeExtensions.Contains(extension);
+            return _officeExtensions.Any(x=>x.Extension == extension);
         }
     }
 }

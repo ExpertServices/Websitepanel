@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace WebsitePanel.WebDavPortal.Exceptions
+namespace WebsitePanel.WebDav.Core.Exceptions
 {
     [Serializable]
     public class ConnectToWebDavServerException : Exception
