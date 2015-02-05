@@ -891,6 +891,13 @@
     <Compile Include="UserControls\ItemButtonPanel.ascx.designer.cs">
       <DependentUpon>ItemButtonPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UserActions.ascx.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\UserActions.ascx.designer.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserOrganization.ascx.cs">
       <DependentUpon>UserOrganization.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4473,6 +4480,7 @@
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="UserControls\ItemButtonPanel.ascx" />
+    <Content Include="UserControls\UserActions.ascx" />
     <Content Include="UserOrganization.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -4541,6 +4549,9 @@
     <Content Include="PhoneNumbers.ascx" />
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
+    <Content Include="UserControls\App_LocalResources\UserActions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\BandwidthReport.ascx.resx">
