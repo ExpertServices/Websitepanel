@@ -226,6 +226,26 @@ namespace WebsitePanel.WebDav.Core.Managers
             }
         }
 
+        public bool FileExist(string path)
+        {
+            try
+            {
+                string folder = GetFileFolder(path);
+
+                var resourceName = GetResourceName(path);
+
+                OpenFolder(folder);
+
+                var resource = _currentFolder.GetResource(resourceName);
+
+                return resource != null;
+            }
+            catch (InvalidOperationException exception)
+            {
+                return false;
+            }
+        }
+
         public string GetFileUrl(string path)
         {
             try

@@ -171,6 +171,7 @@
     <Compile Include="DependencyInjection\Providers\WebDavManagerProvider.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="Extensions\UrlHelperExtensions.cs" />
     <Compile Include="FileOperations\FileOpenerManager.cs" />
     <Compile Include="FileOperations\FileOpenerType.cs" />
     <Compile Include="Global.asax.cs">

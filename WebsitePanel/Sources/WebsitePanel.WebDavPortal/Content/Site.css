@@ -67,6 +67,7 @@ textarea {
 #logout {
     font-size: 1.2em;
     color: #9d9d9d;
+    margin-bottom: 0px;
 }
 
 #logout :hover {
@@ -125,6 +126,10 @@ input,div{border-radius:0px!important;}
   border-color: #2e8bcc;
 }
 
+.navbar-collapse, .navbar-header {
+    padding-top: 4px;
+}
+
 .navbar-inverse .navbar-brand, .navbar-text, #logout{
   color: #FFFFFF;
   opacity: 0.8;
@@ -152,6 +157,7 @@ div#breadcrumb_wrapper a:last-child {
     float: none;
     display: inline-block;
     margin-right: 10px;
+    vertical-align: top;
 }
 
 .header-portal-title {

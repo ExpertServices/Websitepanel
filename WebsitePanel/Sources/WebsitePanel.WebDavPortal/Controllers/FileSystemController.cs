@@ -83,7 +83,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
             }
         }
 
-        public ActionResult ShowOfficeDocument(string org, string pathPart = "")
+        public ActionResult ShowOfficeDocument(string org, string pathPart = "", FileAccess? fileAccess = null)
         {
             var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
 
@@ -97,11 +97,22 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             string wopiSrc = Server.UrlDecode(url);
 
-            string owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaEditor : owaOpener.OwaView;
+            string owaOpenerUri = string.Empty;
+
+            if (fileAccess == null)
+            {
+                owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaEditor : owaOpener.OwaView;
+            }
+            else
+            {
+                owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) && fileAccess == FileAccess.Write ? owaOpener.OwaEditor : owaOpener.OwaView;
+            }
 
             var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 
-            return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
+            string fileName = fileUrl.Split('/').Last();
+
+            return View(new OfficeOnlineModel(uri, fileName));
         }
 
         [HttpPost]

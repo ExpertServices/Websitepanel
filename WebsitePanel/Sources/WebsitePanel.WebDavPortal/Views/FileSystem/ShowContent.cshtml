@@ -9,7 +9,6 @@
 
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
     ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
 }
 
