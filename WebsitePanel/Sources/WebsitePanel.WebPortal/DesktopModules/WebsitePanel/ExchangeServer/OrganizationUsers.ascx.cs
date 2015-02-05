@@ -136,7 +136,7 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 var accountType = (ExchangeAccountType)gvUsers.DataKeys[rowIndex][1];
 
-                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS) && accountType != ExchangeAccountType.User)
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx) && accountType != ExchangeAccountType.User)
                 {
                     chkEnableForceArchiveMailbox.Visible = true;
 
@@ -362,7 +362,7 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 int result = 0;
 
-                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS))
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx))
                 {
                     result = ES.Services.Organizations.SetDeletedUser(PanelRequest.ItemID, int.Parse(hdAccountId.Value), chkEnableForceArchiveMailbox.Checked);
                 }

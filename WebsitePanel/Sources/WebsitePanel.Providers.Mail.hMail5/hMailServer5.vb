@@ -377,7 +377,7 @@ Public Class hMailServer5
             objAccount.Password = mailbox.Password
             objAccount.MaxSize = mailbox.MaxMailboxSize
             objAccount.PersonFirstName = mailbox.FirstName
-            objAccount.PersonLastName = mailbox.FirstName
+            objAccount.PersonLastName = mailbox.LastName
             objAccount.SignatureEnabled = mailbox.SignatureEnabled
             objAccount.SignaturePlainText = mailbox.Signature
             objAccount.SignatureHTML = mailbox.SignatureHTML
@@ -397,9 +397,12 @@ Public Class hMailServer5
 
             'set forwarding address
             If mailbox.ForwardingEnabled Then
-                objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
-                objAccount.ForwardEnabled = True
-                objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
+                If Not String.IsNullOrEmpty(mailbox.ForwardingAddresses(0)) Then
+                    'Log.WriteInfo("forwarding enabled on creation of email account")
+                    objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
+                    objAccount.ForwardEnabled = True
+                    objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
+                End If
             End If
 
             objAccount.Save()
