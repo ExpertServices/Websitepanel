@@ -177,8 +177,8 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
 
             var newToken = _tokenManager.CreateToken(WspContext.User,newFilePath);
 
-            var readUrlPart = Url.Route(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = newFilePath, fileAccess = FileAccess.Read });
-            var writeUrlPart = Url.Route(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = newFilePath, fileAccess = FileAccess.Write });
+            var readUrlPart = Url.Route(FileSystemRouteNames.ViewOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = newFilePath});
+            var writeUrlPart = Url.Route(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = newFilePath });
 
             result.HostEditUrl = new Uri(Request.RequestUri, writeUrlPart).ToString();
             result.HostViewUrl = new Uri(Request.RequestUri, readUrlPart).ToString(); ;

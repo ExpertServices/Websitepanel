@@ -45,10 +45,22 @@ namespace WebsitePanel.WebDavPortal
                 );
 
             routes.MapRoute(
-                name: FileSystemRouteNames.ShowOfficeOnlinePath,
-                url: "office365/{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "ShowOfficeDocument", pathPart = UrlParameter.Optional }
+                name: FileSystemRouteNames.ViewOfficeOnline,
+                url: "office365/view/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "ViewOfficeDocument", pathPart = UrlParameter.Optional }
                 );
+
+            routes.MapRoute(
+                name: FileSystemRouteNames.EditOfficeOnline,
+                url: "office365/edit/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "EditOfficeDocument", pathPart = UrlParameter.Optional }
+                );
+
+            //routes.MapRoute(
+            //    name: FileSystemRouteNames.ShowOfficeOnlinePath,
+            //    url: "office365/{org}/{*pathPart}",
+            //    defaults: new { controller = "FileSystem", action = "ShowOfficeDocument", pathPart = UrlParameter.Optional }
+            //    );
 
             routes.MapRoute(
                 name: FileSystemRouteNames.ShowAdditionalContent,

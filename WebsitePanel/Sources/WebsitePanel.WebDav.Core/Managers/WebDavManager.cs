@@ -190,6 +190,8 @@ namespace WebsitePanel.WebDav.Core.Managers
         public void DeleteResource(string path)
         {
             path = RemoveLeadingFromPath(path, "office365");
+            path = RemoveLeadingFromPath(path, "view");
+            path = RemoveLeadingFromPath(path, "edit");
             path = RemoveLeadingFromPath(path, WspContext.User.OrganizationId);
 
             string folderPath = GetFileFolder(path);
