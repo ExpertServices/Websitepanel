@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Cobalt;
+using log4net;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Interfaces.Owa;
 
@@ -11,12 +13,16 @@ namespace WebsitePanel.WebDav.Core.Owa
         private readonly IWebDavManager _webDavManager;
         private readonly IWopiFileManager _fileManager;
         private readonly IAccessTokenManager _tokenManager;
+        private readonly ILog Log;
 
-        public CobaltManager(IWebDavManager webDavManager, IWopiFileManager fileManager, IAccessTokenManager tokenManager)
+        public CobaltManager(IWebDavManager webDavManager, IWopiFileManager fileManager,
+            IAccessTokenManager tokenManager)
         {
             _webDavManager = webDavManager;
             _fileManager = fileManager;
             _tokenManager = tokenManager;
+
+            Log = LogManager.GetLogger(this.GetType());
         }
 
         public Atom ProcessRequest(int accessTokenId, Stream requestStream)
@@ -27,30 +33,69 @@ namespace WebsitePanel.WebDav.Core.Owa
 
             var requestBatch = new RequestBatch();
 
-            var cobaltFile = _fileManager.Get(token.FilePath) ?? _fileManager.Create(accessTokenId);
-
-            Object ctx;
-            ProtocolVersion protocolVersion;
-
-            requestBatch.DeserializeInputFromProtocol(atomRequest, out ctx, out protocolVersion);
-
-            cobaltFile.CobaltEndpoint.ExecuteRequestBatch(requestBatch);
-
-            foreach (var request in requestBatch.Requests)
+            try
             {
-                if (request.GetType() == typeof(PutChangesRequest) && request.PartitionId == FilePartitionId.Content && request.CompletedSuccessfully)
-                {
-                    using (var saveStream = new MemoryStream())
-                    {
-                        GenericFdaStream myCobaltStream = new GenericFda(cobaltFile.CobaltEndpoint, null).GetContentStream();
-                        myCobaltStream.CopyTo(saveStream);
+                var cobaltFile = _fileManager.Get(token.FilePath) ?? _fileManager.Create(accessTokenId);
 
-                        _webDavManager.UploadFile(token.FilePath, saveStream.ToArray());
+                Object ctx;
+                ProtocolVersion protocolVersion;
+
+                requestBatch.DeserializeInputFromProtocol(atomRequest, out ctx, out protocolVersion);
+                cobaltFile.CobaltEndpoint.ExecuteRequestBatch(requestBatch);
+
+
+                foreach (var request in requestBatch.Requests)
+                {
+
+                    if (request.GetType() == typeof (PutChangesRequest) &&
+                        request.PartitionId == FilePartitionId.Content && request.CompletedSuccessfully)
+                    {
+                        using (var saveStream = new MemoryStream())
+                        {
+                            CopyStream(cobaltFile, saveStream);
+                            _webDavManager.UploadFile(token.FilePath, saveStream.ToArray());
+                        }
                     }
                 }
+
+
+                return requestBatch.SerializeOutputToProtocol(protocolVersion);
             }
 
-            return requestBatch.SerializeOutputToProtocol(protocolVersion);
+            catch (Exception e)
+            {
+                Log.Error("Cobalt manager Process request", e);
+
+                throw;
+            }
+        }
+
+        private void CopyStream(CobaltFile file, Stream stream)
+        {
+            var tries = 3;
+
+            for (int i = 0; i < tries; i++)
+            {
+                try
+                {
+                    GenericFdaStream myCobaltStream = new GenericFda(file.CobaltEndpoint, null).GetContentStream();
+
+                    myCobaltStream.CopyTo(stream);
+
+                    break;
+                }
+                catch (Exception)
+                {
+                    //unable to read update - save failed
+                    if (i == tries - 1)
+                    {
+                        throw;
+                    }
+
+                    //waiting for cobalt completion
+                    Thread.Sleep(50);
+                }
+            }
         }
     }
 } 

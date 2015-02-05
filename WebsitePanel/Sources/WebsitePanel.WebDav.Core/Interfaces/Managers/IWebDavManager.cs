@@ -9,6 +9,7 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Managers
     {
         IEnumerable<IHierarchyItem> OpenFolder(string path);
         bool IsFile(string path);
+        bool FileExist(string path);
         byte[] GetFileBytes(string path);
         void UploadFile(string path, HttpPostedFileBase file);
         void UploadFile(string path, byte[] bytes);

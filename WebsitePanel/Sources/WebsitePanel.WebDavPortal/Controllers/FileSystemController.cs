@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -83,12 +84,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
             }
         }
 
-        public ActionResult ShowOfficeDocument(string org, string pathPart = "")
+        public ActionResult ShowOfficeDocument(string org, string pathPart, string owaOpenerUri)
         {
-            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
-
-            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
-
             string fileUrl = WebDavAppConfigManager.Instance.WebdavRoot+ org + "/" + pathPart.TrimStart('/');
             var accessToken = _tokenManager.CreateToken(WspContext.User, pathPart);
 
@@ -97,11 +94,32 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             string wopiSrc = Server.UrlDecode(url);
 
-            string owaOpenerUri = permissions.HasFlag(WebDavPermissions.Write) ? owaOpener.OwaEditor : owaOpener.OwaView;
-
             var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 
-            return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
+            string fileName = fileUrl.Split('/').Last();
+
+            return View("ShowOfficeDocument", new OfficeOnlineModel(uri, fileName));
+        }
+
+        public ActionResult ViewOfficeDocument(string org, string pathPart)
+        {
+            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
+
+            return ShowOfficeDocument(org, pathPart, owaOpener.OwaView);
+        }
+
+        public ActionResult EditOfficeDocument(string org, string pathPart)
+        {
+            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
+            if (permissions.HasFlag(WebDavPermissions.Write) == false)
+            {
+                return new RedirectToRouteResult(FileSystemRouteNames.ViewOfficeOnline, null);
+            }
+
+            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
+
+            return ShowOfficeDocument(org, pathPart, owaOpener.OwaEditor);
         }
 
         [HttpPost]
@@ -114,6 +132,26 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var result = children.Skip(resourseRenderCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
 
             return PartialView("_ResourseCollectionPartial", result);
+        }
+
+        [HttpGet]
+        public ActionResult DownloadFile(string org, string pathPart)
+        {
+            if (org != WspContext.User.OrganizationId)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            }
+
+            string fileName = pathPart.Split('/').Last();
+
+            if (_webdavManager.IsFile(pathPart) == false)
+            {
+                throw new Exception(Resources.NotAFile);
+            }
+
+            var fileBytes = _webdavManager.GetFileBytes(pathPart);
+
+            return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]

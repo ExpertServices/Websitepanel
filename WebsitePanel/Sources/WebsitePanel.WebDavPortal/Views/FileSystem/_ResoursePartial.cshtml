@@ -18,7 +18,7 @@
         case FileOpenerType.OfficeOnline:
             isTargetBlank = true;
             var pathPart = Model.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/'); 
-            href = string.Concat(Url.RouteUrl(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
+            href = string.Concat(Url.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
             break;
         default:
             isTargetBlank = false;

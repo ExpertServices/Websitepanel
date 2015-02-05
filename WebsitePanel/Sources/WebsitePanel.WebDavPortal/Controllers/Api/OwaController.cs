@@ -22,6 +22,9 @@ using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDav.Core.Wsp.Framework;
 using WebsitePanel.WebDavPortal.Configurations.ControllerConfigurations;
+using WebsitePanel.WebDavPortal.Extensions;
+using WebsitePanel.WebDavPortal.UI.Routes;
+using WebsitePanel.WebDav.Core.Extensions;
 
 namespace WebsitePanel.WebDavPortal.Controllers.Api
 {
@@ -52,6 +55,11 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
             var token = _tokenManager.GetToken(accessTokenId);
 
             var fileInfo = _wopiServer.GetCheckFileInfo(token.FilePath);
+
+            var urlPart = Url.Route(FileSystemRouteNames.ShowContentPath, new { org = WspContext.User.OrganizationId, pathPart = token.FilePath });
+            var url = new Uri(Request.RequestUri, urlPart).ToString();
+
+            fileInfo.DownloadUrl = url;
 
             return fileInfo;
         }
@@ -106,6 +114,12 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         }
 
         [HttpPost]
+        public HttpResponseMessage Refresh_Lock(int accessTokenId)
+        {
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
         public HttpResponseMessage UnLock(int accessTokenId)
         {
             return new HttpResponseMessage(HttpStatusCode.OK);
@@ -121,6 +135,57 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
             _webDavManager.UploadFile(token.FilePath, bytes);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public PutRelativeFile Put_Relative(int accessTokenId)
+        {
+            var result = new PutRelativeFile();
+
+            var token = _tokenManager.GetToken(accessTokenId);
+
+            var newFilePath = string.Empty;
+
+            var target = Request.Headers.Contains("X-WOPI-RelativeTarget") ? Request.Headers.GetValues("X-WOPI-RelativeTarget").First() : Request.Headers.GetValues("X-WOPI-SuggestedTarget").First();
+
+            bool overwrite = Request.Headers.Contains("X-WOPI-RelativeTarget") && Convert.ToBoolean(Request.Headers.GetValues("X-WOPI-OverwriteRelativeTarget").First());
+
+            if (string.IsNullOrEmpty(target))
+            {
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
+            }
+
+            if (target.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Count() > 1)
+            {
+                var fileName = Path.GetFileName(token.FilePath);
+
+                newFilePath = token.FilePath.ReplaceLast(fileName, target);
+            }
+            else
+            {
+                newFilePath = Path.ChangeExtension(token.FilePath, target);
+            }
+
+            if (overwrite == false && _webDavManager.FileExist(newFilePath))
+            {
+                throw new HttpResponseException(HttpStatusCode.Conflict);
+            }
+
+            var bytes = Request.Content.ReadAsByteArrayAsync().Result;
+
+            _webDavManager.UploadFile(newFilePath, bytes);
+
+            var newToken = _tokenManager.CreateToken(WspContext.User,newFilePath);
+
+            var readUrlPart = Url.Route(FileSystemRouteNames.ViewOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = newFilePath});
+            var writeUrlPart = Url.Route(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = newFilePath });
+
+            result.HostEditUrl = new Uri(Request.RequestUri, writeUrlPart).ToString();
+            result.HostViewUrl = new Uri(Request.RequestUri, readUrlPart).ToString(); ;
+            result.Name = Path.GetFileName(newFilePath);
+            result.Url = Url.GenerateWopiUrl(newToken, newFilePath);
+
+            return result;
         }
     }
 }

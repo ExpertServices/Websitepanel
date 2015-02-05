@@ -190,6 +190,8 @@ namespace WebsitePanel.WebDav.Core.Managers
         public void DeleteResource(string path)
         {
             path = RemoveLeadingFromPath(path, "office365");
+            path = RemoveLeadingFromPath(path, "view");
+            path = RemoveLeadingFromPath(path, "edit");
             path = RemoveLeadingFromPath(path, WspContext.User.OrganizationId);
 
             string folderPath = GetFileFolder(path);
@@ -223,6 +225,26 @@ namespace WebsitePanel.WebDav.Core.Managers
             catch (InvalidOperationException exception)
             {
                 throw new ResourceNotFoundException("Resource not found", exception);
+            }
+        }
+
+        public bool FileExist(string path)
+        {
+            try
+            {
+                string folder = GetFileFolder(path);
+
+                var resourceName = GetResourceName(path);
+
+                OpenFolder(folder);
+
+                var resource = _currentFolder.GetResource(resourceName);
+
+                return resource != null;
+            }
+            catch (InvalidOperationException exception)
+            {
+                return false;
             }
         }
 

@@ -18,6 +18,7 @@ namespace WebsitePanel.WebDav.Core.Config
             FileIcons = new FileIconsDictionary();
             HttpErrors = new HttpErrorsCollection();
             OfficeOnline = new OfficeOnlineCollection();
+            OwaSupportedBrowsers = new OwaSupportedBrowsersCollection();
         }
 
         public static WebDavAppConfigManager Instance
@@ -51,5 +52,6 @@ namespace WebsitePanel.WebDav.Core.Config
         public FileIconsDictionary FileIcons { get; private set; }
         public HttpErrorsCollection HttpErrors { get; private set; }
         public OfficeOnlineCollection OfficeOnline { get; private set; }
+        public OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; private set; }
     }
 }

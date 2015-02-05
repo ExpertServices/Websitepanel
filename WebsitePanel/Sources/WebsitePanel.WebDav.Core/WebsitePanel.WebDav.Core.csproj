@@ -104,6 +104,7 @@
     <Compile Include="Config\Entities\FileIconsDictionary.cs" />
     <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
     <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
+    <Compile Include="Config\Entities\OwaSupportedBrowsersCollection.cs" />
     <Compile Include="Config\Entities\SessionKeysCollection.cs" />
     <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
     <Compile Include="Config\IWebDavAppConfig.cs" />
@@ -114,6 +115,8 @@
     <Compile Include="Config\WebConfigSections\FileIconsElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElement.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElement.cs" />
+    <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElement.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\UserDomainElement.cs" />
@@ -122,11 +125,13 @@
     <Compile Include="Config\WebConfigSections\WebsitePanelConstantUserElement.cs" />
     <Compile Include="Config\WebDavAppConfigManager.cs" />
     <Compile Include="Entities\Owa\CheckFileInfo.cs" />
+    <Compile Include="Entities\Owa\PutRelativeFile.cs" />
     <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="IConnectionSettings.cs" />
     <Compile Include="IFolder.cs" />
