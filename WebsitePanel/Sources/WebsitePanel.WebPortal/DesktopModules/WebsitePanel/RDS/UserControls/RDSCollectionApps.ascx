@@ -24,16 +24,11 @@
 				<ItemStyle Width="90%" Wrap="false">
 				</ItemStyle>
 				<ItemTemplate>
-                    <asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
+                    <asp:hyperlink id="lnkDisplayName" meta:resourcekey="lnkDisplayName" runat="server" Text='<%# Eval("DisplayName") %>' NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("Alias").ToString()) %>'/>                    
                     <asp:HiddenField ID="hfFilePath" runat="server"  Value='<%# Eval("FilePath") %>'/>
                     <asp:HiddenField ID="hfRequiredCommandLine" runat="server"  Value='<%# Eval("RequiredCommandLine") %>'/>
 				</ItemTemplate>
-			</asp:TemplateField>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:hyperlink id="lnkUsers" meta:resourcekey="lnkUsers" runat="server" NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("DisplayName").ToString()) %>'>Users</asp:hyperlink>
-                </ItemTemplate>
-            </asp:TemplateField>
+			</asp:TemplateField>            
 		</Columns>
 	</asp:GridView>
     <br />

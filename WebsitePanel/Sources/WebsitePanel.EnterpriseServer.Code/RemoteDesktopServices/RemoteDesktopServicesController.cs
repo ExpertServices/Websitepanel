@@ -1111,7 +1111,7 @@ namespace WebsitePanel.EnterpriseServer
             var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
             var collection = GetRdsCollection(collectionId);
 
-            result.AddRange(rds.GetApplicationUsers(collection.Name, remoteApp.DisplayName));
+            result.AddRange(rds.GetApplicationUsers(collection.Name, remoteApp.Alias));
 
             return result;
         }
@@ -1130,7 +1130,7 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
                 }
 
-                var collection = GetRdsCollection(collectionId);
+                var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
                 rds.SetApplicationUsers(collection.Name, remoteApp, users.ToArray());
             }
@@ -1214,7 +1214,6 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 remoteApp.ShowInWebAccess = true;
-
                 rds.AddRemoteApplication(collection.Name, remoteApp);
             }
             catch (Exception ex)
@@ -1319,13 +1318,14 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 List<RemoteApplication> existingCollectionApps = GetCollectionRemoteApplications(itemId, collection.Name);
-                List<RemoteApplication> remoteAppsToAdd = remoteApps.Where(x => !existingCollectionApps.Select(p => p.DisplayName).Contains(x.DisplayName)).ToList();
+                List<RemoteApplication> remoteAppsToAdd = remoteApps.Where(x => !existingCollectionApps.Select(p => p.Alias).Contains(x.Alias)).ToList();
                 foreach (var app in remoteAppsToAdd)
-                {                    
+                {
+                    app.ShowInWebAccess = true;
                     AddRemoteApplicationToCollection(itemId, collection, app);
                 }
 
-                List<RemoteApplication> remoteAppsToRemove = existingCollectionApps.Where(x => !remoteApps.Select(p => p.DisplayName).Contains(x.DisplayName)).ToList();
+                List<RemoteApplication> remoteAppsToRemove = existingCollectionApps.Where(x => !remoteApps.Select(p => p.Alias).Contains(x.Alias)).ToList();
                 foreach (var app in remoteAppsToRemove)
                 {
                     RemoveRemoteApplicationFromCollection(itemId, collection, app);

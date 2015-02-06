@@ -127,10 +127,10 @@
     <value />
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Edit RDS Application</value>
+    <value>Edit RDS Collection</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit RDS Application</value>
+    <value>Edit RDS Collection</value>
   </data>
   <data name="locCollectionName.Text" xml:space="preserve">
     <value>Collection Name:</value>
@@ -143,5 +143,14 @@
   </data>
   <data name="locApplicationName.Text" xml:space="preserve">
     <value>Application Name:</value>
+  </data>
+  <data name="secRdsApplicationUsers.Text" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="secRdsApplicationEdit.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="locLblApplicationName" xml:space="preserve">
+    <value>Application Name</value>
   </data>
 </root>

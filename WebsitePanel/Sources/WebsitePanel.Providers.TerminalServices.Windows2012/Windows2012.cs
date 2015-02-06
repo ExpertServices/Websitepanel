@@ -643,7 +643,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 Command cmd = new Command("Get-RDRemoteApp");
                 cmd.Parameters.Add("CollectionName", collectionName);
                 cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
-                cmd.Parameters.Add("DisplayName", applicationName);
+                cmd.Parameters.Add("Alias", applicationName);
 
                 var application = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
 
@@ -899,21 +899,34 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 RemoveRdRap(runSpace, gatewayHost, policyName);
             }
-
-            Log.WriteWarning(gatewayHost);
+            
             var userGroupParametr = string.Format("@({0})", string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
             var computerGroupParametr = string.Format("\"{0}@{1}\"", GetComputersGroupName(collectionName), RootDomain);
 
             Command rdRapCommand = new Command("New-Item");
             rdRapCommand.Parameters.Add("Path", string.Format("\"{0}\"", RapPath));
             rdRapCommand.Parameters.Add("Name", string.Format("\"{0}\"", policyName));
-            rdRapCommand.Parameters.Add("UserGroups", userGroupParametr);
+            rdRapCommand.Parameters.Add("UserGroups", userGroupParametr);            
             rdRapCommand.Parameters.Add("ComputerGroupType", 1);
-            rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParametr);
-            Log.WriteWarning("User Group:" + userGroupParametr);
-            Log.WriteWarning("Computer Group:" + computerGroupParametr);
-            ExecuteRemoteShellCommand(runSpace, gatewayHost, rdRapCommand, RdsModuleName);
-            Log.WriteWarning("RD RAP Added");
+            rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParametr);            
+
+            object[] errors;
+
+            for (int i = 0; i < 3; i++)
+            {
+                Log.WriteWarning(string.Format("Adding RD RAP ... {0}\r\nGateway Host\t{1}\r\nUser Group\t{2}\r\nComputer Group\t{3}", i + 1, gatewayHost, userGroupParametr, computerGroupParametr));
+                ExecuteRemoteShellCommand(runSpace, gatewayHost, rdRapCommand, out errors, RdsModuleName);
+
+                if (errors == null || !errors.Any())
+                {
+                    Log.WriteWarning("RD RAP Added Successfully");
+                    break;
+                }
+                else
+                {
+                    Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                }
+            }            
         }
 
         internal void RemoveRdRap(Runspace runSpace, string gatewayHost, string name)
@@ -1178,6 +1191,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 FilePath = Convert.ToString(GetPSObjectProperty(psObject, "FilePath")),
                 FileVirtualPath = Convert.ToString(GetPSObjectProperty(psObject, "FileVirtualPath"))
             };
+
+            remoteApp.Alias = remoteApp.DisplayName;
 
             return remoteApp;
         }
@@ -1494,6 +1509,12 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         internal Collection<PSObject> ExecuteRemoteShellCommand(Runspace runSpace, string hostName, Command cmd, params string[] moduleImports)
         {
+            object[] errors;
+            return ExecuteRemoteShellCommand(runSpace, hostName, cmd, out errors, moduleImports);
+        }
+
+        internal Collection<PSObject> ExecuteRemoteShellCommand(Runspace runSpace, string hostName, Command cmd, out object[] errors, params string[] moduleImports)
+        {
             Command invokeCommand = new Command("Invoke-Command");
             invokeCommand.Parameters.Add("ComputerName", hostName);
 
@@ -1512,9 +1533,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             ScriptBlock sb = invoke.Invoke(string.Format("{{{0}}}", commandString))[0].BaseObject as ScriptBlock;
 
-            invokeCommand.Parameters.Add("ScriptBlock", sb);
+            invokeCommand.Parameters.Add("ScriptBlock", sb);            
 
-            return ExecuteShellCommand(runSpace, invokeCommand, false);
+            return ExecuteShellCommand(runSpace, invokeCommand, false, out errors);
         }
 
         internal Collection<PSObject> ExecuteRemoteShellCommand(Runspace runSpace, string hostName, List<string> scripts, params string[] moduleImports)
@@ -1779,10 +1800,26 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     prop.SetValue(session, GetPSObjectProperty(userSession, prop.Name).ToString(), null);
                 }
 
+                session.UserName = GetUserFullName(session.DomainName, session.UserName, runSpace);
                 result.Add(session);
             }
 
             return result;
+        }
+
+        private string GetUserFullName(string domain, string userName, Runspace runspace)
+        {
+            Command cmd = new Command("Get-WmiObject");
+            cmd.Parameters.Add("Class", "win32_useraccount");
+            cmd.Parameters.Add("Filter", string.Format("Domain = '{0}' AND Name = '{1}'", domain, userName));
+            var names = ExecuteShellCommand(runspace, cmd, false);
+
+            if (names.Any())
+            {
+                return names.First().Members["FullName"].Value.ToString();
+            }
+
+            return "";
         }
 
         #endregion

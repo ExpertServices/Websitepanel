@@ -40,67 +40,94 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.Localize locTitle;
         
         /// <summary>
-        /// messageBox control.
+        /// litCollectionName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
+        protected global::System.Web.UI.WebControls.Literal litCollectionName;
         
         /// <summary>
-        /// locCollectionName control.
+        /// SimpleMessageBox1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCollectionName;
+        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox SimpleMessageBox1;
         
         /// <summary>
-        /// locCName control.
+        /// tabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCName;
+        protected global::WebsitePanel.Portal.RDS.UserControls.RdsServerTabs tabs;
         
         /// <summary>
-        /// locApplicationName control.
+        /// secRdsApplicationEdit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locApplicationName;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secRdsApplicationEdit;
         
         /// <summary>
-        /// locAppName control.
+        /// panelRdsApplicationEdit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locAppName;
+        protected global::System.Web.UI.WebControls.Panel panelRdsApplicationEdit;
         
         /// <summary>
-        /// UsersPanel control.
+        /// locLblApplicationName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl UsersPanel;
+        protected global::System.Web.UI.WebControls.Localize locLblApplicationName;
         
         /// <summary>
-        /// locUsersSection control.
+        /// txtApplicationName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locUsersSection;
+        protected global::System.Web.UI.WebControls.TextBox txtApplicationName;
+        
+        /// <summary>
+        /// valApplicationName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valApplicationName;
+        
+        /// <summary>
+        /// secRdsApplicationUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secRdsApplicationUsers;
+        
+        /// <summary>
+        /// panelRdsApplicationUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelRdsApplicationUsers;
         
         /// <summary>
         /// users control.
@@ -112,21 +139,12 @@ namespace WebsitePanel.Portal.RDS {
         protected global::WebsitePanel.Portal.RDS.UserControls.RDSCollectionUsers users;
         
         /// <summary>
-        /// btnSave control.
+        /// buttonPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
-        
-        /// <summary>
-        /// valSummary control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary valSummary;
+        protected global::WebsitePanel.Portal.ItemButtonPanel buttonPanel;
     }
 }

@@ -113,8 +113,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
             var sessionHosts = ES.Services.RDS.GetRdsCollectionSessionHosts(PanelRequest.CollectionID);            
 
             var addedApplications = GetApps();
-            var displayNames = addedApplications.Select(p => p.DisplayName);
-            apps = apps.Where(x => !displayNames.Contains(x.DisplayName)).ToList();          
+            var aliases = addedApplications.Select(p => p.Alias);
+            apps = apps.Where(x => !aliases.Contains(x.Alias)).ToList();          
 
             if (Direction == SortDirection.Ascending)
             {
@@ -132,13 +132,22 @@ namespace WebsitePanel.Portal.RDS.UserControls
             foreach (var host in sessionHosts)
             {
                 if (!requiredParams.Contains(string.Format("/v:{0}", host.ToLower())))
-                {
+                {                    
                     var fullRemote = new StartMenuApp
                     {
                         DisplayName = string.Format("Full Desktop - {0}", host.ToLower()),
                         FilePath = "%SystemRoot%\\system32\\mstsc.exe",
                         RequiredCommandLine = string.Format("/v:{0}", host.ToLower())
                     };
+
+                    var sessionHost = collection.Servers.Where(s => s.FqdName.Equals(host, StringComparison.CurrentCultureIgnoreCase)).First();
+
+                    if (sessionHost != null)
+                    {
+                        fullRemote.DisplayName = string.Format("Full Desktop - {0}", sessionHost.Name.ToLower());
+                    }
+
+                    fullRemote.Alias = fullRemote.DisplayName.Replace(" ", "");
 
                     if (apps.Count > 0)
                     {
@@ -201,7 +210,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                 RemoteApplication app = new RemoteApplication();
                 app.Alias = (string)gvApps.DataKeys[i][0];
-                app.DisplayName = ((Literal)row.FindControl("litDisplayName")).Text;
+                app.DisplayName = ((HyperLink)row.FindControl("lnkDisplayName")).Text;
                 app.FilePath = ((HiddenField)row.FindControl("hfFilePath")).Value;
                 app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
 
