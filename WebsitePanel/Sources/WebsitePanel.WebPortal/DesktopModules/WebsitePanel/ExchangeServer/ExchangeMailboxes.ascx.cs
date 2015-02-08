@@ -69,7 +69,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             BindServiceLevels();
 
-            
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
@@ -273,5 +272,42 @@ namespace WebsitePanel.Portal.ExchangeServer
             odsAccountsPaged.SelectParameters["accountTypes"].DefaultValue = string.Join(",", accountTypes);
         }
 
+        protected void userActions_OnExecutingUserAction(object sender, EventArgs e)
+        {
+            // Get checked users
+            var userIds = Utils.GetCheckboxValuesFromGrid<int>(gvMailboxes, "chkSelectedUsersIds");
+
+            if (userActions.SelectedAction != UserActionTypes.None)
+            {
+                if (userIds.Count > 0)
+                {
+                    try
+                    {
+                        var result = userActions.DoUserActions(userIds);
+
+                        if (result < 0)
+                        {
+                            messageBox.ShowResultMessage(result);
+                            return;
+                        }
+
+                        messageBox.ShowSuccessMessage("ORGANIZATION_USERS_ACTIONS");
+                    }
+                    catch (Exception ex)
+                    {
+                        messageBox.ShowErrorMessage("ORGANIZATION_USERS_ACTIONS", ex);
+                    }
+
+                    // Refresh users grid
+                    gvMailboxes.DataBind();
+                }
+                else
+                {
+                    messageBox.ShowWarningMessage("ORGANIZATION_USERS_ACTIONS");
+                }
+            }
+
+            userActions.ResetSelection();
+        }
     }
 }

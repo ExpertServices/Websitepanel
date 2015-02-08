@@ -35,180 +35,243 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ExchangeServer {
+namespace WebsitePanel.Portal {
     
     
-    public partial class ExchangeMailboxes {
+    public partial class UserActions {
         
         /// <summary>
-        /// asyncTasks control.
+        /// tblActions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+        protected global::System.Web.UI.UpdatePanel tblActions;
         
         /// <summary>
-        /// Image1 control.
+        /// ddlUserActions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
+        protected global::System.Web.UI.WebControls.DropDownList ddlUserActions;
         
         /// <summary>
-        /// locTitle control.
+        /// Modal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTitle;
+        protected global::AjaxControlToolkit.ModalPopupExtender Modal;
         
         /// <summary>
-        /// messageBox control.
+        /// EnablePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
+        protected global::System.Web.UI.WebControls.Panel EnablePanel;
         
         /// <summary>
-        /// btnCreateMailbox control.
+        /// headerEnable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCreateMailbox;
+        protected global::System.Web.UI.WebControls.Localize headerEnable;
         
         /// <summary>
-        /// userActions control.
+        /// litEnable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserActions userActions;
+        protected global::System.Web.UI.WebControls.Literal litEnable;
         
         /// <summary>
-        /// SearchPanel control.
+        /// btnEnableOk control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SearchPanel;
+        protected global::System.Web.UI.WebControls.Button btnEnableOk;
         
         /// <summary>
-        /// chkMailboxes control.
+        /// btnEnableCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkMailboxes;
+        protected global::System.Web.UI.WebControls.Button btnEnableCancel;
         
         /// <summary>
-        /// chkResourceMailboxes control.
+        /// DisablePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkResourceMailboxes;
+        protected global::System.Web.UI.WebControls.Panel DisablePanel;
         
         /// <summary>
-        /// chkSharedMailboxes control.
+        /// headerDisable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSharedMailboxes;
+        protected global::System.Web.UI.WebControls.Localize headerDisable;
         
         /// <summary>
-        /// ddlPageSize control.
+        /// litDisable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPageSize;
+        protected global::System.Web.UI.WebControls.Literal litDisable;
         
         /// <summary>
-        /// ddlSearchColumn control.
+        /// btnDisableOk control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSearchColumn;
+        protected global::System.Web.UI.WebControls.Button btnDisableOk;
         
         /// <summary>
-        /// txtSearchValue control.
+        /// btnDisableCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearchValue;
+        protected global::System.Web.UI.WebControls.Button btnDisableCancel;
         
         /// <summary>
-        /// cmdSearch control.
+        /// ServiceLevelPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
+        protected global::System.Web.UI.WebControls.Panel ServiceLevelPanel;
         
         /// <summary>
-        /// gvMailboxes control.
+        /// headerServiceLevel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvMailboxes;
+        protected global::System.Web.UI.WebControls.Localize headerServiceLevel;
         
         /// <summary>
-        /// odsAccountsPaged control.
+        /// litServiceLevel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsAccountsPaged;
+        protected global::System.Web.UI.WebControls.Literal litServiceLevel;
         
         /// <summary>
-        /// locQuota control.
+        /// ddlServiceLevels control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locQuota;
+        protected global::System.Web.UI.WebControls.DropDownList ddlServiceLevels;
         
         /// <summary>
-        /// mailboxesQuota control.
+        /// btnServiceLevelOk control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.QuotaViewer mailboxesQuota;
+        protected global::System.Web.UI.WebControls.Button btnServiceLevelOk;
         
         /// <summary>
-        /// dlServiceLevelQuotas control.
+        /// btnServiceLevelCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater dlServiceLevelQuotas;
+        protected global::System.Web.UI.WebControls.Button btnServiceLevelCancel;
+        
+        /// <summary>
+        /// VIPPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel VIPPanel;
+        
+        /// <summary>
+        /// headerVIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize headerVIP;
+        
+        /// <summary>
+        /// litVIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litVIP;
+        
+        /// <summary>
+        /// ddlVIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlVIP;
+        
+        /// <summary>
+        /// btnVIPOk control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnVIPOk;
+        
+        /// <summary>
+        /// btnVIPCancel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnVIPCancel;
+        
+        /// <summary>
+        /// FakeModalPopupTarget control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button FakeModalPopupTarget;
     }
 }
