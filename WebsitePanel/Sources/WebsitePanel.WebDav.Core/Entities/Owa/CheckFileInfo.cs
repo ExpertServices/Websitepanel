@@ -33,6 +33,10 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         public string DownloadUrl { get; set; }
         [DataMember]
         public bool ReadOnly { get; set; }
+        [DataMember]
+        public bool RestrictedWebViewOnly { get; set; }
+        [DataMember]
+        public string ClientUrl { get; set; }
         //[DataMember]
         //public bool UserCanNotWriteRelative { get; set; }
         
@@ -100,8 +104,7 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //public bool ProtectInClient { get; set; }
         //[DataMember]
         //public bool ReadOnly { get; set; }
-        //[DataMember]
-        //public bool RestrictedWebViewOnly { get; set; }
+
 
         //[DataMember]
         //public string SignoutUrl { get; set; }

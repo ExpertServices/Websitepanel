@@ -60,6 +60,7 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
             var url = new Uri(Request.RequestUri, urlPart).ToString();
 
             fileInfo.DownloadUrl = url;
+            fileInfo.ClientUrl = _webDavManager.GetFileUrl(token.FilePath);
 
             return fileInfo;
         }
