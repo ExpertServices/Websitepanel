@@ -1217,10 +1217,10 @@ namespace WebsitePanel.EnterpriseServer
             return account;
         }
 
-        public static ExchangeAccount GetAccountByAccountName(string primaryEmailAddress)
+        public static ExchangeAccount GetAccountByAccountName(string userPrincipalName)
         {
             ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
-                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(primaryEmailAddress));
+                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(userPrincipalName));
 
             if (account == null)
                 return null;
