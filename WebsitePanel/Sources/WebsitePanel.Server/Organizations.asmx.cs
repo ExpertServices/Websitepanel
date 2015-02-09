@@ -159,12 +159,13 @@ namespace WebsitePanel.Server
             string address, string city, string state, string zip, string country, string jobTitle,
             string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, 
+            bool userMustChangePassword)
         {
             Organization.SetUserGeneralSettings(organizationId, accountName, displayName, password, hideFromAddressBook,
                 disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle,
                 company, department, office, managerAccountName, businessPhone, fax, homePhone,
-                mobilePhone, pager, webPage, notes, externalEmail);
+                mobilePhone, pager, webPage, notes, externalEmail, userMustChangePassword);
         }
 
 

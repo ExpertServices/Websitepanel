@@ -327,5 +327,12 @@ namespace WebsitePanel.Providers.HostedSolution
             set { isVip = value; }
         }
 
+        private bool userMustChangePassword;
+
+        public bool UserMustChangePassword
+        {
+            get { return userMustChangePassword; }
+            set { userMustChangePassword = value; }
+        }
     }
 }
