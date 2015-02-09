@@ -173,7 +173,7 @@ namespace WebsitePanel.Portal
                     user.ExternalEmail,
                     user.SubscriberNumber,
                     serviceLevelId ?? user.LevelId,
-                    isVIP ?? user.IsVIP);
+                    isVIP ?? user.IsVIP, false);
 
                 if (result < 0)
                 {
