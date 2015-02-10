@@ -236,7 +236,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     user.ExternalEmail,
                     txtSubscriberNumber.Text,
                     0,
-                    false);
+                    false,
+                    chkUserMustChangePassword.Checked);
         }
 
 

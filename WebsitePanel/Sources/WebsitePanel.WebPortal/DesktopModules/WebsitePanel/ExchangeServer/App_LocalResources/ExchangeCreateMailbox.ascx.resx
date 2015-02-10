@@ -189,4 +189,7 @@
   <data name="SharedMailbox.Text" xml:space="preserve">
     <value>Shared Mailbox</value>
   </data>
+  <data name="chkUserMustChangePassword.Text" xml:space="preserve">
+    <value>User must change password at next logon</value>
+  </data>
 </root>
