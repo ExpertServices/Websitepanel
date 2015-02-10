@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Net.Mail;
 using System.Threading;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
@@ -1216,10 +1217,10 @@ namespace WebsitePanel.EnterpriseServer
             return account;
         }
 
-        public static ExchangeAccount GetAccountByAccountName(string primaryEmailAddress)
+        public static ExchangeAccount GetAccountByAccountName(string userPrincipalName)
         {
             ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
-                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(primaryEmailAddress));
+                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(userPrincipalName));
 
             if (account == null)
                 return null;
@@ -2919,23 +2920,18 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 List<ExchangeMailboxPlan> mailboxPlans = new List<ExchangeMailboxPlan>();
+                int? defaultPlanId = null;
 
                 UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
 
                 if (user.Role == UserRole.User)
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, archiving);
+                    GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, ref defaultPlanId, archiving);
                 else
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, archiving);
+                    GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, ref defaultPlanId, archiving);
 
-
-                ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
-
-                if (ExchangeOrg != null)
+                if (defaultPlanId.HasValue)
                 {
-                    foreach (ExchangeMailboxPlan p in mailboxPlans)
-                    {
-                        p.IsDefault = (p.MailboxPlanId == ExchangeOrg.ExchangeMailboxPlanID);
-                    }
+                    mailboxPlans.ForEach(p => p.IsDefault = (p.MailboxPlanId == defaultPlanId.Value));
                 }
 
                 return mailboxPlans;
@@ -2950,7 +2946,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, bool archiving)
+        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, ref int? defaultPlanId, bool archiving)
         {
             if ((user != null))
             {
@@ -2983,11 +2979,20 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         mailboxPlans.Add(p);
                     }
+
+                    // Set default plan
+                    ExchangeOrganization exchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(OrgId));
+
+                    // If the default plan has not been set by the setting of higher priority 
+                    if (!defaultPlanId.HasValue && exchangeOrg != null && exchangeOrg.ExchangeMailboxPlanID > 0)
+                    {
+                        defaultPlanId = exchangeOrg.ExchangeMailboxPlanID;
+                    }
                 }
 
                 UserInfo owner = UserController.GetUserInternally(user.OwnerId);
 
-                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, archiving);
+                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, ref defaultPlanId, archiving);
             }
         }
 

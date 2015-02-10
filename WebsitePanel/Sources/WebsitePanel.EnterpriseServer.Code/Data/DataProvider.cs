@@ -2684,13 +2684,13 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string primaryEmailAddress)
+        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string userPrincipalName)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "GetExchangeAccountByAccountNameWithoutItemId",
-                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress)
+                new SqlParameter("@UserPrincipalName", userPrincipalName)
             );
         }
 

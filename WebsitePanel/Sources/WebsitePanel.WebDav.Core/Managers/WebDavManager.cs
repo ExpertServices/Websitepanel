@@ -143,9 +143,55 @@ namespace WebsitePanel.WebDav.Core.Managers
             resource.Upload(bytes);
         }
 
+        public void UploadFile(string path, byte[] bytes)
+        {
+            var resource = new WebDavResource();
+
+            var fileUrl = new Uri(WebDavAppConfigManager.Instance.WebdavRoot)
+                .Append(WspContext.User.OrganizationId)
+                .Append(path);
+
+            resource.SetHref(fileUrl);
+            resource.SetCredentials(new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword)));
+
+            resource.Upload(bytes);
+        }
+
+        public void UploadFile(string path, Stream stream)
+        {
+            var resource = new WebDavResource();
+
+            var fileUrl = new Uri(WebDavAppConfigManager.Instance.WebdavRoot)
+                .Append(WspContext.User.OrganizationId)
+                .Append(path);
+
+            resource.SetHref(fileUrl);
+            resource.SetCredentials(new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword)));
+
+            var bytes = ReadFully(stream);
+
+            resource.Upload(bytes);
+        }
+
+        public void LockFile(string path)
+        {
+            var resource = new WebDavResource();
+
+            var fileUrl = new Uri(WebDavAppConfigManager.Instance.WebdavRoot)
+                .Append(WspContext.User.OrganizationId)
+                .Append(path);
+
+            resource.SetHref(fileUrl);
+            resource.SetCredentials(new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword)));
+
+            resource.Lock();
+        }
+
         public void DeleteResource(string path)
         {
             path = RemoveLeadingFromPath(path, "office365");
+            path = RemoveLeadingFromPath(path, "view");
+            path = RemoveLeadingFromPath(path, "edit");
             path = RemoveLeadingFromPath(path, WspContext.User.OrganizationId);
 
             string folderPath = GetFileFolder(path);
@@ -179,6 +225,26 @@ namespace WebsitePanel.WebDav.Core.Managers
             catch (InvalidOperationException exception)
             {
                 throw new ResourceNotFoundException("Resource not found", exception);
+            }
+        }
+
+        public bool FileExist(string path)
+        {
+            try
+            {
+                string folder = GetFileFolder(path);
+
+                var resourceName = GetResourceName(path);
+
+                OpenFolder(folder);
+
+                var resource = _currentFolder.GetResource(resourceName);
+
+                return resource != null;
+            }
+            catch (InvalidOperationException exception)
+            {
+                return false;
             }
         }
 

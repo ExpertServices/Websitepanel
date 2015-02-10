@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Web;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDavPortal.Extensions;
 
@@ -20,10 +22,34 @@ namespace WebsitePanel.WebDavPortal.FileOperations
             get
             {
                 FileOpenerType result;
-                if (_operationTypes.TryGetValue(fileExtension, out result))
+                if (_operationTypes.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
                     return result;
                 return FileOpenerType.Download;
             }
+        }
+
+        private bool CheckBrowserSupport()
+        {
+            var request = HttpContext.Current.Request;
+            int supportedVersion;
+
+            string key = string.Empty;
+
+            foreach (var supportedKey in WebDavAppConfigManager.Instance.OwaSupportedBrowsers.Keys)
+            {
+                if (supportedKey.Split(';').Contains(request.Browser.Browser))
+                {
+                    key = supportedKey;
+                    break;
+                }
+            }
+
+            if (WebDavAppConfigManager.Instance.OwaSupportedBrowsers.TryGetValue(key, out supportedVersion) == false)
+            {
+                return false;
+            }
+
+            return supportedVersion <= request.Browser.MajorVersion;
         }
     }
 }
