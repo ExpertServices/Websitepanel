@@ -80,7 +80,7 @@
                                     <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
                                 </HeaderTemplate>
 			                    <ItemTemplate>							        
-				                    <asp:CheckBox runat="server" ID="chkSelectedUsersIds"></asp:CheckBox>
+				                    <asp:CheckBox runat="server" ID="chkSelectedUsersIds" CssClass="GridCheckbox"></asp:CheckBox>
 			                    </ItemTemplate>
 		                    </asp:TemplateField>
                             <asp:TemplateField>
