@@ -73,11 +73,6 @@
 					                OnRowCommand="gvUsers_RowCommand" AllowPaging="True" AllowSorting="True"
 					                DataSourceID="odsAccountsPaged" PageSize="20">
 					                <Columns>
-						                <asp:TemplateField>
-							                <ItemTemplate>							        
-								                <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
-							                </ItemTemplate>
-						                </asp:TemplateField>
                                         <asp:TemplateField>
                                             <HeaderTemplate>
                                                 <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
@@ -86,6 +81,11 @@
 				                                <asp:CheckBox runat="server" ID="chkSelectedUsersIds"></asp:CheckBox>
 			                                </ItemTemplate>
 		                                </asp:TemplateField>	
+						                <asp:TemplateField>
+							                <ItemTemplate>							        
+								                <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
+							                </ItemTemplate>
+						                </asp:TemplateField>
 						                <asp:TemplateField HeaderText="gvUsersDisplayName" SortExpression="DisplayName">
 							                <ItemStyle Width="25%"></ItemStyle>
 							                <ItemTemplate>							        

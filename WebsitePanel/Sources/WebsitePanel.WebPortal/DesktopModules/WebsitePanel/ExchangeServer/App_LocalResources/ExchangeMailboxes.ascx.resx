@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreateMailbox.Text" xml:space="preserve">
-    <value>Create New Mailbox</value>
+    <value>New Mailbox</value>
   </data>
   <data name="cmdDelete.OnClientClick" xml:space="preserve">
     <value>if(!confirm('Are you sure you want to delete this mailbox?')) return false; else ShowProgressDialog('Deleting mailbox...');</value>
