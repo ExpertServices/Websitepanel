@@ -986,13 +986,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             //adding users to group
             foreach (var user in users)
             {
-                var userPath = GetUserPath(organizationId, user);
+                var samName = user.Split('\\').Last();
+                var userPath = GetUserPath(organizationId, samName);
 
                 if (ActiveDirectoryUtils.AdObjectExists(userPath))
-                {
-                    var userObject = ActiveDirectoryUtils.GetADObject(userPath);
-                    var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(userObject, "sAMAccountName");
-
+                {                    
                     if (!ActiveDirectoryUtils.IsUserInGroup(samName, usersGroupName))
                     {
                         ActiveDirectoryUtils.AddObjectToGroup(userPath, GetUsersGroupPath(organizationId, collectionName));

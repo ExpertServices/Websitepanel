@@ -194,6 +194,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 OrganizationUser user = new OrganizationUser();
                 user.AccountName = (string)gvUsers.DataKeys[i][0];
                 user.DisplayName = ((Literal)row.FindControl("litAccount")).Text;
+                user.SamAccountName = ((HiddenField)row.FindControl("hdnSamAccountName")).Value;
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||
@@ -219,7 +220,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     accounts.Add(new OrganizationUser
                     {
                         AccountName = (string)gvPopupAccounts.DataKeys[i][0],
-                        DisplayName = ((Literal)row.FindControl("litDisplayName")).Text
+                        DisplayName = ((Literal)row.FindControl("litDisplayName")).Text,
+                        SamAccountName = ((HiddenField)row.FindControl("hdnSamName")).Value
                     });
                 }
             }
