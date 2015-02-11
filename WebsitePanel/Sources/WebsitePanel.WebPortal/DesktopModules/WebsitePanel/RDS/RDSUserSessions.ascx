@@ -42,7 +42,7 @@
                                             <asp:TemplateField meta:resourcekey="gvUserName" HeaderText="gvUserName">
                                                 <ItemStyle Width="30%" Wrap="false"/>
                                                 <ItemTemplate>
-                                                    <asp:Literal ID="litUserName" runat="server" Text='<%# string.Format("{0}\\{1}", Eval("DomainName"), Eval("UserName")) %>'/>
+                                                    <asp:Literal ID="litUserName" runat="server" Text='<%# Eval("UserName") %>'/>
                                                     <asp:HiddenField ID="hfUnifiedSessionId" runat="server"  Value='<%# Eval("UnifiedSessionId") %>'/>
                                                 </ItemTemplate>
                                             </asp:TemplateField>

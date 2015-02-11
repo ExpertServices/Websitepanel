@@ -150,6 +150,9 @@
   <data name="NoFilesAreSelected" xml:space="preserve">
     <value>No files are selected.</value>
   </data>
+  <data name="NotAFile" xml:space="preserve">
+    <value>Not a file.</value>
+  </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing</value>
   </data>

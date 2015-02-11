@@ -56,10 +56,10 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvUsers.Columns[5].Visible = false;
+                    gvUsers.Columns[6].Visible = false;
                 }
             }
-            gvUsers.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+            gvUsers.Columns[4].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
         }
 
         private void BindServiceLevels()
@@ -136,7 +136,7 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 var accountType = (ExchangeAccountType)gvUsers.DataKeys[rowIndex][1];
 
-                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS) && accountType != ExchangeAccountType.User)
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx) && accountType != ExchangeAccountType.User)
                 {
                     chkEnableForceArchiveMailbox.Visible = true;
 
@@ -362,7 +362,7 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 int result = 0;
 
-                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS))
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx))
                 {
                     result = ES.Services.Organizations.SetDeletedUser(PanelRequest.ItemID, int.Parse(hdAccountId.Value), chkEnableForceArchiveMailbox.Checked);
                 }
@@ -387,6 +387,45 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 messageBox.ShowErrorMessage("ORGANIZATIONS_DELETE_USERS", ex);
             }
+        }
+
+
+        protected void userActions_OnExecutingUserAction(object sender, EventArgs e)
+        {
+            // Get checked users
+            var userIds = Utils.GetCheckboxValuesFromGrid<int>(gvUsers, "chkSelectedUsersIds");
+
+            if (userActions.SelectedAction != UserActionTypes.None)
+            {
+                if (userIds.Count > 0)
+                {
+                    try
+                    {
+                        var result = userActions.DoUserActions(userIds);
+
+                        if (result < 0)
+                        {
+                            messageBox.ShowResultMessage(result);
+                            return;
+                        }
+
+                        messageBox.ShowSuccessMessage("ORGANIZATION_USERS_ACTIONS");
+                    }
+                    catch (Exception ex)
+                    {
+                        messageBox.ShowErrorMessage("ORGANIZATION_USERS_ACTIONS", ex);
+                    }
+
+                    // Refresh users grid
+                    gvUsers.DataBind();
+                }
+                else
+                {
+                    messageBox.ShowWarningMessage("ORGANIZATION_USERS_ACTIONS");
+                }
+            }
+
+            userActions.ResetSelection();
         }
     }
 }

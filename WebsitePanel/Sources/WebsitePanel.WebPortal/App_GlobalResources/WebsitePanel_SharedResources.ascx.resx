@@ -3136,6 +3136,15 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ORGANIZATION_USERS_ACTIONS" xml:space="preserve">
+    <value>Action has been successfully performed.</value>
+  </data>
+  <data name="Error.ORGANIZATION_USERS_ACTIONS" xml:space="preserve">
+    <value>Failed to perform action.</value>
+  </data>
+  <data name="Warning.ORGANIZATION_USERS_ACTIONS" xml:space="preserve">
+    <value>Please select the users for which you want to perform actions.</value>
+  </data>
   <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
     <value>User password has been successfully updated.</value>
   </data>
@@ -5643,6 +5652,9 @@
   </data>
   <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
     <value>RDS Collection settings not updated</value>
+  </data>
+  <data name="ERROR.REMOTEAPPUSERS_NOT_UPDATED" xml:space="preserve">
+    <value>Remote application users not updated</value>
   </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
     <value>RDS User logging off error</value>

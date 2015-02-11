@@ -153,4 +153,7 @@
   <data name="headerAddApps.Text" xml:space="preserve">
     <value>Available Remote Applications</value>
   </data>
+  <data name="lnkDisplayName" xml:space="preserve">
+    <value>ShowProgressDialog('Loading ...');</value>
+  </data>
 </root>

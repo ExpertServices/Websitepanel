@@ -231,6 +231,8 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 password.ValidationEnabled = true;
                 password.Password = string.Empty;
+
+                chkUserMustChangePassword.Checked = user.UserMustChangePassword;
             }
             catch (Exception ex)
             {
@@ -323,7 +325,8 @@ namespace WebsitePanel.Portal.HostedSolution
                     txtExternalEmailAddress.Text,
                     txtSubscriberNumber.Text,
                     string.IsNullOrEmpty(ddlServiceLevels.SelectedValue) ? 0 : int.Parse(ddlServiceLevels.SelectedValue),
-                    chkVIP.Checked);
+                    chkVIP.Checked,
+                    chkUserMustChangePassword.Checked);
 
                 if (result < 0)
                 {
