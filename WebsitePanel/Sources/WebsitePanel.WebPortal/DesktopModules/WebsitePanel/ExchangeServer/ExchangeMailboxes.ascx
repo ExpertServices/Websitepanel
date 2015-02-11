@@ -30,22 +30,22 @@
                     <div class="FormButtonsBarClean">
                         <div class="FormButtonsBarCleanLeft">
                             <asp:Button ID="btnCreateMailbox" runat="server" meta:resourcekey="btnCreateMailbox"
-                            Text="Create New Mailbox" CssClass="Button1" OnClick="btnCreateMailbox_Click" />
+                            Text="New Mailbox" CssClass="Button1" OnClick="btnCreateMailbox_Click" />
                         </div>
                         <div class="FormButtonsBarCleanMiddle">
                             <table>
                                 <tr>
                                     <td>
-                                        <wsp:UserActions ID="userActions" runat="server" OnExecutingUserAction="userActions_OnExecutingUserAction" />
+                                        <wsp:UserActions ID="userActions" runat="server" OnExecutingUserAction="userActions_OnExecutingUserAction" ShowSetMailboxPlan="true" />
                                     </td>
                                     <td class="FormButtonsBarCleanSeparatorSmall"></td>
                                     <td>
                                         <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
-                                            <asp:CheckBox ID="chkMailboxes" runat="server" meta:resourcekey="chkMailboxes" Text="Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" />
-                                            <asp:CheckBox ID="chkResourceMailboxes" runat="server" meta:resourcekey="chkResourceMailboxes" Text="Resource Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" />
-                                            <asp:CheckBox ID="chkSharedMailboxes" runat="server" meta:resourcekey="chkSharedMailboxes" Text="Shared Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" />
+                                            <asp:CheckBox ID="chkMailboxes" runat="server" meta:resourcekey="chkMailboxes" Text="Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" CssClass="Small" />
+                                            <asp:CheckBox ID="chkResourceMailboxes" runat="server" meta:resourcekey="chkResourceMailboxes" Text="Resource Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" CssClass="Small" />
+                                            <asp:CheckBox ID="chkSharedMailboxes" runat="server" meta:resourcekey="chkSharedMailboxes" Text="Shared Mailboxes" AutoPostBack="true" OnCheckedChanged="chkMailboxes_CheckedChanged" CssClass="Small" />
                                             <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"
-                                                OnSelectedIndexChanged="ddlPageSize_SelectedIndexChanged">
+                                                OnSelectedIndexChanged="ddlPageSize_SelectedIndexChanged" Width="50">
                                                 <asp:ListItem>10</asp:ListItem>
                                                 <asp:ListItem Selected="True">20</asp:ListItem>
                                                 <asp:ListItem>50</asp:ListItem>
@@ -60,8 +60,9 @@
                                                 <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
                                                 <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Account Number</asp:ListItem>
                                                 <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Login</asp:ListItem>
-                                            </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
-                                                CausesValidation="false" />
+                                            </asp:DropDownList>
+                                            <asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox>
+                                            <asp:ImageButton ID="cmdSearch" runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton" CausesValidation="false" />
                                         </asp:Panel>
                                     </td>
                                 </tr>
@@ -75,11 +76,6 @@
 					    DataSourceID="odsAccountsPaged" PageSize="20">
 					    <Columns>
                             <asp:TemplateField>
-							    <ItemTemplate>							        
-								    <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
-							    </ItemTemplate>
-						    </asp:TemplateField>
-                            <asp:TemplateField>
                                 <HeaderTemplate>
                                     <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
                                 </HeaderTemplate>
@@ -87,6 +83,11 @@
 				                    <asp:CheckBox runat="server" ID="chkSelectedUsersIds"></asp:CheckBox>
 			                    </ItemTemplate>
 		                    </asp:TemplateField>
+                            <asp:TemplateField>
+							    <ItemTemplate>							        
+								    <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
+							    </ItemTemplate>
+						    </asp:TemplateField>
 						    <asp:TemplateField HeaderText="gvMailboxesDisplayName" SortExpression="DisplayName">
 							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>

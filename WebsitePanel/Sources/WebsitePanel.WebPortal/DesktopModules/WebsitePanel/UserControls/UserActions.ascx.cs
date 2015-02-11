@@ -53,20 +53,33 @@ namespace WebsitePanel.Portal
         Enable = 2,
         SetServiceLevel = 3,
         SetVIP = 4,
+        UnsetVIP = 5,
+        SetMailboxPlan = 6
     }
 
     public partial class UserActions : WebsitePanelControlBase
     {
         public event EventHandler ExecutingUserAction;
 
+        private bool showSetMailboxPlan = false;
+        public bool ShowSetMailboxPlan
+        {
+            get { return showSetMailboxPlan; }
+            set { showSetMailboxPlan = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             // Remove Service Level item and VIP item from Action List if current Hosting plan does not allow Service Levels
             if (!PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId).Groups.ContainsKey(ResourceGroups.ServiceLevels))
             {
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(UserActionTypes.SetServiceLevel.ToString()));
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(UserActionTypes.SetVIP.ToString()));
+                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetServiceLevel).ToString()));
+                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetVIP).ToString()));
+                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.UnsetVIP).ToString()));
             }
+
+            if (!ShowSetMailboxPlan)
+                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetMailboxPlan).ToString()));
         }
 
         public UserActionTypes SelectedAction
@@ -75,28 +88,6 @@ namespace WebsitePanel.Portal
             {
                 return (UserActionTypes)Convert.ToInt32(ddlUserActions.SelectedValue);
             }
-        }
-
-        protected void ddlUserActions_OnSelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (SelectedAction)
-            {
-                case UserActionTypes.Disable:
-                    Modal.PopupControlID = DisablePanel.ID;
-                    break;
-                case UserActionTypes.Enable:
-                    Modal.PopupControlID = EnablePanel.ID;
-                    break;
-                case UserActionTypes.SetServiceLevel:
-                    FillServiceLevelsList();
-                    Modal.PopupControlID = ServiceLevelPanel.ID;
-                    break;
-                case UserActionTypes.SetVIP:
-                    Modal.PopupControlID = VIPPanel.ID;
-                    break;
-            }
-
-            Modal.Show();
         }
 
         public int DoUserActions(List<int> userIds)
@@ -110,17 +101,27 @@ namespace WebsitePanel.Portal
                 case UserActionTypes.SetServiceLevel:
                     return ChangeUsersSettings(userIds, null, SelectedServiceId, null);
                 case UserActionTypes.SetVIP:
-                    return ChangeUsersSettings(userIds, null, null, SelectedVIP);
+                    return ChangeUsersSettings(userIds, null, null, true);
+                case UserActionTypes.UnsetVIP:
+                    return ChangeUsersSettings(userIds, null, null, false);
+                case UserActionTypes.SetMailboxPlan:
+                    return SetMailboxPlan(userIds);
             }
 
             return 0;
         }
 
-        protected void btnModalOk_Click(object sender, EventArgs e)
+        protected void DoExecutingUserAction()
         {
             if (ExecutingUserAction != null)
                 ExecutingUserAction(this, new EventArgs());
         }
+
+        protected void btnModalOk_Click(object sender, EventArgs e)
+        {
+            DoExecutingUserAction();
+        }
+
         protected void btnModalCancel_OnClick(object sender, EventArgs e)
         {
             ResetSelection();
@@ -173,12 +174,11 @@ namespace WebsitePanel.Portal
                     user.ExternalEmail,
                     user.SubscriberNumber,
                     serviceLevelId ?? user.LevelId,
-                    isVIP ?? user.IsVIP, false);
+                    isVIP ?? user.IsVIP, 
+                    user.UserMustChangePassword);
 
                 if (result < 0)
-                {
                     return result;
-                }
             }
 
             return 0;
@@ -186,6 +186,29 @@ namespace WebsitePanel.Portal
 
 
         #region ServiceLevel
+
+        protected int SetMailboxPlan(List<int> userIds)
+        {
+            int planId;
+            
+            if (!int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId))
+                return 0;
+
+            if (planId < 0) return 0;
+
+            foreach (int userId in userIds)
+            {
+                ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, userId);
+
+                int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, userId, planId,
+                    account.ArchivingMailboxPlanId, account.EnableArchiving);
+
+                if (result < 0)
+                    return result;
+            }
+
+            return 0;
+        }
 
         protected int? SelectedServiceId
         {
@@ -239,15 +262,29 @@ namespace WebsitePanel.Portal
 
         #endregion
 
-
-        #region VIP
-
-        protected bool? SelectedVIP
+        protected void btnApply_Click(object sender, EventArgs e)
         {
-            get { return ddlVIP.SelectedValue == "0"; }
-        }
+            switch (SelectedAction)
+            {
+                case UserActionTypes.Disable:
+                case UserActionTypes.Enable:
+                case UserActionTypes.SetVIP:
+                case UserActionTypes.UnsetVIP:
+                    DoExecutingUserAction();
+                    break;
+                case UserActionTypes.SetServiceLevel:
+                    FillServiceLevelsList();
+                    Modal.PopupControlID = ServiceLevelPanel.ID;
+                    Modal.Show();
+                    break;
+                case UserActionTypes.SetMailboxPlan:
+                    Modal.PopupControlID = MailboxPlanPanel.ID;
+                    Modal.Show();
+                    break;
 
-        #endregion
+            }
+
+        }
 
     }
 }

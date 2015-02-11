@@ -1,72 +1,46 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserActions.ascx.cs" Inherits="WebsitePanel.Portal.UserActions" %>
+<%@ Register Src="../ExchangeServer/UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
+
 <script language="javascript">
     function CloseAndShowProgressDialog(text) {
         $(".Popup").hide();
         return ShowProgressDialog(text);
+    }
+
+    function ShowProrgess(btn) {
+        var action = $(btn).prev().val();
+
+        if (action == 1) {
+            ShowProgressDialog('Disabling users...');
+        } else if (action == 2) {
+            ShowProgressDialog('Enabling users...');
+        } else if (action == 4) {
+            ShowProgressDialog('Setting VIP...');
+        } else if (action == 5) {
+            ShowProgressDialog('Unsetting VIP...');
+        }
     }
 </script>
 <asp:UpdatePanel ID="tblActions" runat="server" CssClass="NormalBold" UpdateMode="Conditional" ChildrenAsTriggers="true" >
     <ContentTemplate>
 
         <asp:DropDownList ID="ddlUserActions" runat="server" CssClass="NormalTextBox" resourcekey="ddlUserActions" 
-            AutoPostBack="True" OnSelectedIndexChanged="ddlUserActions_OnSelectedIndexChanged">
+            AutoPostBack="True">
             <asp:ListItem Value="0">Actions</asp:ListItem>
             <asp:ListItem Value="1">Disable</asp:ListItem>
             <asp:ListItem Value="2">Enable</asp:ListItem>
             <asp:ListItem Value="3">SetServiceLevel</asp:ListItem>
             <asp:ListItem Value="4">SetVIP</asp:ListItem>
+            <asp:ListItem Value="5">UnsetVIP</asp:ListItem>
+            <asp:ListItem Value="6">SetMailboxPlan</asp:ListItem>
         </asp:DropDownList>
+
+        <asp:Button ID="btnApply" runat="server" meta:resourcekey="btnApply"
+        Text="Apply" CssClass="Button1" OnClick="btnApply_Click" OnClientClick="return ShowProrgess(this);" />
+
         
         <ajaxToolkit:ModalPopupExtender ID="Modal" runat="server" EnableViewState="true" TargetControlID="FakeModalPopupTarget"
-             PopupControlID="EnablePanel" BackgroundCssClass="modalBackground" DropShadow="false" />
-
-        <%-- Enable --%>
-        <asp:Panel ID="EnablePanel" runat="server" CssClass="Popup" Style="display: none">
-            <table class="Popup-Header">
-                <tr>
-                    <td class="Popup-HeaderLeft"></td>
-                    <td class="Popup-HeaderTitle"><asp:Localize ID="headerEnable" runat="server" meta:resourcekey="headerEnable"></asp:Localize></td>
-                    <td class="Popup-HeaderRight"></td>
-                </tr>
-            </table>
-            <div class="Popup-Content">
-                <div class="Popup-Body">
-                    <br/>
-                    <asp:Literal ID="litEnable" runat="server" meta:resourcekey="litEnable"></asp:Literal>
-                    <br/>
-                </div>
-                <div class="FormFooterMiddle">
-                    <asp:Button ID="btnEnableOk" runat="server" CssClass="Button1" meta:resourcekey="btnEnableOk" Text="Ok" 
-                        OnClientClick="return CloseAndShowProgressDialog('Enabling users...')" OnClick="btnModalOk_Click" />
-                    <asp:Button ID="btnEnableCancel" runat="server" CssClass="Button1" meta:resourcekey="btnEnableCancel" Text="Cancel"
-                        OnClick="btnModalCancel_OnClick" CausesValidation="false" />
-                </div>
-            </div>
-        </asp:Panel>
-
-        <%-- Disable --%>
-        <asp:Panel ID="DisablePanel" runat="server" CssClass="Popup" Style="display: none">
-            <table class="Popup-Header">
-                <tr>
-                    <td class="Popup-HeaderLeft"></td>
-                    <td class="Popup-HeaderTitle"><asp:Localize ID="headerDisable" runat="server" meta:resourcekey="headerDisable"></asp:Localize></td>
-                    <td class="Popup-HeaderRight"></td>
-                </tr>
-            </table>
-            <div class="Popup-Content">
-                <div class="Popup-Body">
-                    <br/>
-                    <asp:Literal ID="litDisable" runat="server" meta:resourcekey="litDisable"></asp:Literal>
-                    <br/>
-                </div>
-                <div class="FormFooterMiddle">
-                    <asp:Button ID="btnDisableOk" runat="server" CssClass="Button1" meta:resourcekey="btnDisableOk" Text="Ok" 
-                        OnClientClick="return CloseAndShowProgressDialog('Disabling users...')" OnClick="btnModalOk_Click" />
-                    <asp:Button ID="btnDisableCancel" runat="server" CssClass="Button1" meta:resourcekey="btnDisableCancel" Text="Cancel"
-                        OnClick="btnModalCancel_OnClick" CausesValidation="false" />
-                </div>
-            </div>
-        </asp:Panel>
+             PopupControlID="FakeModalPopupTarget" BackgroundCssClass="modalBackground" DropShadow="false" />
         
         <%--Set Service Level--%>
         <asp:Panel ID="ServiceLevelPanel" runat="server" CssClass="Popup" Style="display: none">
@@ -93,43 +67,40 @@
                 </div>
             </div>
         </asp:Panel>
-        
-        <%-- VIP --%>
-        <asp:Panel ID="VIPPanel" runat="server" CssClass="Popup" Style="display: none">
+
+        <%--Set MailboxPlan--%>
+        <asp:Panel ID="MailboxPlanPanel" runat="server" CssClass="Popup" Style="display: none">
             <table class="Popup-Header">
                 <tr>
                     <td class="Popup-HeaderLeft"></td>
-                    <td class="Popup-HeaderTitle"><asp:Localize ID="headerVIP" runat="server" meta:resourcekey="headerVIP"></asp:Localize></td>
+                    <td class="Popup-HeaderTitle"><asp:Localize ID="headerMailboxPlanLabel" runat="server" meta:resourcekey="headerMailboxPlanLabel"></asp:Localize></td>
                     <td class="Popup-HeaderRight"></td>
                 </tr>
             </table>
             <div class="Popup-Content">
                 <div class="Popup-Body">
                     <br/>
-                    <asp:Literal ID="litVIP" runat="server" meta:resourcekey="litVIP"></asp:Literal>
+                    <asp:Literal ID="litMailboxPlan" runat="server" meta:resourcekey="litMailboxPlan"></asp:Literal>
                     <br/>
-                    <asp:DropDownList ID="ddlVIP" runat="server" CssClass="NormalTextBox" resourcekey="ddlVIP">
-                        <asp:ListItem Value="0">SetVIP</asp:ListItem>
-                        <asp:ListItem Value="1">UnsetVIP</asp:ListItem>
-                    </asp:DropDownList>
+                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
                     <br/>
                 </div>
                 <div class="FormFooterMiddle">
-                    <asp:Button ID="btnVIPOk" runat="server" CssClass="Button1" meta:resourcekey="btnVIPOk" Text="Ok" 
-                        OnClientClick="return CloseAndShowProgressDialog('Setting VIP...')" OnClick="btnModalOk_Click" />
-                    <asp:Button ID="btnVIPCancel" runat="server" CssClass="Button1" meta:resourcekey="btnVIPCancel" Text="Cancel"
+                    <asp:Button ID="btnMailboxPlanOk" runat="server" CssClass="Button1" meta:resourcekey="btnMailboxPlanOk" Text="Ok" 
+                        OnClientClick="return CloseAndShowProgressDialog('Setting Mailbox Plan ...')" OnClick="btnModalOk_Click" />
+                    <asp:Button ID="btnMailboxPlanCancel" runat="server" CssClass="Button1" meta:resourcekey="btnMailboxPlanCancel" Text="Cancel"
                         OnClick="btnModalCancel_OnClick" CausesValidation="false" />
                 </div>
             </div>
         </asp:Panel>
 
+        
         <asp:Button ID="FakeModalPopupTarget" runat="server" Style="display: none;" />
     </ContentTemplate>
     
     <Triggers>
-        <asp:PostBackTrigger ControlID="btnDisableOk" />
-        <asp:PostBackTrigger ControlID="btnEnableOk" />
         <asp:PostBackTrigger ControlID="btnServiceLevelOk" />
-        <asp:PostBackTrigger ControlID="btnVIPOk" />
+        <asp:PostBackTrigger ControlID="btnMailboxPlanOk" />
+        <asp:PostBackTrigger ControlID="btnApply" />
     </Triggers>
 </asp:UpdatePanel>
