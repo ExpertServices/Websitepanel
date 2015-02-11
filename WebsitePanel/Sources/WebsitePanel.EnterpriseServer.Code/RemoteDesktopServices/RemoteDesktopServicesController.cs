@@ -1055,15 +1055,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 var usersInDb = GetRdsCollectionUsers(collectionId);
 
-                var usersAccountNames = users.Select(x => x.AccountName).ToList();
+                var accountNames = users.Select(x => x.AccountName).ToList();
 
                 //Set on server
-                rds.SetUsersInCollection(org.OrganizationId, collection.Name, users.Select(x => x.AccountName).ToArray());
+                rds.SetUsersInCollection(org.OrganizationId, collection.Name, users.Select(x => x.SamAccountName).ToArray());
 
                 //Remove from db
                 foreach (var userInDb in usersInDb)
                 {
-                    if (!usersAccountNames.Contains(userInDb.AccountName))
+                    if (!accountNames.Contains(userInDb.AccountName))
                     {
                         DataProvider.RemoveRDSUserFromRDSCollection(collectionId, userInDb.AccountId);
                     }
@@ -1109,9 +1109,9 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
-            var collection = GetRdsCollection(collectionId);
-
-            result.AddRange(rds.GetApplicationUsers(collection.Name, remoteApp.Alias));
+            var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
+            var users = rds.GetApplicationUsers(collection.Name, remoteApp.Alias);
+            result.AddRange(users);
 
             return result;
         }
