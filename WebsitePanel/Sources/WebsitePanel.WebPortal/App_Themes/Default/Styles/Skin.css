@@ -179,7 +179,7 @@ h2.ProductTitle.Huge {margin:0;}
 .FormButtonsBar .Left {float: left;}
 .FormButtonsBar .Right {float:right;}
 .FormButtonsBar Button2.Right {text-align: right; margin-bottom: 3px;}
-.FormButtonsBarClean {clear: both; padding-bottom: 4px;}
+.FormButtonsBarClean {clear: both; padding-bottom: 4px; height: 26px;}
 .FormButtonsBarCleanLeft {float: left;}
 .FormButtonsBarCleanRight {text-align: right;}
 .FormButtonsBarCleanMiddle {float: right;}

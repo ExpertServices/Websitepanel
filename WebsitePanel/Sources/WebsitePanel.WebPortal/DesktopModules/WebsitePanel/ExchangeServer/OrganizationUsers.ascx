@@ -65,7 +65,6 @@
                             </table>
                         </div>
                     </div>
-                    <br />
                     <asp:Panel ID="UsersPanel" runat="server">
 						<asp:UpdatePanel ID="UsersUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
 							<ContentTemplate>
