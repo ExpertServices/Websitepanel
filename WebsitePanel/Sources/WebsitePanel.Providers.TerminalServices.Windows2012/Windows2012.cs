@@ -527,6 +527,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             catch (Exception e)
             {
                 result = false;
+                Log.WriteWarning(e.ToString());
             }
 
             return result;
@@ -672,6 +673,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {
+                Log.WriteWarning(string.Format("App alias: {0}\r\nCollection Name:{2}\r\nUsers: {1}", remoteApp.Alias, string.Join("; ", users), collectionName));
                 runspace = OpenRunspace();
 
                 Command cmd = new Command("Set-RDRemoteApp");
@@ -680,8 +682,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("DisplayName", remoteApp.DisplayName);
                 cmd.Parameters.Add("UserGroups", users);
                 cmd.Parameters.Add("Alias", remoteApp.Alias);
+                object[] errors;
 
-                ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
+                ExecuteShellCommand(runspace, cmd, false, out errors).FirstOrDefault();
+
+                if (errors.Any())
+                {
+                    Log.WriteWarning(string.Format("{0} adding users errors: {1}", remoteApp.DisplayName, string.Join("\r\n", errors.Select(e => e.ToString()).ToArray())));
+                }
+                else
+                {
+                    Log.WriteWarning(string.Format("{0} users added successfully", remoteApp.DisplayName));
+                }
             }
             catch(Exception)
             {
@@ -985,15 +997,23 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             //adding users to group
             foreach (var user in users)
-            {
-                var samName = user.Split('\\').Last();
-                var userPath = GetUserPath(organizationId, samName);
+            {                
+                var userPath = GetUserPath(organizationId, user);
+                Log.WriteWarning(string.Format("User Path: {0}", userPath));
+                Log.WriteWarning(string.Format("Group Name: {0}", usersGroupName));
 
                 if (ActiveDirectoryUtils.AdObjectExists(userPath))
                 {                    
+                    var userObject = ActiveDirectoryUtils.GetADObject(userPath);
+                    var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(userObject, "sAMAccountName");
+                    Log.WriteWarning(string.Format("SAMAccountName: {0}", samName));
+
                     if (!ActiveDirectoryUtils.IsUserInGroup(samName, usersGroupName))
                     {
-                        ActiveDirectoryUtils.AddObjectToGroup(userPath, GetUsersGroupPath(organizationId, collectionName));
+                        Log.WriteWarning(string.Format("{0} not exists in {1}", samName, usersGroupName));
+                        var userGroupsPath = GetUsersGroupPath(organizationId, collectionName);
+                        ActiveDirectoryUtils.AddObjectToGroup(userPath, userGroupsPath);
+                        Log.WriteWarning(string.Format("{0} added", samName));
                     }
                 }
             }
