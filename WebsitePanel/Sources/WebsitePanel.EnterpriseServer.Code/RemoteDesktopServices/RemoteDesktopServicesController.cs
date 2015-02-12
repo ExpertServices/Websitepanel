@@ -1058,7 +1058,7 @@ namespace WebsitePanel.EnterpriseServer
                 var accountNames = users.Select(x => x.AccountName).ToList();
 
                 //Set on server
-                rds.SetUsersInCollection(org.OrganizationId, collection.Name, users.Select(x => x.SamAccountName).ToArray());
+                rds.SetUsersInCollection(org.OrganizationId, collection.Name, users.Select(x => x.AccountName).ToArray());
 
                 //Remove from db
                 foreach (var userInDb in usersInDb)
