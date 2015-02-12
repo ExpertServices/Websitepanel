@@ -9,7 +9,6 @@
 
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
     ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
 }
 
@@ -21,16 +20,16 @@
 }
 else
 {
-    <div class="container prevent-deselect">
+    <div id="breadcrumb_wrapper" class="container prevent-deselect">
         @if (Model != null)
         {
             string header = WspContext.User.OrganizationId;
-            <a href="/@header/" class="btn btn-primary btn-sm active" role="button">@header</a>
+            <a href="/@header/">@header</a>
             string[] elements = Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < elements.Length; i++)
             {
-                <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
-                <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))" class="btn btn-primary btn-sm active" role="button">@elements[i]</a>
+                <span style="top: 2px;"> / </span>
+                <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))">@elements[i]</a>
             }
         }
     </div>

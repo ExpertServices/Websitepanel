@@ -169,7 +169,8 @@ namespace WebsitePanel.Portal.HostedSolution
                     user.ExternalEmail,
                     txtSubscriberNumber.Text,
                     0,
-                    false);
+                    false,
+                    chkUserMustChangePassword.Checked);
         }
     }
 }

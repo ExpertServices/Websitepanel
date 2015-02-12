@@ -62,6 +62,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public const string CustomAttribute2 = "extensionAttribute2";
         public const string DistinguishedName = "distinguishedName";
         public const string SID = "objectSid";
-
+        public const string PwdLastSet = "pwdLastSet";
+        public const string UserAccountControl = "UserAccountControl";
     }
 }

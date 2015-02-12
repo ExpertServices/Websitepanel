@@ -219,14 +219,15 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP, 
+            bool userMustChangePassword)
         {
             return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName,
                 password, hideAddressBook, disabled, locked, firstName, initials,
                 lastName, address, city, state, zip, country,
                 jobTitle, company, department, office, managerAccountName,
                 businessPhone, fax, homePhone, mobilePhone, pager,
-                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP);
+                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP, userMustChangePassword);
         }
 
 
