@@ -56,10 +56,10 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvUsers.Columns[5].Visible = false;
+                    gvUsers.Columns[6].Visible = false;
                 }
             }
-            gvUsers.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+            gvUsers.Columns[4].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
         }
 
         private void BindServiceLevels()

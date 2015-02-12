@@ -94,6 +94,7 @@ textarea {font-family:inherit; font-size:inherit; color:inherit; background:#fff
 /* checkbox */
 input[type=checkbox], input[type=radio] {margin:8px 4px 8px; vertical-align:-1px;}
 .HeaderCheckbox {margin-left:5px;}
+.GridCheckbox input[type=checkbox] {margin-top:0px;}
 input[type=image] {margin-right:4px;}
 .LoginLabel {display:block; line-height:34px; width:auto !important; padding-right:8px;}
 .LoginContainer .SubHead {padding-right:8px; color:#333;}
@@ -178,7 +179,7 @@ h2.ProductTitle.Huge {margin:0;}
 .FormButtonsBar .Left {float: left;}
 .FormButtonsBar .Right {float:right;}
 .FormButtonsBar Button2.Right {text-align: right; margin-bottom: 3px;}
-.FormButtonsBarClean {clear: both; padding-bottom: 4px;}
+.FormButtonsBarClean {clear: both; padding-bottom: 4px; height: 26px;}
 .FormButtonsBarCleanLeft {float: left;}
 .FormButtonsBarCleanRight {text-align: right;}
 .FormButtonsBarCleanMiddle {float: right;}

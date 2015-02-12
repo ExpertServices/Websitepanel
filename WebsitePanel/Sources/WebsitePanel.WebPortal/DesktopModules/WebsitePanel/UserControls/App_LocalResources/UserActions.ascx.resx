@@ -117,28 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnDisableCancel.Text" xml:space="preserve">
+  <data name="btnApply.Text" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="btnMailboxPlanCancel.Text" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="btnDisableOk.Text" xml:space="preserve">
-    <value>Ok</value>
-  </data>
-  <data name="btnEnableCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="btnEnableOk.Text" xml:space="preserve">
+  <data name="btnMailboxPlanOk.Text" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="btnServiceLevelCancel.Text" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="btnServiceLevelOk.Text" xml:space="preserve">
-    <value>Ok</value>
-  </data>
-  <data name="btnVIPCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="btnVIPOk.Text" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="cmdApply.AlternateText" xml:space="preserve">
@@ -153,35 +144,26 @@
   <data name="ddlUserActionsItem.Enable" xml:space="preserve">
     <value>Enable</value>
   </data>
+  <data name="ddlUserActionsItem.SetMailboxPlan" xml:space="preserve">
+    <value>Set Mailbox Plan</value>
+  </data>
   <data name="ddlUserActionsItem.SetServiceLevel" xml:space="preserve">
     <value>Set Service Level</value>
   </data>
   <data name="ddlUserActionsItem.SetVIP" xml:space="preserve">
     <value>Set VIP</value>
   </data>
-  <data name="ddlVIPItem.SetVIP" xml:space="preserve">
-    <value>Set VIP</value>
-  </data>
-  <data name="ddlVIPItem.UnsetVIP" xml:space="preserve">
+  <data name="ddlUserActionsItem.UnsetVIP" xml:space="preserve">
     <value>Unset VIP</value>
   </data>
-  <data name="headerDisable.Text" xml:space="preserve">
-    <value>Disable users</value>
-  </data>
-  <data name="headerEnable.Text" xml:space="preserve">
-    <value>Enable users</value>
+  <data name="headerMailboxPlanLabel.Text" xml:space="preserve">
+    <value>Mailbox Plan</value>
   </data>
   <data name="headerServiceLevel.Text" xml:space="preserve">
     <value>Service Level</value>
   </data>
-  <data name="headerVIP.Text" xml:space="preserve">
-    <value>Set VIP</value>
-  </data>
-  <data name="litDisable.Text" xml:space="preserve">
-    <value>Do you wish to disable all selected users?</value>
-  </data>
-  <data name="litEnable.Text" xml:space="preserve">
-    <value>Do you wish to enable all selected users?</value>
+  <data name="litMailboxPlan.text" xml:space="preserve">
+    <value>Please select a Mailbox Plan for the all checked mailboxes</value>
   </data>
   <data name="litServiceLevel.text" xml:space="preserve">
     <value>Please select a Service Level for the all checked users</value>

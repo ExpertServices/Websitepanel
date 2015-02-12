@@ -76,6 +76,8 @@ namespace WebsitePanel.Portal
             chkPerl.Checked = Utils.ParseBool(settings["PerlInstalled"], false);
             chkPython.Checked = Utils.ParseBool(settings["PythonInstalled"], false);
             chkCgiBin.Checked = Utils.ParseBool(settings["CgiBinInstalled"], false);
+			chkCfExt.Checked = Utils.ParseBool(settings["ColdFusionInstalled"], false);
+			chkVirtDir.Checked = Utils.ParseBool(settings["CreateCFVirtualDirectoriesPol"], false);
 
             // anonymous account policy
             anonymousUsername.Value = settings["AnonymousAccountPolicy"];
@@ -130,6 +132,8 @@ namespace WebsitePanel.Portal
             settings["PerlInstalled"] = chkPerl.Checked.ToString();
             settings["PythonInstalled"] = chkPython.Checked.ToString();
             settings["CgiBinInstalled"] = chkCgiBin.Checked.ToString();
+			settings["ColdFusionInstalled"] = chkCfExt.Checked.ToString();
+			settings["CreateCFVirtualDirectoriesPol"] = chkVirtDir.Checked.ToString();
 
             // anonymous account policy
             settings["AnonymousAccountPolicy"] = anonymousUsername.Value;

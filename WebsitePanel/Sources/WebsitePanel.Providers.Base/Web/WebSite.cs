@@ -55,6 +55,7 @@ namespace WebsitePanel.Providers.Web
         private bool frontPageInstalled;
 	    private bool coldFusionAvailable;
 	    private bool createCFVirtualDirectories;
+		private bool createCFVirtualDirectoriesPol;
 	    private string frontPageAccount;
         private string frontPagePassword;
 	    private string coldFusionVersion;
@@ -156,6 +157,12 @@ namespace WebsitePanel.Providers.Web
 	    {
             get { return this.createCFVirtualDirectories; }
             set { this.createCFVirtualDirectories = value; }
+	    }
+		
+	    public bool CreateCFVirtualDirectoriesPol
+	    {
+            get { return this.createCFVirtualDirectoriesPol; }
+            set { this.createCFVirtualDirectoriesPol = value; }
 	    }
 
 	    public ServerState SiteState
