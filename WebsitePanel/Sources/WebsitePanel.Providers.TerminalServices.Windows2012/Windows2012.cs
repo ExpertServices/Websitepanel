@@ -988,34 +988,28 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         {
             var usersGroupName = GetUsersGroupName(collectionName);
             var usersGroupPath = GetUsersGroupPath(organizationId, collectionName);
+            var orgPath = GetOrganizationPath(organizationId);
+            var orgEntry = ActiveDirectoryUtils.GetADObject(orgPath);
+            var groupUsers = ActiveDirectoryUtils.GetGroupObjects(usersGroupName, "user", orgEntry);
 
             //remove all users from group
-            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(usersGroupName, "user"))
+            foreach (string userPath in groupUsers)
             {
-                ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, usersGroupPath);
-            }
+                ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, usersGroupPath);                
+            }          
 
             //adding users to group
             foreach (var user in users)
             {                
-                var userPath = GetUserPath(organizationId, user);
-                Log.WriteWarning(string.Format("User Path: {0}", userPath));
-                Log.WriteWarning(string.Format("Group Name: {0}", usersGroupName));
+                var userPath = GetUserPath(organizationId, user);                
 
                 if (ActiveDirectoryUtils.AdObjectExists(userPath))
                 {                    
                     var userObject = ActiveDirectoryUtils.GetADObject(userPath);
-                    var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(userObject, "sAMAccountName");
-                    Log.WriteWarning(string.Format("SAMAccountName: {0}", samName));
-
-                    if (!ActiveDirectoryUtils.IsUserInGroup(samName, usersGroupName))
-                    {
-                        Log.WriteWarning(string.Format("{0} not exists in {1}", samName, usersGroupName));
-                        var userGroupsPath = GetUsersGroupPath(organizationId, collectionName);
-                        ActiveDirectoryUtils.AddObjectToGroup(userPath, userGroupsPath);
-                        Log.WriteWarning(string.Format("{0} added", samName));
-                    }
-                }
+                    var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(userObject, "sAMAccountName");                    
+                    var userGroupsPath = GetUsersGroupPath(organizationId, collectionName);
+                    ActiveDirectoryUtils.AddObjectToGroup(userPath, userGroupsPath);                    
+                }                
             }
         }
 
