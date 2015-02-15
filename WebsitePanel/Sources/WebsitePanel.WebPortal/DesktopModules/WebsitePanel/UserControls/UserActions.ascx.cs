@@ -42,6 +42,7 @@ using System.Web.UI.HtmlControls;
 using Microsoft.Web.Services3.Referral;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Portal.UserControls;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal
@@ -57,40 +58,30 @@ namespace WebsitePanel.Portal
         SetMailboxPlan = 6
     }
 
-    public partial class UserActions : WebsitePanelControlBase
+    public partial class UserActions : ActionListControlBase<UserActionTypes>
     {
-        public event EventHandler ExecutingUserAction;
-
-        private bool showSetMailboxPlan = false;
-        public bool ShowSetMailboxPlan
-        {
-            get { return showSetMailboxPlan; }
-            set { showSetMailboxPlan = value; }
-        }
+        public bool ShowSetMailboxPlan { get; set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             // Remove Service Level item and VIP item from Action List if current Hosting plan does not allow Service Levels
             if (!PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId).Groups.ContainsKey(ResourceGroups.ServiceLevels))
             {
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetServiceLevel).ToString()));
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetVIP).ToString()));
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.UnsetVIP).ToString()));
+                RemoveActionItem(UserActionTypes.SetServiceLevel);
+                RemoveActionItem(UserActionTypes.SetVIP);
+                RemoveActionItem(UserActionTypes.UnsetVIP);
             }
 
             if (!ShowSetMailboxPlan)
-                ddlUserActions.Items.Remove(ddlUserActions.Items.FindByValue(((int)UserActionTypes.SetMailboxPlan).ToString()));
+                RemoveActionItem(UserActionTypes.SetMailboxPlan);
         }
 
-        public UserActionTypes SelectedAction
+        protected override DropDownList ActionsList
         {
-            get
-            {
-                return (UserActionTypes)Convert.ToInt32(ddlUserActions.SelectedValue);
-            }
+            get { return ddlUserActions; }
         }
 
-        public int DoUserActions(List<int> userIds)
+        protected override int DoAction(List<int> userIds)
         {
             switch (SelectedAction)
             {
@@ -111,25 +102,14 @@ namespace WebsitePanel.Portal
             return 0;
         }
 
-        protected void DoExecutingUserAction()
-        {
-            if (ExecutingUserAction != null)
-                ExecutingUserAction(this, new EventArgs());
-        }
-
         protected void btnModalOk_Click(object sender, EventArgs e)
         {
-            DoExecutingUserAction();
+            FireExecuteAction();
         }
 
         protected void btnModalCancel_OnClick(object sender, EventArgs e)
         {
             ResetSelection();
-        }
-
-        public void ResetSelection()
-        {
-            ddlUserActions.ClearSelection();
         }
 
         protected int ChangeUsersSettings(List<int> userIds, bool? disable, int? serviceLevelId, bool? isVIP)
@@ -270,7 +250,7 @@ namespace WebsitePanel.Portal
                 case UserActionTypes.Enable:
                 case UserActionTypes.SetVIP:
                 case UserActionTypes.UnsetVIP:
-                    DoExecutingUserAction();
+                    FireExecuteAction();
                     break;
                 case UserActionTypes.SetServiceLevel:
                     FillServiceLevelsList();

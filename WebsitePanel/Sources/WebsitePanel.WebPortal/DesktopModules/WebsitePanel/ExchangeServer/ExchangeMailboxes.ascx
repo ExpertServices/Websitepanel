@@ -36,7 +36,7 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <wsp:UserActions ID="userActions" runat="server" OnExecutingUserAction="userActions_OnExecutingUserAction" ShowSetMailboxPlan="true" />
+                                        <wsp:UserActions ID="userActions" runat="server" GridViewID="gvMailboxes" CheckboxesName="chkSelectedUsersIds" ShowSetMailboxPlan="true" />
                                     </td>
                                     <td class="FormButtonsBarCleanSeparatorSmall"></td>
                                     <td>
