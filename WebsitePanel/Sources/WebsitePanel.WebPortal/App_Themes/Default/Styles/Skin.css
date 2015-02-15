@@ -184,7 +184,7 @@ h2.ProductTitle.Huge {margin:0;}
 .FormButtonsBarCleanRight {text-align: right;}
 .FormButtonsBarCleanMiddle {float: right;}
 .FormButtonsBarCleanSeparator {padding-right: 30px;}
-.FormButtonsBarCleanSeparatorSmall {padding-right: 15px;}
+.FormButtonsBarCleanSeparatorSmall {padding-right: 3px;}
 .GridFooter .Left {float: left;}
 .GridFooter .Right {text-align: right;}
 .FormRow {padding-top: 4px; padding-bottom: 4px;}

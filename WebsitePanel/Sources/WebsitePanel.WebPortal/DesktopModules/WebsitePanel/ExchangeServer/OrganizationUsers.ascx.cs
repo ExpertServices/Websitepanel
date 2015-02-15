@@ -424,8 +424,6 @@ namespace WebsitePanel.Portal.HostedSolution
                     messageBox.ShowWarningMessage("ORGANIZATION_USERS_ACTIONS");
                 }
             }
-
-            userActions.ResetSelection();
         }
     }
 }
