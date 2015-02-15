@@ -38,7 +38,7 @@ namespace WebsitePanel.WebDav.Core.Owa
 
             var cFileInfo = new CheckFileInfo
             {
-                BaseFileName = resource.DisplayName,
+                BaseFileName = resource.DisplayName.Split(new []{'/'},StringSplitOptions.RemoveEmptyEntries).LastOrDefault(),
                 OwnerId = WspContext.User.Login,
                 Size = resource.ContentLength,
                 Version = DateTime.Now.ToString("s"),
@@ -50,7 +50,8 @@ namespace WebsitePanel.WebDav.Core.Owa
                 SupportsSecureStore = false,
                 SupportsUpdate = true,
                 UserCanWrite = !readOnly,
-                ReadOnly = readOnly
+                ReadOnly = readOnly,
+                RestrictedWebViewOnly = false
             };
 
             return cFileInfo;

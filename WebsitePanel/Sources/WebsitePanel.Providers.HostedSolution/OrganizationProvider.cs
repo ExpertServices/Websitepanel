@@ -603,6 +603,53 @@ namespace WebsitePanel.Providers.HostedSolution
             return retUser;
         }
 
+        private static Int64 ConvertADSLargeIntegerToInt64(object adsLargeInteger)
+        {
+            var highPart = (Int32)adsLargeInteger.GetType().InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            var lowPart = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+            return highPart * ((Int64)UInt32.MaxValue + 1) + lowPart;
+        }
+
+        private bool GetUserMustChangePassword(DirectoryEntry user)
+        {
+            Int64 pls;
+            int uac;
+
+            if (user.Properties[ADAttributes.PwdLastSet] != null && user.Properties[ADAttributes.PwdLastSet].Value != null)
+                pls = ConvertADSLargeIntegerToInt64(user.Properties[ADAttributes.PwdLastSet].Value);
+            else
+                return false;
+
+            if (user.Properties[ADAttributes.UserAccountControl] != null && user.Properties[ADAttributes.UserAccountControl].Value != null)
+                uac = (int)user.Properties[ADAttributes.UserAccountControl].Value;
+            else
+                return false;
+
+            return (pls == 0) && ((uac & 0x00010000) == 0);
+        }
+
+        private void SetUserMustChangePassword(DirectoryEntry user, bool userMustChangePassword)
+        {
+            Int64 pls;
+            int uac;
+
+            if (user.Properties[ADAttributes.PwdLastSet] != null && user.Properties[ADAttributes.PwdLastSet].Value != null)
+                pls = ConvertADSLargeIntegerToInt64(user.Properties[ADAttributes.PwdLastSet].Value);
+            else
+                return;
+
+            if (user.Properties[ADAttributes.UserAccountControl] != null && user.Properties[ADAttributes.UserAccountControl].Value != null)
+                uac = (int)user.Properties[ADAttributes.UserAccountControl].Value;
+            else
+                return;
+
+            if ((uac & 0x00010000) != 0) return;
+
+            if ((pls == 0) == userMustChangePassword) return;
+
+            user.Properties[ADAttributes.PwdLastSet].Value = userMustChangePassword ? 0 : -1;
+        }
+
         private OrganizationUser GetUser(string path)
         {
             OrganizationUser retUser = new OrganizationUser();
@@ -637,6 +684,7 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
             retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
+            retUser.UserMustChangePassword = GetUserMustChangePassword(entry);
 
             return retUser;
         }
@@ -673,12 +721,12 @@ namespace WebsitePanel.Providers.HostedSolution
             string address, string city, string state, string zip, string country, string jobTitle,
             string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, bool userMustChangePassword)
         {
             SetUserGeneralSettingsInternal(organizationId, accountName, displayName, password, hideFromAddressBook,
                 disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle,
                 company, department, office, managerAccountName, businessPhone, fax, homePhone,
-                mobilePhone, pager, webPage, notes, externalEmail);
+                mobilePhone, pager, webPage, notes, externalEmail, userMustChangePassword);
         }
 
         internal void SetUserGeneralSettingsInternal(string organizationId, string accountName, string displayName, string password,
@@ -686,7 +734,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string address, string city, string state, string zip, string country, string jobTitle,
             string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, bool userMustChangePassword)
         {
             string path = GetUserPath(organizationId, accountName);
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
@@ -738,6 +786,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             }
 
+            SetUserMustChangePassword(entry, userMustChangePassword);
 
             entry.CommitChanges();
         }

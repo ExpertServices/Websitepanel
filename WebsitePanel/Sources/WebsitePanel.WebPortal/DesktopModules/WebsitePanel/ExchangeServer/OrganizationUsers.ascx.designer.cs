@@ -86,6 +86,15 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Button btnCreateUser;
         
         /// <summary>
+        /// userActions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.UserActions userActions;
+        
+        /// <summary>
         /// SearchPanel control.
         /// </summary>
         /// <remarks>

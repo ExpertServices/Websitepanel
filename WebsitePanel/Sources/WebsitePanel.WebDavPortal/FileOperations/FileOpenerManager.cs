@@ -33,7 +33,18 @@ namespace WebsitePanel.WebDavPortal.FileOperations
             var request = HttpContext.Current.Request;
             int supportedVersion;
 
-            if (WebDavAppConfigManager.Instance.OwaSupportedBrowsers.TryGetValue(request.Browser.Browser, out supportedVersion) == false)
+            string key = string.Empty;
+
+            foreach (var supportedKey in WebDavAppConfigManager.Instance.OwaSupportedBrowsers.Keys)
+            {
+                if (supportedKey.Split(';').Contains(request.Browser.Browser))
+                {
+                    key = supportedKey;
+                    break;
+                }
+            }
+
+            if (WebDavAppConfigManager.Instance.OwaSupportedBrowsers.TryGetValue(key, out supportedVersion) == false)
             {
                 return false;
             }

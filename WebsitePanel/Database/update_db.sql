@@ -5457,6 +5457,13 @@ CREATE TABLE RDSServers
 )
 GO
 
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'RDSServers' AND COLUMN_NAME = 'ConnectionEnabled')
+BEGIN
+	ALTER TABLE [dbo].[RDSServers]
+		ADD ConnectionEnabled BIT NOT NULL DEFAULT(1)
+END
+GO
+
 
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollections')
 CREATE TABLE RDSCollections
@@ -8559,6 +8566,43 @@ exec sp_xml_removedocument @idoc
 COMMIT TRAN
 
 RETURN 
+GO
+
+
+
+IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
+DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+GO
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+(
+	@UserPrincipalName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan',
+	E.EnableArchiving
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.UserPrincipalName = @UserPrincipalName
+RETURN
 GO
 
 -- Hyper-V 2012 R2

@@ -1349,6 +1349,11 @@ namespace WebsitePanel.Providers.Web
 			//
 			UpdateCgiBinFolder(site);
 			//
+			if (site.CreateCFVirtualDirectoriesPol)
+			{
+				//Create CFVirtDirs if enabled in hosting plan, this allows for CF to be enbled via Web Policy
+				CreateCFVirtualDirectories(site.SiteId);
+			}
 			try
 			{
 				webObjectsSvc.ChangeSiteState(site.SiteId, ServerState.Started);
@@ -1357,7 +1362,7 @@ namespace WebsitePanel.Providers.Web
 			{
 				Log.WriteError(ex);
 			}
-			//
+			//	
 			return site.SiteId;
 		}
 
@@ -1448,6 +1453,7 @@ namespace WebsitePanel.Providers.Web
                 {
                     DeleteCFVirtualDirectories(site.SiteId);
                     site.CreateCFVirtualDirectories = false;
+					site.CreateCFVirtualDirectoriesPol = false;
                 }
                 else
                 {
@@ -1457,6 +1463,7 @@ namespace WebsitePanel.Providers.Web
                         {
                             DeleteCFVirtualDirectories(site.SiteId);
                             site.CreateCFVirtualDirectories = false;
+							site.CreateCFVirtualDirectoriesPol = false;
                         }
                     }
                     else
@@ -1465,6 +1472,7 @@ namespace WebsitePanel.Providers.Web
                         {
                             CreateCFVirtualDirectories(site.SiteId);
                             site.CreateCFVirtualDirectories = true;
+							site.CreateCFVirtualDirectoriesPol = true;
                         }
                     }
                 }
