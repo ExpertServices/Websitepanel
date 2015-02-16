@@ -90,7 +90,7 @@ namespace WebsitePanel.Portal
                 case UserActionTypes.Enable:
                     return ChangeUsersSettings(userIds, false, null, null);
                 case UserActionTypes.SetServiceLevel:
-                    return ChangeUsersSettings(userIds, null, SelectedServiceId, null);
+                    return ChangeUsersServiceLevel(userIds);
                 case UserActionTypes.SetVIP:
                     return ChangeUsersSettings(userIds, null, null, true);
                 case UserActionTypes.UnsetVIP:
@@ -100,6 +100,42 @@ namespace WebsitePanel.Portal
             }
 
             return 0;
+        }
+
+        protected int ChangeUsersServiceLevel(List<int> userIds)
+        {
+            if (ddlServiceLevels.SelectedItem == null)
+                return 0;
+
+            string levelName = ddlServiceLevels.SelectedItem.Text;
+            if (string.IsNullOrEmpty(levelName))
+                return 0;
+
+            int levelId;
+            if (!int.TryParse(ddlServiceLevels.SelectedItem.Value, out levelId))
+                return 0;
+
+
+            string quotaName = Quotas.SERVICE_LEVELS + levelName;
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (!cntx.Quotas.ContainsKey(quotaName))
+                return 0;
+
+
+            List<OrganizationUser> users = new List<OrganizationUser>();
+
+            foreach (int id in userIds)
+                users.Add(ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, id));
+
+
+            int usersCount = users.Count - users.Where(x => (x.LevelId == levelId)).Count();
+
+            if (!CheckServiceLevelQuota(cntx.Quotas[quotaName], usersCount))
+                return -1;
+
+            return ChangeUsersSettings(userIds, null, levelId, null);
         }
 
         protected void btnModalOk_Click(object sender, EventArgs e)
@@ -165,8 +201,6 @@ namespace WebsitePanel.Portal
         }
 
 
-        #region ServiceLevel
-
         protected int SetMailboxPlan(List<int> userIds)
         {
             int planId;
@@ -190,19 +224,20 @@ namespace WebsitePanel.Portal
             return 0;
         }
 
-        protected int? SelectedServiceId
-        {
-            get
-            {
-                if (ddlServiceLevels.SelectedValue == string.Empty)
-                    return null;
-
-                return Convert.ToInt32(ddlServiceLevels.SelectedValue);
-            }
-        }
+        #region ServiceLevel
 
         protected void FillServiceLevelsList()
         {
+
+            if (GridView == null || String.IsNullOrWhiteSpace(CheckboxesName))
+                return;
+
+            List<int> ids = Utils.GetCheckboxValuesFromGrid<int>(GridView, CheckboxesName);
+            List<OrganizationUser> users = new List<OrganizationUser>();
+
+            foreach(int id in ids)
+                users.Add(ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, id));
+            
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
             if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
@@ -211,12 +246,12 @@ namespace WebsitePanel.Portal
 
                 foreach (var quota in cntx.Quotas.Where(x => x.Key.Contains(Quotas.SERVICE_LEVELS)))
                 {
-                    foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
+                    foreach (ServiceLevel serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
                     {
-                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value))
-                        {
+                        int usersCount = users.Count - users.Where(x => (x.LevelId == serviceLevel.LevelId)).Count();
+
+                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value, usersCount))
                             enabledServiceLevels.Add(serviceLevel);
-                        }
                     }
                 }
 
@@ -230,11 +265,11 @@ namespace WebsitePanel.Portal
             }
         }
 
-        private bool CheckServiceLevelQuota(QuotaValueInfo quota)
+        private bool CheckServiceLevelQuota(QuotaValueInfo quota, int itemCount)
         {
             if (quota.QuotaAllocatedValue != -1)
             {
-                return quota.QuotaAllocatedValue > quota.QuotaUsedValue;
+                return quota.QuotaAllocatedValue >= quota.QuotaUsedValue + itemCount;
             }
 
             return true;
