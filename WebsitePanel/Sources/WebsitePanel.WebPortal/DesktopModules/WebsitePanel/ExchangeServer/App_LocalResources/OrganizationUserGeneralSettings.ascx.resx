@@ -252,4 +252,7 @@
   <data name="secServiceLevels.Text" xml:space="preserve">
     <value>Service Level Information</value>
   </data>
+  <data name="chkUserMustChangePassword.Text" xml:space="preserve">
+    <value>User must change password at next logon</value>
+  </data>
 </root>

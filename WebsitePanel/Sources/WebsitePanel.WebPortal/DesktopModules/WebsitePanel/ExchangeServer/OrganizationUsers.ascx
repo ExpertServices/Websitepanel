@@ -3,6 +3,15 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/UserActions.ascx" TagName="UserActions" TagPrefix="wsp" %>
+
+<script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
+
+<script language="javascript">
+    function SelectAllCheckboxes(box) {
+        $(".NormalGridView tbody :checkbox").attr("checked", $(box).attr("checked"));
+    }
+</script>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -25,25 +34,35 @@
                             <asp:Button ID="btnCreateUser" runat="server" meta:resourcekey="btnCreateUser"
                             Text="Create New User" CssClass="Button1" OnClick="btnCreateUser_Click" />
                         </div>
-                        <div class="FormButtonsBarCleanRight">
-                            <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
-                                <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"    
-                                onselectedindexchanged="ddlPageSize_SelectedIndexChanged">   
-                                    <asp:ListItem>10</asp:ListItem>   
-                                    <asp:ListItem Selected="True">20</asp:ListItem>   
-                                    <asp:ListItem>50</asp:ListItem>   
-                                    <asp:ListItem>100</asp:ListItem>   
-                                </asp:DropDownList>  
+                        <div class="FormButtonsBarCleanMiddle">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <wsp:UserActions ID="userActions" runat="server"  GridViewID="gvUsers" CheckboxesName="chkSelectedUsersIds" />
+                                    </td>
+                                    <td class="FormButtonsBarCleanSeparator"></td>
+                                    <td>
+                                        <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
+                                            <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"
+                                                OnSelectedIndexChanged="ddlPageSize_SelectedIndexChanged">
+                                                <asp:ListItem>10</asp:ListItem>
+                                                <asp:ListItem Selected="True">20</asp:ListItem>
+                                                <asp:ListItem>50</asp:ListItem>
+                                                <asp:ListItem>100</asp:ListItem>
+                                            </asp:DropDownList>
 
-                                <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
-                                    <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
-                                    <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
-                                    <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
-                                    <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Account Number</asp:ListItem>
-                                    <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Login</asp:ListItem>
-                                </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
-		                            CausesValidation="false"/>
-                            </asp:Panel>
+                                            <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
+                                                <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
+                                                <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
+                                                <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
+                                                <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Account Number</asp:ListItem>
+                                                <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Login</asp:ListItem>
+                                            </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
+                                                CausesValidation="false" />
+                                        </asp:Panel>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <asp:Panel ID="UsersPanel" runat="server">
@@ -54,12 +73,19 @@
 					                OnRowCommand="gvUsers_RowCommand" AllowPaging="True" AllowSorting="True"
 					                DataSourceID="odsAccountsPaged" PageSize="20">
 					                <Columns>
+                                        <asp:TemplateField>
+                                            <HeaderTemplate>
+                                                <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
+                                            </HeaderTemplate>
+			                                <ItemTemplate>							        
+				                                <asp:CheckBox runat="server" ID="chkSelectedUsersIds" CssClass="GridCheckbox"></asp:CheckBox>
+			                                </ItemTemplate>
+		                                </asp:TemplateField>	
 						                <asp:TemplateField>
 							                <ItemTemplate>							        
 								                <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
 							                </ItemTemplate>
 						                </asp:TemplateField>
-                        						     						   						    
 						                <asp:TemplateField HeaderText="gvUsersDisplayName" SortExpression="DisplayName">
 							                <ItemStyle Width="25%"></ItemStyle>
 							                <ItemTemplate>							        

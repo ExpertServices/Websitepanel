@@ -5334,16 +5334,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 string newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
 
-                if (newValue != oldValue)
-                {
-                    cmd = new Command("Set-Mailbox");
-                    cmd.Parameters.Add("Identity", id);
-                    cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+                cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", id);
+                cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
 
-                    ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommand(runSpace, cmd);
 
-                    res.Add(newValue);
-                }
+                res.Add(newValue);
 
             }
             finally

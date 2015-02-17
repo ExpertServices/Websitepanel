@@ -35,11 +35,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal {
-    
-    
-    public partial class SettingsExchangeMailboxPlansPolicy {
-        
+namespace WebsitePanel.Portal
+{
+
+
+    public partial class SettingsExchangeMailboxPlansPolicy
+    {
+
         /// <summary>
         /// asyncTasks control.
         /// </summary>
@@ -48,7 +50,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
+
         /// <summary>
         /// messageBox control.
         /// </summary>
@@ -57,7 +59,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
-        
+
         /// <summary>
         /// gvMailboxPlans control.
         /// </summary>
@@ -66,7 +68,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvMailboxPlans;
-        
+
         /// <summary>
         /// secMailboxPlan control.
         /// </summary>
@@ -75,7 +77,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secMailboxPlan;
-        
+
         /// <summary>
         /// MailboxPlan control.
         /// </summary>
@@ -84,7 +86,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel MailboxPlan;
-        
+
         /// <summary>
         /// txtMailboxPlan control.
         /// </summary>
@@ -93,7 +95,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtMailboxPlan;
-        
+
         /// <summary>
         /// valRequireMailboxPlan control.
         /// </summary>
@@ -102,7 +104,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireMailboxPlan;
-        
+
         /// <summary>
         /// secMailboxFeatures control.
         /// </summary>
@@ -111,7 +113,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secMailboxFeatures;
-        
+
         /// <summary>
         /// MailboxFeatures control.
         /// </summary>
@@ -120,7 +122,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel MailboxFeatures;
-        
+
         /// <summary>
         /// chkPOP3 control.
         /// </summary>
@@ -129,7 +131,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPOP3;
-        
+
         /// <summary>
         /// chkIMAP control.
         /// </summary>
@@ -138,7 +140,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkIMAP;
-        
+
         /// <summary>
         /// chkOWA control.
         /// </summary>
@@ -147,7 +149,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkOWA;
-        
+
         /// <summary>
         /// chkMAPI control.
         /// </summary>
@@ -156,7 +158,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkMAPI;
-        
+
         /// <summary>
         /// chkActiveSync control.
         /// </summary>
@@ -165,7 +167,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkActiveSync;
-        
+
         /// <summary>
         /// secMailboxGeneral control.
         /// </summary>
@@ -174,7 +176,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secMailboxGeneral;
-        
+
         /// <summary>
         /// MailboxGeneral control.
         /// </summary>
@@ -183,7 +185,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel MailboxGeneral;
-        
+
         /// <summary>
         /// chkHideFromAddressBook control.
         /// </summary>
@@ -192,7 +194,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkHideFromAddressBook;
-        
+
         /// <summary>
         /// secStorageQuotas control.
         /// </summary>
@@ -201,7 +203,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secStorageQuotas;
-        
+
         /// <summary>
         /// StorageQuotas control.
         /// </summary>
@@ -210,7 +212,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel StorageQuotas;
-        
+
         /// <summary>
         /// locMailboxSize control.
         /// </summary>
@@ -219,7 +221,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locMailboxSize;
-        
+
         /// <summary>
         /// mailboxSize control.
         /// </summary>
@@ -228,7 +230,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor mailboxSize;
-        
+
         /// <summary>
         /// locMaxRecipients control.
         /// </summary>
@@ -237,7 +239,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locMaxRecipients;
-        
+
         /// <summary>
         /// maxRecipients control.
         /// </summary>
@@ -246,7 +248,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor maxRecipients;
-        
+
         /// <summary>
         /// locMaxSendMessageSizeKB control.
         /// </summary>
@@ -255,7 +257,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locMaxSendMessageSizeKB;
-        
+
         /// <summary>
         /// maxSendMessageSizeKB control.
         /// </summary>
@@ -264,7 +266,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor maxSendMessageSizeKB;
-        
+
         /// <summary>
         /// locMaxReceiveMessageSizeKB control.
         /// </summary>
@@ -273,7 +275,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locMaxReceiveMessageSizeKB;
-        
+
         /// <summary>
         /// maxReceiveMessageSizeKB control.
         /// </summary>
@@ -282,7 +284,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor maxReceiveMessageSizeKB;
-        
+
         /// <summary>
         /// locWhenSizeExceeds control.
         /// </summary>
@@ -291,7 +293,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locWhenSizeExceeds;
-        
+
         /// <summary>
         /// locIssueWarning control.
         /// </summary>
@@ -300,7 +302,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locIssueWarning;
-        
+
         /// <summary>
         /// sizeIssueWarning control.
         /// </summary>
@@ -309,7 +311,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox sizeIssueWarning;
-        
+
         /// <summary>
         /// locProhibitSend control.
         /// </summary>
@@ -318,7 +320,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locProhibitSend;
-        
+
         /// <summary>
         /// sizeProhibitSend control.
         /// </summary>
@@ -327,7 +329,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox sizeProhibitSend;
-        
+
         /// <summary>
         /// locProhibitSendReceive control.
         /// </summary>
@@ -336,7 +338,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locProhibitSendReceive;
-        
+
         /// <summary>
         /// sizeProhibitSendReceive control.
         /// </summary>
@@ -345,7 +347,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox sizeProhibitSendReceive;
-        
+
         /// <summary>
         /// secDeleteRetention control.
         /// </summary>
@@ -354,7 +356,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secDeleteRetention;
-        
+
         /// <summary>
         /// DeleteRetention control.
         /// </summary>
@@ -363,7 +365,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel DeleteRetention;
-        
+
         /// <summary>
         /// locKeepDeletedItems control.
         /// </summary>
@@ -372,7 +374,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locKeepDeletedItems;
-        
+
         /// <summary>
         /// daysKeepDeletedItems control.
         /// </summary>
@@ -381,7 +383,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.DaysBox daysKeepDeletedItems;
-        
+
         /// <summary>
         /// secLitigationHold control.
         /// </summary>
@@ -390,7 +392,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secLitigationHold;
-        
+
         /// <summary>
         /// LitigationHold control.
         /// </summary>
@@ -399,7 +401,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel LitigationHold;
-        
+
         /// <summary>
         /// chkEnableLitigationHold control.
         /// </summary>
@@ -408,7 +410,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkEnableLitigationHold;
-        
+
         /// <summary>
         /// locRecoverableItemsSpace control.
         /// </summary>
@@ -417,7 +419,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locRecoverableItemsSpace;
-        
+
         /// <summary>
         /// recoverableItemsSpace control.
         /// </summary>
@@ -426,7 +428,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor recoverableItemsSpace;
-        
+
         /// <summary>
         /// locRecoverableItemsWarning control.
         /// </summary>
@@ -435,7 +437,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locRecoverableItemsWarning;
-        
+
         /// <summary>
         /// recoverableItemsWarning control.
         /// </summary>
@@ -444,7 +446,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox recoverableItemsWarning;
-        
+
         /// <summary>
         /// lblLitigationHoldUrl control.
         /// </summary>
@@ -453,7 +455,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLitigationHoldUrl;
-        
+
         /// <summary>
         /// txtLitigationHoldUrl control.
         /// </summary>
@@ -462,7 +464,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLitigationHoldUrl;
-        
+
         /// <summary>
         /// lblLitigationHoldMsg control.
         /// </summary>
@@ -471,7 +473,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblLitigationHoldMsg;
-        
+
         /// <summary>
         /// txtLitigationHoldMsg control.
         /// </summary>
@@ -480,7 +482,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtLitigationHoldMsg;
-        
+
         /// <summary>
         /// secArchiving control.
         /// </summary>
@@ -489,7 +491,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secArchiving;
-        
+
         /// <summary>
         /// Archiving control.
         /// </summary>
@@ -498,7 +500,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Archiving;
-        
+
         /// <summary>
         /// chkEnableArchiving control.
         /// </summary>
@@ -507,7 +509,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkEnableArchiving;
-        
+
         /// <summary>
         /// locArchiveQuota control.
         /// </summary>
@@ -516,7 +518,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locArchiveQuota;
-        
+
         /// <summary>
         /// archiveQuota control.
         /// </summary>
@@ -525,7 +527,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaEditor archiveQuota;
-        
+
         /// <summary>
         /// locArchiveWarningQuota control.
         /// </summary>
@@ -534,7 +536,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locArchiveWarningQuota;
-        
+
         /// <summary>
         /// archiveWarningQuota control.
         /// </summary>
@@ -543,7 +545,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox archiveWarningQuota;
-        
+
         /// <summary>
         /// secRetentionPolicyTags control.
         /// </summary>
@@ -552,7 +554,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.CollapsiblePanel secRetentionPolicyTags;
-        
+
         /// <summary>
         /// RetentionPolicyTags control.
         /// </summary>
@@ -561,7 +563,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel RetentionPolicyTags;
-        
+
         /// <summary>
         /// GeneralUpdatePanel control.
         /// </summary>
@@ -570,7 +572,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.UpdatePanel GeneralUpdatePanel;
-        
+
         /// <summary>
         /// gvPolicy control.
         /// </summary>
@@ -579,7 +581,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView gvPolicy;
-        
+
         /// <summary>
         /// ddTags control.
         /// </summary>
@@ -588,7 +590,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddTags;
-        
+
         /// <summary>
         /// bntAddTag control.
         /// </summary>
@@ -597,7 +599,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button bntAddTag;
-        
+
         /// <summary>
         /// btnAddMailboxPlan control.
         /// </summary>
@@ -606,7 +608,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnAddMailboxPlan;
-        
+
         /// <summary>
         /// btnUpdateMailboxPlan control.
         /// </summary>
@@ -615,7 +617,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpdateMailboxPlan;
-        
+
         /// <summary>
         /// txtStatus control.
         /// </summary>
@@ -624,5 +626,7 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtStatus;
+
+        protected global::System.Web.UI.WebControls.Button btnSetDefaultMailboxPlan;
     }
 }

@@ -181,6 +181,23 @@
             <td class="Normal">
                 <asp:CheckBox ID="chkCgiBin" runat="server" Text="Installed" /></td>
         </tr>
+		
+        <tr>
+            <td class="SubHead">
+                <asp:Label ID="lblCfExt" runat="server" meta:resourcekey="lblCfExt" Text="ColdFusion:"></asp:Label>
+            </td>
+            <td class="Normal">
+                <asp:CheckBox ID="chkCfExt" runat="server" Text="Enabled" /></td>
+        </tr>
+
+        <tr>
+            <td class="SubHead">
+                <asp:Label ID="lblVirtDir" runat="server" meta:resourcekey="lblVirtDir" Text="CFVirtualDirectories:"></asp:Label>
+            </td>
+            <td class="Normal">
+                <asp:CheckBox ID="chkVirtDir" runat="server" Text="Enabled" /></td>
+        </tr>
+		
     </table>
 </asp:Panel>
 

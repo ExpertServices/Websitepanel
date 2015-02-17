@@ -15,6 +15,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string ConnectionStringsKey = "appConnectionStrings";
         private const string SessionKeysKey = "sessionKeys";
         private const string FileIconsKey = "fileIcons";
+        private const string OwaSupportedBrowsersKey = "owaSupportedBrowsers";
         private const string OfficeOnlineKey = "officeOnline";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
@@ -73,6 +74,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (FileIconsElementCollection) this[FileIconsKey]; }
             set { this[FileIconsKey] = value; }
+        }
+
+        [ConfigurationProperty(OwaSupportedBrowsersKey, IsDefaultCollection = false)]
+        public OwaSupportedBrowsersElementCollection OwaSupportedBrowsers
+        {
+            get { return (OwaSupportedBrowsersElementCollection)this[OwaSupportedBrowsersKey]; }
+            set { this[OwaSupportedBrowsersKey] = value; }
         }
 
         [ConfigurationProperty(OfficeOnlineKey, IsDefaultCollection = false)]
