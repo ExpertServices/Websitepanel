@@ -289,5 +289,29 @@ namespace WebsitePanel.EnterpriseServer
         {
             return RemoteDesktopServicesController.GetRdsCollectionSessionHosts(collectionId);
         }
+
+        [WebMethod]
+        public RdsServerInfo GetRdsServerInfo(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.GetRdsServerInfo(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public string GetRdsServerStatus(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.GetRdsServerStatus(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public ResultObject ShutDownRdsServer(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.ShutDownRdsServer(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public ResultObject RestartRdsServer(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.RestartRdsServer(itemId, fqdnName);
+        }
     }
 }

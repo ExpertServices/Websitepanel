@@ -63,7 +63,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string Users = "users";
         private const string RdsGroupFormat = "rds-{0}-{1}";
         private const string RdsModuleName = "RemoteDesktopServices";
-        private const string AddNpsString = "netsh nps add np name=\"\"{0}\"\" policysource=\"1\" processingorder=\"{1}\" conditionid=\"0x3d\" conditiondata=\"^5$\" conditionid=\"0x1fb5\" conditiondata=\"{2}\" conditionid=\"0x1e\" conditiondata=\"UserAuthType:(PW|CA)\" profileid=\"0x1005\" profiledata=\"TRUE\" profileid=\"0x100f\" profiledata=\"TRUE\" profileid=\"0x1009\" profiledata=\"0x7\" profileid=\"0x1fe6\" profiledata=\"0x40000000\"";
+        private const string AddNpsString = "netsh nps add np name=\"\"{0}\"\" policysource=\"1\" processingorder=\"{1}\" conditionid=\"0x3d\" conditiondata=\"^5$\" conditionid=\"0x1fb5\" conditiondata=\"{2}\" conditionid=\"0x1e\" conditiondata=\"UserAuthType:(PW|CA)\" profileid=\"0x1005\" profiledata=\"TRUE\" profileid=\"0x100f\" profiledata=\"TRUE\" profileid=\"0x1009\" profiledata=\"0x7\" profileid=\"0x1fe6\" profiledata=\"0x40000000\"";        
+
         #endregion
 
         #region Properties
@@ -956,9 +957,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
 
             ExecuteShellCommand(runSpace, cmd, false);
-        }
-
-   
+        }   
 
         private bool ExistRdsServerInDeployment(Runspace runSpace, RdsServer server)
         {
@@ -1832,6 +1831,238 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return "";
+        }
+
+        #endregion
+
+        #region Server Info
+
+        public RdsServerInfo GetRdsServerInfo(string serverName)
+        {
+            var result = new RdsServerInfo();
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+                result = GetServerInfo(runspace, serverName);
+                result.Status = GetRdsServerStatus(runspace, serverName);
+
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
+            return result;
+        }
+
+        public string GetRdsServerStatus(string serverName)
+        {
+            string result = "";
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();                
+                result = GetRdsServerStatus(runspace, serverName);
+
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
+            return result;
+        }
+
+        public void ShutDownRdsServer(string serverName)
+        {            
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+                var command = new Command("Stop-Computer");
+                command.Parameters.Add("ComputerName", serverName);
+                command.Parameters.Add("Force", true);
+                object[] errors = null;
+
+                ExecuteShellCommand(runspace, command, false, out errors);
+
+                if (errors.Any())
+                {
+                    Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                    throw new Exception(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                }
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+        }
+
+        public void RestartRdsServer(string serverName)
+        {
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+                var command = new Command("Restart-Computer");
+                command.Parameters.Add("ComputerName", serverName);
+                command.Parameters.Add("Force", true);
+                object[] errors = null;
+
+                ExecuteShellCommand(runspace, command, false, out errors);
+
+                if (errors.Any())
+                {
+                    Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                    throw new Exception(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                }
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+        }
+
+        private RdsServerInfo GetServerInfo(Runspace runspace, string serverName)
+        {
+            var result = new RdsServerInfo();
+            Command cmd = new Command("Get-WmiObject");
+            cmd.Parameters.Add("Class", "Win32_Processor");
+            cmd.Parameters.Add("ComputerName", serverName);
+
+            object[] errors = null;
+            var psProcInfo = ExecuteShellCommand(runspace, cmd, false, out errors).First();
+
+            if (errors.Any())
+            {
+                Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                return result;
+            }
+
+            cmd = new Command("Get-WmiObject");
+            cmd.Parameters.Add("Class", "Win32_OperatingSystem");
+            cmd.Parameters.Add("ComputerName", serverName);
+
+            var psMemoryInfo = ExecuteShellCommand(runspace, cmd, false, out errors).First();
+
+            if (errors.Any())
+            {
+                Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                return result;
+            }
+
+            result.NumberOfCores = Convert.ToInt32(GetPSObjectProperty(psProcInfo, "NumberOfCores"));
+            result.MaxClockSpeed = Convert.ToInt32(GetPSObjectProperty(psProcInfo, "MaxClockSpeed"));
+            result.LoadPercentage = Convert.ToInt32(GetPSObjectProperty(psProcInfo, "LoadPercentage"));
+            result.MemoryAllocatedMb = Math.Round(Convert.ToDouble(GetPSObjectProperty(psMemoryInfo, "TotalVisibleMemorySize")) / 1024, 1);
+            result.FreeMemoryMb = Math.Round(Convert.ToDouble(GetPSObjectProperty(psMemoryInfo, "FreePhysicalMemory")) / 1024, 1);
+            result.Drives = GetRdsServerDriveInfo(runspace, serverName).ToArray();
+
+            return result;
+        }
+
+        private string GetRdsServerStatus (Runspace runspace, string serverName)
+        {
+            if (CheckServerAvailability(serverName))
+            {                
+                if (CheckPendingReboot(runspace, serverName))
+                {
+                    return "Online - Pending Reboot";
+                }
+
+                return "Online";
+            }
+            else
+            {
+                return "Unavailable";
+            }
+        }
+
+        private List<RdsServerDriveInfo> GetRdsServerDriveInfo(Runspace runspace, string serverName)
+        {
+            var result = new List<RdsServerDriveInfo>();
+            Command cmd = new Command("Get-WmiObject");
+            cmd.Parameters.Add("Class", "Win32_LogicalDisk");
+            cmd.Parameters.Add("Filter", "DriveType=3");
+            cmd.Parameters.Add("ComputerName", serverName);
+            object[] errors = null;
+            var psDrives = ExecuteShellCommand(runspace, cmd, false, out errors);
+
+            if (errors.Any())
+            {
+                Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                return result;
+            }            
+
+            foreach (var psDrive in psDrives)
+            {
+                var driveInfo = new RdsServerDriveInfo()
+                {
+                    VolumeName = GetPSObjectProperty(psDrive, "VolumeName").ToString(),
+                    DeviceId = GetPSObjectProperty(psDrive, "DeviceId").ToString(),
+                    SizeMb = Math.Round(Convert.ToDouble(GetPSObjectProperty(psDrive, "Size"))/1024/1024, 1),
+                    FreeSpaceMb = Math.Round(Convert.ToDouble(GetPSObjectProperty(psDrive, "FreeSpace"))/1024/1024, 1)
+                };
+
+                result.Add(driveInfo);
+            }
+
+            return result;
+        }
+
+        private bool CheckRDSServerAvaliability(string serverName)
+        {            
+            var ping = new Ping();
+            var reply = ping.Send(serverName, 1000);
+
+            if (reply.Status == IPStatus.Success)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckPendingReboot(Runspace runspace, string serverName)
+        {            
+            if (CheckPendingReboot(runspace, serverName, @"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing", "RebootPending"))
+            {
+                return true;
+            }
+
+            if (CheckPendingReboot(runspace, serverName, @"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update", "RebootRequired"))
+            {
+                return true;
+            }
+
+            if (CheckPendingReboot(runspace, serverName, @"HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager", "PendingFileRenameOperations"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckPendingReboot(Runspace runspace, string serverName, string registryPath, string registryKey)
+        {
+            Command cmd = new Command("Get-ItemProperty");
+            cmd.Parameters.Add("Path", registryPath);
+            cmd.Parameters.Add("Name", registryKey);
+            cmd.Parameters.Add("ErrorAction", "SilentlyContinue");
+
+            var feature = ExecuteRemoteShellCommand(runspace, serverName, cmd).FirstOrDefault();
+
+            if (feature != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

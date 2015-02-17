@@ -35,12 +35,14 @@ using System.Linq;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.RemoteDesktopServices;
+using AjaxControlToolkit;
 
 namespace WebsitePanel.Portal.RDS.UserControls
 {
     public partial class RDSCollectionServers : WebsitePanelControlBase
 	{
         public const string DirectionString = "DirectionString";
+        public event EventHandler OnRefreshClicked;
 
 		protected enum SelectedState
 		{
@@ -53,6 +55,17 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		{
             BindServers(servers, false);
 		}
+
+        public void BindServers(RdsServer[] servers)
+        {
+            gvServers.DataSource = servers;
+            gvServers.DataBind();
+        }
+
+        public void HideRefreshButton()
+        {
+            btnRefresh.Visible = false;
+        }
         
         public List<RdsServer> GetServers()
         {
@@ -172,6 +185,13 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 RdsServer server = new RdsServer();
                 server.Id = (int)gvServers.DataKeys[i][0];
                 server.FqdName = ((Literal)row.FindControl("litFqdName")).Text;
+                server.Status = ((Literal)row.FindControl("litStatus")).Text;
+                var rdsCollectionId = ((HiddenField)row.FindControl("hdnRdsCollectionId")).Value;
+
+                if (!string.IsNullOrEmpty(rdsCollectionId))
+                {
+                    server.RdsCollectionId = Convert.ToInt32(rdsCollectionId);
+                }
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||
@@ -209,6 +229,12 @@ namespace WebsitePanel.Portal.RDS.UserControls
         protected void BindOrganizationServers()
         {
             RdsServer[] servers = ES.Services.RDS.GetOrganizationRdsServersPaged(PanelRequest.ItemID, PanelRequest.CollectionID, "FqdName", txtSearchValue.Text, null, 0, 1000).Servers;
+
+            foreach(var rdsServer in servers)
+            {
+                rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(PanelRequest.ItemID, rdsServer.FqdName);
+            }
+
             Array.Sort(servers, CompareAccount);
 
             if (Direction == SortDirection.Ascending)
@@ -239,6 +265,60 @@ namespace WebsitePanel.Portal.RDS.UserControls
         protected static int CompareAccount(RdsServer server1, RdsServer server2)
         {
             return string.Compare(server1.FqdName, server2.FqdName);
+        }
+
+        protected void gvServers_RowCommand(object sender, GridViewCommandEventArgs e)
+        {            
+            if (e.CommandName == "ViewInfo")
+            {        
+                try
+                {
+                    ShowInfo(e.CommandArgument.ToString());                 
+                }
+                catch (Exception)
+                {                    
+                }
+            }
+            else if (e.CommandName == "Restart")
+            {
+                Restart(e.CommandArgument.ToString());
+            }
+            else if (e.CommandName == "ShutDown")
+            {
+                ShutDown(e.CommandArgument.ToString());
+            }
+        }
+
+        protected void btnRefresh_Click(object sender, EventArgs e)
+        {            
+            if (OnRefreshClicked != null)
+            {
+                OnRefreshClicked(GetServers(), new EventArgs());                
+            }                        
+        }
+
+        private void ShowInfo(string serverName)
+        {
+            ViewInfoModal.Show();
+            var serverInfo = ES.Services.RDS.GetRdsServerInfo(PanelRequest.ItemID, serverName);
+            litProcessor.Text = string.Format("{0}x{1} MHz", serverInfo.NumberOfCores, serverInfo.MaxClockSpeed);
+            litLoadPercentage.Text = string.Format("{0}%", serverInfo.LoadPercentage);
+            litMemoryAllocated.Text = string.Format("{0} MB", serverInfo.MemoryAllocatedMb);
+            litFreeMemory.Text = string.Format("{0} MB", serverInfo.FreeMemoryMb);
+            rpServerDrives.DataSource = serverInfo.Drives;
+            rpServerDrives.DataBind(); 
+        }
+
+        private void Restart(string serverName)
+        {
+            ES.Services.RDS.RestartRdsServer(PanelRequest.ItemID, serverName);
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
+        }
+
+        private void ShutDown(string serverName)
+        {
+            ES.Services.RDS.ShutDownRdsServer(PanelRequest.ItemID, serverName);
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
         }
 	}
 }
