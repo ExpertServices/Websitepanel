@@ -22,7 +22,7 @@
         <table>
             <tr>
                 <td>
-                    <wsp:WebsiteActions ID="websiteActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" />
+                    <wsp:WebsiteActions ID="websiteActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" Visible="False" />
                 </td>
                 <td class="FormButtonsBarCleanSeparator"></td>
                 <td>

@@ -91,6 +91,12 @@ namespace WebsitePanel.Portal.UserControls
             set { EnsureChildControls(); QuotasPanel.Visible = value; }
         }
 
+        public bool ShowActions
+        {
+            get { EnsureChildControls(); return QuotasPanel.Visible; }
+            set { EnsureChildControls(); websiteActions.Visible = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //HideServiceColumns(gvWebSites);
