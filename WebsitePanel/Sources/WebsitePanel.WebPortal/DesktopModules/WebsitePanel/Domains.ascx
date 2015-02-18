@@ -4,6 +4,9 @@
 <%@ Register Src="UserControls/UserDetails.ascx" TagName="UserDetails" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SearchBox.ascx" TagName="SearchBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/DomainActions.ascx" TagName="DomainActions" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+
+<wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 <script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
 

@@ -1,7 +1,4 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DomainActions.ascx.cs" Inherits="WebsitePanel.Portal.DomainActions" %>
-<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-
-<wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 <script language="javascript">
     function ShowProrgess(btn) {

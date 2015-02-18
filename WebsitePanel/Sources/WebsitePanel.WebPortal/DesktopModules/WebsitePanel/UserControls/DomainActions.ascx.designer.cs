@@ -13,15 +13,6 @@ namespace WebsitePanel.Portal {
     public partial class DomainActions {
         
         /// <summary>
-        /// asyncTasks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
-        /// <summary>
         /// tblActions control.
         /// </summary>
         /// <remarks>
