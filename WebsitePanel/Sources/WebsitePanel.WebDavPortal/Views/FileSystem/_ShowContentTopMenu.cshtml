@@ -1,0 +1,51 @@
+﻿@using WebsitePanel.WebDav.Core.Entities.Account.Enums
+@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDav.Core.Security.Authorization.Enums
+@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDavPortal.UI.Routes
+
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+
+<div id="breadcrumb_wrapper" class="container prevent-deselect">
+    @if (Model != null)
+    {
+        string header = WspContext.User.OrganizationId;
+        <a href="/@header/" class="processing-dialog">@header</a>
+        string[] elements = Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < elements.Length; i++)
+        {
+            <span style="top: 2px;"> / </span>
+            <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))" class="processing-dialog">@elements[i]</a>
+        }
+    }
+</div>
+<div class="container file-actions-menu prevent-deselect">
+    @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
+    {
+        <div class="file-deletion navbar-left">
+            <a id="delete-button" class="btn btn-danger btn-sm active" role="button"
+               data-target="#confirm-dialog"
+               data-target-positive-button-text="@UI.Delete"
+               data-target-title-text="@UI.DeleteFileQuestion"
+               data-target-content="@UI.DialogsContentConfrimFileDeletion">@UI.Delete</a>
+        </div>
+    }
+    
+    <div class="navbar-right">
+        @if (Request.Browser.IsMobileDevice == false)
+        {
+            <div class="btn-toolbar change-view-block" role="toolbar">
+                <div class="btn-group">
+                    <a class="btn btn-default" title="@UI.Details" href="@Url.RouteUrl(FileSystemRouteNames.ChangeWebDavViewType, new { viewType = FolderViewTypes.BigIcons, org = WspContext.User.OrganizationId, pathPart = Model.UrlSuffix })"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span></a>
+                    <a class="btn btn-default" title="@UI.Table" href="@Url.RouteUrl(FileSystemRouteNames.ChangeWebDavViewType, new { viewType = FolderViewTypes.Table, org = WspContext.User.OrganizationId, pathPart = Model.UrlSuffix })"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span></a>
+                </div>
+            </div>
+        }
+
+        @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
+        {
+            <a id="upload-button" class="btn btn-success btn-sm active" data-toggle="modal" data-target="#file-upload" role="button">@UI.FileUpload</a>
+        }
+    </div>
+    
+</div>

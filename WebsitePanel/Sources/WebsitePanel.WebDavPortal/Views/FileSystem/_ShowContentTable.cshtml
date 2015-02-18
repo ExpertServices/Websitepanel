@@ -1,0 +1,53 @@
+﻿@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDavPortal.UI.Routes
+
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+
+<div class="prevent-deselect">
+    <table id="webdav-items-table" class="display table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>@UI.Name</th>
+                <th>@UI.Type</th>
+                <th>@UI.Modified</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+            wsp.fileBrowser.initDataTable('#webdav-items-table','@Url.RouteUrl(FileSystemRouteNames.ShowContentDetails)');
+        });
+
+    </script>
+}
+
+@section popups
+{
+    <div id="file-upload" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-file-upload-title" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="modal-file-upload-title">@UI.FileUpload</h4>
+                </div>
+                @using (Html.BeginRouteForm(FileSystemRouteNames.UploadFile, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="modal-body">
+                        <input type="file" name="file" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">@UI.Close</button>
+                        <button type="submit" class="btn btn-primary processing-dialog">@UI.Upload</button>
+                    </div>
+                }
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    @Html.Partial("_ProcessDialog", null)
+    @Html.Partial("_ConfirmDialog")
+}

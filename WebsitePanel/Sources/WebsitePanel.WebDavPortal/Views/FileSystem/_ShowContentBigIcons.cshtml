@@ -1,0 +1,24 @@
+﻿@using WebsitePanel.WebDav.Core.Client
+@using WebsitePanel.WebDavPortal.UI.Routes
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+
+<div class="container">
+
+    <div class="row" id="resourcesDiv">
+        @if (Model != null)
+        {
+            foreach (IHierarchyItem element in Model.Items)
+            {
+                @Html.Partial("_ResoursePartial", element)
+            }
+        }
+    </div>
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/appScripts/storage/bigIcons")
+
+    <script>
+        recalculateResourseHeight();
+    </script>
+}
