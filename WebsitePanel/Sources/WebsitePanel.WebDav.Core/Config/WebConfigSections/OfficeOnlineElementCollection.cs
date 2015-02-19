@@ -8,6 +8,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
     {
         private const string UrlKey = "url";
         private const string IsEnabledKey = "isEnabled";
+        private const string CobaltFileTtlKey = "cobaltFileTtl";
 
         [ConfigurationProperty(UrlKey, IsKey = true, IsRequired = true)]
         public string Url
@@ -21,6 +22,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return Boolean.Parse(this[IsEnabledKey].ToString()); }
             set { this[IsEnabledKey] = value; }
+        }
+
+        [ConfigurationProperty(CobaltFileTtlKey, IsKey = true, IsRequired = true)]
+        public int CobaltFileTtl
+        {
+            get { return int.Parse(this[CobaltFileTtlKey].ToString()); }
+            set { this[CobaltFileTtlKey] = value; }
         }
 
         protected override ConfigurationElement CreateNewElement()

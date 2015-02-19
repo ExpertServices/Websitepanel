@@ -380,7 +380,10 @@ namespace WebsitePanel.EnterpriseServer
                     site.PerlInstalled = Utils.ParseBool(webPolicy["PerlInstalled"], false);
                     site.PythonInstalled = Utils.ParseBool(webPolicy["PythonInstalled"], false);
                     site.CgiBinInstalled = Utils.ParseBool(webPolicy["CgiBinInstalled"], false);
-                    site.ColdFusionInstalled = false;
+					QuotaValueInfo quotaInfoCF = PackageController.GetPackageQuota(packageId, Quotas.WEB_COLDFUSION);
+                    site.ColdFusionInstalled = (quotaInfoCF.QuotaAllocatedValue > 0) && Utils.ParseBool(webPolicy["ColdFusionInstalled"], false);
+					QuotaValueInfo quotaInfoCFV = PackageController.GetPackageQuota(packageId, Quotas.WEB_CFVIRTUALDIRS);
+					site.CreateCFVirtualDirectoriesPol = (quotaInfoCFV.QuotaAllocatedValue > 0) && Utils.ParseBool(webPolicy["CreateCFVirtualDirectoriesPol"], false);
                     
                 }
                 else
@@ -403,6 +406,7 @@ namespace WebsitePanel.EnterpriseServer
                     site.PythonInstalled = false;
                     site.CgiBinInstalled = false;
                     site.ColdFusionInstalled = false;
+					site.CreateCFVirtualDirectoriesPol = false;
                 }
 
                 site.HttpRedirect = "";

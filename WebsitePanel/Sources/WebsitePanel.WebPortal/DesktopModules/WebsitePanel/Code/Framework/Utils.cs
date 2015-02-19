@@ -328,21 +328,21 @@ namespace WebsitePanel.Portal
             return idn.GetAscii(domainName);
         }
 
-        /// <summary>
-        /// Adds the specified parameter to the Query String.
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="paramName">Name of the parameter to add.</param>
-        /// <param name="paramValue">Value for the parameter to add.</param>
-        /// <returns>Url with added parameter.</returns>
-        public static Uri AddParameter(this Uri url, string paramName, string paramValue)
+        public static List<T> GetCheckboxValuesFromGrid<T>(GridView gridView, string checkboxName)
         {
-            var uriBuilder = new UriBuilder(url);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-            query[paramName] = paramValue;
-            uriBuilder.Query = query.ToString();
+            // Get checked users
+            var userIds = new List<T>();
 
-            return new Uri(uriBuilder.ToString());
+            foreach (GridViewRow gvr in gridView.Rows)
+            {
+                if (((CheckBox)gvr.FindControl(checkboxName)).Checked)
+                {
+                    string userId = gridView.DataKeys[gvr.DataItemIndex].Value.ToString();
+                    userIds.Add((T)Convert.ChangeType(userId, typeof(T)));
+                }
+            }
+
+            return userIds;
         }
     }
 }

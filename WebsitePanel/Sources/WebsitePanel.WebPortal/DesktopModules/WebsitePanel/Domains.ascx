@@ -3,10 +3,18 @@
 <%@ Register Src="UserControls/ServerDetails.ascx" TagName="ServerDetails" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/UserDetails.ascx" TagName="UserDetails" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SearchBox.ascx" TagName="SearchBox" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/DomainActions.ascx" TagName="DomainActions" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
+<wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
+<script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
 
-
+<script language="javascript">
+    function SelectAllCheckboxes(box) {
+        $(".NormalGridView tbody :checkbox").attr("checked", $(box).attr("checked"));
+    }
+</script>
 
 <div class="FormButtonsBar">
     <div class="Left">
@@ -16,14 +24,32 @@
 
     </div>
     <div class="Right">
-        <wsp:SearchBox ID="searchBox" runat="server" />
+        <table>
+            <tr>
+                <td>
+                    <wsp:DomainActions ID="websiteActions" runat="server" GridViewID="gvDomains" CheckboxesName="chkSelectedIds" />
+                </td>
+                <td class="FormButtonsBarCleanSeparator"></td>
+                <td>
+                    <wsp:SearchBox ID="searchBox" runat="server" />
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 
 <asp:GridView ID="gvDomains" runat="server" AutoGenerateColumns="False" Width="100%" AllowSorting="True" DataSourceID="odsDomainsPaged"
-    EmptyDataText="gvDomains"
+    EmptyDataText="gvDomains" DataKeyNames="DomainID"
     CssSelectorClass="NormalGridView" AllowPaging="True" OnRowCommand="gvDomains_RowCommand">
     <Columns>
+        <asp:TemplateField>
+            <HeaderTemplate>
+                <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
+            </HeaderTemplate>
+			<ItemTemplate>							        
+				<asp:CheckBox runat="server" ID="chkSelectedIds" CssClass="GridCheckbox"></asp:CheckBox>
+			</ItemTemplate>
+		</asp:TemplateField>
         <asp:TemplateField SortExpression="DomainName" HeaderText="gvDomainsName">
             <ItemStyle Width="45%" Wrap="False"></ItemStyle>
             <ItemTemplate>

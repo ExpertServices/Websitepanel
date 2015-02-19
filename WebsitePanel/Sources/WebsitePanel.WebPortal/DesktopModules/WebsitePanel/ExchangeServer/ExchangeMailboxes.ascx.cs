@@ -69,16 +69,15 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             BindServiceLevels();
 
-            
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvMailboxes.Columns[4].Visible = false;
+                    gvMailboxes.Columns[6].Visible = false;
                 }
             }
 
-            gvMailboxes.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+            gvMailboxes.Columns[4].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
         }
 
         private void BindServiceLevels()
@@ -272,6 +271,5 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             odsAccountsPaged.SelectParameters["accountTypes"].DefaultValue = string.Join(",", accountTypes);
         }
-
     }
 }

@@ -81,6 +81,7 @@
 							<td>
                                 <wsp:PasswordControl id="password" runat="server" ValidationGroup="CreateMailbox" AllowGeneratePassword="true" >
                                 </wsp:PasswordControl>
+						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
                             </td>
 						</tr>
 						

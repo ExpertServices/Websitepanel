@@ -160,6 +160,15 @@ namespace WebsitePanel.WebDavPortal.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not a file..
+        /// </summary>
+        public static string NotAFile {
+            get {
+                return ResourceManager.GetString("NotAFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
         public static string Processing {
