@@ -13,9 +13,7 @@ $(document).on('click', '.processing-dialog', function (e) {
 //Toggle file select + Ctrl multiselect
 $(document).on('click', '.element-container', function (e) {
     if (e.ctrlKey) {
-
         $(this).toggleClass("selected-file");
-
     } else {
 
         wsp.fileBrowser.clearAllSelectedItems();
@@ -42,7 +40,12 @@ $(document).on('touchstart', '.element-container', function(e) {
 //Double click file open
 $(document).on('dblclick', '.element-container', function (e) {
     wsp.fileBrowser.openItem(this);
-    wsp.dialogs.showProcessDialog();
+
+    var links = $(item).find('.file-link');
+
+    if (links.length != 0 && links[0].hasClass('processing-dialog')) {
+        wsp.dialogs.showProcessDialog();
+    }
 });
 
 

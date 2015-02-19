@@ -83,11 +83,12 @@ WspFileBrowser.prototype = {
             "ajax": ajaxUrl,
             "processing": true,
             "serverSide": true,
+            "searching": false,
             "columnDefs": [
                 {
                     "render": function(data, type, row) {
                         return '<img class="table-icon" src="' + row.IconHref + '"/>' +
-                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link processing-dialog" title="' + row.DisplayName + '">' +
+                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link ' + (row.IsFolder ?  'processing-dialog':'') + '" title="' + row.DisplayName + '">' +
                                     row.DisplayName +
                                 '</a>';
                     },
@@ -97,12 +98,17 @@ WspFileBrowser.prototype = {
                     "render": function (data, type, row) {
                         return row.Type;
                     },
+                    "orderable": false,
+                    "className": "center",
+                    "width":"10%",
                     "targets": 1
                 },
                 {
                     "render": function (data, type, row) {
-                        return row.LastModified;
+                        return row.LastModifiedFormated;
                     },
+                    "width": "20%",
+                    "className": "center",
                     "targets": 2
                 }
             ],
@@ -118,6 +124,18 @@ WspFileBrowser.prototype = {
         if (this.table != null) {
             this.table.fnDraw(false);
         }
+    },
+
+    initFileUpload: function (elementId, url) {
+        $(document).ready(function () {
+
+            $(elementId).fileupload({ url: url, autoUpload: true });
+
+            $(elementId).fileupload('option', {
+                disableImagePreview: true,
+                sequentialUploads: true
+            });
+        });
     }
 };
 

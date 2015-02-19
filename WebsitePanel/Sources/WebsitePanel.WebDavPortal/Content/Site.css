@@ -62,6 +62,15 @@ tr.selected-file {
     height: 30px;
 }
 
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #webdav-items-table tr td {
     vertical-align: middle !important;
 }
@@ -75,6 +84,111 @@ tr.selected-file {
     display: inline-block;
     vertical-align: bottom;
     height: 32px;
+}
+
+.drag-and-drop-area input {
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    /* IE 5-7 */
+    filter: alpha(opacity=0);
+    /* Netscape */
+    -moz-opacity: 0;
+    /* Safari 1.x */
+    -khtml-opacity: 0;
+    opacity: 0;
+    font-size: 198px;
+    height: 198px;
+    border: #2e8bcc 1px;
+}
+
+.drag-and-drop-area .info-block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    margin-left: -100px;
+    margin-top: -51px;
+}
+
+.drag-and-drop-area .upload-block {
+    width: 100%;
+}
+
+.drag-and-drop-area .upload-block-text {
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+}
+
+.drag-and-drop-area .upload-block-description {
+    display: block;
+}
+
+.drag-and-drop-area .upload-block-icon {
+    font-size: 60px;
+    color: gray;
+}
+
+.drag-and-drop-area .info-block-hover {
+    color: black;
+}
+
+.drag-and-drop-area {
+    margin-left: 15%;
+    margin-right: 15%;
+    background-color: #eee;
+    border: 1px solid #888;
+    border-radius: 3px !important;
+    overflow: hidden;
+}
+
+.template-upload .size, .template-download .size {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.template-upload .progress, .template-download .progress {
+    display: inline-block;
+    width: 70%;
+    margin-bottom: 0px;
+}
+
+.template-upload .column-name, .template-download .column-name, {
+    width: 40%;
+}
+
+.template-upload .column-progress, .template-download .column-progress {
+    width: 40%;
+}
+
+.template-upload .column-actions, .template-download .column-actions  {
+    width: 20%;
+    font-size: 20px;
+}
+
+.template-upload .column-actions .file-actions, .template-download .column-actions .file-actions {
+    float: right;
+    font-size: 23px;
+}
+
+.fileupload-global-process {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #E0E0E0;
+    border-radius: 3px !important;
+}
+
+.fileupload-global-process .cancel-all {
+    float: right;
+}
+
+.file-upload-menu .file-actions-menu {
+    display: none;
+}
+
+.center {
+    text-align: center;
 }
 
 #errorMessage {

@@ -29,27 +29,37 @@ namespace WebsitePanel.WebDavPortal
                 "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/appScripts").Include(
-                "~/Scripts/appScripts/authentication.js",
                 "~/Scripts/appScripts/messages.js",
                 "~/Scripts/appScripts/fileBrowsing.js",
                 "~/Scripts/appScripts/dialogs.js",
                 "~/Scripts/appScripts/wsp.js"
                ));
 
-            bundles.Add(new ScriptBundle("~/bundles/appScripts/storage/bigIcons").Include(
+            bundles.Add(new ScriptBundle("~/bundles/bigIconsScripts").Include(
                 "~/Scripts/appScripts/recalculateResourseHeight.js",
                 "~/Scripts/appScripts/uploadingData2.js"
                ));
 
-            //bundles.Add(new ScriptBundle("~/bundles/appScripts/storage/table-view").Include(
-            //  ));
-
             bundles.Add(new ScriptBundle("~/bundles/authScripts").Include(
                "~/Scripts/appScripts/authentication.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/file-upload").Include(
+                "~/Scripts/jquery.ui.widget.js",
+                "~/Scripts/jQuery.FileUpload/tmpl.min.js",
+                "~/Scripts/jQuery.FileUpload/load-image.min.js",
+                "~/Scripts/jQuery.FileUpload/jquery.iframe-transport.js",
+                "~/Scripts/jQuery.FileUpload/jquery.fileupload.js",
+                "~/Scripts/jQuery.FileUpload/jquery.fileupload-process.js",
+                "~/Scripts/jQuery.FileUpload/jquery.fileupload-image.js",
+                "~/Scripts/jQuery.FileUpload/jquery.fileupload-validate.js",
+                "~/Scripts/jQuery.FileUpload/jquery.fileupload-ui.js"
+               ));
 
             var styleBundle = new StyleBundle("~/Content/css");
 
             styleBundle.Include(
+                "~/Content/jQuery.FileUpload/css/jquery.fileupload.css",
+                "~/Content/jQuery.FileUpload/css/jquery.fileupload-ui.css",
                 "~/Content/bootstrap.css",
                 "~/Content/site.css");
 

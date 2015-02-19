@@ -79,6 +79,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel All.
+        /// </summary>
+        public static string CancelAll {
+            get {
+                return ResourceManager.GetString("CancelAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Close {
@@ -129,6 +138,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string DialogsContentConfrimFileDeletion {
             get {
                 return ResourceManager.GetString("DialogsContentConfrimFileDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
             }
         }
         
@@ -196,6 +214,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to or drag and drop files here..
+        /// </summary>
+        public static string OrDragAndDropFilesHere {
+            get {
+                return ResourceManager.GetString("OrDragAndDropFilesHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait....
         /// </summary>
         public static string PleaseWaitWithDots {
@@ -219,6 +246,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string ProcessingWithDots {
             get {
                 return ResourceManager.GetString("ProcessingWithDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select files to upload.
+        /// </summary>
+        public static string SelectFilesToUpload {
+            get {
+                return ResourceManager.GetString("SelectFilesToUpload", resourceCulture);
             }
         }
         

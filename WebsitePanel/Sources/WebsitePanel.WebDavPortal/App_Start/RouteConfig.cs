@@ -60,8 +60,8 @@ namespace WebsitePanel.WebDavPortal
 
             routes.MapRoute(
                 name: FileSystemRouteNames.UploadFile,
-                url: "storage/upload-file/{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "UploadFile" }
+                url: "storage/upload-files/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "UploadFiles" }
                 );
 
             routes.MapRoute(

@@ -44,7 +44,7 @@
 
         @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
         {
-            <a id="upload-button" class="btn btn-success btn-sm active" data-toggle="modal" data-target="#file-upload" role="button">@UI.FileUpload</a>
+            <a id="upload-button" class="btn btn-success btn-sm active" href="@Url.RouteUrl(FileSystemRouteNames.UploadFile)" role="button">@UI.FileUpload</a>
         }
     </div>
     

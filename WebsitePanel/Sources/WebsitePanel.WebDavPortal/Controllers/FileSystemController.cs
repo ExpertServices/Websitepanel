@@ -119,12 +119,12 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
                 if (Request.Browser.IsMobileDevice == false && model.UserSettings.WebDavViewType == FolderViewTypes.Table)
                 {
-                    return View("_ShowContentTable", model);
+                    return PartialView("_ShowContentTable", model);
                 }
 
                 model.Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount);
 
-                return View("_ShowContentBigIcons", model);
+                return PartialView("_ShowContentBigIcons", model);
             }
             catch (UnauthorizedException e)
             {
@@ -139,6 +139,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var folderItems = _webdavManager.OpenFolder(pathPart);
 
             var tableItems = Mapper.Map<IEnumerable<IHierarchyItem>, IEnumerable<ResourceTableItemModel>>(folderItems).ToList();
+
+            var orders = dtRequest.Orders.ToList();
+            orders.Insert(0, new JqueryDataTableOrder{Column = 3, Ascending = false});
+
+            dtRequest.Orders = orders;
 
             var dataTableResponse = DataTableHelper.ProcessRequest(tableItems, dtRequest);
             
@@ -177,22 +182,51 @@ namespace WebsitePanel.WebDavPortal.Controllers
             return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
         }
 
-        [HttpPost]
-        public ActionResult UploadFile(string org, string pathPart)
+        [HttpGet]
+        public ActionResult UploadFiles(string org, string pathPart)
         {
-            foreach (string fileName in Request.Files)
+            var model = new ModelForWebDav
             {
-                var file = Request.Files[fileName];
+                UrlSuffix = pathPart
+            };
 
-                if (file == null || file.ContentLength == 0)
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("UploadFiles")]
+        public ActionResult UploadFilePost(string org, string pathPart)
+        {
+            var uploadResults = new List<UploadFileResult>();
+
+            foreach (string file in Request.Files)
+            {
+                var hpf = Request.Files[file] as HttpPostedFileBase;
+
+                if (hpf == null || hpf.ContentLength == 0)
                 {
                     continue;
                 }
 
-                _webdavManager.UploadFile(pathPart, file);
+                _webdavManager.UploadFile(pathPart, hpf);
+
+                uploadResults.Add(new UploadFileResult()
+                {
+                    name = hpf.FileName,
+                    size = hpf.ContentLength,
+                    type = hpf.ContentType
+                });
             }
 
-            return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
+            var result = Json(new { files = uploadResults });
+
+            //for IE8 which does not accept application/json
+            if (Request.Headers["Accept"] != null && !Request.Headers["Accept"].Contains("application/json"))
+            {
+                result.ContentType = MediaTypeNames.Text.Plain;
+            }
+
+            return result;
         }
 
         [HttpPost]

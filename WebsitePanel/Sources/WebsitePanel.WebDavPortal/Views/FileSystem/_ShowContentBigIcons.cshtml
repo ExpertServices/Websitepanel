@@ -2,6 +2,7 @@
 @using WebsitePanel.WebDavPortal.UI.Routes
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 
+
 <div class="container">
 
     <div class="row" id="resourcesDiv">
@@ -14,11 +15,3 @@
         }
     </div>
 </div>
-
-@section scripts{
-    @Scripts.Render("~/bundles/appScripts/storage/bigIcons")
-
-    <script>
-        recalculateResourseHeight();
-    </script>
-}

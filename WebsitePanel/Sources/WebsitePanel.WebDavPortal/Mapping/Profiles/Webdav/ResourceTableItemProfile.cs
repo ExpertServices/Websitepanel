@@ -42,9 +42,12 @@ namespace WebsitePanel.WebDavPortal.Mapping.Profiles.Webdav
                 .ForMember(ti => ti.IsTargetBlank, x => x.MapFrom(hi => openerManager.GetIsTargetBlank(hi)))
                 .ForMember(ti => ti.Type, x => x.MapFrom(hi => (new WebDavResource(null, hi)).ItemType.GetDescription().ToLowerInvariant()))
                 .ForMember(ti => ti.IconHref, x => x.MapFrom(hi => (new WebDavResource(null, hi)).ItemType == ItemType.Folder ? WebDavAppConfigManager.Instance.FileIcons.FolderPath.Trim('~') : WebDavAppConfigManager.Instance.FileIcons[Path.GetExtension(hi.DisplayName.Trim('/'))].Trim('~')))
-                .ForMember(ti => ti.LastModified, 
+                .ForMember(ti => ti.LastModified, x => x.MapFrom(hi => (new WebDavResource(null, hi)).LastModified))
+                .ForMember(ti => ti.LastModifiedFormated,
                             x => x.MapFrom(hi => (new WebDavResource(null, hi)).LastModified == DateTime.MinValue ? "--" : (new WebDavResource(null, hi)).LastModified.ToString("dd/MM/yyyy hh:mm tt")))
-                .ForMember(ti => ti.Size, x => x.MapFrom(hi => (new WebDavResource(null,hi)).ContentLength));
+
+                .ForMember(ti => ti.Size, x => x.MapFrom(hi => (new WebDavResource(null,hi)).ContentLength))
+                .ForMember(ti => ti.IsFolder, x => x.MapFrom(hi => (new WebDavResource(null, hi)).ItemType == ItemType.Folder));
         }
     }
 }

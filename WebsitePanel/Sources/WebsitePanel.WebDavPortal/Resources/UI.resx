@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="CancelAll" xml:space="preserve">
+    <value>Cancel All</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -140,6 +143,9 @@
   </data>
   <data name="DialogsContentConfrimFileDeletion" xml:space="preserve">
     <value>Are you sure you want to delete {0} item(s)?</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
   </data>
   <data name="FileUpload" xml:space="preserve">
     <value>File Upload</value>
@@ -162,6 +168,9 @@
   <data name="NotAFile" xml:space="preserve">
     <value>Not a file.</value>
   </data>
+  <data name="OrDragAndDropFilesHere" xml:space="preserve">
+    <value>or drag and drop files here.</value>
+  </data>
   <data name="PleaseWaitWithDots" xml:space="preserve">
     <value>Please wait...</value>
   </data>
@@ -170,6 +179,9 @@
   </data>
   <data name="ProcessingWithDots" xml:space="preserve">
     <value>Processing...</value>
+  </data>
+  <data name="SelectFilesToUpload" xml:space="preserve">
+    <value>Select files to upload</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>

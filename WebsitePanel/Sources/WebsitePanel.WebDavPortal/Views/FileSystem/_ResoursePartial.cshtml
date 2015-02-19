@@ -43,7 +43,7 @@
     <div class="element">
         <img class="icon-size" src="@Url.Content(actualPath)" />
 
-        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link processing-dialog" title="@name">
+        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link @(Model.ItemType == ItemType.Folder ? "processing-dialog" : "")" title="@name">
             <p style="word-wrap: break-word;">@name</p>
         </a>
 
