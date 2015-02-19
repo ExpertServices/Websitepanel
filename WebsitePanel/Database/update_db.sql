@@ -8604,3 +8604,30 @@ WHERE
 	E.UserPrincipalName = @UserPrincipalName
 RETURN
 GO
+
+-- Service items count by name and serviceid
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetServiceItemsCountByNameAndServiceId')
+DROP PROCEDURE GetServiceItemsCountByNameAndServiceId
+GO
+
+CREATE PROCEDURE [dbo].[GetServiceItemsCountByNameAndServiceId]
+(
+	@ActorID int,
+	@ServiceId int,
+	@ItemName nvarchar(500),
+	@GroupName nvarchar(100) = NULL,
+	@ItemTypeName nvarchar(200)
+)
+AS
+SELECT Count(*)
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+WHERE S.ServiceID = @ServiceId 
+AND SIT.TypeName = @ItemTypeName
+AND SI.ItemName = @ItemName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+RETURN 
+GO

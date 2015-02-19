@@ -1380,6 +1380,14 @@ namespace WebsitePanel.EnterpriseServer
             return CreateServiceItem(dvItem[0], dsItem.Tables[1].DefaultView);
         }
 
+        public static int GetServiceItemsCountByNameAndServiceId(int serviceId, string groupName, string itemName, Type itemType)
+        {
+            string itemTypeName = ObjectUtils.GetTypeFullName(itemType);
+
+            return DataProvider.GetServiceItemsCountByNameAndServiceId(SecurityContext.User.UserId,
+                serviceId, groupName, itemName, itemTypeName);
+        }
+
         public static bool CheckServiceItemExists(string itemName, Type itemType)
         {
             return CheckServiceItemExists(itemName, null, itemType);
