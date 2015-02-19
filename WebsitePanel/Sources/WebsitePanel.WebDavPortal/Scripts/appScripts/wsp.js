@@ -69,6 +69,15 @@ $(document).click(function(event) {
     }
 });
 
+$('#drag-and-drop-area').click(function (e) {
+    $('#file-input').click();
+});
+
+$('#drag-and-drop-area #file-input').click(function (e) {
+    e.stopPropagation();
+});
+
+
 function isMobileDevice() {
     return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
 }
