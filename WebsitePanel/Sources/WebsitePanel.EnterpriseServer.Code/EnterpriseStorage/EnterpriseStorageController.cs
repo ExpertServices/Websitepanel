@@ -1210,6 +1210,37 @@ namespace WebsitePanel.EnterpriseServer
             return null;
         }
 
+        #region WebDav portal
+
+        public static string GetWebDavPortalUserSettingsByAccountId(int accountId)
+        {
+            var dataReader = DataProvider.GetWebDavPortalUserSettingsByAccountId(accountId);
+
+            while (dataReader.Read())
+            {
+                return (string)dataReader["Settings"];
+            }
+
+            return null;
+        }
+
+        public static void UpdateUserSettings(int accountId, string settings)
+        {
+            var oldSettings = GetWebDavPortalUserSettingsByAccountId(accountId);
+
+            if (string.IsNullOrEmpty(oldSettings))
+            {
+                DataProvider.AddWebDavPortalUsersSettings(accountId, settings);
+            }
+            else
+            {
+                DataProvider.UpdateWebDavPortalUsersSettings(accountId, settings);
+            }
+        }
+
+        #endregion
+
+
         #region Statistics
 
         public static OrganizationStatistics GetStatistics(int itemId)

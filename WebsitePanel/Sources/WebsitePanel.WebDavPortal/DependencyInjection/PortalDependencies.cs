@@ -1,10 +1,12 @@
 ﻿using Ninject;
 using System.Web.SessionState;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
+using WebsitePanel.WebDav.Core.Interfaces.Managers.Users;
 using WebsitePanel.WebDav.Core.Interfaces.Owa;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Interfaces.Storages;
 using WebsitePanel.WebDav.Core.Managers;
+using WebsitePanel.WebDav.Core.Managers.Users;
 using WebsitePanel.WebDav.Core.Owa;
 using WebsitePanel.WebDav.Core.Security.Authentication;
 using WebsitePanel.WebDav.Core.Security.Authorization;
@@ -28,6 +30,7 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
             kernel.Bind<IWebDavAuthorizationService>().To<WebDavAuthorizationService>();
             kernel.Bind<ICobaltManager>().To<CobaltManager>();
             kernel.Bind<ITtlStorage>().To<CacheTtlStorage>();
+            kernel.Bind<IUserSettingsManager>().To<UserSettingsManager>();
         }
     }
 }

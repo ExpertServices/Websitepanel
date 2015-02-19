@@ -1,20 +1,64 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Mvc;
+using WebsitePanel.WebDav.Core;
+using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDavPortal.Extensions;
+using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal.FileOperations
 {
     public class FileOpenerManager
     {
         private readonly IDictionary<string, FileOpenerType> _operationTypes = new Dictionary<string, FileOpenerType>();
+        private UrlHelper _urlHelper;
 
         public FileOpenerManager()
         {
             if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
                 _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension, y => FileOpenerType.OfficeOnline));
+        }
+
+        public string GetUrl(IHierarchyItem item)
+        {
+            _urlHelper =_urlHelper ?? new UrlHelper(HttpContext.Current.Request.RequestContext);
+
+            var opener = this[Path.GetExtension(item.DisplayName)];
+            string href = "/";
+
+            switch (opener)
+            {
+                case FileOpenerType.OfficeOnline:
+                {
+                    var pathPart = item.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
+                    href = string.Concat(_urlHelper.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
+                    break;
+                }
+                default:
+                {
+                    href = item.Href.LocalPath;
+                    break;
+                }
+            }
+
+            return href;
+        }
+
+        public bool GetIsTargetBlank(IHierarchyItem item)
+        {
+            var opener = this[Path.GetExtension(item.DisplayName)];
+
+            switch (opener)
+            {
+                case FileOpenerType.OfficeOnline:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         public FileOpenerType this[string fileExtension]

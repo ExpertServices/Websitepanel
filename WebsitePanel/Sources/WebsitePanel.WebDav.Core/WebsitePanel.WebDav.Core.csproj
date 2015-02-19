@@ -99,10 +99,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\Resources\LocalizedDescriptionAttribute.cs" />
     <Compile Include="Config\Entities\AbstractConfigCollection.cs" />
     <Compile Include="Config\Entities\ElementsRendering.cs" />
     <Compile Include="Config\Entities\FileIconsDictionary.cs" />
     <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
+    <Compile Include="Config\Entities\FilesToIgnoreCollection.cs" />
     <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
     <Compile Include="Config\Entities\OwaSupportedBrowsersCollection.cs" />
     <Compile Include="Config\Entities\SessionKeysCollection.cs" />
@@ -113,6 +115,8 @@
     <Compile Include="Config\WebConfigSections\ElementsRenderingElement.cs" />
     <Compile Include="Config\WebConfigSections\FileIconsElement.cs" />
     <Compile Include="Config\WebConfigSections\FileIconsElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\FilesToIgnoreElement.cs" />
+    <Compile Include="Config\WebConfigSections\FilesToIgnoreElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElement.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElement.cs" />
@@ -124,6 +128,8 @@
     <Compile Include="Config\WebConfigSections\WebdavRootElement.cs" />
     <Compile Include="Config\WebConfigSections\WebsitePanelConstantUserElement.cs" />
     <Compile Include="Config\WebDavAppConfigManager.cs" />
+    <Compile Include="Entities\Account\Enums\FolderViewTypes.cs" />
+    <Compile Include="Entities\Account\UserPortalSettings.cs" />
     <Compile Include="Entities\Owa\CheckFileInfo.cs" />
     <Compile Include="Entities\Owa\PutRelativeFile.cs" />
     <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
@@ -131,14 +137,18 @@
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="Helper\SerializeHelper.cs" />
     <Compile Include="IConnectionSettings.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Interfaces\Managers\Users\IUserSettingsManager.cs" />
     <Compile Include="Interfaces\Storages\IKeyValueStorage.cs" />
     <Compile Include="Interfaces\Storages\ITtlStorage.cs" />
+    <Compile Include="Managers\Users\UserSettingsManager.cs" />
     <Compile Include="Owa\CobaltManager.cs" />
     <Compile Include="Interfaces\Owa\ICobaltManager.cs" />
     <Compile Include="Interfaces\Owa\IWopiFileManager.cs" />

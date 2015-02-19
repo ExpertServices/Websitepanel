@@ -1,5 +1,6 @@
 ﻿function WspFileBrowser() {
-    this.settings = { deletionBlockSelector: ".file-actions-menu .file-deletion", deletionUrl: "files-group-action/delete1" };
+    this.settings = { deletionBlockSelector: ".file-actions-menu .file-deletion", deletionUrl: "storage/files-group-action/delete" };
+    this.table = null;
 }
 
 WspFileBrowser.prototype = {
@@ -43,14 +44,17 @@ WspFileBrowser.prototype = {
                 wsp.messages.showMessages(model.Messages);
 
                 wsp.fileBrowser.clearDeletedItems(model.DeletedFiles);
-
                 wsp.fileBrowser.refreshDeletionBlock();
+                wsp.fileBrowser.refreshDataTable();
 
                 wsp.dialogs.hideProcessDialog();
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 wsp.messages.addErrorMessage(errorThrown);
+
                 wsp.fileBrowser.refreshDeletionBlock();
+                wsp.fileBrowser.refreshDataTable();
+
                 wsp.dialogs.hideProcessDialog();
             }
         });
@@ -63,6 +67,7 @@ WspFileBrowser.prototype = {
             $('.element-container').has('a[href="' + item + '"]').remove();
         });
     },
+
     refreshDeletionBlock: function() {
         if (this.getSelectedItemsCount() > 0) {
 
@@ -71,6 +76,66 @@ WspFileBrowser.prototype = {
         } else {
             $(this.settings.deletionBlockSelector).hide();
         }
+    },
+
+    initDataTable: function (tableId, ajaxUrl) {
+        this.table = $(tableId).dataTable({
+            "ajax": ajaxUrl,
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "columnDefs": [
+                {
+                    "render": function(data, type, row) {
+                        return '<img class="table-icon" src="' + row.IconHref + '"/>' +
+                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link ' + (row.IsFolder ?  'processing-dialog':'') + '" title="' + row.DisplayName + '">' +
+                                    row.DisplayName +
+                                '</a>';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        return row.Type;
+                    },
+                    "orderable": false,
+                    "className": "center",
+                    "width":"10%",
+                    "targets": 1
+                },
+                {
+                    "render": function (data, type, row) {
+                        return row.LastModifiedFormated;
+                    },
+                    "width": "20%",
+                    "className": "center",
+                    "targets": 2
+                }
+            ],
+            "createdRow": function(row, data, index) {
+                $(row).addClass('element-container');
+            }
+        });
+
+        $(tableId).removeClass('dataTable');
+    },
+
+    refreshDataTable: function () {
+        if (this.table != null) {
+            this.table.fnDraw(false);
+        }
+    },
+
+    initFileUpload: function (elementId, url) {
+        $(document).ready(function () {
+
+            $(elementId).fileupload({ url: url, autoUpload: true });
+
+            $(elementId).fileupload('option', {
+                disableImagePreview: true,
+                sequentialUploads: true
+            });
+        });
     }
 };
 

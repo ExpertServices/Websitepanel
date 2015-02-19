@@ -17,6 +17,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string FileIconsKey = "fileIcons";
         private const string OwaSupportedBrowsersKey = "owaSupportedBrowsers";
         private const string OfficeOnlineKey = "officeOnline";
+        private const string FilesToIgnoreKey = "filesToIgnore";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
 
@@ -88,6 +89,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (OfficeOnlineElementCollection)this[OfficeOnlineKey]; }
             set { this[OfficeOnlineKey] = value; }
+        }
+
+        [ConfigurationProperty(FilesToIgnoreKey, IsDefaultCollection = false)]
+        public FilesToIgnoreElementCollection FilesToIgnore
+        {
+            get { return (FilesToIgnoreElementCollection)this[FilesToIgnoreKey]; }
+            set { this[FilesToIgnoreKey] = value; }
         }
     }
 }

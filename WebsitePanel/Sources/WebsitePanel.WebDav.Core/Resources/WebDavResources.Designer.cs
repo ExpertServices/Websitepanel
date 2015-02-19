@@ -68,5 +68,23 @@ namespace WebsitePanel.WebDav.Core.Resources {
                 return ResourceManager.GetString("FolderIsNotEmptyFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder.
+        /// </summary>
+        internal static string ItemTypeFolder {
+            get {
+                return ResourceManager.GetString("ItemTypeFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document.
+        /// </summary>
+        internal static string ItemTypeResource {
+            get {
+                return ResourceManager.GetString("ItemTypeResource", resourceCulture);
+            }
+        }
     }
 }
