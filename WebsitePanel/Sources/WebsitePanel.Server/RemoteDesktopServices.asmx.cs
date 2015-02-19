@@ -495,5 +495,73 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public RdsServerInfo GetRdsServerInfo(string serverName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetRdsServerInfo", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetRdsServerInfo(serverName);
+                Log.WriteEnd("'{0}' GetRdsServerInfo", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetRdsServerInfo", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public string GetRdsServerStatus(string serverName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetRdsServerStatus", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetRdsServerStatus(serverName);
+                Log.WriteEnd("'{0}' GetRdsServerStatus", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetRdsServerStatus", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ShutDownRdsServer(string serverName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShutDownRdsServer", ProviderSettings.ProviderName);
+                RDSProvider.ShutDownRdsServer(serverName);
+                Log.WriteEnd("'{0}' ShutDownRdsServer", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShutDownRdsServer", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RestartRdsServer(string serverName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RestartRdsServer", ProviderSettings.ProviderName);
+                RDSProvider.RestartRdsServer(serverName);
+                Log.WriteEnd("'{0}' RestartRdsServer", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RestartRdsServer", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

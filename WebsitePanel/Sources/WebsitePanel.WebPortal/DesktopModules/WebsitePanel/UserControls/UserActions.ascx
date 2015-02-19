@@ -14,6 +14,8 @@
             ShowProgressDialog('Disabling users...');
         } else if (action == 2) {
             ShowProgressDialog('Enabling users...');
+        } else if (action == 3) {
+            ShowProgressDialog('Prepare...');
         } else if (action == 4) {
             ShowProgressDialog('Setting VIP...');
         } else if (action == 5) {

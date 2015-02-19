@@ -10,24 +10,33 @@
 namespace WebsitePanel.Portal {
     
     
-    public partial class WebSites {
+    public partial class DomainActions {
         
         /// <summary>
-        /// asyncTasks control.
+        /// tblActions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+        protected global::System.Web.UI.UpdatePanel tblActions;
         
         /// <summary>
-        /// itemsList control.
+        /// ddlDomainActions control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.SpaceServiceItems itemsList;
+        protected global::System.Web.UI.WebControls.DropDownList ddlDomainActions;
+        
+        /// <summary>
+        /// btnApply control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnApply;
     }
 }

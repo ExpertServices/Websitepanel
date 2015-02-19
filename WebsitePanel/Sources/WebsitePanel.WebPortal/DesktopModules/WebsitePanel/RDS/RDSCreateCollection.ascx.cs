@@ -43,7 +43,7 @@ namespace WebsitePanel.Portal.RDS
         {
             if (!IsPostBack)
             {
-
+                servers.HideRefreshButton();
             }
         }
 
