@@ -132,4 +132,7 @@
   <data name="Tab.UserSessions" xml:space="preserve">
     <value>User Sessions</value>
   </data>
+  <data name="Tab.LocalAdmins" xml:space="preserve">
+    <value>Local Administrators</value>
+  </data>
 </root>

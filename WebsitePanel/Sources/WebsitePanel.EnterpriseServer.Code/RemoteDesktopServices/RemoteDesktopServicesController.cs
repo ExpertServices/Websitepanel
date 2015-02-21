@@ -168,9 +168,9 @@ namespace WebsitePanel.EnterpriseServer
             return RemoveRdsServerFromCollectionInternal(itemId, rdsServer, rdsCollection);
         }
 
-        public static ResultObject RemoveRdsServerFromOrganization(int rdsServerId)
+        public static ResultObject RemoveRdsServerFromOrganization(int itemId, int rdsServerId)
         {
-            return RemoveRdsServerFromOrganizationInternal(rdsServerId);
+            return RemoveRdsServerFromOrganizationInternal(itemId, rdsServerId);
         }
 
         public static ResultObject UpdateRdsServer(RdsServer rdsServer)
@@ -268,6 +268,16 @@ namespace WebsitePanel.EnterpriseServer
             return RestartRdsServerInternal(itemId, fqdnName);
         }
 
+        public static List<OrganizationUser> GetRdsCollectionLocalAdmins(int itemId)
+        {
+            return GetRdsCollectionLocalAdminsInternal(itemId);
+        }
+
+        public static ResultObject SaveRdsCollectionLocalAdmins(OrganizationUser[] users, int itemId)
+        {
+            return SaveRdsCollectionLocalAdminsInternal(users, itemId);
+        }
+
         private static RdsCollection GetRdsCollectionInternal(int collectionId)
         {
             var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
@@ -298,6 +308,61 @@ namespace WebsitePanel.EnterpriseServer
             FillRdsCollection(collection);
 
             return collection;
+        }
+
+        private static List<OrganizationUser> GetRdsCollectionLocalAdminsInternal(int itemId)
+        {
+            var result = new List<OrganizationUser>();
+            Organization org = OrganizationController.GetOrganization(itemId);
+            
+            if (org == null)
+            {
+                return result;
+            }
+            
+            var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));            
+
+            var organizationUsers = OrganizationController.GetOrganizationUsersPaged(itemId, null, null, null, 0, Int32.MaxValue).PageUsers;
+            var organizationAdmins = rds.GetRdsCollectionLocalAdmins(org.OrganizationId);
+
+            return organizationUsers.Where(o => organizationAdmins.Select(a => a.ToLower()).Contains(o.SamAccountName.ToLower())).ToList();
+        }
+
+        private static ResultObject SaveRdsCollectionLocalAdminsInternal(OrganizationUser[] users, int itemId)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "SAVE_LOCAL_ADMINS");
+
+            try
+            {                
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+
+                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+                rds.SaveRdsCollectionLocalAdmins(users.Select(u => u.AccountName).ToArray(), org.OrganizationId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
         }
 
         private static RdsCollectionSettings GetRdsCollectionSettingsInternal(int collectionId)
@@ -960,11 +1025,12 @@ namespace WebsitePanel.EnterpriseServer
                     rds.AddSessionHostFeatureToServer(rdsServer.FqdName);
                 }
 
+                rds.MoveRdsServerToTenantOU(rdsServer.FqdName, org.OrganizationId);
                 DataProvider.AddRDSServerToOrganization(itemId, serverId);
             }
             catch (Exception ex)
             {
-                result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER_TO_ORGANIZATION", ex);
+                throw TaskManager.WriteError(ex);
             }
             finally
             {
@@ -981,17 +1047,29 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        private static ResultObject RemoveRdsServerFromOrganizationInternal(int rdsServerId)
+        private static ResultObject RemoveRdsServerFromOrganizationInternal(int itemId, int rdsServerId)
         {
-            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "REMOVE_RDS_SERVER_FROM_ORGANIZATION");
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "REMOVE_RDS_SERVER_FROM_ORGANIZATION");            
 
             try
             {
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+
+                var rdsServer = ObjectUtils.FillObjectFromDataReader<RdsServer>(DataProvider.GetRDSServerById(rdsServerId));
+                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+                rds.RemoveRdsServerFromTenantOU(rdsServer.FqdName, org.OrganizationId);
                 DataProvider.RemoveRDSServerFromOrganization(rdsServerId);
             }
             catch (Exception ex)
             {
-                result.AddError("REMOTE_DESKTOP_SERVICES_REMOVE_RDS_SERVER_FROM_ORGANIZATION", ex);
+                throw TaskManager.WriteError(ex);
             }
             finally
             {
@@ -1542,7 +1620,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (var server in servers)
                 {
-                    RemoveRdsServerFromOrganization(server.Id);
+                    RemoveRdsServerFromOrganization(itemId, server.Id);
                 }
             }
             catch (Exception ex)

@@ -127,11 +127,11 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> Put(int accessTokenId)
+        public HttpResponseMessage Put(int accessTokenId)
         {
             var token = _tokenManager.GetToken(accessTokenId);
 
-            var bytes = await Request.Content.ReadAsByteArrayAsync();
+            var bytes = Request.Content.ReadAsByteArrayAsync().Result;
 
             _webDavManager.UploadFile(token.FilePath, bytes);
 

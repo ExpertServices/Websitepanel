@@ -5656,6 +5656,9 @@
   <data name="ERROR.REMOTEAPPUSERS_NOT_UPDATED" xml:space="preserve">
     <value>Remote application users not updated</value>
   </data>
+  <data name="ERROR.RDSSERVER_NOT_ASSIGNED" xml:space="preserve">
+    <value>RDS server not assigned to organization</value>
+  </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
     <value>RDS User logging off error</value>
   </data>

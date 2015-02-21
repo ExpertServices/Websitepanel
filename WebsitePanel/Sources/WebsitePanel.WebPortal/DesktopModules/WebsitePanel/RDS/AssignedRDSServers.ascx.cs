@@ -99,7 +99,7 @@ namespace WebsitePanel.Portal.RDS
 
         private void DeleteItem(int rdsServerId)
         {
-            ResultObject result = ES.Services.RDS.RemoveRdsServerFromOrganization(rdsServerId);
+            ResultObject result = ES.Services.RDS.RemoveRdsServerFromOrganization(PanelRequest.ItemID, rdsServerId);
 
             if (!result.IsSuccess)
             {

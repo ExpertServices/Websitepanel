@@ -330,6 +330,13 @@
     <Compile Include="RDS\RDSCollections.ascx.designer.cs">
       <DependentUpon>RDSCollections.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\RDSLocalAdmins.ascx.cs">
+      <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSLocalAdmins.ascx.designer.cs">
+      <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\RDSUserSessions.ascx.cs">
       <DependentUpon>RDSUserSessions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4396,6 +4403,7 @@
     <Content Include="RDS\RDSEditCollectionUsers.ascx" />
     <Content Include="RDS\RDSCreateCollection.ascx" />
     <Content Include="RDS\RDSCollections.ascx" />
+    <Content Include="RDS\RDSLocalAdmins.ascx" />
     <Content Include="RDS\RDSUserSessions.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
@@ -4419,6 +4427,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="RDS\App_LocalResources\RDSUserSessions.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSLocalAdmins.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -42,6 +43,15 @@ namespace WebsitePanel.WebDav.Core
             {
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
+            }
+
+            public WebDavResource(ICredentials credentials, IHierarchyItem item)
+            {
+                SendChunked = false;
+                AllowWriteStreamBuffering = false;
+
+                SetCredentials(credentials);
+                SetHierarchyItem(item);
             }
 
             public Uri BaseUri
@@ -124,7 +134,7 @@ namespace WebsitePanel.WebDav.Core
                 var webClient = new WebClient();
                 webClient.Credentials = credentials;
                 webClient.Headers.Add("Authorization", auth);
-
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 webClient.UploadData(Href, "PUT", data);
             }
 
@@ -143,6 +153,7 @@ namespace WebsitePanel.WebDav.Core
                 webClient.Headers.Add("Authorization", auth);
                 //TODO Disable SSL
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate{ return true; });
+
                 return webClient.OpenRead(_href);
             }
 

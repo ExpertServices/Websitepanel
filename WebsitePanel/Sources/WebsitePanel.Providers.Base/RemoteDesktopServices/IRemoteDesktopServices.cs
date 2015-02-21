@@ -73,5 +73,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         string GetRdsServerStatus(string serverName);
         void ShutDownRdsServer(string serverName);
         void RestartRdsServer(string serverName);
+        void SaveRdsCollectionLocalAdmins(List<string> users, string organizationId);
+        List<string> GetRdsCollectionLocalAdmins(string organizationId);
+        void MoveRdsServerToTenantOU(string hostName, string organizationId);
+        void RemoveRdsServerFromTenantOU(string hostName, string organizationId);
     }
 }

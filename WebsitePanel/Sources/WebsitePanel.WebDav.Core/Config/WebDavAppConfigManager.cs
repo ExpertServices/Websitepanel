@@ -19,6 +19,7 @@ namespace WebsitePanel.WebDav.Core.Config
             HttpErrors = new HttpErrorsCollection();
             OfficeOnline = new OfficeOnlineCollection();
             OwaSupportedBrowsers = new OwaSupportedBrowsersCollection();
+            FilesToIgnore = new FilesToIgnoreCollection();
         }
 
         public static WebDavAppConfigManager Instance
@@ -53,5 +54,6 @@ namespace WebsitePanel.WebDav.Core.Config
         public HttpErrorsCollection HttpErrors { get; private set; }
         public OfficeOnlineCollection OfficeOnline { get; private set; }
         public OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; private set; }
+        public FilesToIgnoreCollection FilesToIgnore { get; private set; }
     }
 }
