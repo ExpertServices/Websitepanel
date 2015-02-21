@@ -33,7 +33,7 @@ namespace WebsitePanel.Providers.Mail
 	[Serializable]
 	public class MailAccount : ServiceProviderItem
 	{
-		private bool enabled;
+		private bool enabled = true;
 		private string password;
 		private string replyTo;
 		private bool responderEnabled;

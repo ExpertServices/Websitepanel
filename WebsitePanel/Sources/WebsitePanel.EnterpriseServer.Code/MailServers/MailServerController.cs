@@ -137,7 +137,6 @@ namespace WebsitePanel.EnterpriseServer
 					return domainResult;
 
 				// create service item
-				item.Enabled = true;
 				item.MaxMailboxSize = GetMaxMailBoxSize(item.PackageId, item);
 
 				// add service item
@@ -207,7 +206,6 @@ namespace WebsitePanel.EnterpriseServer
 				MailServer mail = new MailServer();
 				ServiceProviderProxy.Init(mail, origItem.ServiceId);
 				item.Name = origItem.Name;
-				item.Enabled = true;
 
 				item.MaxMailboxSize = GetMaxMailBoxSize(origItem.PackageId, item);
 

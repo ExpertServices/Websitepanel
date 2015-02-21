@@ -7,126 +7,144 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.UserControls {
+namespace WebsitePanel.Portal.ProviderControls {
     
     
-    public partial class SpaceServiceItems {
+    public partial class SmarterMail100_Settings {
         
         /// <summary>
-        /// btnAddItem control.
+        /// lblServiceUrl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddItem;
+        protected global::System.Web.UI.WebControls.Label lblServiceUrl;
         
         /// <summary>
-        /// chkRecursive control.
+        /// txtServiceUrl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRecursive;
+        protected global::System.Web.UI.WebControls.TextBox txtServiceUrl;
         
         /// <summary>
-        /// websiteActions control.
+        /// lblPublicIP control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.WebsiteActions websiteActions;
+        protected global::System.Web.UI.WebControls.Label lblPublicIP;
         
         /// <summary>
-        /// mailActions control.
+        /// ipAddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.MailAccountActions mailActions;
+        protected global::WebsitePanel.Portal.SelectIPAddress ipAddress;
         
         /// <summary>
-        /// searchBox control.
+        /// lblDomainsPath control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.SearchBox searchBox;
+        protected global::System.Web.UI.WebControls.Label lblDomainsPath;
         
         /// <summary>
-        /// litGroupName control.
+        /// txtDomainsFolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litGroupName;
+        protected global::System.Web.UI.WebControls.TextBox txtDomainsFolder;
         
         /// <summary>
-        /// litTypeName control.
+        /// lblAdminLogin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litTypeName;
+        protected global::System.Web.UI.WebControls.Label lblAdminLogin;
         
         /// <summary>
-        /// ItemsPanel control.
+        /// txtUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ItemsPanel;
+        protected global::System.Web.UI.WebControls.TextBox txtUsername;
         
         /// <summary>
-        /// gvItems control.
+        /// rowPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvItems;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow rowPassword;
         
         /// <summary>
-        /// odsItemsPaged control.
+        /// lblCurrPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsItemsPaged;
+        protected global::System.Web.UI.WebControls.Label lblCurrPassword;
         
         /// <summary>
-        /// QuotasPanel control.
+        /// lblAdminPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel QuotasPanel;
+        protected global::System.Web.UI.WebControls.Label lblAdminPassword;
         
         /// <summary>
-        /// lblQuotaName control.
+        /// txtPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblQuotaName;
+        protected global::System.Web.UI.WebControls.TextBox txtPassword;
         
         /// <summary>
-        /// itemsQuota control.
+        /// cbImportDomainAdmin control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Quota itemsQuota;
+        protected global::System.Web.UI.WebControls.CheckBox cbImportDomainAdmin;
+        
+        /// <summary>
+        /// cbInheritDefaultLimits control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbInheritDefaultLimits;
+        
+        /// <summary>
+        /// cbEnableDomainAdmin control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbEnableDomainAdmin;
     }
 }

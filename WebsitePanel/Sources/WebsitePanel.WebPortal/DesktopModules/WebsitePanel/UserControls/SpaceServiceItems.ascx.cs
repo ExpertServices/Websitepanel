@@ -113,14 +113,8 @@ namespace WebsitePanel.Portal.UserControls
                                          (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
             gvItems.Columns[5].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
             gvItems.Columns[6].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
-            if (QuotaName == "Web.Sites")
-            {
-                websiteActions.Visible = true;
-            }
-            else
-            {
-                websiteActions.Visible = false;
-            }
+
+            ShowActionList();
 
             if (!IsPostBack)
             {
@@ -214,6 +208,24 @@ namespace WebsitePanel.Portal.UserControls
 			string localizedLinkText = HostModule.GetLocalizedString(ViewLinkText + ".Text");
 			lnkView.Text = localizedLinkText != null ? localizedLinkText : ViewLinkText;
 		}
+
+        private void ShowActionList()
+        {
+            websiteActions.Visible = false;
+            mailActions.Visible = false;
+
+            switch (QuotaName)
+            {
+                case "Web.Sites":
+                    websiteActions.Visible = true;
+                    break;
+                case "Mail.Accounts":
+                    ProviderInfo provider = ES.Services.Servers.GetPackageServiceProvider(PanelSecurity.PackageId, "Mail");
+                    if (provider.EditorControl == "SmarterMail100")
+                        mailActions.Visible = true;
+                    break;
+            }
+        }
 
     }
 }
