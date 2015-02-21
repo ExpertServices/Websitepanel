@@ -402,6 +402,9 @@
   <data name="Error.MAIL_UPDATE_ACCOUNT" xml:space="preserve">
     <value>Error updating mail account</value>
   </data>
+  <data name="Error.MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY" xml:space="preserve">
+    <value>Password doesn't meet complexity. Perhaps the password length is less 5 characters.</value>
+  </data>
   <data name="Error.MAIL_UPDATE_DOMAIN" xml:space="preserve">
     <value>Error updating mail domain</value>
   </data>
