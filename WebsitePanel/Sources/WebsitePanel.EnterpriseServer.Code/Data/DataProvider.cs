@@ -1197,6 +1197,24 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@itemName", itemName));
         }
 
+        public static int GetServiceItemsCountByNameAndServiceId(int actorId, int serviceId, string groupName,
+            string itemName, string itemTypeName)
+        {
+            int res = 0;
+
+            object obj =  SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetServiceItemsCountByNameAndServiceId",
+               new SqlParameter("@ActorID", actorId),
+                new SqlParameter("@ServiceId", serviceId),
+                new SqlParameter("@ItemName", itemName),
+                new SqlParameter("@GroupName", groupName),
+                new SqlParameter("@ItemTypeName", itemTypeName));
+
+            if (!int.TryParse(obj.ToString(), out res)) return -1;
+
+            return res;
+        }
+
         public static int AddServiceItem(int actorId, int serviceId, int packageId, string itemName,
             string itemTypeName, string xmlProperties)
         {
