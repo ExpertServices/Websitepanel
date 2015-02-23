@@ -1171,8 +1171,13 @@ namespace WebsitePanel.Providers.Mail
 					mailbox.IsDomainAdmin // domain admin is false
 					);
 
-				if (!result.Result)
-					throw new Exception(result.Message);
+                if (!result.Result)
+                {
+                    if (result.ResultCode == -21)
+                        throw new Exception("Password doesn't meet complexity", new Exception(result.Message));
+
+                    throw new Exception(result.Message);
+                }
 
 				// set forwarding settings
 				result = users.UpdateUserForwardingInfo(AdminUsername, AdminPassword,
@@ -1232,10 +1237,15 @@ namespace WebsitePanel.Providers.Mail
 				GenericResult result = users.UpdateUser(
 					AdminUsername, AdminPassword, mailbox.Name, strPassword, mailbox.FirstName, mailbox.LastName, mailbox.IsDomainAdmin);
 
-				if (!result.Result)
-					throw new Exception(result.Message);
+			    if (!result.Result)
+			    {
+			        if (result.ResultCode == -21)
+                        throw new Exception("Password doesn't meet complexity", new Exception(result.Message));
+			        
+                    throw new Exception(result.Message);
+			    }
 
-				// set forwarding settings
+			    // set forwarding settings
 				result = users.UpdateUserForwardingInfo(AdminUsername, AdminPassword,
 					mailbox.Name, mailbox.DeleteOnForward,
 					(mailbox.ForwardingAddresses != null ? String.Join(", ", mailbox.ForwardingAddresses) : ""));

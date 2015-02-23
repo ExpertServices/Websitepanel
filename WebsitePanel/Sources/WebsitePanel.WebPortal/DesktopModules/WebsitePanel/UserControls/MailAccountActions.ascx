@@ -1,26 +1,23 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebsiteActions.ascx.cs" Inherits="WebsitePanel.Portal.WebsiteActions" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="MailAccountActions.ascx.cs" Inherits="WebsitePanel.Portal.MailAccountActions" %>
 
 <script language="javascript">
     function ShowProgress(btn) {
         var action = $(btn).prev().val();
 
         if (action === 1) {
-            ShowProgressDialog("Stopping websites...");
-        } else if (action == 2) {
-            ShowProgressDialog("Starting websites...");
-        } else if (action == 3) {
-            ShowProgressDialog("Restarting App Pools...");
+            ShowProgressDialog("Enabling mail account...");
+        } else if (action === 2) {
+            ShowProgressDialog("Disabling mail account...");
         }
     }
 </script>
 <asp:UpdatePanel ID="tblActions" runat="server" CssClass="NormalBold" UpdateMode="Conditional" ChildrenAsTriggers="true" >
     <ContentTemplate>
 
-        <asp:DropDownList ID="ddlWebsiteActions" runat="server" CssClass="NormalTextBox" resourcekey="ddlWebsiteActions" AutoPostBack="True">
+        <asp:DropDownList ID="ddlMailAccountActions" runat="server" CssClass="NormalTextBox" resourcekey="ddlWebsiteActions" AutoPostBack="True">
             <asp:ListItem Value="0">Actions</asp:ListItem>
-            <asp:ListItem Value="1">Stop</asp:ListItem>
-            <asp:ListItem Value="2">Start</asp:ListItem>
-            <asp:ListItem Value="3">RestartAppPool</asp:ListItem>
+            <asp:ListItem Value="1">Disable</asp:ListItem>
+            <asp:ListItem Value="2">Enable</asp:ListItem>
         </asp:DropDownList>
 
         <asp:Button ID="btnApply" runat="server" meta:resourcekey="btnApply"

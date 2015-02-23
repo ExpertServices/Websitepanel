@@ -7,126 +7,117 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.UserControls {
+namespace WebsitePanel.Portal.ProviderControls {
     
     
-    public partial class SpaceServiceItems {
+    public partial class SmarterMail100_EditDomain_Sharing {
         
         /// <summary>
-        /// btnAddItem control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddItem;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// chkRecursive control.
+        /// cbGlobalAddressList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRecursive;
+        protected global::System.Web.UI.WebControls.CheckBox cbGlobalAddressList;
         
         /// <summary>
-        /// websiteActions control.
+        /// Label2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.WebsiteActions websiteActions;
+        protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// mailActions control.
+        /// cbSharedCalendars control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.MailAccountActions mailActions;
+        protected global::System.Web.UI.WebControls.CheckBox cbSharedCalendars;
         
         /// <summary>
-        /// searchBox control.
+        /// Label3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.SearchBox searchBox;
+        protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// litGroupName control.
+        /// cbSharedContacts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litGroupName;
+        protected global::System.Web.UI.WebControls.CheckBox cbSharedContacts;
         
         /// <summary>
-        /// litTypeName control.
+        /// Label4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litTypeName;
+        protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// ItemsPanel control.
+        /// cbSharedFolders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ItemsPanel;
+        protected global::System.Web.UI.WebControls.CheckBox cbSharedFolders;
         
         /// <summary>
-        /// gvItems control.
+        /// Label5 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvItems;
+        protected global::System.Web.UI.WebControls.Label Label5;
         
         /// <summary>
-        /// odsItemsPaged control.
+        /// cbSharedNotes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsItemsPaged;
+        protected global::System.Web.UI.WebControls.CheckBox cbSharedNotes;
         
         /// <summary>
-        /// QuotasPanel control.
+        /// Label6 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel QuotasPanel;
+        protected global::System.Web.UI.WebControls.Label Label6;
         
         /// <summary>
-        /// lblQuotaName control.
+        /// cbSharedTasks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblQuotaName;
-        
-        /// <summary>
-        /// itemsQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.Quota itemsQuota;
+        protected global::System.Web.UI.WebControls.CheckBox cbSharedTasks;
     }
 }
