@@ -4,22 +4,32 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
+using System.Security.Policy;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using AutoMapper;
 using log4net;
 using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Entities.Account.Enums;
 using WebsitePanel.WebDav.Core.Exceptions;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
+using WebsitePanel.WebDav.Core.Interfaces.Managers.Users;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
+using WebsitePanel.WebDav.Core.Security.Authorization.Enums;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
+using WebsitePanel.WebDav.Core.Wsp.Framework;
 using WebsitePanel.WebDavPortal.CustomAttributes;
 using WebsitePanel.WebDavPortal.Extensions;
+using WebsitePanel.WebDavPortal.FileOperations;
+using WebsitePanel.WebDavPortal.Helpers;
+using WebsitePanel.WebDavPortal.ModelBinders.DataTables;
 using WebsitePanel.WebDavPortal.Models;
 using System.Net;
 using WebsitePanel.WebDavPortal.Models.Common;
+using WebsitePanel.WebDavPortal.Models.Common.DataTable;
 using WebsitePanel.WebDavPortal.Models.Common.Enums;
 using WebsitePanel.WebDavPortal.Models.FileSystem;
 using WebsitePanel.WebDavPortal.UI;
@@ -37,17 +47,27 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccessTokenManager _tokenManager;
         private readonly IWebDavAuthorizationService _webDavAuthorizationService;
+        private readonly IUserSettingsManager _userSettingsManager;
         private readonly ILog Log;
 
-        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, IWebDavAuthorizationService webDavAuthorizationService)
+        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, IWebDavAuthorizationService webDavAuthorizationService, FileOpenerManager openerManager, IUserSettingsManager userSettingsManager)
         {
             _cryptography = cryptography;
             _webdavManager = webdavManager;
             _authenticationService = authenticationService;
             _tokenManager = tokenManager;
             _webDavAuthorizationService = webDavAuthorizationService;
+            _userSettingsManager = userSettingsManager;
 
             Log = LogManager.GetLogger(this.GetType());
+        }
+
+        [HttpGet]
+        public ActionResult ChangeViewType(FolderViewTypes viewType, string org, string pathPart = "")
+        {
+            _userSettingsManager.ChangeWebDavViewType(WspContext.User.AccountId, viewType);
+
+            return RedirectToRoute(FileSystemRouteNames.ShowContentPath, new  { org, pathPart });
         }
 
         [HttpGet]
@@ -68,11 +88,12 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             try
             {
-                IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(pathPart);
-
-                var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
-
-                var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart, Permissions = permissions};
+                var model = new ModelForWebDav
+                {
+                    UrlSuffix = pathPart, 
+                    Permissions =_webDavAuthorizationService.GetPermissions(WspContext.User, pathPart),
+                    UserSettings = _userSettingsManager.GetUserSettings(WspContext.User.AccountId)
+                };
 
                 return View(model);
             }
@@ -82,18 +103,51 @@ namespace WebsitePanel.WebDavPortal.Controllers
             }
         }
 
-        public ActionResult ShowOfficeDocument(string org, string pathPart = "")
+        [ChildActionOnly]
+        public ActionResult ContentList(string org, FolderViewTypes viewType,  string pathPart = "")
         {
-            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
+            try
+            {
+                IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(pathPart);
 
-            string fileUrl = WebDavAppConfigManager.Instance.WebdavRoot+ org + "/" + pathPart.TrimStart('/');
-            var accessToken = _tokenManager.CreateToken(WspContext.User, pathPart);
+                var model = new ModelForWebDav
+                {
+                    UrlSuffix = pathPart,
+                    Permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart),
+                    UserSettings = _userSettingsManager.GetUserSettings(WspContext.User.AccountId)
+                };
 
-            string wopiSrc = Server.UrlDecode(Url.RouteUrl(OwaRouteNames.CheckFileInfo, new { accessTokenId = accessToken.Id }, Request.Url.Scheme));
+                if (Request.Browser.IsMobileDevice == false && model.UserSettings.WebDavViewType == FolderViewTypes.Table)
+                {
+                    return PartialView("_ShowContentTable", model);
+                }
 
-            var uri = string.Format("{0}/{1}?WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpener.OwaOpener, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
+                model.Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount);
 
-            return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
+                return PartialView("_ShowContentBigIcons", model);
+            }
+            catch (UnauthorizedException e)
+            {
+                throw new HttpException(404, "Not Found");
+            }
+        }
+
+
+        [HttpGet]
+        public ActionResult GetContentDetails(string org, string pathPart, [ModelBinder(typeof (JqueryDataTableModelBinder))] JqueryDataTableRequest dtRequest)
+        {
+            var folderItems = _webdavManager.OpenFolder(pathPart);
+
+            var tableItems = Mapper.Map<IEnumerable<IHierarchyItem>, IEnumerable<ResourceTableItemModel>>(folderItems).ToList();
+
+            var orders = dtRequest.Orders.ToList();
+            orders.Insert(0, new JqueryDataTableOrder{Column = 3, Ascending = false});
+
+            dtRequest.Orders = orders;
+
+            var dataTableResponse = DataTableHelper.ProcessRequest(tableItems, dtRequest);
+            
+            return Json(dataTableResponse, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -108,22 +162,71 @@ namespace WebsitePanel.WebDavPortal.Controllers
             return PartialView("_ResourseCollectionPartial", result);
         }
 
-        [HttpPost]
-        public ActionResult UploadFile(string org, string pathPart)
+        [HttpGet]
+        public ActionResult DownloadFile(string org, string pathPart)
         {
-            foreach (string fileName in Request.Files)
+            if (org != WspContext.User.OrganizationId)
             {
-                var file = Request.Files[fileName];
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            }
 
-                if (file == null || file.ContentLength == 0)
+            string fileName = pathPart.Split('/').Last();
+
+            if (_webdavManager.IsFile(pathPart) == false)
+            {
+                throw new Exception(Resources.UI.NotAFile);
+            }
+
+            var fileBytes = _webdavManager.GetFileBytes(pathPart);
+
+            return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+        }
+
+        [HttpGet]
+        public ActionResult UploadFiles(string org, string pathPart)
+        {
+            var model = new ModelForWebDav
+            {
+                UrlSuffix = pathPart
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("UploadFiles")]
+        public ActionResult UploadFilePost(string org, string pathPart)
+        {
+            var uploadResults = new List<UploadFileResult>();
+
+            foreach (string file in Request.Files)
+            {
+                var hpf = Request.Files[file] as HttpPostedFileBase;
+
+                if (hpf == null || hpf.ContentLength == 0)
                 {
                     continue;
                 }
 
-                _webdavManager.UploadFile(pathPart, file);
+                _webdavManager.UploadFile(pathPart, hpf);
+
+                uploadResults.Add(new UploadFileResult()
+                {
+                    name = hpf.FileName,
+                    size = hpf.ContentLength,
+                    type = hpf.ContentType
+                });
             }
 
-            return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
+            var result = Json(new { files = uploadResults });
+
+            //for IE8 which does not accept application/json
+            if (Request.Headers["Accept"] != null && !Request.Headers["Accept"].Contains("application/json"))
+            {
+                result.ContentType = MediaTypeNames.Text.Plain;
+            }
+
+            return result;
         }
 
         [HttpPost]
@@ -133,7 +236,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (filePathes == null)
             {
-                model.AddMessage(MessageType.Error, Resources.NoFilesAreSelected);
+                model.AddMessage(MessageType.Error, Resources.UI.NoFilesAreSelected);
 
                 return Json(model);
             }
@@ -154,10 +257,52 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (model.DeletedFiles.Any())
             {
-                model.AddMessage(MessageType.Success, string.Format(Resources.ItemsWasRemovedFormat, model.DeletedFiles.Count));
+                model.AddMessage(MessageType.Success, string.Format(Resources.UI.ItemsWasRemovedFormat, model.DeletedFiles.Count));
             }
 
             return Json(model);
         }
+
+        #region Owa Actions
+
+        public ActionResult ShowOfficeDocument(string org, string pathPart, string owaOpenerUri)
+        {
+            string fileUrl = WebDavAppConfigManager.Instance.WebdavRoot + org + "/" + pathPart.TrimStart('/');
+            var accessToken = _tokenManager.CreateToken(WspContext.User, pathPart);
+
+            var urlPart = Url.HttpRouteUrl(OwaRouteNames.CheckFileInfo, new { accessTokenId = accessToken.Id });
+            var url = new Uri(Request.Url, urlPart).ToString();
+
+            string wopiSrc = Server.UrlDecode(url);
+
+            var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
+
+            string fileName = fileUrl.Split('/').Last();
+
+            return View("ShowOfficeDocument", new OfficeOnlineModel(uri, fileName));
+        }
+
+        public ActionResult ViewOfficeDocument(string org, string pathPart)
+        {
+            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
+
+            return ShowOfficeDocument(org, pathPart, owaOpener.OwaView);
+        }
+
+        public ActionResult EditOfficeDocument(string org, string pathPart)
+        {
+            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
+            if (permissions.HasFlag(WebDavPermissions.Write) == false)
+            {
+                return new RedirectToRouteResult(FileSystemRouteNames.ViewOfficeOnline, null);
+            }
+
+            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
+
+            return ShowOfficeDocument(org, pathPart, owaOpener.OwaEditor);
+        }
+        #endregion
+
     }
 }

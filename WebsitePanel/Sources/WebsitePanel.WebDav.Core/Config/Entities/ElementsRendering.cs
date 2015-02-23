@@ -7,13 +7,11 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
     {
         public int DefaultCount { get; private set; }
         public int AddElementsCount { get; private set; }
-        public List<string> ElementsToIgnore { get; private set; }
 
         public ElementsRendering()
         {
             DefaultCount = ConfigSection.ElementsRendering.DefaultCount;
             AddElementsCount = ConfigSection.ElementsRendering.AddElementsCount;
-            ElementsToIgnore = ConfigSection.ElementsRendering.ElementsToIgnore.Split(',').ToList();
         }
     }
 }

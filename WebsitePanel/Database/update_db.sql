@@ -8569,3 +8569,125 @@ RETURN
 GO
 
 
+
+IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
+DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+GO
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+(
+	@UserPrincipalName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan',
+	E.EnableArchiving
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.UserPrincipalName = @UserPrincipalName
+RETURN
+GO
+
+
+
+--Webdav portal users settings
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'WebDavPortalUsersSettings')
+CREATE TABLE WebDavPortalUsersSettings
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccountId INT NOT NULL,
+	Settings NVARCHAR(max)
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_WebDavPortalUsersSettings_UserId')
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]
+DROP CONSTRAINT [FK_WebDavPortalUsersSettings_UserId]
+GO
+
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]  WITH CHECK ADD  CONSTRAINT [FK_WebDavPortalUsersSettings_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavPortalUsersSettingsByAccountId')
+DROP PROCEDURE GetWebDavPortalUsersSettingsByAccountId
+GO
+CREATE PROCEDURE [dbo].[GetWebDavPortalUsersSettingsByAccountId]
+(
+	@AccountId INT
+)
+AS
+SELECT TOP 1
+	US.Id,
+	US.AccountId,
+	US.Settings
+	FROM WebDavPortalUsersSettings AS US
+	WHERE AccountId = @AccountId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddWebDavPortalUsersSettings')
+DROP PROCEDURE AddWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[AddWebDavPortalUsersSettings]
+(
+	@WebDavPortalUsersSettingsId INT OUTPUT,
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+INSERT INTO WebDavPortalUsersSettings
+(
+	AccountId,
+	Settings
+)
+VALUES
+(
+	@AccountId,
+	@Settings
+)
+
+SET @WebDavPortalUsersSettingsId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateWebDavPortalUsersSettings')
+DROP PROCEDURE UpdateWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateWebDavPortalUsersSettings]
+(
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+UPDATE WebDavPortalUsersSettings
+SET
+	Settings = @Settings
+WHERE AccountId = @AccountId
+GO

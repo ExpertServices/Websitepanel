@@ -3,6 +3,7 @@
 @using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.FileOperations
 @using Ninject;
+@using WebsitePanel.WebDavPortal.Resources
 @using WebsitePanel.WebDavPortal.UI
 @using WebsitePanel.WebDavPortal.UI.Routes
 @model IHierarchyItem
@@ -18,7 +19,7 @@
         case FileOpenerType.OfficeOnline:
             isTargetBlank = true;
             var pathPart = Model.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/'); 
-            href = string.Concat(Url.RouteUrl(FileSystemRouteNames.ShowOfficeOnlinePath, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
+            href = string.Concat(Url.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
             break;
         default:
             isTargetBlank = false;
@@ -42,7 +43,7 @@
     <div class="element">
         <img class="icon-size" src="@Url.Content(actualPath)" />
 
-        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link" title="@name">
+        <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) class="file-link @(Model.ItemType == ItemType.Folder ? "processing-dialog" : "")" title="@name">
             <p style="word-wrap: break-word;">@name</p>
         </a>
 
@@ -53,7 +54,7 @@
                     <p class="progress-text">@percent%</p>
                 </div>
             </div>
-            <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @Resources.GigabyteShort</p>
+            <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @UI.GigabyteShort</p>
         }
 
         <div class="selected-element-overlay">

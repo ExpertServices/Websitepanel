@@ -17,7 +17,7 @@ WspDialogs.prototype =
         $(dialogId).find('.modal-body').empty();
         $(dialogId).find('.modal-body').html(content);
 
-        //title replace
+        //positive button replace
         if (positiveButton) {
             $(dialogId).find('.modal-footer .positive-button').empty();
             $(dialogId).find('.modal-footer .positive-button').text(positiveButton);
@@ -39,41 +39,3 @@ WspDialogs.prototype =
 }
 };
 
-/*
-wsp.dialogs = wsp.dialogs || (function () {
-    var settings = { dialogId: "#confirm-dialog" };
-
-    return {
-        settings: settings,
-
-        showConfirmDialog : function (title, content, positiveButton, positiveClickFunction, dialogId) {
-            dialogId = dialogId || this.settings.dialogId;
-
-            //title replace
-            if (title) {
-                $(dialogId).find('.modal-title').empty();
-                $(dialogId).find('.modal-title').text(title);
-            }
-
-            //body replace
-            $(dialogId).find('.modal-body').empty();
-            $(dialogId).find('.modal-body').html(content);
-
-            //title replace
-            if (positiveButton) {
-                $(dialogId).find('.modal-footer .positive-button').empty();
-                $(dialogId).find('.modal-footer .positive-button').text(positiveButton);
-            }
-
-            //binding click event
-            $(dialogId).find('.modal-footer .positive-button').unbind('click');
-            $(dialogId).find('.modal-footer .positive-button').click(positiveClickFunction);
-
-            $(dialogId).modal();
-        },
-
-        showProcessDialog: function () {
-            $('#processDialog').modal();
-        }
-    };
-})();*/

@@ -2684,13 +2684,13 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string primaryEmailAddress)
+        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string userPrincipalName)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "GetExchangeAccountByAccountNameWithoutItemId",
-                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress)
+                new SqlParameter("@UserPrincipalName", userPrincipalName)
             );
         }
 
@@ -4483,6 +4483,45 @@ namespace WebsitePanel.EnterpriseServer
                 "GetEnterpriseFolder",
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@FolderName", folderName)
+            );
+        }
+
+        public static IDataReader GetWebDavPortalUserSettingsByAccountId(int accountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavPortalUsersSettingsByAccountId",
+                new SqlParameter("@AccountId", accountId)
+            );
+        }
+
+        public static int AddWebDavPortalUsersSettings(int accountId, string settings)
+        {
+            SqlParameter settingsId = new SqlParameter("@WebDavPortalUsersSettingsId", SqlDbType.Int);
+            settingsId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddWebDavPortalUsersSettings",
+                settingsId,
+                new SqlParameter("@AccountId", accountId),
+                new SqlParameter("@Settings", settings)
+            );
+
+            // read identity
+            return Convert.ToInt32(settingsId.Value);
+        }
+
+        public static void UpdateWebDavPortalUsersSettings(int accountId, string settings)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateWebDavPortalUsersSettings",
+                new SqlParameter("@AccountId", accountId),
+                new SqlParameter("@Settings", settings)
             );
         }
 

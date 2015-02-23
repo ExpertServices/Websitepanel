@@ -218,6 +218,68 @@ namespace WebsitePanel.WebDav.Core
                 Open();
             }
 
+            public void OpenPaged(string path)
+            {
+                _path = new Uri(path);
+                OpenPaged();
+            }
+
+            public void OpenPaged()
+            {
+                var request = (HttpWebRequest)WebRequest.Create(_path);
+                //request.PreAuthenticate = true;
+                request.Method = "SEARCH";
+
+                //TODO Disable SSL
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+
+                var credentials = (NetworkCredential)_credentials;
+                if (credentials != null && credentials.UserName != null)
+                {
+                    request.Credentials = _credentials;
+
+                    string auth = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+                    request.Headers.Add("Authorization", auth);
+                }
+
+                var strQuery = "<?xml version=\"1.0\"?><D:searchrequest xmlns:D = \"DAV:\" >"
+                        + "<D:sql>SELECT \"DAV:displayname\" FROM \"" + _path + "\""
+                        + "WHERE \"DAV:ishidden\" = false"
+                        + "</D:sql></D:searchrequest>";
+
+                try
+                {
+                   var bytes = Encoding.UTF8.GetBytes(strQuery);
+
+                    request.ContentLength = bytes.Length;
+
+                    using (var requestStream = request.GetRequestStream())
+                    {
+                        // Write the SQL query to the request stream.
+                        requestStream.Write(bytes, 0, bytes.Length);
+                    }
+
+                    request.ContentType = "text/xml";
+
+                    using (var response = (HttpWebResponse)request.GetResponse())
+                    {
+                        using (var responseStream = new StreamReader(response.GetResponseStream()))
+                        {
+                            string responseString = responseStream.ReadToEnd();
+                            ProcessResponse(responseString);
+                        }
+                    }
+                }
+                catch (WebException e)
+                {
+                    if (e.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        throw new UnauthorizedException();
+                    }
+                    throw e;
+                }
+            }
+
             /// <summary>
             ///     Processes the response from the server.
             /// </summary>
@@ -301,6 +363,36 @@ namespace WebsitePanel.WebDav.Core
                                                                         XmlCurrentPropNode.NamespaceURI),
                                                                     XmlCurrentPropNode.InnerXml));
                                                             break;
+                                                        //case "lockdiscovery":
+                                                        //{
+                                                        //    if (XmlCurrentPropNode.HasChildNodes == false)
+                                                        //    {
+                                                        //        break;
+                                                        //    }
+
+                                                        //    foreach (XmlNode activeLockNode in XmlCurrentPropNode.FirstChild)
+                                                        //    {
+                                                        //        switch (activeLockNode.LocalName)
+                                                        //        {
+                                                        //            case "owner":
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("owner",
+                                                        //                            activeLockNode.NamespaceURI),
+                                                        //                        activeLockNode.InnerXml));
+                                                        //                break;
+                                                        //            case "locktoken":
+                                                        //                var lockTokenNode = activeLockNode.FirstChild;
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("locktoken",
+                                                        //                            lockTokenNode.NamespaceURI),
+                                                        //                        lockTokenNode.InnerXml));
+                                                        //                break;
+                                                        //        }
+                                                        //    }
+                                                        //    break;
+                                                        //}
                                                     }
                                                 }
                                                 break;

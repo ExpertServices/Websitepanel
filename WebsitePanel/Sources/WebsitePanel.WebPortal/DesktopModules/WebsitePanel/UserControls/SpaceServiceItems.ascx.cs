@@ -91,6 +91,12 @@ namespace WebsitePanel.Portal.UserControls
             set { EnsureChildControls(); QuotasPanel.Visible = value; }
         }
 
+        public bool ShowActions
+        {
+            get { EnsureChildControls(); return QuotasPanel.Visible; }
+            set { EnsureChildControls(); websiteActions.Visible = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             //HideServiceColumns(gvWebSites);
@@ -108,11 +114,11 @@ namespace WebsitePanel.Portal.UserControls
 
             // visibility
             chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
-            gvItems.Columns[1].Visible = !String.IsNullOrEmpty(ViewLinkText);
-            gvItems.Columns[2].Visible = gvItems.Columns[3].Visible =
+            gvItems.Columns[2].Visible = !String.IsNullOrEmpty(ViewLinkText);
+            gvItems.Columns[3].Visible = gvItems.Columns[4].Visible =
                                          (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
-            gvItems.Columns[4].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
-            gvItems.Columns[5].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+            gvItems.Columns[5].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
+            gvItems.Columns[6].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
 
             if (!IsPostBack)
             {
@@ -206,5 +212,6 @@ namespace WebsitePanel.Portal.UserControls
 			string localizedLinkText = HostModule.GetLocalizedString(ViewLinkText + ".Text");
 			lnkView.Text = localizedLinkText != null ? localizedLinkText : ViewLinkText;
 		}
+
     }
 }

@@ -120,4 +120,10 @@
   <data name="FolderIsNotEmptyFormat" xml:space="preserve">
     <value>Folder {0} is not empty.</value>
   </data>
+  <data name="ItemTypeFolder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="ItemTypeResource" xml:space="preserve">
+    <value>Document</value>
+  </data>
 </root>

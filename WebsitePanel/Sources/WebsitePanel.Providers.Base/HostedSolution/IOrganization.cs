@@ -64,7 +64,8 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string jobTitle,
                                     string company, string department, string office, string managerAccountName,
                                     string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-                                    string webPage, string notes, string externalEmail);
+                                    string webPage, string notes, string externalEmail,
+                                    bool userMustChangePassword);
 
         void SetUserPassword(string organizationId, string accountName, string password);
 

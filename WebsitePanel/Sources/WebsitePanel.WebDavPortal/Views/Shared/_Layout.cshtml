@@ -11,10 +11,11 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>@(ViewBag.Title ?? WebDavAppConfigManager.Instance.ApplicationName)</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top prevent-deselect">
@@ -25,7 +26,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.RouteLink(WebDavAppConfigManager.Instance.ApplicationName, FileSystemRouteNames.ShowContentPath, new { pathPart = string.Empty }, new { @class = "navbar-brand" })
+                <a href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new { pathPart = string.Empty })">
+                    <img class="header-logo processing-dialog" src="@Url.Content("~/Content/Images/logo.png")" />
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 @{
@@ -46,34 +49,34 @@
     <div class="prevent-deselect">
         @RenderSection("popups", required: false)
     </div>
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/appScripts")
-
     
+    <div class="manual-scripts">
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/appScripts")
+    </div>
 
     @if (WspContext.User != null)
     {
         @Scripts.Render("~/bundles/authScripts")
         
         <script>
-            StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+            $(document).ready(function() {
+                StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+            });
         </script>
     }
 
     @if (Model != null)
     {
         <script>
-            wsp.messages.showMessages(@Html.Raw(Json.Encode(Model.Messages)));
+            $(document).ready(function () {
+                wsp.messages.showMessages(@Html.Raw(Json.Encode(Model.Messages)));
+            });
         </script>
     }
-
-
-
-    @RenderSection("scripts", required: false)
     
-
+     @RenderSection("scripts", required: false)
 </body>
 </html>

@@ -13,6 +13,33 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         public long Size { get; set; }
         [DataMember]
         public string Version { get; set; }
+        [DataMember]
+        public bool SupportsCoauth { get; set; }
+        [DataMember]
+        public bool SupportsCobalt { get; set; }
+        [DataMember]
+        public bool SupportsFolders { get; set; }
+        [DataMember]
+        public bool SupportsLocks { get; set; }
+        [DataMember]
+        public bool SupportsScenarioLinks { get; set; }
+        [DataMember]
+        public bool SupportsSecureStore { get; set; }
+        [DataMember]
+        public bool SupportsUpdate { get; set; }
+        [DataMember]
+        public bool UserCanWrite { get; set; }
+        [DataMember]
+        public string DownloadUrl { get; set; }
+        [DataMember]
+        public bool ReadOnly { get; set; }
+        [DataMember]
+        public bool RestrictedWebViewOnly { get; set; }
+        [DataMember]
+        public string ClientUrl { get; set; }
+        //[DataMember]
+        //public bool UserCanNotWriteRelative { get; set; }
+        
 
         //[DataMember]
         //public string SHA256 { get; set; }
@@ -42,8 +69,6 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //public bool DisablePrint { get; set; }
         //[DataMember]
         //public bool DisableTranslation { get; set; }
-        //[DataMember]
-        //public string DownloadUrl { get; set; }
         //[DataMember]
         //public string FileSharingUrl { get; set; }
         //[DataMember]
@@ -79,26 +104,12 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //public bool ProtectInClient { get; set; }
         //[DataMember]
         //public bool ReadOnly { get; set; }
-        //[DataMember]
-        //public bool RestrictedWebViewOnly { get; set; }
+
 
         //[DataMember]
         //public string SignoutUrl { get; set; }
 
-        //[DataMember]
-        //public bool SupportsCoauth { get; set; }
-        //[DataMember]
-        //public bool SupportsCobalt { get; set; }
-        //[DataMember]
-        //public bool SupportsFolders { get; set; }
-        //[DataMember]
-        //public bool SupportsLocks { get; set; }
-        //[DataMember]
-        //public bool SupportsScenarioLinks { get; set; }
-        //[DataMember]
-        //public bool SupportsSecureStore { get; set; }
-        //[DataMember]
-        //public bool SupportsUpdate { get; set; }
+
         //[DataMember]
         //public string TenantId { get; set; }
         //[DataMember]
@@ -107,8 +118,7 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //public string TimeZone { get; set; }
         //[DataMember]
         //public bool UserCanAttend { get; set; }
-        //[DataMember]
-        //public bool UserCanNotWriteRelative { get; set; }
+
         //[DataMember]
         //public bool UserCanPresent { get; set; }
         //[DataMember]
