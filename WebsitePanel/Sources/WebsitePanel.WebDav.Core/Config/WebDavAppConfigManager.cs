@@ -47,6 +47,11 @@ namespace WebsitePanel.WebDav.Core.Config
             get { return _configSection.AuthTimeoutCookieName.Value; }
         }
 
+        public string EnterpriseServerUrl
+        {
+            get { return _configSection.EnterpriseServerUrl.Value; }
+        }
+
         public ElementsRendering ElementsRendering { get; private set; }
         public WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; private set; }
         public SessionKeysCollection SessionKeys { get; private set; }
