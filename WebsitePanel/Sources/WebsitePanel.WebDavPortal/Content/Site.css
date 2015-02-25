@@ -24,13 +24,8 @@ textarea {
 }
 
 .element-container {
-	margin-bottom: 15px;
-	/*text-align:center;*/
     cursor: pointer;
-    margin-top: 14px;
-    margin-left: 1px;
-    margin-right: 1px;
-    padding: 3px;
+    margin-top: 15px;
 }
 
 .element-container .element {
@@ -45,6 +40,7 @@ textarea {
       -webkit-box-sizing:border-box;
       border: 1px solid rgb(80, 152, 249);
       padding: 3px;
+      margin: 4px;
 }
 
 .selected-file .element div.selected-element-overlay {

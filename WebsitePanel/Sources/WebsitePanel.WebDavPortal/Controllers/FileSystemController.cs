@@ -97,6 +97,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
                     SearchValue = searchValue
                 };
 
+                if (Request.Browser.IsMobileDevice)
+                {
+                    model.UserSettings.WebDavViewType = FolderViewTypes.BigIcons;
+                }
+
                 return View(model);
             }
             catch (UnauthorizedException e)
