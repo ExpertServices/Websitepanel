@@ -1029,10 +1029,10 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SearchFiles", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SystemFile[] SearchFiles(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive) {
+        public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
             object[] results = this.Invoke("SearchFiles", new object[] {
                         itemId,
-                        searchPath,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive});
@@ -1040,10 +1040,10 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSearchFiles(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SearchFiles", new object[] {
                         itemId,
-                        searchPath,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive}, callback, asyncState);
@@ -1056,18 +1056,18 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public void SearchFilesAsync(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive) {
-            this.SearchFilesAsync(itemId, searchPath, searchText, userPrincipalName, recursive, null);
+        public void SearchFilesAsync(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
+            this.SearchFilesAsync(itemId, searchPaths, searchText, userPrincipalName, recursive, null);
         }
         
         /// <remarks/>
-        public void SearchFilesAsync(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive, object userState) {
+        public void SearchFilesAsync(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, object userState) {
             if ((this.SearchFilesOperationCompleted == null)) {
                 this.SearchFilesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSearchFilesOperationCompleted);
             }
             this.InvokeAsync("SearchFiles", new object[] {
                         itemId,
-                        searchPath,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive}, this.SearchFilesOperationCompleted, userState);

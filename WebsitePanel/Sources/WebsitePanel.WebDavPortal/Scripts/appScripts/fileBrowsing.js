@@ -81,7 +81,7 @@ WspFileBrowser.prototype = {
     initDataTable: function (tableId, ajaxUrl) {
         this.table = $(tableId).dataTable({
             "ajax": ajaxUrl,
-            "processing": true,
+            "processing": false,
             "serverSide": true,
             "columnDefs": [
                 {
@@ -113,6 +113,15 @@ WspFileBrowser.prototype = {
             ],
             "createdRow": function(row, data, index) {
                 $(row).addClass('element-container');
+            },
+            "fnPreDrawCallback": function () {
+                // gather info to compose a message
+                wsp.dialogs.showProcessDialog();
+                return true;
+            },
+            "fnDrawCallback": function () {
+                // in case your overlay needs to be put away automatically you can put it here
+                wsp.dialogs.hideProcessDialog();
             }
         });
 

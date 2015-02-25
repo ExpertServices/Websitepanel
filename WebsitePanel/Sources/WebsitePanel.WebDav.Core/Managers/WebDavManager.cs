@@ -80,28 +80,23 @@ namespace WebsitePanel.WebDav.Core.Managers
         {
             pathPart = (pathPart ?? string.Empty).Replace("/","\\");
 
-            var items = WspContext.Services.EnterpriseStorage.SearchFiles(itemId, pathPart, searchValue, uesrPrincipalName, recursive);
+            SystemFile[] items;
 
-            var resources = Convert(items, new Uri(WebDavAppConfigManager.Instance.WebdavRoot).Append(WspContext.User.OrganizationId, pathPart));
 
             if (string.IsNullOrWhiteSpace(pathPart))
             {
-                var rootItems = ConnectToWebDavServer().ToArray();
+                var rootItems = ConnectToWebDavServer().Select(x => x.Name).ToList();
+                rootItems.Insert(0, string.Empty);
 
-                foreach (var resource in resources)
-                {
-                    var rootItem = rootItems.FirstOrDefault(x => x.Name == resource.DisplayName);
-
-                    if (rootItem == null)
-                    {
-                        continue;
-                    }
-
-                    resource.ContentLength = rootItem.Size;
-                    resource.AllocatedSpace = rootItem.FRSMQuotaMB;
-                    resource.IsRootItem = true;
-                }
+                items = WspContext.Services.EnterpriseStorage.SearchFiles(itemId, rootItems.ToArray(), searchValue, uesrPrincipalName, recursive);
             }
+            else
+            {
+                items = WspContext.Services.EnterpriseStorage.SearchFiles(itemId, new []{pathPart}, searchValue, uesrPrincipalName, recursive);
+            }
+
+            var resources = Convert(items, new Uri(WebDavAppConfigManager.Instance.WebdavRoot).Append(WspContext.User.OrganizationId, pathPart));
+
 
             return FilterResult(resources);
         }

@@ -176,12 +176,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public SystemFile[] Search(string searchPath, string searchText, string userPrincipalName, bool recursive)
+        public SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
             try
             {
                 Log.WriteStart("'{0}' Search", ProviderSettings.ProviderName);
-                var searchResults = EnterpriseStorageProvider.Search(searchPath, searchText, userPrincipalName, recursive);
+                var searchResults = EnterpriseStorageProvider.Search(organizationId, searchPaths, searchText, userPrincipalName, recursive);
                 Log.WriteEnd("'{0}' Search", ProviderSettings.ProviderName);
                 return searchResults;
             }

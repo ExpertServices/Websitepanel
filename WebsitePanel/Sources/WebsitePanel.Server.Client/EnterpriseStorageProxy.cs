@@ -410,9 +410,10 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/Search", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SystemFile[] Search(string searchPath, string searchText, string userPrincipalName, bool recursive) {
+        public SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
             object[] results = this.Invoke("Search", new object[] {
-                        searchPath,
+                        organizationId,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive});
@@ -420,9 +421,10 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSearch(string searchPath, string searchText, string userPrincipalName, bool recursive, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSearch(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("Search", new object[] {
-                        searchPath,
+                        organizationId,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive}, callback, asyncState);
@@ -435,17 +437,18 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         }
         
         /// <remarks/>
-        public void SearchAsync(string searchPath, string searchText, string userPrincipalName, bool recursive) {
-            this.SearchAsync(searchPath, searchText, userPrincipalName, recursive, null);
+        public void SearchAsync(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
+            this.SearchAsync(organizationId, searchPaths, searchText, userPrincipalName, recursive, null);
         }
         
         /// <remarks/>
-        public void SearchAsync(string searchPath, string searchText, string userPrincipalName, bool recursive, object userState) {
+        public void SearchAsync(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, object userState) {
             if ((this.SearchOperationCompleted == null)) {
                 this.SearchOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSearchOperationCompleted);
             }
             this.InvokeAsync("Search", new object[] {
-                        searchPath,
+                        organizationId,
+                        searchPaths,
                         searchText,
                         userPrincipalName,
                         recursive}, this.SearchOperationCompleted, userState);

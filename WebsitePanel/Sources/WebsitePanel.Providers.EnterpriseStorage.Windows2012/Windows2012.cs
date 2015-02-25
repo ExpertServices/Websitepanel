@@ -285,23 +285,27 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
         #endregion
 
-        public SystemFile[] Search(string searchPath, string searchText, string userPrincipalName, bool recursive)
+        public SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
             var settings = GetWebDavSetting(null);
             var result = new List<SystemFile>();
+            var isRootSearch = false;
+
+            if (searchPaths.Any(string.IsNullOrEmpty))
+            {
+                isRootSearch = true;
+                searchPaths = searchPaths.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            }
 
             using (new WindowsIdentity(userPrincipalName).Impersonate())
             {
                 using (var conn = new OleDbConnection("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';"))
                 {
-                    var searchDirectory = Path.Combine(settings.LocationDrive + ":\\", settings.HomeFolder);
-                    searchDirectory = Path.Combine(searchDirectory, searchPath);
+                    var rootFolder = Path.Combine(settings.LocationDrive + ":\\", settings.HomeFolder);
+                    rootFolder = Path.Combine(rootFolder, organizationId);
 
-                    var searchDirectoryUrl = new Uri(searchDirectory).AbsoluteUri;
-
-                    var wsSql = string.Format(@"SELECT System.FileName, System.DateModified, System.Size, System.Kind, System.ItemPathDisplay, System.ItemType FROM SYSTEMINDEX WHERE System.FileName LIKE '%{0}%' AND {1} = '{2}'",
-                        searchText, recursive ? "SCOPE" : "DIRECTORY", searchDirectoryUrl);
-
+                    var wsSql = string.Format(@"SELECT System.FileName, System.DateModified, System.Size, System.Kind, System.ItemPathDisplay, System.ItemType FROM SYSTEMINDEX WHERE System.FileName LIKE '%{0}%' AND ({1})",
+                        searchText, string.Join(" OR ", searchPaths.Select(x => string.Format("{0} = '{1}'", recursive ? "SCOPE" : "DIRECTORY", Path.Combine(rootFolder, x))).ToArray()));
 
                     conn.Open();
 
@@ -325,7 +329,19 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                             }
 
                             file.FullName = (reader[4] as string ?? string.Empty);
-                            file.RelativeUrl = file.FullName.Replace(searchDirectory, string.Empty).Trim('\\');
+
+                            if (isRootSearch)
+                            {
+                                file.RelativeUrl = file.FullName.Replace(rootFolder, "").Trim('\\');
+                            }
+                            else
+                            {
+                                foreach (var searchPath in searchPaths)
+                                {
+                                    file.RelativeUrl = file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
+                                }
+                            }
+                            
 
                             result.Add(file);
                         }

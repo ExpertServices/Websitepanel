@@ -171,9 +171,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public SystemFile[] SearchFiles(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive)
+        public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
-           return EnterpriseStorageController.SearchFiles(itemId, searchPath, searchText, userPrincipalName, recursive);
+           return EnterpriseStorageController.SearchFiles(itemId, searchPaths, searchText, userPrincipalName, recursive);
         }
 
         #region Directory Browsing

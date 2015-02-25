@@ -172,7 +172,7 @@ namespace WebsitePanel.EnterpriseServer
             return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenByAccessToken(accessToken));
         }
 
-        public static SystemFile[] SearchFiles(int itemId, string searchPath, string searchText, string userPrincipalName, bool recursive)
+        public static SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
             try
             {
@@ -192,23 +192,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(serviceId);
 
-                var rootFolders = GetRootFolders(userPrincipalName).ToList();
-
-                var searchResult = es.Search(Path.Combine(org.OrganizationId, searchPath ?? string.Empty), searchText, userPrincipalName, recursive);
-
-                var result = new List<SystemFile>();
-
-                foreach (var systemFile in searchResult)
-                {
-                    if (rootFolders.All(x => !systemFile.FullName.Contains(x.FullName)))
-                    {
-                        continue;
-                    }
-
-                    result.Add(systemFile);
-                }
-
-                return result.ToArray();
+                return es.Search(org.OrganizationId, searchPaths, searchText, userPrincipalName, recursive);
             }
             catch (Exception ex)
             {
