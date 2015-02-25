@@ -114,6 +114,10 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback RestartRdsServerOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetRdsCollectionLocalAdminsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SaveRdsCollectionLocalAdminsOperationCompleted;
+        
         /// <remarks/>
         public esRemoteDesktopServices() {
             this.Url = "http://localhost:9002/esRemoteDesktopServices.asmx";
@@ -244,6 +248,12 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event RestartRdsServerCompletedEventHandler RestartRdsServerCompleted;
+        
+        /// <remarks/>
+        public event GetRdsCollectionLocalAdminsCompletedEventHandler GetRdsCollectionLocalAdminsCompleted;
+        
+        /// <remarks/>
+        public event SaveRdsCollectionLocalAdminsCompletedEventHandler SaveRdsCollectionLocalAdminsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1216,15 +1226,17 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/RemoveRdsServerFromOrganization", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResultObject RemoveRdsServerFromOrganization(int rdsServerId) {
+        public ResultObject RemoveRdsServerFromOrganization(int itemId, int rdsServerId) {
             object[] results = this.Invoke("RemoveRdsServerFromOrganization", new object[] {
+                        itemId,
                         rdsServerId});
             return ((ResultObject)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginRemoveRdsServerFromOrganization(int rdsServerId, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginRemoveRdsServerFromOrganization(int itemId, int rdsServerId, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("RemoveRdsServerFromOrganization", new object[] {
+                        itemId,
                         rdsServerId}, callback, asyncState);
         }
         
@@ -1235,16 +1247,17 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public void RemoveRdsServerFromOrganizationAsync(int rdsServerId) {
-            this.RemoveRdsServerFromOrganizationAsync(rdsServerId, null);
+        public void RemoveRdsServerFromOrganizationAsync(int itemId, int rdsServerId) {
+            this.RemoveRdsServerFromOrganizationAsync(itemId, rdsServerId, null);
         }
         
         /// <remarks/>
-        public void RemoveRdsServerFromOrganizationAsync(int rdsServerId, object userState) {
+        public void RemoveRdsServerFromOrganizationAsync(int itemId, int rdsServerId, object userState) {
             if ((this.RemoveRdsServerFromOrganizationOperationCompleted == null)) {
                 this.RemoveRdsServerFromOrganizationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRemoveRdsServerFromOrganizationOperationCompleted);
             }
             this.InvokeAsync("RemoveRdsServerFromOrganization", new object[] {
+                        itemId,
                         rdsServerId}, this.RemoveRdsServerFromOrganizationOperationCompleted, userState);
         }
         
@@ -2137,6 +2150,91 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.RestartRdsServerCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.RestartRdsServerCompleted(this, new RestartRdsServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollectionLocalAdmins", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationUser[] GetRdsCollectionLocalAdmins(int collectionId) {
+            object[] results = this.Invoke("GetRdsCollectionLocalAdmins", new object[] {
+                        collectionId});
+            return ((OrganizationUser[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsCollectionLocalAdmins(int collectionId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsCollectionLocalAdmins", new object[] {
+                        collectionId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationUser[] EndGetRdsCollectionLocalAdmins(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationUser[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsCollectionLocalAdminsAsync(int collectionId) {
+            this.GetRdsCollectionLocalAdminsAsync(collectionId, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsCollectionLocalAdminsAsync(int collectionId, object userState) {
+            if ((this.GetRdsCollectionLocalAdminsOperationCompleted == null)) {
+                this.GetRdsCollectionLocalAdminsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsCollectionLocalAdminsOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsCollectionLocalAdmins", new object[] {
+                        collectionId}, this.GetRdsCollectionLocalAdminsOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsCollectionLocalAdminsOperationCompleted(object arg) {
+            if ((this.GetRdsCollectionLocalAdminsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsCollectionLocalAdminsCompleted(this, new GetRdsCollectionLocalAdminsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SaveRdsCollectionLocalAdmins", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject SaveRdsCollectionLocalAdmins(OrganizationUser[] users, int collectionId) {
+            object[] results = this.Invoke("SaveRdsCollectionLocalAdmins", new object[] {
+                        users,
+                        collectionId});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSaveRdsCollectionLocalAdmins(OrganizationUser[] users, int collectionId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SaveRdsCollectionLocalAdmins", new object[] {
+                        users,
+                        collectionId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndSaveRdsCollectionLocalAdmins(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SaveRdsCollectionLocalAdminsAsync(OrganizationUser[] users, int collectionId) {
+            this.SaveRdsCollectionLocalAdminsAsync(users, collectionId, null);
+        }
+        
+        /// <remarks/>
+        public void SaveRdsCollectionLocalAdminsAsync(OrganizationUser[] users, int collectionId, object userState) {
+            if ((this.SaveRdsCollectionLocalAdminsOperationCompleted == null)) {
+                this.SaveRdsCollectionLocalAdminsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSaveRdsCollectionLocalAdminsOperationCompleted);
+            }
+            this.InvokeAsync("SaveRdsCollectionLocalAdmins", new object[] {
+                        users,
+                        collectionId}, this.SaveRdsCollectionLocalAdminsOperationCompleted, userState);
+        }
+        
+        private void OnSaveRdsCollectionLocalAdminsOperationCompleted(object arg) {
+            if ((this.SaveRdsCollectionLocalAdminsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SaveRdsCollectionLocalAdminsCompleted(this, new SaveRdsCollectionLocalAdminsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3225,6 +3323,58 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal RestartRdsServerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsCollectionLocalAdminsCompletedEventHandler(object sender, GetRdsCollectionLocalAdminsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsCollectionLocalAdminsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsCollectionLocalAdminsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationUser[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationUser[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SaveRdsCollectionLocalAdminsCompletedEventHandler(object sender, SaveRdsCollectionLocalAdminsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SaveRdsCollectionLocalAdminsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SaveRdsCollectionLocalAdminsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

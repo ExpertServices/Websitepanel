@@ -42,6 +42,7 @@ using WebsitePanel.Providers;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Server
 {
@@ -560,6 +561,72 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' RestartRdsServer", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SaveRdsCollectionLocalAdmins(List<OrganizationUser> users, List<string> hosts)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SaveRdsCollectionLocalAdmins", ProviderSettings.ProviderName);
+                RDSProvider.SaveRdsCollectionLocalAdmins(users, hosts);
+                Log.WriteEnd("'{0}' SaveRdsCollectionLocalAdmins", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SaveRdsCollectionLocalAdmins", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<string> GetRdsCollectionLocalAdmins(string hostName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetRdsCollectionLocalAdmins", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetRdsCollectionLocalAdmins(hostName);
+                Log.WriteEnd("'{0}' GetRdsCollectionLocalAdmins", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetRdsCollectionLocalAdmins", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void MoveRdsServerToTenantOU(string hostName, string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' MoveRdsServerToTenantOU", ProviderSettings.ProviderName);
+                RDSProvider.MoveRdsServerToTenantOU(hostName, organizationId);
+                Log.WriteEnd("'{0}' MoveRdsServerToTenantOU", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' MoveRdsServerToTenantOU", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveRdsServerFromTenantOU(string hostName, string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveRdsServerFromTenantOU", ProviderSettings.ProviderName);
+                RDSProvider.RemoveRdsServerFromTenantOU(hostName, organizationId);
+                Log.WriteEnd("'{0}' RemoveRdsServerFromTenantOU", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveRdsServerFromTenantOU", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

@@ -40,6 +40,15 @@ namespace WebsitePanel.Portal.UserControls {
         protected global::WebsitePanel.Portal.WebsiteActions websiteActions;
         
         /// <summary>
+        /// mailActions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.MailAccountActions mailActions;
+        
+        /// <summary>
         /// searchBox control.
         /// </summary>
         /// <remarks>

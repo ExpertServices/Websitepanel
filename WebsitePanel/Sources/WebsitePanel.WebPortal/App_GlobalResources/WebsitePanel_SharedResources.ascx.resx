@@ -402,6 +402,9 @@
   <data name="Error.MAIL_UPDATE_ACCOUNT" xml:space="preserve">
     <value>Error updating mail account</value>
   </data>
+  <data name="Error.MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY" xml:space="preserve">
+    <value>Password doesn't meet complexity. Perhaps the password length is less 5 characters.</value>
+  </data>
   <data name="Error.MAIL_UPDATE_DOMAIN" xml:space="preserve">
     <value>Error updating mail domain</value>
   </data>
@@ -5655,6 +5658,12 @@
   </data>
   <data name="ERROR.REMOTEAPPUSERS_NOT_UPDATED" xml:space="preserve">
     <value>Remote application users not updated</value>
+  </data>
+  <data name="ERROR.RDSSERVER_NOT_ASSIGNED" xml:space="preserve">
+    <value>RDS server not assigned to organization</value>
+  </data>
+  <data name="ERROR.RDSLOCALADMINS_NOT_ADDED" xml:space="preserve">
+    <value>Local admins not added</value>
   </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
     <value>RDS User logging off error</value>

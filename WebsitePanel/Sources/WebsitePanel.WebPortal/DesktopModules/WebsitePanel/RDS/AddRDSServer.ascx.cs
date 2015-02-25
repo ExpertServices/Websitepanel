@@ -68,9 +68,10 @@ namespace WebsitePanel.Portal.RDS
                 Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_servers",
                                   "SpaceID=" + PanelSecurity.PackageId));
             }
-            catch { }
-
- 
+            catch (Exception ex)
+            {
+                ShowErrorMessage("RDSSERVER_NOT_ASSIGNED", ex);
+            }
         }
     }
 }

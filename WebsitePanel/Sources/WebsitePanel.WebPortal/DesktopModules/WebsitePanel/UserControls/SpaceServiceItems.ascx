@@ -3,6 +3,7 @@
 <%@ Register Src="ServerDetails.ascx" TagName="ServerDetails" TagPrefix="wsp" %>
 <%@ Register Src="SearchBox.ascx" TagName="SearchBox" TagPrefix="wsp" %>
 <%@ Register Src="WebsiteActions.ascx" TagName="WebsiteActions" TagPrefix="wsp" %>
+<%@ Register Src="MailAccountActions.ascx" TagName="MailAccountActions" TagPrefix="wsp" %>
 
 <script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
 
@@ -21,8 +22,12 @@
     <div class="Right">
         <table>
             <tr>
+                <%-- Action lists --%>
                 <td>
+                    <%-- Web Sites --%>
                     <wsp:WebsiteActions ID="websiteActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" Visible="False" />
+                    <%-- Mail Accounts --%>
+                    <wsp:MailAccountActions ID="mailActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" Visible="False" />
                 </td>
                 <td class="FormButtonsBarCleanSeparator"></td>
                 <td>

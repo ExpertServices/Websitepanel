@@ -189,9 +189,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject RemoveRdsServerFromOrganization(int rdsServerId)
+        public ResultObject RemoveRdsServerFromOrganization(int itemId, int rdsServerId)
         {
-            return RemoteDesktopServicesController.RemoveRdsServerFromOrganization(rdsServerId);
+            return RemoteDesktopServicesController.RemoveRdsServerFromOrganization(itemId, rdsServerId);
         }
 
         [WebMethod]
@@ -312,6 +312,18 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject RestartRdsServer(int itemId, string fqdnName)
         {
             return RemoteDesktopServicesController.RestartRdsServer(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public List<OrganizationUser> GetRdsCollectionLocalAdmins(int collectionId)
+        {
+            return RemoteDesktopServicesController.GetRdsCollectionLocalAdmins(collectionId);
+        }
+
+        [WebMethod]
+        public ResultObject SaveRdsCollectionLocalAdmins(OrganizationUser[] users, int collectionId)
+        {
+            return RemoteDesktopServicesController.SaveRdsCollectionLocalAdmins(users, collectionId);
         }
     }
 }

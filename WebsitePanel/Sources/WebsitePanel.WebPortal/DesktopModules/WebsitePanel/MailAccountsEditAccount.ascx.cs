@@ -235,9 +235,9 @@ namespace WebsitePanel.Portal
                 try
                 {
                     int result = ES.Services.MailServers.AddMailAccount(item);
-                    if (result < 0)
+                    if (result == BusinessErrorCodes.ERROR_MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY)
                     {
-                        ShowResultMessage(result);
+                        ShowErrorMessage("MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY");
                         return;
                     }
                     if (result == BusinessErrorCodes.ERROR_MAIL_LICENSE_DOMAIN_QUOTA)
@@ -250,7 +250,11 @@ namespace WebsitePanel.Portal
                         ShowResultMessage(result);
                         return;
                     }
-
+                    if (result < 0)
+                    {
+                        ShowResultMessage(result);
+                        return;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -264,6 +268,11 @@ namespace WebsitePanel.Portal
                 try
                 {
                     int result = ES.Services.MailServers.UpdateMailAccount(item);
+                    if (result == BusinessErrorCodes.ERROR_MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY)
+                    {
+                        ShowErrorMessage("MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY");
+                        return;
+                    }
                     if (result < 0)
                     {
                         ShowResultMessage(result);

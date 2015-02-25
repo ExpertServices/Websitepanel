@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
 {
@@ -73,5 +74,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         string GetRdsServerStatus(string serverName);
         void ShutDownRdsServer(string serverName);
         void RestartRdsServer(string serverName);
+        void SaveRdsCollectionLocalAdmins(List<OrganizationUser> users, List<string> hosts);
+        List<string> GetRdsCollectionLocalAdmins(string hostName);
+        void MoveRdsServerToTenantOU(string hostName, string organizationId);
+        void RemoveRdsServerFromTenantOU(string hostName, string organizationId);
     }
 }

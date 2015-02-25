@@ -76,6 +76,42 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valCollectionName;
         
         /// <summary>
+        /// secSelectSertificate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secSelectSertificate;
+        
+        /// <summary>
+        /// panelSelectSertificate control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelSelectSertificate;
+        
+        /// <summary>
+        /// upPFX control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.FileUpload upPFX;
+        
+        /// <summary>
+        /// txtPFXInstallPassword control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPFXInstallPassword;
+        
+        /// <summary>
         /// RDSServersPanel control.
         /// </summary>
         /// <remarks>

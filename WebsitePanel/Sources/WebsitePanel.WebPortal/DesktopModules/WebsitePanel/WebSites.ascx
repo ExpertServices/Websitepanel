@@ -9,5 +9,4 @@
     CreateControlID="add_site"
     GroupName="Web"
     TypeName="WebsitePanel.Providers.Web.WebSite, WebsitePanel.Providers.Base"
-    QuotaName="Web.Sites"
-    ShowActions = "True" />
+    QuotaName="Web.Sites" />
