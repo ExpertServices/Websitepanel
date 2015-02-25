@@ -27,6 +27,10 @@ textarea {
 	margin-bottom: 15px;
 	/*text-align:center;*/
     cursor: pointer;
+    margin-top: 14px;
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 3px;
 }
 
 .element-container .element {
@@ -235,6 +239,10 @@ tr.selected-file {
     display: none;
 }
 
+.file-actions-menu .file-upload {
+    display: inline-block;
+}
+
 #message-area {
     margin-top: 15px;
 }
@@ -249,12 +257,46 @@ tr.selected-file {
 }
 
 .search-block {
+    float: right;
 }
 
 .search-block input, .search-block label {
     display: inline-block;
     width: initial;
     font-weight: normal;
+}
+
+.elements-container {
+    padding-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .col-sm-2.element-container {
+        width: 15.666667%;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-sm-2.element-container {
+        float: left;
+        width: 48%;
+    }
+}
+
+
+@media (max-width: 250px) {
+    .col-sm-2.element-container {
+        float: left;
+        width: 100%;
+    }
+}
+
+.back-button {
+    font-size: 30px;
+    color: white;
+    padding-left: 10px;
+    padding-top: 3px;
+    display: block;
 }
 
 /* Theme Mods */

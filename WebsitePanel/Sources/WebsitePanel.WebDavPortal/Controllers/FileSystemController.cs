@@ -15,6 +15,7 @@ using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Entities.Account.Enums;
 using WebsitePanel.WebDav.Core.Exceptions;
+using WebsitePanel.WebDav.Core.Extensions;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Interfaces.Managers.Users;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
@@ -79,12 +80,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.NoContent);
             }
 
-            string fileName = pathPart.Split('/').Last();
-
             if (_webdavManager.IsFile(pathPart))
             {
-                var fileBytes = _webdavManager.GetFileBytes(pathPart);
-                return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+                var resource = _webdavManager.GetResource(pathPart);
+
+                return new FileStreamResult(resource.GetReadStream(), resource.ContentType);
             }
 
             try
@@ -293,22 +293,25 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var uri = string.Format("{0}/{1}WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpenerUri, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 
             string fileName = fileUrl.Split('/').Last();
+            string folder = pathPart.ReplaceLast(fileName, "").Trim('/');
 
-            return View("ShowOfficeDocument", new OfficeOnlineModel(uri, fileName));
+            return View("ShowOfficeDocument", new OfficeOnlineModel(uri, fileName, folder));
         }
 
         public ActionResult ViewOfficeDocument(string org, string pathPart)
         {
             var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
 
-            return ShowOfficeDocument(org, pathPart, owaOpener.OwaView);
+            var owaOpenerUrl = Request.Browser.IsMobileDevice ? owaOpener.OwaMobileViev : owaOpener.OwaView;
+
+            return ShowOfficeDocument(org, pathPart, owaOpenerUrl);
         }
 
         public ActionResult EditOfficeDocument(string org, string pathPart)
         {
             var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
 
-            if (permissions.HasFlag(WebDavPermissions.Write) == false)
+            if (permissions.HasFlag(WebDavPermissions.Write) == false || Request.Browser.IsMobileDevice)
             {
                 return new RedirectToRouteResult(FileSystemRouteNames.ViewOfficeOnline, null);
             }

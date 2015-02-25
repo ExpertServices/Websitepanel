@@ -418,6 +418,7 @@ namespace WebsitePanel.WebDav.Core
                             SetComment(item.Comment);
                             SetCreatorDisplayName(item.CreatorDisplayName);
                             SetLastModified(item.LastModified);
+
                             foreach (Property property in item.Properties)
                             {
                                 SetProperty(property);

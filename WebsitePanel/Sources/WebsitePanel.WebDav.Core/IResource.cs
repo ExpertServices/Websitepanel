@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
@@ -28,7 +29,6 @@ namespace WebsitePanel.WebDav.Core
             private bool _checkedOut = false;
             private string _comment = "";
             private long _contentLength;
-            private string _contentType = "";
             private DateTime _creationDate = new DateTime(0);
             private string _creatorDisplayName = "";
             private ICredentials _credentials = new NetworkCredential();
@@ -79,7 +79,14 @@ namespace WebsitePanel.WebDav.Core
 
             public string ContentType
             {
-                get { return _contentType; }
+                get
+                {
+                    {
+                        var property = _properties.FirstOrDefault(x => x.Name.Name == "getcontenttype");
+
+                        return property == null ? MediaTypeNames.Application.Octet : property.StringValue;
+                    }
+                }
             }
 
             /// <summary>
