@@ -266,13 +266,13 @@ tr.selected-file {
     padding-top: 10px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 991px) {
     .col-sm-2.element-container {
-        width: 15.666667%;
+        width: 18.666667%;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px)  {
     .col-sm-2.element-container {
         float: left;
         width: 48%;
