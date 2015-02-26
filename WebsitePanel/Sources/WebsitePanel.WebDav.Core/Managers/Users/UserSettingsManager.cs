@@ -1,5 +1,4 @@
-﻿using WebsitePanel.EnterpriseServer;
-using WebsitePanel.WebDav.Core.Entities.Account;
+﻿using WebsitePanel.WebDav.Core.Entities.Account;
 using WebsitePanel.WebDav.Core.Entities.Account.Enums;
 using WebsitePanel.WebDav.Core.Helper;
 using WebsitePanel.WebDav.Core.Interfaces.Managers.Users;

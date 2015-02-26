@@ -36,8 +36,7 @@ namespace WebsitePanel.WebDavPortal
                ));
 
             bundles.Add(new ScriptBundle("~/bundles/bigIconsScripts").Include(
-                "~/Scripts/appScripts/recalculateResourseHeight.js",
-                "~/Scripts/appScripts/uploadingData2.js"
+                "~/Scripts/appScripts/recalculateResourseHeight.js"
                ));
 
             bundles.Add(new ScriptBundle("~/bundles/authScripts").Include(

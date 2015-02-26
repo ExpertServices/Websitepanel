@@ -8,6 +8,7 @@ namespace WebsitePanel.WebDavPortal.Models.FileSystem
     {
         public string DisplayName { get; set; }
         public string Url { get; set; }
+        public Uri Href { get; set; }
         public bool IsTargetBlank { get; set; }
         public bool IsFolder { get; set; }
         public long Size { get; set; }

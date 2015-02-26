@@ -15,7 +15,6 @@ namespace WebsitePanel.WebDavPortal.FileOperations
     public class FileOpenerManager
     {
         private readonly IDictionary<string, FileOpenerType> _operationTypes = new Dictionary<string, FileOpenerType>();
-        private UrlHelper _urlHelper;
 
         public FileOpenerManager()
         {
@@ -23,10 +22,8 @@ namespace WebsitePanel.WebDavPortal.FileOperations
                 _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension, y => FileOpenerType.OfficeOnline));
         }
 
-        public string GetUrl(IHierarchyItem item)
+        public string GetUrl(IHierarchyItem item, UrlHelper urlHelper)
         {
-            _urlHelper =_urlHelper ?? new UrlHelper(HttpContext.Current.Request.RequestContext);
-
             var opener = this[Path.GetExtension(item.DisplayName)];
             string href = "/";
 
@@ -35,7 +32,7 @@ namespace WebsitePanel.WebDavPortal.FileOperations
                 case FileOpenerType.OfficeOnline:
                 {
                     var pathPart = item.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
-                    href = string.Concat(_urlHelper.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
+                    href = string.Concat(urlHelper.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new { org = WspContext.User.OrganizationId, pathPart = "" }), pathPart);
                     break;
                 }
                 default:

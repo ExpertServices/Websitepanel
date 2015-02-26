@@ -367,25 +367,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
-    <Content Include="App_Data\SiteSettings.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\Countries.config" />
-    <Content Include="App_Data\CountryStates.config" />
-    <Content Include="App_Data\Ecommerce_Modules.config" />
-    <Content Include="App_Data\Ecommerce_Pages.config" />
-    <Content Include="App_Data\ESModule_ControlsHierarchy.config" />
-    <Content Include="App_Data\ModulesData.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\SupportedLocales.config" />
-    <Content Include="App_Data\SupportedThemes.config" />
-    <Content Include="App_Data\WebsitePanel_Modules.config">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_Data\WebsitePanel_Pages.config">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\DataTables-1.10.4\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.jqueryui.scss" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />

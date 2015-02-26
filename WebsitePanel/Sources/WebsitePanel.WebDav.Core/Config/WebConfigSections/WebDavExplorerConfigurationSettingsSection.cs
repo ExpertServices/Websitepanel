@@ -9,6 +9,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string WebdavRootKey = "webdavRoot";
         private const string AuthTimeoutCookieNameKey = "authTimeoutCookieName";
         private const string AppName = "applicationName";
+        private const string EnterpriseServerUrlNameKey = "enterpriseServer";
         private const string WebsitePanelConstantUserKey = "websitePanelConstantUser";
         private const string ElementsRenderingKey = "elementsRendering";
         private const string Rfc2898CryptographyKey = "rfc2898Cryptography";
@@ -26,6 +27,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (AuthTimeoutCookieNameElement)this[AuthTimeoutCookieNameKey]; }
             set { this[AuthTimeoutCookieNameKey] = value; }
+        }
+
+        [ConfigurationProperty(EnterpriseServerUrlNameKey, IsRequired = true)]
+        public EnterpriseServerElement EnterpriseServerUrl
+        {
+            get { return (EnterpriseServerElement)this[EnterpriseServerUrlNameKey]; }
+            set { this[EnterpriseServerUrlNameKey] = value; }
         }
 
         [ConfigurationProperty(WebdavRootKey, IsRequired = true)]

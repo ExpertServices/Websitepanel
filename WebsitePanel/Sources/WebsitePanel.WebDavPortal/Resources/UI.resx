@@ -180,6 +180,9 @@
   <data name="ProcessingWithDots" xml:space="preserve">
     <value>Processing...</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="SelectFilesToUpload" xml:space="preserve">
     <value>Select files to upload</value>
   </data>

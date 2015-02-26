@@ -159,7 +159,7 @@ namespace WebsitePanel.WebDav.Core
             {
                 _creationDate = DateTime.Parse(creationDate);
             }
-
+            
             public void SetCreationDate(DateTime creationDate)
             {
                 _creationDate = creationDate;

@@ -19,8 +19,8 @@
 else
 {
    @Html.Partial("_ShowContentTopMenu", Model)
-
-   @Html.Action("ContentList", "FileSystem", new { viewType = Request.Browser.IsMobileDevice ? FolderViewTypes.BigIcons : Model.UserSettings.WebDavViewType });
+    
+   @Html.Action("ContentList", "FileSystem", new { model = Model });
 }
 
 
@@ -34,17 +34,22 @@ else
         @Scripts.Render("~/bundles/bigIconsScripts")
 
         <script>
-            recalculateResourseHeight();
+            $(document).ready(function () {
+                @if (string.IsNullOrEmpty(Model.SearchValue))
+                {
+                    @:wsp.fileBrowser.initBigIcons('#resourcesDiv', '@Url.RouteUrl(FileSystemRouteNames.ShowAdditionalContent)');
+                }
+                recalculateResourseHeight();
+            });
         </script>
     }
     else
     {
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
                 wsp.fileBrowser.initDataTable('#webdav-items-table', '@Url.RouteUrl(FileSystemRouteNames.ShowContentDetails)');
             });
-
         </script>
     }
 }

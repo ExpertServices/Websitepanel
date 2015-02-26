@@ -41,9 +41,9 @@ $(document).on('touchstart', '.element-container', function(e) {
 $(document).on('dblclick', '.element-container', function (e) {
     wsp.fileBrowser.openItem(this);
 
-    var links = $(item).find('.file-link');
+    var links = $(this).find('.file-link');
 
-    if (links.length != 0 && links[0].hasClass('processing-dialog')) {
+    if (links.length != 0 && $(links[0]).hasClass('processing-dialog')) {
         wsp.dialogs.showProcessDialog();
     }
 });

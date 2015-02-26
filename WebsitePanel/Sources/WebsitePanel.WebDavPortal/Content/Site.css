@@ -24,9 +24,8 @@ textarea {
 }
 
 .element-container {
-	margin-bottom: 15px;
-	/*text-align:center;*/
     cursor: pointer;
+    margin-top: 15px;
 }
 
 .element-container .element {
@@ -41,6 +40,7 @@ textarea {
       -webkit-box-sizing:border-box;
       border: 1px solid rgb(80, 152, 249);
       padding: 3px;
+      margin: 4px;
 }
 
 .selected-file .element div.selected-element-overlay {
@@ -235,6 +235,10 @@ tr.selected-file {
     display: none;
 }
 
+.file-actions-menu .file-upload {
+    display: inline-block;
+}
+
 #message-area {
     margin-top: 15px;
 }
@@ -246,6 +250,49 @@ tr.selected-file {
 
 #processDialog .modal-dialog {
     width: 200px;
+}
+
+.search-block {
+    float: right;
+}
+
+.search-block input, .search-block label {
+    display: inline-block;
+    width: initial;
+    font-weight: normal;
+}
+
+.elements-container {
+    padding-top: 10px;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .col-sm-2.element-container {
+        width: 18.666667%;
+    }
+}
+
+@media (max-width: 768px)  {
+    .col-sm-2.element-container {
+        float: left;
+        width: 48%;
+    }
+}
+
+
+@media (max-width: 250px) {
+    .col-sm-2.element-container {
+        float: left;
+        width: 100%;
+    }
+}
+
+.back-button {
+    font-size: 30px;
+    color: white;
+    padding-left: 10px;
+    padding-top: 3px;
+    display: block;
 }
 
 /* Theme Mods */
