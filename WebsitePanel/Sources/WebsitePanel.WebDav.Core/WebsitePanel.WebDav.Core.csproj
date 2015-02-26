@@ -107,6 +107,7 @@
     <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
     <Compile Include="Config\Entities\OwaSupportedBrowsersCollection.cs" />
     <Compile Include="Config\Entities\SessionKeysCollection.cs" />
+    <Compile Include="Config\Entities\OpenerCollection.cs" />
     <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
     <Compile Include="Config\IWebDavAppConfig.cs" />
     <Compile Include="Config\WebConfigSections\ApplicationNameElement.cs" />
@@ -119,10 +120,12 @@
     <Compile Include="Config\WebConfigSections\FilesToIgnoreElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElement.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OpenerElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElement.cs" />
     <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElement.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OpenerElement.cs" />
     <Compile Include="Config\WebConfigSections\UserDomainElement.cs" />
     <Compile Include="Config\WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
     <Compile Include="Config\WebConfigSections\WebdavRootElement.cs" />

@@ -14,5 +14,6 @@ namespace WebsitePanel.WebDav.Core.Config
         OfficeOnlineCollection OfficeOnline { get; }
         OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; }
         FilesToIgnoreCollection FilesToIgnore { get; }
+        OpenerCollection FileOpener { get; }
     }
 }

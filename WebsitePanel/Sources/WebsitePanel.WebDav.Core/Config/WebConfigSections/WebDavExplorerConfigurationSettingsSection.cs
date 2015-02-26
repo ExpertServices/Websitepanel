@@ -19,6 +19,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string OwaSupportedBrowsersKey = "owaSupportedBrowsers";
         private const string OfficeOnlineKey = "officeOnline";
         private const string FilesToIgnoreKey = "filesToIgnore";
+        private const string TypeOpenerKey = "typeOpener";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
 
@@ -97,6 +98,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (OfficeOnlineElementCollection)this[OfficeOnlineKey]; }
             set { this[OfficeOnlineKey] = value; }
+        }
+
+        [ConfigurationProperty(TypeOpenerKey, IsDefaultCollection = false)]
+        public OpenerElementCollection TypeOpener
+        {
+            get { return (OpenerElementCollection)this[TypeOpenerKey]; }
+            set { this[TypeOpenerKey] = value; }
         }
 
         [ConfigurationProperty(FilesToIgnoreKey, IsDefaultCollection = false)]

@@ -20,6 +20,7 @@ namespace WebsitePanel.WebDav.Core.Config
             OfficeOnline = new OfficeOnlineCollection();
             OwaSupportedBrowsers = new OwaSupportedBrowsersCollection();
             FilesToIgnore = new FilesToIgnoreCollection();
+            FileOpener = new OpenerCollection();
         }
 
         public static WebDavAppConfigManager Instance
@@ -60,5 +61,6 @@ namespace WebsitePanel.WebDav.Core.Config
         public OfficeOnlineCollection OfficeOnline { get; private set; }
         public OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; private set; }
         public FilesToIgnoreCollection FilesToIgnore { get; private set; }
+        public OpenerCollection FileOpener { get; private set; }
     }
 }
