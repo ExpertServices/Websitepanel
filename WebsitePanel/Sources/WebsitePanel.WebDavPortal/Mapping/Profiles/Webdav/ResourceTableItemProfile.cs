@@ -43,8 +43,7 @@ namespace WebsitePanel.WebDavPortal.Mapping.Profiles.Webdav
                 .ForMember(ti => ti.IconHref, x => x.MapFrom(hi => hi.ItemType == ItemType.Folder ? WebDavAppConfigManager.Instance.FileIcons.FolderPath.Trim('~') : WebDavAppConfigManager.Instance.FileIcons[Path.GetExtension(hi.DisplayName.Trim('/'))].Trim('~')))
                 .ForMember(ti => ti.IsTargetBlank, x => x.MapFrom(hi => openerManager.GetIsTargetBlank(hi)))
                 .ForMember(ti => ti.LastModified, x => x.MapFrom(hi => hi.LastModified))
-                .ForMember(ti => ti.LastModifiedFormated,
-                            x => x.MapFrom(hi => hi.LastModified == DateTime.MinValue ? "--" : (new WebDavResource(null, hi)).LastModified.ToString("dd/MM/yyyy hh:mm tt")))
+                .ForMember(ti => ti.LastModifiedFormated, x => x.MapFrom(hi => hi.LastModified == DateTime.MinValue ? "--" : (new WebDavResource(null, hi)).LastModified.ToString("dd/MM/yyyy hh:mm tt")))
 
                 .ForMember(ti => ti.Size, x => x.MapFrom(hi => hi.ContentLength))
                 .ForMember(ti => ti.IsFolder, x => x.MapFrom(hi => hi.ItemType == ItemType.Folder));

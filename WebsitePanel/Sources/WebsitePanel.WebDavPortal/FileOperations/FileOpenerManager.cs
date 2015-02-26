@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using WebsitePanel.WebDav.Core;
@@ -14,12 +15,21 @@ namespace WebsitePanel.WebDavPortal.FileOperations
 {
     public class FileOpenerManager
     {
+        private readonly IDictionary<string, FileOpenerType> _officeOperationTypes = new Dictionary<string, FileOpenerType>();
         private readonly IDictionary<string, FileOpenerType> _operationTypes = new Dictionary<string, FileOpenerType>();
 
         public FileOpenerManager()
         {
             if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
-                _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension, y => FileOpenerType.OfficeOnline));
+            {
+                _officeOperationTypes.AddRange(
+                    WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension,
+                        y => FileOpenerType.OfficeOnline));
+            }
+
+            _operationTypes.AddRange(
+                    WebDavAppConfigManager.Instance.FileOpener.ToDictionary(x => x.Extension,
+                        y => FileOpenerType.Open));
         }
 
         public string GetUrl(IHierarchyItem item, UrlHelper urlHelper)
@@ -48,14 +58,35 @@ namespace WebsitePanel.WebDavPortal.FileOperations
         public bool GetIsTargetBlank(IHierarchyItem item)
         {
             var opener = this[Path.GetExtension(item.DisplayName)];
+            var result = false;
 
             switch (opener)
             {
                 case FileOpenerType.OfficeOnline:
-                    return true;
-                default:
-                    return false;
+                {
+                    result = true;
+                    break;
+                }
+                    case FileOpenerType.Open:
+                {
+                    result = true;
+                    break;
+                }
             }
+
+            return result;
+        }
+
+        public string GetMimeType(string extension)
+        {
+            var opener = WebDavAppConfigManager.Instance.FileOpener.FirstOrDefault(x => x.Extension.ToLowerInvariant() == extension.ToLowerInvariant());
+
+            if (opener == null)
+            {
+                return MediaTypeNames.Application.Octet;
+            }
+
+            return opener.MimeType;
         }
 
         public FileOpenerType this[string fileExtension]
@@ -63,8 +94,16 @@ namespace WebsitePanel.WebDavPortal.FileOperations
             get
             {
                 FileOpenerType result;
-                if (_operationTypes.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
+                if (_officeOperationTypes.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
+                {
                     return result;
+                }
+
+                if (_operationTypes.TryGetValue(fileExtension, out result))
+                {
+                    return result;
+                }
+
                 return FileOpenerType.Download;
             }
         }

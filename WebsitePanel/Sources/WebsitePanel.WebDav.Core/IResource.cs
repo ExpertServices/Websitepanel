@@ -83,7 +83,6 @@ namespace WebsitePanel.WebDav.Core
                 {
                     {
                         var property = _properties.FirstOrDefault(x => x.Name.Name == "getcontenttype");
-
                         return property == null ? MediaTypeNames.Application.Octet : property.StringValue;
                     }
                 }

@@ -297,7 +297,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 searchPaths = searchPaths.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
 
-            using (new WindowsIdentity(userPrincipalName).Impersonate())
+            //using (new WindowsIdentity(userPrincipalName).Impersonate())
             {
                 using (var conn = new OleDbConnection("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';"))
                 {
@@ -341,7 +341,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                                     file.RelativeUrl = file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
                                 }
                             }
-                            
 
                             result.Add(file);
                         }

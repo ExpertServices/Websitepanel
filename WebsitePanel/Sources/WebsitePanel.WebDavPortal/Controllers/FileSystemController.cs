@@ -84,7 +84,9 @@ namespace WebsitePanel.WebDavPortal.Controllers
             {
                 var resource = _webdavManager.GetResource(pathPart);
 
-                return new FileStreamResult(resource.GetReadStream(), resource.ContentType);
+                var mimeType = _openerManager.GetMimeType(Path.GetExtension(pathPart));
+
+                return new FileStreamResult(resource.GetReadStream(), mimeType);
             }
 
             try
@@ -346,6 +348,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
                         item.Url = item.Href.LocalPath;
                         break;
                     }
+                }
+
+                if (Request.Browser.IsMobileDevice)
+                {
+                    item.IsTargetBlank = false;
                 }
             }
         }
