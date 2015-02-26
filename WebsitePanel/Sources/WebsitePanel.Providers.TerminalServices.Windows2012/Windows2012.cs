@@ -311,7 +311,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 if (!ActiveDirectoryUtils.AdObjectExists(GetHelpDeskComputerGroupPath()))
                 {
-                    ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskComputerGroup);
+                    ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskGroup);
                 }
 
                 if (!ActiveDirectoryUtils.AdObjectExists(GetUsersGroupPath(organizationId, collection.Name)))
@@ -568,7 +568,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 if (!ActiveDirectoryUtils.AdObjectExists(GetHelpDeskComputerGroupPath()))
                 {
-                    ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskComputerGroup);
+                    ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskGroup);
                 }
 
                 AddComputerToCollectionAdComputerGroup(organizationId, collectionName, server);
@@ -1355,7 +1355,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     ActiveDirectoryUtils.AddObjectToGroup(computerPath, GetComputerGroupPath(organizationId, collectionName));
                 }
 
-                if (!ActiveDirectoryUtils.IsComputerInGroup(samName, RDSHelpDeskComputerGroup))
+                if (!ActiveDirectoryUtils.IsComputerInGroup(samName, RDSHelpDeskGroup))
                 {
                     ActiveDirectoryUtils.AddObjectToGroup(computerPath, GetHelpDeskComputerGroupPath());
                 }
@@ -1386,7 +1386,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 if (ActiveDirectoryUtils.AdObjectExists(GetHelpDeskComputerGroupPath()))
                 {
-                    if (ActiveDirectoryUtils.IsComputerInGroup(samName, RDSHelpDeskComputerGroup))
+                    if (ActiveDirectoryUtils.IsComputerInGroup(samName, RDSHelpDeskGroup))
                     {
                         ActiveDirectoryUtils.RemoveObjectFromGroup(computerPath, GetHelpDeskComputerGroupPath());
                     }
@@ -1682,7 +1682,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             AppendProtocol(sb);
             AppendDomainController(sb);
-            AppendCNPath(sb, RDSHelpDeskComputerGroup);
+            AppendCNPath(sb, RDSHelpDeskGroup);
             AppendOUPath(sb, RootOU);
             AppendDomainPath(sb, RootDomain);
 
