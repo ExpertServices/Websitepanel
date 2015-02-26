@@ -836,7 +836,7 @@ namespace WebsitePanel.Providers.Mail
                 Enabled = Convert.ToInt32((object) accountObject.GetProperty("U_AccountDisabled")) == 0,
                 ForwardingEnabled = !string.IsNullOrWhiteSpace(accountObject.GetProperty("U_ForwardTo")) || string.IsNullOrWhiteSpace(accountObject.GetProperty("U_RemoteAddress")) && Convert.ToBoolean((object) accountObject.GetProperty("U_UseRemoteAddress")),
                 IsDomainAdmin = Convert.ToBoolean((object) accountObject.GetProperty("U_DomainAdmin")),
-                MaxMailboxSize = Convert.ToInt32((object) accountObject.GetProperty("U_MaxBoxSize"))/1024,
+                MaxMailboxSize = Convert.ToBoolean((object) accountObject.GetProperty("U_MaxBox")) ? Convert.ToInt32((object) accountObject.GetProperty("U_MaxBoxSize"))/1024 : 0,
                 Password = accountObject.GetProperty("U_Password"),
                 ResponderEnabled = Convert.ToInt32((object) accountObject.GetProperty("U_Respond")) > 0,
                 QuotaUsed = Convert.ToInt64((object) accountObject.GetProperty("U_MailBoxSize")),
@@ -923,7 +923,8 @@ namespace WebsitePanel.Providers.Mail
             accountObject.SetProperty("U_AccountDisabled", mailbox.IceWarpAccountState);
             accountObject.SetProperty("U_DomainAdmin", mailbox.IsDomainAdmin);
             accountObject.SetProperty("U_Password", mailbox.Password);
-            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize);
+            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize*1024);
+            accountObject.SetProperty("U_MaxBox", mailbox.MaxMailboxSize > 0 ? "1" : "0");
             accountObject.SetProperty("U_MaxMessageSize", mailbox.MaxMessageSizeMegaByte*1024);
             accountObject.SetProperty("U_MegabyteSendLimit", mailbox.MegaByteSendLimit);
             accountObject.SetProperty("U_NumberSendLimit", mailbox.NumberSendLimit);

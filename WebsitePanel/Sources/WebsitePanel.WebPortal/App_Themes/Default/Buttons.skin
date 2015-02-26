@@ -32,11 +32,13 @@ Default skin template. The following skins are provided as examples only.
 <asp:ImageButton SkinID="StopMedium" runat="server" ImageUrl="Images/stop_24.png" ImageAlign="AbsMiddle" Width="24" Height="24"/>
 <asp:ImageButton SkinID="ContinueMedium" runat="server" ImageUrl="Images/play_24.png" ImageAlign="AbsMiddle" Width="24" Height="24"/>
 <asp:ImageButton SkinID="RecycleMedium" runat="server" ImageUrl="Images/restart_24.png" ImageAlign="AbsMiddle" Width="24" Height="24"/>
+<asp:ImageButton SkinID="ApplyMedium" runat="server" ImageUrl="Images/apply_24.png" ImageAlign="AbsMiddle" Width="24" Height="24"/>
 
 <asp:ImageButton SkinID="PauseSmall" runat="server" ImageUrl="Images/pause_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"/>
 <asp:ImageButton SkinID="StartSmall" runat="server" ImageUrl="Images/play_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"/>
 <asp:ImageButton SkinID="StopSmall" runat="server" ImageUrl="Images/stop_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"/>
 <asp:ImageButton SkinID="ContinueSmall" runat="server" ImageUrl="Images/play_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"/>
+<asp:ImageButton SkinID="ApplySmall" runat="server" ImageUrl="Images/apply_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"/>
 
 
 <asp:ImageButton SkinID="VpsDelete" runat="server" ImageUrl="Images/VPS/delete.png" ImageAlign="AbsMiddle"  Width="16" Height="16"/>

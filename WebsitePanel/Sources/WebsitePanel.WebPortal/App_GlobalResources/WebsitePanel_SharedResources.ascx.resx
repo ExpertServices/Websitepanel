@@ -402,6 +402,9 @@
   <data name="Error.MAIL_UPDATE_ACCOUNT" xml:space="preserve">
     <value>Error updating mail account</value>
   </data>
+  <data name="Error.MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY" xml:space="preserve">
+    <value>Password doesn't meet complexity. Perhaps the password length is less 5 characters.</value>
+  </data>
   <data name="Error.MAIL_UPDATE_DOMAIN" xml:space="preserve">
     <value>Error updating mail domain</value>
   </data>
@@ -3136,6 +3139,15 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Action has been successfully performed.</value>
+  </data>
+  <data name="Error.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Failed to perform action.</value>
+  </data>
+  <data name="Warning.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Please select the items for which you want to perform action.</value>
+  </data>
   <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
     <value>User password has been successfully updated.</value>
   </data>
@@ -5334,6 +5346,9 @@
   </data>
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
+  </data>
+  <data name="Success.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Succesfully set default mailbox plan.</value>
   </data>
   <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
     <value>Lync plan update failed</value>

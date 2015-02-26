@@ -1,0 +1,22 @@
+﻿@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDavPortal.UI.Routes
+
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+
+<div class="prevent-deselect container">
+    <table id="webdav-items-table" class="display table table-striped table-bordered noselect" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>@UI.Name</th>
+                <th>@UI.Type</th>
+                <th>@UI.Modified</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section popups
+{
+    @Html.Partial("_ProcessDialog", null)
+    @Html.Partial("_ConfirmDialog")
+}

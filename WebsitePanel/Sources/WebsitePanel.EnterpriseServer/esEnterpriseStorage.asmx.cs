@@ -158,6 +158,18 @@ namespace WebsitePanel.EnterpriseServer
             return EnterpriseStorageController.CheckUsersDomainExists(itemId);
         }
 
+        [WebMethod]
+        public string GetWebDavPortalUserSettingsByAccountId(int accountId)
+        {
+            return EnterpriseStorageController.GetWebDavPortalUserSettingsByAccountId(accountId);
+        }
+
+        [WebMethod]
+        public void UpdateWebDavPortalUserSettings(int accountId, string settings)
+        {
+            EnterpriseStorageController.UpdateUserSettings(accountId,settings);
+        }
+
         #region Directory Browsing
 
         [WebMethod]

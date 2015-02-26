@@ -77,10 +77,10 @@
                             </td>
 						</tr>
 						
-						
 						<tr>
 						    <td></td>
 						    <td>
+						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
 						        <br />
 						        <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
 						        <br />

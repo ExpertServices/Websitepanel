@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal
 
         public string WrapComment(string text)
         {
-            return (text != null) ? PortalAntiXSS.EncodeOld(text.Replace("\n", "<br/>")) : text;
+            return (text != null) ? Server.HtmlEncode(text).Replace("\n", "<br/>") : text;
         }
 
         protected void gvComments_RowDeleting(object sender, GridViewDeleteEventArgs e)

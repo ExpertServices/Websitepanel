@@ -6,7 +6,6 @@ namespace WebsitePanel.WebDav.Core.Config.WebConfigSections
     {
         private const string DefaultCountKey = "defaultCount";
         private const string AddElementsCountKey = "addElementsCount";
-        private const string ElementsToIgnoreKey = "elementsToIgnoreKey";
 
         [ConfigurationProperty(DefaultCountKey, IsKey = true, IsRequired = true, DefaultValue = 30)]
         public int DefaultCount
@@ -20,13 +19,6 @@ namespace WebsitePanel.WebDav.Core.Config.WebConfigSections
         {
             get { return (int)this[AddElementsCountKey]; }
             set { this[AddElementsCountKey] = value; }
-        }
-
-        [ConfigurationProperty(ElementsToIgnoreKey, IsKey = true, IsRequired = true, DefaultValue = "")]
-        public string ElementsToIgnore
-        {
-            get { return (string)this[ElementsToIgnoreKey]; }
-            set { this[ElementsToIgnoreKey] = value; }
         }
     }
 }

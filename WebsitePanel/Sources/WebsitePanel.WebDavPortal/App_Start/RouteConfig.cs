@@ -29,48 +29,65 @@ namespace WebsitePanel.WebDavPortal
             #region Owa
 
             routes.MapRoute(
-                name: OwaRouteNames.GetFile,
-                url: "owa/wopi*/files/{accessTokenId}/contents",
-                defaults: new { controller = "Owa", action = "GetFile" }
+                name: FileSystemRouteNames.ViewOfficeOnline,
+                url: "office365/view/{org}/{*pathPart}",
+                defaults:
+                    new {controller = "FileSystem", action = "ViewOfficeDocument", pathPart = UrlParameter.Optional}
                 );
 
             routes.MapRoute(
-                name: OwaRouteNames.CheckFileInfo,
-                url: "owa/wopi*/files/{accessTokenId}",
-                defaults: new { controller = "Owa", action = "CheckFileInfo" }
+                name: FileSystemRouteNames.EditOfficeOnline,
+                url: "office365/edit/{org}/{*pathPart}",
+                defaults:
+                    new {controller = "FileSystem", action = "EditOfficeDocument", pathPart = UrlParameter.Optional}
                 );
 
             #endregion
 
+            #region Enterprise storage 
+
             routes.MapRoute(
-                name: FileSystemRouteNames.DeleteFiles,
-                url: "files-group-action/delete",
-                defaults: new { controller = "FileSystem", action = "DeleteFiles" }
-                );
+                    name: FileSystemRouteNames.ChangeWebDavViewType,
+                    url: "storage/change-view-type/{viewType}",
+                    defaults: new { controller = "FileSystem", action = "ChangeViewType" }
+                    );
+
+            routes.MapRoute(
+                    name: FileSystemRouteNames.DeleteFiles,
+                    url: "storage/files-group-action/delete",
+                    defaults: new { controller = "FileSystem", action = "DeleteFiles" }
+                    );
 
             routes.MapRoute(
                 name: FileSystemRouteNames.UploadFile,
-                url: "upload-file/{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "UploadFile" }
+                url: "storage/upload-files/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "UploadFiles" }
                 );
 
             routes.MapRoute(
-                name: FileSystemRouteNames.ShowOfficeOnlinePath,
-                url: "office365/{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "ShowOfficeDocument", pathPart = UrlParameter.Optional }
+                name: FileSystemRouteNames.DownloadFile,
+                url: "storage/download-file/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "DownloadFile" }
                 );
 
             routes.MapRoute(
                 name: FileSystemRouteNames.ShowAdditionalContent,
-                url: "show-additional-content/{*path}",
+                url: "storage/show-additional-content/{*path}",
                 defaults: new { controller = "FileSystem", action = "ShowAdditionalContent", path = UrlParameter.Optional }
+                );
+
+            routes.MapRoute(
+                name: FileSystemRouteNames.ShowContentDetails,
+                url: "storage/details/{org}/{*pathPart}",
+                defaults: new { controller = "FileSystem", action = "GetContentDetails", pathPart = UrlParameter.Optional }
                 );
 
             routes.MapRoute(
                 name: FileSystemRouteNames.ShowContentPath,
                 url: "{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional }
-                );
+                ); 
+            #endregion
 
             routes.MapRoute(
                 name: "Default",

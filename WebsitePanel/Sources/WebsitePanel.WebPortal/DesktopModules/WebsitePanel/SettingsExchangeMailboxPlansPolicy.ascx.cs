@@ -36,7 +36,7 @@ using System.Xml.Serialization;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -99,21 +99,7 @@ namespace WebsitePanel.Portal
 
         private void BindMailboxPlans()
         {
-            Providers.HostedSolution.Organization[] orgs = null;
-
-            if (PanelSecurity.SelectedUserId != 1)
-            {
-                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                if ((Packages != null) & (Packages.GetLength(0) > 0))
-                {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                }
-            }
-            else
-            {
-                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-            }
+            Providers.HostedSolution.Organization[] orgs = GetOrganizations();
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
             {
@@ -123,6 +109,9 @@ namespace WebsitePanel.Portal
                 gvMailboxPlans.DataBind();
             }
 
+            // enable set default plan button if organization has two or more plans
+            btnSetDefaultMailboxPlan.Enabled = gvMailboxPlans.Rows.Count > 1;
+        
             btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
         }
 
@@ -185,21 +174,7 @@ namespace WebsitePanel.Portal
                 if (PanelSecurity.SelectedUser.Role == UserRole.Reseller)
                     plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Reseller;
 
-            Providers.HostedSolution.Organization[] orgs = null;
-
-            if (PanelSecurity.SelectedUserId != 1)
-            {
-                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                if ((Packages != null) & (Packages.GetLength(0) > 0))
-                {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                }
-            }
-            else
-            {
-                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-            }
+            Providers.HostedSolution.Organization[] orgs = GetOrganizations();
 
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
@@ -231,20 +206,7 @@ namespace WebsitePanel.Portal
                 case "DeleteItem":
                     try
                     {
-
-                        if (PanelSecurity.SelectedUserId != 1)
-                        {
-                            PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                            if ((Packages != null) & (Packages.GetLength(0) > 0))
-                            {
-                                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                            }
-                        }
-                        else
-                        {
-                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-                        }
+                        orgs = GetOrganizations();
 
                         plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
 
@@ -308,20 +270,7 @@ namespace WebsitePanel.Portal
                 case "EditItem":
                         ViewState["MailboxPlanID"] = mailboxPlanId;
 
-                        if (PanelSecurity.SelectedUserId != 1)
-                        {
-                            PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                            if ((Packages != null) & (Packages.GetLength(0) > 0))
-                            {
-                                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                            }
-                        }
-                        else
-                        {
-                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-                        }
-
+                        orgs = GetOrganizations();
 
                         plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
                         txtMailboxPlan.Text = plan.MailboxPlan;
@@ -421,23 +370,8 @@ namespace WebsitePanel.Portal
                 return;
 
             int mailboxPlanId = (int)ViewState["MailboxPlanID"];
-            Providers.HostedSolution.Organization[] orgs = null;
+            Providers.HostedSolution.Organization[] orgs = GetOrganizations();
             Providers.HostedSolution.ExchangeMailboxPlan plan;
-
-
-            if (PanelSecurity.SelectedUserId != 1)
-            {
-                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                if ((Packages != null) & (Packages.GetLength(0) > 0))
-                {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                }
-            }
-            else
-            {
-                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-            }
 
             plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
 
@@ -668,36 +602,22 @@ namespace WebsitePanel.Portal
             {
                 ddTags.Items.Clear();
 
-            Providers.HostedSolution.Organization[] orgs = null;
+                Organization[] orgs = GetOrganizations();
 
-            if (PanelSecurity.SelectedUserId != 1)
-            {
-                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                if ((Packages != null) & (Packages.GetLength(0) > 0))
+                if ((orgs != null) && (orgs.GetLength(0) > 0))
                 {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                }
-            }
-            else
-            {
-                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-            }
+                    Providers.HostedSolution.ExchangeRetentionPolicyTag[] allTags = ES.Services.ExchangeServer.GetExchangeRetentionPolicyTags(orgs[0].Id);
+                    List<ExchangeMailboxPlanRetentionPolicyTag> selectedTags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
 
-            if ((orgs != null) & (orgs.GetLength(0) > 0))
-            {
-                Providers.HostedSolution.ExchangeRetentionPolicyTag[] allTags = ES.Services.ExchangeServer.GetExchangeRetentionPolicyTags(orgs[0].Id);
-                List<ExchangeMailboxPlanRetentionPolicyTag> selectedTags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
-
-                foreach (Providers.HostedSolution.ExchangeRetentionPolicyTag tag in allTags)
-                {
-                    if (selectedTags != null)
+                    foreach (Providers.HostedSolution.ExchangeRetentionPolicyTag tag in allTags)
                     {
-                        if (selectedTags.Find(x => x.TagID == tag.TagID) != null)
-                            continue;
-                    }
+                        if (selectedTags != null)
+                        {
+                            if (selectedTags.Find(x => x.TagID == tag.TagID) != null)
+                                continue;
+                        }
 
-                    ddTags.Items.Add(new System.Web.UI.WebControls.ListItem(tag.TagName, tag.TagID.ToString()));
+                        ddTags.Items.Add(new System.Web.UI.WebControls.ListItem(tag.TagName, tag.TagID.ToString()));
                     }
                 }
 
@@ -737,5 +657,55 @@ namespace WebsitePanel.Portal
 
         }
 
+        protected Organization[] GetOrganizations()
+        {
+            Organization[] orgs = null;
+
+            if (PanelSecurity.SelectedUserId != 1)
+            {
+                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                if ((Packages != null) & (Packages.GetLength(0) > 0))
+                {
+                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                }
+            }
+            else
+            {
+                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+            }
+
+            return orgs;
+        }
+
+        protected void btnSetDefaultMailboxPlan_Click(object sender, EventArgs e)
+        {
+            // get domain
+            int mailboxPlanId = Utils.ParseInt(Request.Form["DefaultMailboxPlan"], 0);
+
+            try
+            {
+                var orgs = GetOrganizations();
+
+                if ((orgs != null) && (orgs.GetLength(0) > 0))
+                {
+                    ES.Services.ExchangeServer.SetOrganizationDefaultExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
+
+                    messageBox.ShowSuccessMessage("EXCHANGE_SET_DEFAULT_MAILBOXPLAN");
+
+                    // rebind domains
+                    BindMailboxPlans();
+                }
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_SET_DEFAULT_MAILBOXPLAN", ex);
+            }
+        }
+
+        protected string IsChecked(bool val)
+        {
+            return val ? "checked" : "";
+        }
     }
 }

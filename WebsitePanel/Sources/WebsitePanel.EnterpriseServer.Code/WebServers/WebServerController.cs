@@ -381,7 +381,10 @@ namespace WebsitePanel.EnterpriseServer
                     site.PerlInstalled = Utils.ParseBool(webPolicy["PerlInstalled"], false);
                     site.PythonInstalled = Utils.ParseBool(webPolicy["PythonInstalled"], false);
                     site.CgiBinInstalled = Utils.ParseBool(webPolicy["CgiBinInstalled"], false);
-                    site.ColdFusionInstalled = false;
+					QuotaValueInfo quotaInfoCF = PackageController.GetPackageQuota(packageId, Quotas.WEB_COLDFUSION);
+                    site.ColdFusionInstalled = (quotaInfoCF.QuotaAllocatedValue > 0) && Utils.ParseBool(webPolicy["ColdFusionInstalled"], false);
+					QuotaValueInfo quotaInfoCFV = PackageController.GetPackageQuota(packageId, Quotas.WEB_CFVIRTUALDIRS);
+					site.CreateCFVirtualDirectoriesPol = (quotaInfoCFV.QuotaAllocatedValue > 0) && Utils.ParseBool(webPolicy["CreateCFVirtualDirectoriesPol"], false);
                     
                 }
                 else
@@ -404,6 +407,7 @@ namespace WebsitePanel.EnterpriseServer
                     site.PythonInstalled = false;
                     site.CgiBinInstalled = false;
                     site.ColdFusionInstalled = false;
+					site.CreateCFVirtualDirectoriesPol = false;
                 }
 
                 site.HttpRedirect = "";
@@ -3633,6 +3637,17 @@ namespace WebsitePanel.EnterpriseServer
 				WebServer server = GetWebServer(item.ServiceId);
 				//
 				server.RevokeWebManagementAccess(item.SiteId, accountName);
+
+                // Cleanup web site properties if the web management and web deploy user are the same
+                if (GetNonQualifiedAccountName(accountName) == item.WebDeployPublishingAccount)
+			    {
+			        item.WebDeployPublishingAccount = String.Empty;
+			        item.WebDeploySitePublishingEnabled = false;
+			        item.WebDeploySitePublishingProfile = String.Empty;
+			        item.WebDeployPublishingPassword = String.Empty;
+			        // Put changes into effect
+			        PackageController.UpdatePackageItem(item);
+			    }
 			}
 			catch (Exception ex)
 			{
@@ -3643,6 +3658,12 @@ namespace WebsitePanel.EnterpriseServer
 				TaskManager.CompleteTask();
 			}
 		}
+
+        protected static string GetNonQualifiedAccountName(string accountName)
+        {
+            int idx = accountName.LastIndexOf("\\");
+            return (idx != -1) ? accountName.Substring(idx + 1) : accountName;
+        }
 
 		public static ResultObject ChangeWebManagementAccessPassword(int siteItemId, string accountPassword)
 		{

@@ -2,6 +2,17 @@
 <%@ Register Src="Quota.ascx" TagName="Quota" TagPrefix="wsp" %>
 <%@ Register Src="ServerDetails.ascx" TagName="ServerDetails" TagPrefix="wsp" %>
 <%@ Register Src="SearchBox.ascx" TagName="SearchBox" TagPrefix="wsp" %>
+<%@ Register Src="WebsiteActions.ascx" TagName="WebsiteActions" TagPrefix="wsp" %>
+<%@ Register Src="MailAccountActions.ascx" TagName="MailAccountActions" TagPrefix="wsp" %>
+
+<script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
+
+<script language="javascript">
+    function SelectAllCheckboxes(box) {
+        $(".NormalGridView tbody :checkbox").attr("checked", $(box).attr("checked"));
+    }
+</script>
+
 <div class="FormButtonsBar">
     <div class="Left">
         <asp:Button ID="btnAddItem" runat="server" Text="btnAddItem" CssClass="Button3" OnClick="btnAddItem_Click" />
@@ -9,7 +20,21 @@
             meta:resourcekey="chkRecursive" AutoPostBack="true" Checked="True" CssClass="Normal" />
     </div>
     <div class="Right">
-        <wsp:SearchBox ID="searchBox" runat="server" />
+        <table>
+            <tr>
+                <%-- Action lists --%>
+                <td>
+                    <%-- Web Sites --%>
+                    <wsp:WebsiteActions ID="websiteActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" Visible="False" />
+                    <%-- Mail Accounts --%>
+                    <wsp:MailAccountActions ID="mailActions" runat="server" GridViewID="gvItems" CheckboxesName="chkSelectedIds" Visible="False" />
+                </td>
+                <td class="FormButtonsBarCleanSeparator"></td>
+                <td>
+                    <wsp:SearchBox ID="searchBox" runat="server" />
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 <asp:Literal ID="litGroupName" runat="server" Visible="false"></asp:Literal>
@@ -19,9 +44,17 @@
 	<ContentTemplate>
 
 <asp:GridView ID="gvItems" runat="server" AutoGenerateColumns="False" AllowSorting="True"
-    DataSourceID="odsItemsPaged" EmptyDataText="gvItems" CssSelectorClass="NormalGridView"
+    DataSourceID="odsItemsPaged" EmptyDataText="gvItems" CssSelectorClass="NormalGridView" DataKeyNames="ItemID"
     AllowPaging="True" OnRowCommand="gvItems_RowCommand" OnRowDataBound="gvItems_RowDataBound">
     <Columns>
+        <asp:TemplateField>
+            <HeaderTemplate>
+                <asp:CheckBox ID="selectAll" Runat="server" onclick="javascript:SelectAllCheckboxes(this);" CssClass="HeaderCheckbox"></asp:CheckBox>
+            </HeaderTemplate>
+			<ItemTemplate>							        
+				<asp:CheckBox runat="server" ID="chkSelectedIds" CssClass="GridCheckbox"></asp:CheckBox>
+			</ItemTemplate>
+		</asp:TemplateField>
         <asp:TemplateField SortExpression="ItemName" HeaderText="gvItemsName">
             <ItemStyle Width="100%"></ItemStyle>
             <ItemTemplate>

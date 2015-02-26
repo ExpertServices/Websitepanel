@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -42,6 +43,15 @@ namespace WebsitePanel.WebDav.Core
             {
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
+            }
+
+            public WebDavResource(ICredentials credentials, IHierarchyItem item)
+            {
+                SendChunked = false;
+                AllowWriteStreamBuffering = false;
+
+                SetCredentials(credentials);
+                SetHierarchyItem(item);
             }
 
             public Uri BaseUri
@@ -124,7 +134,7 @@ namespace WebsitePanel.WebDav.Core
                 var webClient = new WebClient();
                 webClient.Credentials = credentials;
                 webClient.Headers.Add("Authorization", auth);
-
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 webClient.UploadData(Href, "PUT", data);
             }
 
@@ -143,6 +153,7 @@ namespace WebsitePanel.WebDav.Core
                 webClient.Headers.Add("Authorization", auth);
                 //TODO Disable SSL
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate{ return true; });
+
                 return webClient.OpenRead(_href);
             }
 
@@ -334,6 +345,69 @@ namespace WebsitePanel.WebDav.Core
                             }
                         } while (bytesRead > 0);
                     }
+                }
+            }
+
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public string Lock()
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string lockToken = string.Empty;
+
+
+                string lockXml =string.Format( "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                                 "<D:lockinfo xmlns:D='DAV:'>" +
+                                 "<D:lockscope><D:exclusive/></D:lockscope>" +
+                                 "<D:locktype><D:write/></D:locktype>" +
+                                 "<D:owner>{0}</D:owner>" +
+                                 "</D:lockinfo>", WspContext.User.Login);
+
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "LOCK";
+                webRequest.Credentials = credentials;
+                webRequest.Headers.Add("Authorization", auth);
+                webRequest.PreAuthenticate = true;
+                webRequest.ContentType = "application/xml";
+
+                // Retrieve the request stream.
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    // Write the lock XML to the destination.
+                    requestStream.Write(Encoding.UTF8.GetBytes(lockXml), 0, lockXml.Length);
+                }
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    lockToken = webResponse.Headers["Lock-Token"];
+                }
+
+                return lockToken;
+            }
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public void UnLock()
+            {
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "UNLOCK";
+                webRequest.Credentials = _credentials;
+                webRequest.PreAuthenticate = true;
+
+                webRequest.Headers.Add(@"Lock-Token", Properties.First(x => x.Name.Name == "locktoken").StringValue);
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    //TODO unlock
                 }
             }
 
