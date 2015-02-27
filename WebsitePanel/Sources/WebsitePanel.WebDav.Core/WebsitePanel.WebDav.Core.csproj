@@ -35,20 +35,23 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CobaltCore">
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.CobaltCore.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Scheduler Domains\WebsitePanel\Bin\Microsoft.Web.Services3.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\Bin\Microsoft.Web.Services3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Web.dll</HintPath>
@@ -85,49 +88,73 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WebsitePanel.EnterpriseServer.Base">
-      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Client">
-      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
     </Reference>
     <Reference Include="WebsitePanel.Providers.Base">
-      <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.Providers.Base.dll</HintPath>
+      <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\Resources\LocalizedDescriptionAttribute.cs" />
     <Compile Include="Config\Entities\AbstractConfigCollection.cs" />
     <Compile Include="Config\Entities\ElementsRendering.cs" />
     <Compile Include="Config\Entities\FileIconsDictionary.cs" />
     <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
+    <Compile Include="Config\Entities\FilesToIgnoreCollection.cs" />
     <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
+    <Compile Include="Config\Entities\OwaSupportedBrowsersCollection.cs" />
     <Compile Include="Config\Entities\SessionKeysCollection.cs" />
+    <Compile Include="Config\Entities\OpenerCollection.cs" />
     <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
     <Compile Include="Config\IWebDavAppConfig.cs" />
     <Compile Include="Config\WebConfigSections\ApplicationNameElement.cs" />
     <Compile Include="Config\WebConfigSections\AuthTimeoutCookieNameElement.cs" />
     <Compile Include="Config\WebConfigSections\ElementsRenderingElement.cs" />
+    <Compile Include="Config\WebConfigSections\EnterpriseServerElement.cs" />
     <Compile Include="Config\WebConfigSections\FileIconsElement.cs" />
     <Compile Include="Config\WebConfigSections\FileIconsElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\FilesToIgnoreElement.cs" />
+    <Compile Include="Config\WebConfigSections\FilesToIgnoreElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElement.cs" />
     <Compile Include="Config\WebConfigSections\OfficeOnlineElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OpenerElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElement.cs" />
+    <Compile Include="Config\WebConfigSections\OwaSupportedBrowsersElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElement.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElementCollection.cs" />
+    <Compile Include="Config\WebConfigSections\OpenerElement.cs" />
     <Compile Include="Config\WebConfigSections\UserDomainElement.cs" />
     <Compile Include="Config\WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
     <Compile Include="Config\WebConfigSections\WebdavRootElement.cs" />
     <Compile Include="Config\WebConfigSections\WebsitePanelConstantUserElement.cs" />
     <Compile Include="Config\WebDavAppConfigManager.cs" />
+    <Compile Include="Entities\Account\Enums\FolderViewTypes.cs" />
+    <Compile Include="Entities\Account\UserPortalSettings.cs" />
     <Compile Include="Entities\Owa\CheckFileInfo.cs" />
+    <Compile Include="Entities\Owa\PutRelativeFile.cs" />
     <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\UriExtensions.cs" />
+    <Compile Include="Helper\SerializeHelper.cs" />
     <Compile Include="IConnectionSettings.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Interfaces\Managers\Users\IUserSettingsManager.cs" />
+    <Compile Include="Interfaces\Storages\IKeyValueStorage.cs" />
+    <Compile Include="Interfaces\Storages\ITtlStorage.cs" />
+    <Compile Include="Managers\Users\UserSettingsManager.cs" />
+    <Compile Include="Owa\CobaltManager.cs" />
+    <Compile Include="Interfaces\Owa\ICobaltManager.cs" />
+    <Compile Include="Interfaces\Owa\IWopiFileManager.cs" />
     <Compile Include="Interfaces\Security\IWebDavAuthorizationService.cs" />
     <Compile Include="Managers\AccessTokenManager.cs" />
     <Compile Include="Interfaces\Managers\IAccessTokenManager.cs" />
@@ -139,6 +166,8 @@
     <Compile Include="ItemType.cs" />
     <Compile Include="LockUriTokenPair.cs" />
     <Compile Include="Managers\WebDavManager.cs" />
+    <Compile Include="Owa\CobaltSessionManager.cs" />
+    <Compile Include="Owa\CobaltHostLockingStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="PropertyName.cs" />
@@ -159,6 +188,7 @@
     <Compile Include="Security\Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Security\Authentication\Principals\WspPrincipal.cs" />
     <Compile Include="Owa\WopiServer.cs" />
+    <Compile Include="Storages\CacheTtlStorage.cs" />
     <Compile Include="WebDavSession.cs" />
     <Compile Include="WspContext.cs" />
     <Compile Include="Wsp\Framework\WSP.cs" />
@@ -168,12 +198,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WebsitePanel.WebPortal\WebsitePanel.WebPortal.csproj">
-      <Project>{C99EFB18-FFE7-45BB-8CA8-29336F3E8C68}</Project>
-      <Name>WebsitePanel.WebPortal</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\HttpErrors.resx">

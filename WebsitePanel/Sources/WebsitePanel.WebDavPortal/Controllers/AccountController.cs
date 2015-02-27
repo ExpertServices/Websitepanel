@@ -59,6 +59,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
         {
             _authenticationService.LogOut();
 
+            Session.Clear();
+
             return RedirectToRoute(AccountRouteNames.Login);
         }
     }

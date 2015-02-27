@@ -125,8 +125,8 @@ namespace WebsitePanel.EnterpriseServer
             if (serviceId == 0)
                 return BusinessErrorCodes.ERROR_MSSQL_RESOURCE_UNAVAILABLE;
 
-            // check package items
-            if (PackageController.GetPackageItemByName(item.PackageId, groupName, item.Name, typeof(SqlDatabase)) != null)
+            // check service items
+            if (PackageController.GetServiceItemsCountByNameAndServiceId(serviceId, groupName, item.Name, typeof(SqlDatabase)) > 0)
                 return BusinessErrorCodes.ERROR_MSSQL_DATABASES_PACKAGE_ITEM_EXISTS;
 
             // place log record

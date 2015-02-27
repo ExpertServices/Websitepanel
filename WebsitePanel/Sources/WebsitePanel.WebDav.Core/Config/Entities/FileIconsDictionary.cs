@@ -12,10 +12,12 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
         public FileIconsDictionary()
         {
             DefaultPath = ConfigSection.FileIcons.DefaultPath;
+            FolderPath = ConfigSection.FileIcons.FolderPath;
             _fileIcons = ConfigSection.FileIcons.Cast<FileIconsElement>().ToDictionary(x => x.Extension, y => y.Path);
         }
 
         public string DefaultPath { get; private set; }
+        public string FolderPath { get; private set; }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {

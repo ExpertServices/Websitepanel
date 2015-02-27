@@ -27,9 +27,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Data.OleDb;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using Microsoft.Win32;
 
@@ -62,6 +65,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         #endregion
 
         #region Folders
+
         public SystemFile[] GetFolders(string organizationId, WebDavSetting[] settings)
         {
             ArrayList items = new ArrayList();
@@ -70,7 +74,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
             foreach (var setting in webDavSettings)
             {
-                string rootPath = string.Format("{0}:\\{1}\\{2}", setting.LocationDrive, setting.HomeFolder, organizationId);
+                string rootPath = string.Format("{0}:\\{1}\\{2}", setting.LocationDrive, setting.HomeFolder,
+                    organizationId);
 
                 var windows = new WebsitePanel.Providers.OS.Windows2012();
 
@@ -114,16 +119,17 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 }
             }
 
-            return (SystemFile[])items.ToArray(typeof(SystemFile));
+            return (SystemFile[]) items.ToArray(typeof (SystemFile));
         }
 
         public SystemFile GetFolder(string organizationId, string folderName, WebDavSetting setting)
         {
             var webDavSetting = GetWebDavSetting(setting);
 
-            string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, folderName);
+            string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder,
+                organizationId, folderName);
             SystemFile folder = null;
-           
+
             var windows = new WebsitePanel.Providers.OS.Windows2012();
 
             if (Directory.Exists(fullName))
@@ -151,7 +157,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 folder.FRSMQuotaGB = windows.ConvertMegaBytesToGB(folder.FRSMQuotaMB);
                 folder.FsrmQuotaType = quota.QuotaType;
             }
-            
+
             return folder;
         }
 
@@ -159,17 +165,21 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         {
             var webDavSetting = GetWebDavSetting(setting);
 
-            FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, folder));
+            FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive,
+                webDavSetting.HomeFolder, organizationId, folder));
         }
 
-        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder,
+            WebDavSetting setting)
         {
             var webDavSetting = GetWebDavSetting(setting);
 
-            var oldPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, originalFolder);
-            var newPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, newFolder);
+            var oldPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder,
+                organizationId, originalFolder);
+            var newPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder,
+                organizationId, newFolder);
 
-            FileUtils.MoveFile(oldPath,newPath);
+            FileUtils.MoveFile(oldPath, newPath);
 
             IWebDav webdav = new WebDav(webDavSetting);
 
@@ -183,17 +193,20 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         {
             var webDavSetting = GetWebDavSetting(setting);
 
-            string rootPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, folder);
+            string rootPath = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder,
+                organizationId, folder);
 
             DirectoryInfo treeRoot = new DirectoryInfo(rootPath);
-            
+
             if (treeRoot.Exists)
             {
                 DirectoryInfo[] dirs = treeRoot.GetDirectories();
                 while (dirs.Length > 0)
                 {
                     foreach (DirectoryInfo dir in dirs)
-                        DeleteFolder(organizationId, folder != string.Empty ? string.Format("{0}\\{1}", folder, dir.Name) : dir.Name, webDavSetting);
+                        DeleteFolder(organizationId,
+                            folder != string.Empty ? string.Format("{0}\\{1}", folder, dir.Name) : dir.Name,
+                            webDavSetting);
 
                     dirs = treeRoot.GetDirectories();
                 }
@@ -207,14 +220,15 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 }
 
                 IWebDav webdav = new WebDav(webDavSetting);
-                
+
                 webdav.DeleteAllWebDavRules(organizationId, folder);
-                
+
                 Directory.Delete(treeRoot.FullName, true);
             }
         }
 
-        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules)
+        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting,
+            WebDavFolderRule[] rules)
         {
             var users = new List<UserPermission>();
 
@@ -243,14 +257,15 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
             var webDavSetting = GetWebDavSetting(setting);
 
-            string path = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, folder);
+            string path = string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder,
+                organizationId, folder);
 
             SecurityUtils.ResetNtfsPermissions(path);
 
             SecurityUtils.GrantGroupNtfsPermissions(path, users.ToArray(), false, new RemoteServerSettings(), null, null);
 
             IWebDav webdav = new WebDav(webDavSetting);
-            
+
             return webdav.SetFolderWebDavRules(organizationId, folder, rules);
         }
 
@@ -269,6 +284,73 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         #endregion
+
+        public SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
+        {
+            var settings = GetWebDavSetting(null);
+            var result = new List<SystemFile>();
+            var isRootSearch = false;
+
+            if (searchPaths.Any(string.IsNullOrEmpty))
+            {
+                isRootSearch = true;
+                searchPaths = searchPaths.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            }
+
+            //using (new WindowsIdentity(userPrincipalName).Impersonate())
+            {
+                using (var conn = new OleDbConnection("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';"))
+                {
+                    var rootFolder = Path.Combine(settings.LocationDrive + ":\\", settings.HomeFolder);
+                    rootFolder = Path.Combine(rootFolder, organizationId);
+
+                    var wsSql = string.Format(@"SELECT System.FileName, System.DateModified, System.Size, System.Kind, System.ItemPathDisplay, System.ItemType FROM SYSTEMINDEX WHERE System.FileName LIKE '%{0}%' AND ({1})",
+                        searchText, string.Join(" OR ", searchPaths.Select(x => string.Format("{0} = '{1}'", recursive ? "SCOPE" : "DIRECTORY", Path.Combine(rootFolder, x))).ToArray()));
+
+                    conn.Open();
+
+                    var cmd = new OleDbCommand(wsSql, conn);
+
+                    using (OleDbDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader!= null && reader.Read())
+                        {
+                            var file = new SystemFile {Name = reader[0] as string};
+
+                            file.Changed = file.CreatedDate = reader[1] is DateTime ? (DateTime)reader[1] : new DateTime();
+                            file.Size = reader[2] is long ? (long) reader[2] : 0;
+
+                            var kind = reader[3] is IEnumerable ? ((IEnumerable)reader[3]).Cast<string>().ToList() : null;
+                            var itemType = reader[5] as string ?? string.Empty;
+
+                            if (kind != null && kind.Any() && itemType.ToLowerInvariant() != ".zip")
+                            {
+                                file.IsDirectory = kind.Any(x => x == "folder");
+                            }
+
+                            file.FullName = (reader[4] as string ?? string.Empty);
+
+                            if (isRootSearch)
+                            {
+                                file.RelativeUrl = file.FullName.Replace(rootFolder, "").Trim('\\');
+                            }
+                            else
+                            {
+                                foreach (var searchPath in searchPaths)
+                                {
+                                    file.RelativeUrl = file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
+                                }
+                            }
+
+                            result.Add(file);
+                        }
+                    }
+                }
+            }
+
+            return result.ToArray();
+        }
+
 
         #region HostingServiceProvider methods
         

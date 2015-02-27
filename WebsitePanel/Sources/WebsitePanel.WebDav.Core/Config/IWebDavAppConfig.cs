@@ -12,5 +12,8 @@ namespace WebsitePanel.WebDav.Core.Config
         FileIconsDictionary FileIcons { get; }
         HttpErrorsCollection HttpErrors { get; }
         OfficeOnlineCollection OfficeOnline { get; }
+        OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; }
+        FilesToIgnoreCollection FilesToIgnore { get; }
+        OpenerCollection FileOpener { get; }
     }
 }

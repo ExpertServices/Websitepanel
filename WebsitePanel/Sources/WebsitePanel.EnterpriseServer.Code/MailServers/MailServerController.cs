@@ -137,7 +137,6 @@ namespace WebsitePanel.EnterpriseServer
 					return domainResult;
 
 				// create service item
-				item.Enabled = true;
 				item.MaxMailboxSize = GetMaxMailBoxSize(item.PackageId, item);
 
 				// add service item
@@ -159,7 +158,11 @@ namespace WebsitePanel.EnterpriseServer
 				{
 					return BusinessErrorCodes.ERROR_MAIL_LICENSE_DOMAIN_QUOTA;
 				}
-				if (ex.Message != null && ex.Message.Contains("The maximum number of users for the server has been reached"))
+                if (ex.Message.Contains("Password doesn't meet complexity"))
+                {
+                    return BusinessErrorCodes.ERROR_MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY;
+                } 
+                if (ex.Message.Contains("The maximum number of users for the server has been reached"))
 				{
 					return BusinessErrorCodes.ERROR_MAIL_LICENSE_USERS_QUOTA;
 				}
@@ -203,7 +206,6 @@ namespace WebsitePanel.EnterpriseServer
 				MailServer mail = new MailServer();
 				ServiceProviderProxy.Init(mail, origItem.ServiceId);
 				item.Name = origItem.Name;
-				item.Enabled = true;
 
 				item.MaxMailboxSize = GetMaxMailBoxSize(origItem.PackageId, item);
 
@@ -224,6 +226,11 @@ namespace WebsitePanel.EnterpriseServer
 			}
 			catch (Exception ex)
 			{
+                if (ex.Message.Contains("Password doesn't meet complexity"))
+			    {
+			        return BusinessErrorCodes.ERROR_MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY;
+			    }
+
 				throw TaskManager.WriteError(ex);
 			}
 			finally

@@ -2284,7 +2284,8 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP,
+            bool userMustChangePassword)
         {
 
             // check account
@@ -2346,7 +2347,8 @@ namespace WebsitePanel.EnterpriseServer
                     pager,
                     webPage,
                     notes,
-                    externalEmailAddress);
+                    externalEmailAddress,
+                    userMustChangePassword);
 
                 // update account
                 account.DisplayName = displayName;

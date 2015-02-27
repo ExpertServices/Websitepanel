@@ -1,16 +1,33 @@
-﻿@model WebsitePanel.WebDavPortal.Models.OfficeOnlineModel
+﻿@using WebsitePanel.WebDavPortal.UI.Routes
+@model WebsitePanel.WebDavPortal.Models.OfficeOnlineModel
 @{
-    Layout = null;
+  Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
     <head>
         <meta name="viewport" content="width=device-width" />
-        <title>@Model.FileName</title>
+        <title>@Html.Raw(Model.FileName)</title>
+        @if (Request.Browser.IsMobileDevice)
+        {
+            @Styles.Render("~/Content/css")
+        }
     </head>
     <body>
-        <iframe src='@Model.Url' width="100%" height="100%" frameborder='0' style="bottom: 0px; left: 0px; position: fixed; right: 0px; top: 0px;">
+        @if (Request.Browser.IsMobileDevice)
+        {
+            <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container top-container">
+                    <div class="navbar-header">
+                        <a class="back-button" href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new {pathPart = Model.Backurl})">
+                            <i class="glyphicon glyphicon-circle-arrow-left"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        <iframe src="@Model.Url" width="100%" height="100%" frameborder='0' style="position: absolute;top: 0;left: 0;bottom: 0;right: 0; @(Request.Browser.IsMobileDevice ? "margin-top: 50px;" : "")">
             This is an embedded
             <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by
             <a target='_blank' href='http://office.com/webapps'>Office Web Apps</a>.

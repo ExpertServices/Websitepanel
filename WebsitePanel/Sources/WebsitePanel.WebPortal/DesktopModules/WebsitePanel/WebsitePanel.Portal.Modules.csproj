@@ -229,6 +229,69 @@
       <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
+      <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Features.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Features.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Sharing.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Sharing.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Throttling.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Throttling.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditForwarding .ascx.cs">
+      <DependentUpon>SmarterMail100_EditForwarding .ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditForwarding .ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditForwarding .ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditGroup.ascx.cs">
+      <DependentUpon>SmarterMail100_EditGroup.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditGroup.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditGroup.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditList.ascx.cs">
+      <DependentUpon>SmarterMail100_EditList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditList.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_Settings.ascx.cs">
+      <DependentUpon>SmarterMail100_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_Settings.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\Windows2012_Settings.ascx.cs">
       <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -850,6 +913,9 @@
     <Compile Include="UserControls\DomainControl.ascx.designer.cs">
       <DependentUpon>DomainControl.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ActionListControlBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -897,6 +963,34 @@
     </Compile>
     <Compile Include="UserControls\ItemButtonPanel.ascx.designer.cs">
       <DependentUpon>ItemButtonPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\DomainActions.ascx.cs">
+      <DependentUpon>DomainActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\DomainActions.ascx.designer.cs">
+      <DependentUpon>DomainActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MailAccountActions.ascx.cs">
+      <DependentUpon>MailAccountActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\MailAccountActions.ascx.designer.cs">
+      <DependentUpon>MailAccountActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\WebsiteActions.ascx.cs">
+      <DependentUpon>WebsiteActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\WebsiteActions.ascx.designer.cs">
+      <DependentUpon>WebsiteActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserActions.ascx.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\UserActions.ascx.designer.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
     </Compile>
     <Compile Include="UserOrganization.ascx.cs">
       <DependentUpon>UserOrganization.ascx</DependentUpon>
@@ -4362,6 +4456,15 @@
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditForwarding .ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditGroup.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditList.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_Settings.ascx" />
     <Content Include="ProviderControls\Windows2012_Settings.ascx" />
     <Content Include="ExchangeServer\OrganizationDeletedUsers.ascx" />
     <Content Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx" />
@@ -4369,6 +4472,33 @@
     <Content Include="ExchangeServer\UserControls\DeletedUserTabs.ascx" />
     <Content Include="RDSServersAddserver.ascx" />
     <Content Include="RDSServers.ascx" />
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditAccount.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Features.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Sharing.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Throttling.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditForwarding.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditGroup.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />
@@ -4482,6 +4612,10 @@
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="UserControls\ItemButtonPanel.ascx" />
+    <Content Include="UserControls\DomainActions.ascx" />
+    <Content Include="UserControls\MailAccountActions.ascx" />
+    <Content Include="UserControls\WebsiteActions.ascx" />
+    <Content Include="UserControls\UserActions.ascx" />
     <Content Include="UserOrganization.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -4550,6 +4684,10 @@
     <Content Include="PhoneNumbers.ascx" />
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
+    <Content Include="UserControls\App_LocalResources\UserActions.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
+    <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\BandwidthReport.ascx.resx">

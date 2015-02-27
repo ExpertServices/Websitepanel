@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -27,7 +29,6 @@ namespace WebsitePanel.WebDav.Core
             private bool _checkedOut = false;
             private string _comment = "";
             private long _contentLength;
-            private string _contentType = "";
             private DateTime _creationDate = new DateTime(0);
             private string _creatorDisplayName = "";
             private ICredentials _credentials = new NetworkCredential();
@@ -42,6 +43,15 @@ namespace WebsitePanel.WebDav.Core
             {
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
+            }
+
+            public WebDavResource(ICredentials credentials, IHierarchyItem item)
+            {
+                SendChunked = false;
+                AllowWriteStreamBuffering = false;
+
+                SetCredentials(credentials);
+                SetHierarchyItem(item);
             }
 
             public Uri BaseUri
@@ -69,7 +79,13 @@ namespace WebsitePanel.WebDav.Core
 
             public string ContentType
             {
-                get { return _contentType; }
+                get
+                {
+                    {
+                        var property = _properties.FirstOrDefault(x => x.Name.Name == "getcontenttype");
+                        return property == null ? MediaTypeNames.Application.Octet : property.StringValue;
+                    }
+                }
             }
 
             /// <summary>
@@ -124,7 +140,7 @@ namespace WebsitePanel.WebDav.Core
                 var webClient = new WebClient();
                 webClient.Credentials = credentials;
                 webClient.Headers.Add("Authorization", auth);
-
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 webClient.UploadData(Href, "PUT", data);
             }
 
@@ -143,6 +159,7 @@ namespace WebsitePanel.WebDav.Core
                 webClient.Headers.Add("Authorization", auth);
                 //TODO Disable SSL
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate{ return true; });
+
                 return webClient.OpenRead(_href);
             }
 
@@ -240,14 +257,14 @@ namespace WebsitePanel.WebDav.Core
             {
                 get
                 {
-                    string displayName = _href.AbsoluteUri.Replace(_baseUri.AbsoluteUri, "");
+                    string displayName = _href.AbsoluteUri.Trim('/').Replace(_baseUri.AbsoluteUri.Trim('/'), "");
                     displayName = Regex.Replace(displayName, "\\/$", "");
                     Match displayNameMatch = Regex.Match(displayName, "([\\/]+)$");
                     if (displayNameMatch.Success)
                     {
                         displayName = displayNameMatch.Groups[1].Value;
                     }
-                    return HttpUtility.UrlDecode(displayName);
+                    return HttpUtility.UrlDecode(displayName.Trim('/'));
                 }
             }
 
@@ -337,6 +354,69 @@ namespace WebsitePanel.WebDav.Core
                 }
             }
 
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public string Lock()
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string lockToken = string.Empty;
+
+
+                string lockXml =string.Format( "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+                                 "<D:lockinfo xmlns:D='DAV:'>" +
+                                 "<D:lockscope><D:exclusive/></D:lockscope>" +
+                                 "<D:locktype><D:write/></D:locktype>" +
+                                 "<D:owner>{0}</D:owner>" +
+                                 "</D:lockinfo>", WspContext.User.Login);
+
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "LOCK";
+                webRequest.Credentials = credentials;
+                webRequest.Headers.Add("Authorization", auth);
+                webRequest.PreAuthenticate = true;
+                webRequest.ContentType = "application/xml";
+
+                // Retrieve the request stream.
+                using (Stream requestStream = webRequest.GetRequestStream())
+                {
+                    // Write the lock XML to the destination.
+                    requestStream.Write(Encoding.UTF8.GetBytes(lockXml), 0, lockXml.Length);
+                }
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    lockToken = webResponse.Headers["Lock-Token"];
+                }
+
+                return lockToken;
+            }
+
+            /// <summary>
+            ///     Lock this item.
+            /// </summary>
+            public void UnLock()
+            {
+                WebRequest webRequest = WebRequest.Create(Href);
+
+                webRequest.Method = "UNLOCK";
+                webRequest.Credentials = _credentials;
+                webRequest.PreAuthenticate = true;
+
+                webRequest.Headers.Add(@"Lock-Token", Properties.First(x => x.Name.Name == "locktoken").StringValue);
+
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    //TODO unlock
+                }
+            }
+
             public bool AllowWriteStreamBuffering { get; set; }
             public bool SendChunked { get; set; }
 
@@ -399,15 +479,10 @@ namespace WebsitePanel.WebDav.Core
             public void SetHref(Uri href)
             {
                 _href = href;
-                string baseUri = _href.Scheme + "://" + _href.Host;
-                for (int i = 0; i < _href.Segments.Length - 1; i++)
-                {
-                    if (_href.Segments[i] != "/")
-                    {
-                        baseUri += "/" + _href.Segments[i];
-                    }
-                }
-                _baseUri = new Uri(baseUri);
+
+                var baseUrl = href.AbsoluteUri.Remove(href.AbsoluteUri.Length - href.Segments.Last().Length);
+
+                _baseUri = new Uri(baseUrl);
             }
 
             /// <summary>

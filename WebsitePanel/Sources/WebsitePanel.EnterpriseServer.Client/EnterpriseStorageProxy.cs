@@ -69,6 +69,12 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback CheckUsersDomainExistsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetWebDavPortalUserSettingsByAccountIdOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback UpdateWebDavPortalUserSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SearchFilesOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetDirectoryBrowseEnabledOperationCompleted;
         
         private System.Threading.SendOrPostCallback SetDirectoryBrowseEnabledOperationCompleted;
@@ -144,6 +150,15 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event CheckUsersDomainExistsCompletedEventHandler CheckUsersDomainExistsCompleted;
+        
+        /// <remarks/>
+        public event GetWebDavPortalUserSettingsByAccountIdCompletedEventHandler GetWebDavPortalUserSettingsByAccountIdCompleted;
+        
+        /// <remarks/>
+        public event UpdateWebDavPortalUserSettingsCompletedEventHandler UpdateWebDavPortalUserSettingsCompleted;
+        
+        /// <remarks/>
+        public event SearchFilesCompletedEventHandler SearchFilesCompleted;
         
         /// <remarks/>
         public event GetDirectoryBrowseEnabledCompletedEventHandler GetDirectoryBrowseEnabledCompleted;
@@ -925,6 +940,143 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.CheckUsersDomainExistsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.CheckUsersDomainExistsCompleted(this, new CheckUsersDomainExistsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWebDavPortalUserSettingsByAccount" +
+            "Id", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetWebDavPortalUserSettingsByAccountId(int accountId) {
+            object[] results = this.Invoke("GetWebDavPortalUserSettingsByAccountId", new object[] {
+                        accountId});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWebDavPortalUserSettingsByAccountId(int accountId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWebDavPortalUserSettingsByAccountId", new object[] {
+                        accountId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string EndGetWebDavPortalUserSettingsByAccountId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWebDavPortalUserSettingsByAccountIdAsync(int accountId) {
+            this.GetWebDavPortalUserSettingsByAccountIdAsync(accountId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWebDavPortalUserSettingsByAccountIdAsync(int accountId, object userState) {
+            if ((this.GetWebDavPortalUserSettingsByAccountIdOperationCompleted == null)) {
+                this.GetWebDavPortalUserSettingsByAccountIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWebDavPortalUserSettingsByAccountIdOperationCompleted);
+            }
+            this.InvokeAsync("GetWebDavPortalUserSettingsByAccountId", new object[] {
+                        accountId}, this.GetWebDavPortalUserSettingsByAccountIdOperationCompleted, userState);
+        }
+        
+        private void OnGetWebDavPortalUserSettingsByAccountIdOperationCompleted(object arg) {
+            if ((this.GetWebDavPortalUserSettingsByAccountIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWebDavPortalUserSettingsByAccountIdCompleted(this, new GetWebDavPortalUserSettingsByAccountIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/UpdateWebDavPortalUserSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void UpdateWebDavPortalUserSettings(int accountId, string settings) {
+            this.Invoke("UpdateWebDavPortalUserSettings", new object[] {
+                        accountId,
+                        settings});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginUpdateWebDavPortalUserSettings(int accountId, string settings, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("UpdateWebDavPortalUserSettings", new object[] {
+                        accountId,
+                        settings}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndUpdateWebDavPortalUserSettings(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void UpdateWebDavPortalUserSettingsAsync(int accountId, string settings) {
+            this.UpdateWebDavPortalUserSettingsAsync(accountId, settings, null);
+        }
+        
+        /// <remarks/>
+        public void UpdateWebDavPortalUserSettingsAsync(int accountId, string settings, object userState) {
+            if ((this.UpdateWebDavPortalUserSettingsOperationCompleted == null)) {
+                this.UpdateWebDavPortalUserSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateWebDavPortalUserSettingsOperationCompleted);
+            }
+            this.InvokeAsync("UpdateWebDavPortalUserSettings", new object[] {
+                        accountId,
+                        settings}, this.UpdateWebDavPortalUserSettingsOperationCompleted, userState);
+        }
+        
+        private void OnUpdateWebDavPortalUserSettingsOperationCompleted(object arg) {
+            if ((this.UpdateWebDavPortalUserSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateWebDavPortalUserSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SearchFiles", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
+            object[] results = this.Invoke("SearchFiles", new object[] {
+                        itemId,
+                        searchPaths,
+                        searchText,
+                        userPrincipalName,
+                        recursive});
+            return ((SystemFile[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SearchFiles", new object[] {
+                        itemId,
+                        searchPaths,
+                        searchText,
+                        userPrincipalName,
+                        recursive}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public SystemFile[] EndSearchFiles(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemFile[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SearchFilesAsync(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive) {
+            this.SearchFilesAsync(itemId, searchPaths, searchText, userPrincipalName, recursive, null);
+        }
+        
+        /// <remarks/>
+        public void SearchFilesAsync(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive, object userState) {
+            if ((this.SearchFilesOperationCompleted == null)) {
+                this.SearchFilesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSearchFilesOperationCompleted);
+            }
+            this.InvokeAsync("SearchFiles", new object[] {
+                        itemId,
+                        searchPaths,
+                        searchText,
+                        userPrincipalName,
+                        recursive}, this.SearchFilesOperationCompleted, userState);
+        }
+        
+        private void OnSearchFilesOperationCompleted(object arg) {
+            if ((this.SearchFilesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SearchFilesCompleted(this, new SearchFilesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1807,6 +1959,62 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetWebDavPortalUserSettingsByAccountIdCompletedEventHandler(object sender, GetWebDavPortalUserSettingsByAccountIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWebDavPortalUserSettingsByAccountIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWebDavPortalUserSettingsByAccountIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void UpdateWebDavPortalUserSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SearchFilesCompletedEventHandler(object sender, SearchFilesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SearchFilesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SearchFilesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SystemFile[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemFile[])(this.results[0]));
             }
         }
     }

@@ -64,8 +64,8 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
 
         private IEnumerable<ESPermission> GetFolderEsPermissions(WspPrincipal principal, string rootFolderName)
         {
-            var dictionary = HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] as
-                    Dictionary<string, IEnumerable<ESPermission>>;
+            var dictionary = HttpContext.Current.Session != null ?HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] as
+                Dictionary<string, IEnumerable<ESPermission>> : null;
 
             if (dictionary == null)
             {
@@ -80,7 +80,10 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
                     dictionary.Add(rootFolder.Name, permissions);
                 }
 
-                HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] = dictionary;
+                if (HttpContext.Current.Session != null)
+                {
+                    HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavRootFoldersPermissions] = dictionary;
+                }
             }
 
             return dictionary.ContainsKey(rootFolderName) ? dictionary[rootFolderName] : new ESPermission[0];
@@ -88,14 +91,16 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
 
         private IEnumerable<ExchangeAccount> GetUserSecurityGroups(WspPrincipal principal)
         {
-            var groups = HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] as
-                    IEnumerable<ExchangeAccount>;
+            var groups = HttpContext.Current.Session != null ? HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] as IEnumerable<ExchangeAccount> : null;
 
             if (groups == null)
             {
                  groups = WSP.Services.Organizations.GetSecurityGroupsByMember(principal.ItemId, principal.AccountId);
 
-                 HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] = groups;
+                if (HttpContext.Current.Session != null)
+                {
+                    HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] = groups;
+                }
             }
 
             return groups ?? new ExchangeAccount[0];

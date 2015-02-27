@@ -881,7 +881,7 @@ namespace WebsitePanel.Providers.Web
 			#endregion
 
 			#region PHP 5 script mappings
-		    if (virtualDir.PhpInstalled.StartsWith(PHP_5))
+		    if (!string.IsNullOrEmpty(virtualDir.PhpInstalled) && virtualDir.PhpInstalled.StartsWith(PHP_5))
 		    {
 		        if (PhpMode == Constants.PhpMode.FastCGI && virtualDir.PhpInstalled.Contains('|'))
 		        {
@@ -1207,6 +1207,25 @@ namespace WebsitePanel.Providers.Web
                         site.ColdFusionVersion = "9";
                         site.ColdFusionAvailable = true;
                     }
+					
+                    if (IsColdFusion10Installed())
+                    {
+                        site.ColdFusionVersion = "10";
+                        site.ColdFusionAvailable = true;
+                    }
+					
+                    if (IsColdFusion11Installed())
+                    {
+                        site.ColdFusionVersion = "11";
+                        site.ColdFusionAvailable = true;
+                    }
+					
+                    if (IsColdFusion12Installed())
+                    {
+                        site.ColdFusionVersion = "12";
+                        site.ColdFusionAvailable = true;
+                    }
+					
                 }
                 else
                 {
@@ -1330,6 +1349,11 @@ namespace WebsitePanel.Providers.Web
 			//
 			UpdateCgiBinFolder(site);
 			//
+			if (site.CreateCFVirtualDirectoriesPol)
+			{
+				//Create CFVirtDirs if enabled in hosting plan, this allows for CF to be enbled via Web Policy
+				CreateCFVirtualDirectories(site.SiteId);
+			}
 			try
 			{
 				webObjectsSvc.ChangeSiteState(site.SiteId, ServerState.Started);
@@ -1338,7 +1362,7 @@ namespace WebsitePanel.Providers.Web
 			{
 				Log.WriteError(ex);
 			}
-			//
+			//	
 			return site.SiteId;
 		}
 
@@ -1429,6 +1453,7 @@ namespace WebsitePanel.Providers.Web
                 {
                     DeleteCFVirtualDirectories(site.SiteId);
                     site.CreateCFVirtualDirectories = false;
+					site.CreateCFVirtualDirectoriesPol = false;
                 }
                 else
                 {
@@ -1438,6 +1463,7 @@ namespace WebsitePanel.Providers.Web
                         {
                             DeleteCFVirtualDirectories(site.SiteId);
                             site.CreateCFVirtualDirectories = false;
+							site.CreateCFVirtualDirectoriesPol = false;
                         }
                     }
                     else
@@ -1446,6 +1472,7 @@ namespace WebsitePanel.Providers.Web
                         {
                             CreateCFVirtualDirectories(site.SiteId);
                             site.CreateCFVirtualDirectories = true;
+							site.CreateCFVirtualDirectoriesPol = true;
                         }
                     }
                 }
@@ -1477,17 +1504,20 @@ namespace WebsitePanel.Providers.Web
                 if (site.ColdFusionInstalled)
                 {
 
-                    var cfElement = handlersCollection.CreateElement("add");
-
-                    cfElement["name"] = "coldfusion";
-                    cfElement["modules"] = "IsapiModule";
-                    cfElement["path"] = "*";
-                    cfElement["scriptProcessor"] = base.ColdFusionPath;
-                    cfElement["verb"] = "*";
-                    cfElement["resourceType"] = "Unspecified";
-                    cfElement["requireAccess"] = "None";
-                    cfElement["preCondition"] = "bitness64";
-                    handlersCollection.AddAt(0, cfElement);
+                    if (IsColdFusion7Installed() || IsColdFusion8Installed() || IsColdFusion9Installed()) 
+					{
+						var cfElement = handlersCollection.CreateElement("add");
+	
+	                    cfElement["name"] = "coldfusion";
+	                    cfElement["modules"] = "IsapiModule";
+	                    cfElement["path"] = "*";
+	                    cfElement["scriptProcessor"] = base.ColdFusionPath;
+	                    cfElement["verb"] = "*";
+	                    cfElement["resourceType"] = "Unspecified";
+	                    cfElement["requireAccess"] = "None";
+	                    cfElement["preCondition"] = "bitness64";
+	                    handlersCollection.AddAt(0, cfElement);
+					}
 
 
                 }
@@ -3336,7 +3366,14 @@ namespace WebsitePanel.Providers.Web
 			}
 
 			WebVirtualDirectory flashRemotingDir = new WebVirtualDirectory();
-			flashRemotingDir.Name = "JRunScripts";
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					flashRemotingDir.Name = "jakarta";
+				}
+			else
+				{
+					flashRemotingDir.Name = "JRunScripts";
+				}			
 			flashRemotingDir.ContentPath = CFFlashRemotingDirPath;
 			flashRemotingDir.EnableAnonymousAccess = true;
 			flashRemotingDir.EnableWindowsAuthentication = true;
@@ -3354,8 +3391,17 @@ namespace WebsitePanel.Providers.Web
 
 		public override void DeleteCFVirtualDirectories(string siteId)
 		{
-			DeleteVirtualDirectory(siteId, "CFIDE");
-			DeleteVirtualDirectory(siteId, "JRunScripts");
+			
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "jakarta");
+				}
+			else
+				{
+					DeleteVirtualDirectory(siteId, "CFIDE");
+					DeleteVirtualDirectory(siteId, "JRunScripts");
+				}
 
 		}
 
@@ -3367,8 +3413,16 @@ namespace WebsitePanel.Providers.Web
 
 			foreach (WebVirtualDirectory dir in dirs)
 			{
+			if (IsColdFusion10Installed() || IsColdFusion11Installed() || IsColdFusion12Installed())
+				{
+				if (dir.FullQualifiedPath.Equals("CFIDE") || dir.FullQualifiedPath.Equals("jakarta"))
+					identifier++;
+				}
+			else
+				{
 				if (dir.FullQualifiedPath.Equals("CFIDE") || dir.FullQualifiedPath.Equals("JRunScripts"))
 					identifier++;
+				}
 			}
 			return identifier.Equals(2);
 		}
@@ -4133,6 +4187,9 @@ namespace WebsitePanel.Providers.Web
                 // Restore setting back
                 ServerSettings.ADEnabled = adEnabled;
             }
+
+            //
+			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
 
 		private void ReadWebDeployPublishingAccessDetails(WebVirtualDirectory iisObject)

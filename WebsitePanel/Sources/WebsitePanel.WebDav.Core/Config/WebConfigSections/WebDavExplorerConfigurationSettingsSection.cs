@@ -9,13 +9,17 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string WebdavRootKey = "webdavRoot";
         private const string AuthTimeoutCookieNameKey = "authTimeoutCookieName";
         private const string AppName = "applicationName";
+        private const string EnterpriseServerUrlNameKey = "enterpriseServer";
         private const string WebsitePanelConstantUserKey = "websitePanelConstantUser";
         private const string ElementsRenderingKey = "elementsRendering";
         private const string Rfc2898CryptographyKey = "rfc2898Cryptography";
         private const string ConnectionStringsKey = "appConnectionStrings";
         private const string SessionKeysKey = "sessionKeys";
         private const string FileIconsKey = "fileIcons";
+        private const string OwaSupportedBrowsersKey = "owaSupportedBrowsers";
         private const string OfficeOnlineKey = "officeOnline";
+        private const string FilesToIgnoreKey = "filesToIgnore";
+        private const string TypeOpenerKey = "typeOpener";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
 
@@ -24,6 +28,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (AuthTimeoutCookieNameElement)this[AuthTimeoutCookieNameKey]; }
             set { this[AuthTimeoutCookieNameKey] = value; }
+        }
+
+        [ConfigurationProperty(EnterpriseServerUrlNameKey, IsRequired = true)]
+        public EnterpriseServerElement EnterpriseServerUrl
+        {
+            get { return (EnterpriseServerElement)this[EnterpriseServerUrlNameKey]; }
+            set { this[EnterpriseServerUrlNameKey] = value; }
         }
 
         [ConfigurationProperty(WebdavRootKey, IsRequired = true)]
@@ -75,11 +86,32 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
             set { this[FileIconsKey] = value; }
         }
 
+        [ConfigurationProperty(OwaSupportedBrowsersKey, IsDefaultCollection = false)]
+        public OwaSupportedBrowsersElementCollection OwaSupportedBrowsers
+        {
+            get { return (OwaSupportedBrowsersElementCollection)this[OwaSupportedBrowsersKey]; }
+            set { this[OwaSupportedBrowsersKey] = value; }
+        }
+
         [ConfigurationProperty(OfficeOnlineKey, IsDefaultCollection = false)]
         public OfficeOnlineElementCollection OfficeOnline
         {
             get { return (OfficeOnlineElementCollection)this[OfficeOnlineKey]; }
             set { this[OfficeOnlineKey] = value; }
+        }
+
+        [ConfigurationProperty(TypeOpenerKey, IsDefaultCollection = false)]
+        public OpenerElementCollection TypeOpener
+        {
+            get { return (OpenerElementCollection)this[TypeOpenerKey]; }
+            set { this[TypeOpenerKey] = value; }
+        }
+
+        [ConfigurationProperty(FilesToIgnoreKey, IsDefaultCollection = false)]
+        public FilesToIgnoreElementCollection FilesToIgnore
+        {
+            get { return (FilesToIgnoreElementCollection)this[FilesToIgnoreKey]; }
+            set { this[FilesToIgnoreKey] = value; }
         }
     }
 }

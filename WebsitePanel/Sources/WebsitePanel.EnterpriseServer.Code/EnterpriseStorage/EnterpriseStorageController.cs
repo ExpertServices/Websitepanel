@@ -172,6 +172,34 @@ namespace WebsitePanel.EnterpriseServer
             return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenByAccessToken(accessToken));
         }
 
+        public static SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
+        {
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return new SystemFile[0];
+                }
+
+                int serviceId = GetEnterpriseStorageServiceID(org.PackageId);
+
+                if (serviceId == 0)
+                {
+                    return new SystemFile[0];
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(serviceId);
+
+                return es.Search(org.OrganizationId, searchPaths, searchText, userPrincipalName, recursive);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         #region Directory Browsing
 
         public static bool GetDirectoryBrowseEnabled(int itemId, string siteId)
@@ -201,6 +229,33 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #endregion
+
+        private static IEnumerable<SystemFile> GetRootFolders(string userPrincipalName)
+        {
+            var rootFolders = new List<SystemFile>();
+
+            var account = ExchangeServerController.GetAccountByAccountName(userPrincipalName);
+
+            var userGroups = OrganizationController.GetSecurityGroupsByMember(account.ItemId, account.AccountId);
+
+            foreach (var folder in GetFolders(account.ItemId))
+            {
+                var permissions = GetFolderPermission(account.ItemId, folder.Name);
+
+                foreach (var permission in permissions)
+                {
+                    if ((!permission.IsGroup
+                            && (permission.DisplayName == account.UserPrincipalName || permission.DisplayName == account.DisplayName))
+                        || (permission.IsGroup && userGroups.Any(x => x.DisplayName == permission.DisplayName)))
+                    {
+                        rootFolders.Add(folder);
+                        break;
+                    }
+                }
+            }
+
+            return rootFolders;
+        }
 
         protected static void StartESBackgroundTaskInternal(string taskName, int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
@@ -1209,6 +1264,37 @@ namespace WebsitePanel.EnterpriseServer
 
             return null;
         }
+
+        #region WebDav portal
+
+        public static string GetWebDavPortalUserSettingsByAccountId(int accountId)
+        {
+            var dataReader = DataProvider.GetWebDavPortalUserSettingsByAccountId(accountId);
+
+            while (dataReader.Read())
+            {
+                return (string)dataReader["Settings"];
+            }
+
+            return null;
+        }
+
+        public static void UpdateUserSettings(int accountId, string settings)
+        {
+            var oldSettings = GetWebDavPortalUserSettingsByAccountId(accountId);
+
+            if (string.IsNullOrEmpty(oldSettings))
+            {
+                DataProvider.AddWebDavPortalUsersSettings(accountId, settings);
+            }
+            else
+            {
+                DataProvider.UpdateWebDavPortalUsersSettings(accountId, settings);
+            }
+        }
+
+        #endregion
+
 
         #region Statistics
 
