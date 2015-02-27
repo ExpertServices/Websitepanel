@@ -95,6 +95,10 @@ namespace WebsitePanel.Portal.RDS
                     ShowErrorMessage("REMOTE_DESKTOP_SERVICES_REMOVE_COLLECTION", ex);
                 }
             }
+            else if (e.CommandName == "EditCollection")
+            {
+                Response.Redirect(GetCollectionEditUrl(e.CommandArgument.ToString()));
+            }
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)

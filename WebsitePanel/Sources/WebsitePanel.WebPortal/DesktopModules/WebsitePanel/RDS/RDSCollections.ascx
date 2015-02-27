@@ -47,8 +47,8 @@
                         <Columns>
                             <asp:TemplateField HeaderText="gvCollectionName" SortExpression="DisplayName">
 							    <ItemStyle Width="40%"></ItemStyle>
-							    <ItemTemplate>                                    
-                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("DisplayName").ToString() %></asp:hyperlink>
+							    <ItemTemplate>  
+                                    <asp:LinkButton id="lnkCollectionName" meta:resourcekey="lnkCollectionName" runat="server" CommandName="EditCollection" CommandArgument='<%# Eval("Id") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"><%# Eval("DisplayName").ToString() %></asp:LinkButton>                                                                 
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvServer">

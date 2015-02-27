@@ -67,11 +67,12 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string RdsGroupFormat = "rds-{0}-{1}";
         private const string RdsModuleName = "RemoteDesktopServices";
         private const string AddNpsString = "netsh nps add np name=\"\"{0}\"\" policysource=\"1\" processingorder=\"{1}\" conditionid=\"0x3d\" conditiondata=\"^5$\" conditionid=\"0x1fb5\" conditiondata=\"{2}\" conditionid=\"0x1e\" conditiondata=\"UserAuthType:(PW|CA)\" profileid=\"0x1005\" profiledata=\"TRUE\" profileid=\"0x100f\" profiledata=\"TRUE\" profileid=\"0x1009\" profiledata=\"0x7\" profileid=\"0x1fe6\" profiledata=\"0x40000000\"";
-        private const string WspAdministratorsGroupName = "WSP-Administrators";
-        private const string WspAdministratorsGroupDescription = "WSP Administrators";
+        private const string WspAdministratorsGroupName = "WSP-Org-Administrators";
+        private const string WspAdministratorsGroupDescription = "WSP Org Administrators";
         private const string RdsServersOU = "RDSServers";
         private const string RDSHelpDeskComputerGroup = "Websitepanel-RDSHelpDesk-Computer";
-        private const string RDSHelpDeskAdminsGroup = "WSP-HelpdeskAdmins";
+        private const string RDSHelpDeskGroup = "WSP-HelpDeskAdministrators";
+        private const string RDSHelpDeskGroupDescription = "WSP Help Desk Administrators";                                                
 
         #endregion
 
@@ -1178,14 +1179,31 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         private void AddHelpDeskAdminsGroupToLocalAdmins(Runspace runspace, string hostName)
         {
-            var helpDeskAdminsGroupPath = GetHelpDeskGroupPath(RDSHelpDeskAdminsGroup);
+            var helpDeskAdminsGroupPath = GetHelpDeskGroupPath(RDSHelpDeskGroup);
+            DirectoryEntry groupEntry = null;
 
             if (!ActiveDirectoryUtils.AdObjectExists(helpDeskAdminsGroupPath))
             {
-                ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskAdminsGroup);
+                ActiveDirectoryUtils.CreateGroup(GetRootOUPath(), RDSHelpDeskGroup);
+                groupEntry = ActiveDirectoryUtils.GetADObject(helpDeskAdminsGroupPath);
+
+                if (groupEntry.Properties.Contains("Description"))
+                {
+                    groupEntry.Properties["Description"][0] = RDSHelpDeskGroupDescription;
+                }
+                else
+                {
+                    groupEntry.Properties["Description"].Add(RDSHelpDeskGroupDescription);
+                }
+
+                groupEntry.CommitChanges();
             }
 
-            var groupEntry = ActiveDirectoryUtils.GetADObject(helpDeskAdminsGroupPath);
+            if (groupEntry == null)
+            {
+                groupEntry = ActiveDirectoryUtils.GetADObject(helpDeskAdminsGroupPath);
+            }
+
             var samAccountName = ActiveDirectoryUtils.GetADObjectProperty(groupEntry, "sAMAccountName");
             
             var scripts = new List<string>
