@@ -13,5 +13,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public string SessionState { get; set; }
         public string HostServer { get; set; }
         public string DomainName { get; set; }
+        public bool IsVip { get; set; }
+        public string SamAccountName { get; set; }
     }
 }

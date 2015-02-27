@@ -42,15 +42,30 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
             {
+                BindQuota(cntx);
             }
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            
             if (cntx.Quotas.ContainsKey(Quotas.RDS_COLLECTIONS))
             {
                 btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
             }
+        }
+
+        private void BindQuota(PackageContext cntx)
+        {            
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            collectionsQuota.QuotaUsedValue = stats.CreatedRdsCollections;
+            collectionsQuota.QuotaValue = stats.AllocatedRdsCollections;
+
+            if (stats.AllocatedUsers != -1)
+            {
+                collectionsQuota.QuotaAvailable = tenantStats.AllocatedRdsCollections - tenantStats.CreatedRdsCollections;
+            }            
         }
 
         public string GetServerName(string collectionId)

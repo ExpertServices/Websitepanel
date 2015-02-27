@@ -760,8 +760,21 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(organization.PackageId));
+            var userSessions = rds.GetRdsUserSessions(collection.Name).ToList();
+            var organizationUsers = OrganizationController.GetOrganizationUsersPaged(collection.ItemId, null, null, null, 0, Int32.MaxValue).PageUsers;            
 
-            return rds.GetRdsUserSessions(collection.Name).ToList();
+            foreach(var userSession in userSessions)
+            {
+                var organizationUser = organizationUsers.FirstOrDefault(o => o.SamAccountName.Equals(userSession.SamAccountName, StringComparison.CurrentCultureIgnoreCase));
+
+                if (organizationUser != null)
+                {
+                    userSession.IsVip = organizationUser.IsVIP;
+                    result.Add(userSession);
+                }
+            }
+
+            return result;
         }
 
         private static RdsServersPaged GetFreeRdsServersPagedInternal(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)

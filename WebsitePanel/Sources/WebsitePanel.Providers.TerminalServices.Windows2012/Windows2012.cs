@@ -2290,18 +2290,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             cmd.Parameters.Add("CollectionName", collectionName);
             cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
             var userSessions = ExecuteShellCommand(runSpace, cmd, false, out errors);            
-            var properties = typeof(RdsUserSession).GetProperties();
+            var properties = typeof(RdsUserSession).GetProperties();            
 
             foreach(var userSession in  userSessions)
             {
-                var session = new RdsUserSession();                                
-
-                foreach(var prop in properties)
+                var session = new RdsUserSession
                 {
-                    prop.SetValue(session, GetPSObjectProperty(userSession, prop.Name).ToString(), null);
-                }
-
-                session.UserName = GetUserFullName(session.DomainName, session.UserName, runSpace);
+                    CollectionName = GetPSObjectProperty(userSession, "CollectionName").ToString(),
+                    DomainName = GetPSObjectProperty(userSession, "DomainName").ToString(),
+                    HostServer = GetPSObjectProperty(userSession, "HostServer").ToString(),
+                    SessionState = GetPSObjectProperty(userSession, "SessionState").ToString(),
+                    UnifiedSessionId = GetPSObjectProperty(userSession, "UnifiedSessionId").ToString(),
+                    SamAccountName = GetPSObjectProperty(userSession, "UserName").ToString(),
+                };                                
+                                
+                session.IsVip = false;
+                session.UserName = GetUserFullName(session.DomainName, session.SamAccountName, runSpace);
                 result.Add(session);
             }
 

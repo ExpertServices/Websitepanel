@@ -6042,7 +6042,7 @@ CREATE PROCEDURE [dbo].GetOrganizationRdsUsersCount
 )
 AS
 SELECT
-  @TotalNumber = Count([RDSCollectionId])
+  @TotalNumber = Count(DISTINCT([AccountId]))
   FROM [dbo].[RDSCollectionUsers]
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
@@ -8192,6 +8192,22 @@ AS
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType = 11)
+		ELSE IF @QuotaID = 450
+			SET @Result = (SELECT COUNT(DISTINCT(RCU.[AccountId])) FROM [dbo].[RDSCollectionUsers] RCU
+				INNER JOIN ExchangeAccounts EA ON EA.AccountId = RCU.AccountId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 451
+			SET @Result = (SELECT COUNT(RS.[ID]) FROM [dbo].[RDSServers] RS				
+				INNER JOIN ServiceItems  si ON RS.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 491
+			SET @Result = (SELECT COUNT(RC.[ID]) FROM [dbo].[RDSCollections] RC
+				INNER JOIN ServiceItems  si ON RC.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
 		ELSE IF @QuotaName like 'ServiceLevel.%' -- Support Service Level Quota
 		BEGIN
 			DECLARE @LevelID int

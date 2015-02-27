@@ -94,6 +94,24 @@ namespace WebsitePanel.Portal.RDS {
         protected global::WebsitePanel.Portal.RDS.UserControls.RDSCollectionUsers users;
         
         /// <summary>
+        /// locQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locQuota;
+        
+        /// <summary>
+        /// usersQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer usersQuota;
+        
+        /// <summary>
         /// buttonPanel control.
         /// </summary>
         /// <remarks>

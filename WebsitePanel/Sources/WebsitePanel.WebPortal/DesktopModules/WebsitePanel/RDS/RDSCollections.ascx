@@ -66,6 +66,11 @@
 		                    </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Collections Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="collectionsQuota" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                    </div>
                     <asp:ObjectDataSource ID="odsRDSCollectionsPaged" runat="server" EnablePaging="True"
 							SelectCountMethod="GetRDSCollectonsPagedCount"
 							SelectMethod="GetRDSCollectonsPaged"
