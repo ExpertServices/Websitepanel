@@ -117,58 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnSave.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Updating folder settings...');</value>
+  <data name="Tab.FolderPermissions" xml:space="preserve">
+    <value>Folder Permissions</value>
   </data>
-  <data name="btnSave.Text" xml:space="preserve">
-    <value>Save Changes</value>
-  </data>
-  <data name="locPermissionsSection.Text" xml:space="preserve">
-    <value>Permissions</value>
-  </data>
-  <data name="locNotes.Text" xml:space="preserve">
-    <value>Notes:</value>
-  </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit Folder</value>
-  </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Folders</value>
-  </data>
-  <data name="valRequireFolderName.ErrorMessage" xml:space="preserve">
-    <value>Enter Folder Name</value>
-  </data>
-  <data name="valRequireFolderName.Text" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="locFolderName.Text" xml:space="preserve">
-    <value>Folder Name:</value>
-  </data>
-  <data name="locFolderUrl.Text" xml:space="preserve">
-    <value>Folder Url:</value>
-  </data>
-  <data name="locFolderSize" xml:space="preserve">
-    <value>Folder Limit Size (Gb):</value>
-  </data>
-  <data name="rangeFolderSize" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="valRequireFolderSize.ErrorMessage" xml:space="preserve">
-    <value>Enter Folder Size</value>
-  </data>
-  <data name="locQuotaType" xml:space="preserve">
-    <value>Quota Type:</value>
-  </data>
-  <data name="valRequireFolderSize" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="rbtnQuotaHard" xml:space="preserve">
-    <value>Hard</value>
-  </data>
-  <data name="rbtnQuotaSoft" xml:space="preserve">
-    <value>Soft</value>
-  </data>
-  <data name="colFolderGeneralSettings.Text" xml:space="preserve">
+  <data name="Tab.GeneralSettings" xml:space="preserve">
     <value>General Settings</value>
+  </data>
+  <data name="Tab.OwaEditPermissions" xml:space="preserve">
+    <value>Office Web App Editing</value>
   </data>
 </root>

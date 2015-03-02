@@ -211,6 +211,20 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsFolderPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsFolderPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsOwaEditing.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsOwaEditing.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationDeletedUsers.ascx.cs">
       <DependentUpon>OrganizationDeletedUsers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -228,6 +242,20 @@
     <Compile Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx.cs">
       <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx.cs">
+      <DependentUpon>EnterpriseStorageEditFolderTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageEditFolderTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.cs">
+      <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
       <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
@@ -4455,7 +4483,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
@@ -4499,6 +4531,10 @@
     <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageEditFolderTabs.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsFolderPermissions.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />

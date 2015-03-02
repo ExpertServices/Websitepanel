@@ -117,58 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnSave.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Updating folder settings...');</value>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Add...</value>
   </data>
-  <data name="btnSave.Text" xml:space="preserve">
-    <value>Save Changes</value>
+  <data name="btnAddSelected.Text" xml:space="preserve">
+    <value>Add Accounts</value>
   </data>
-  <data name="locPermissionsSection.Text" xml:space="preserve">
-    <value>Permissions</value>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="locNotes.Text" xml:space="preserve">
-    <value>Notes:</value>
+  <data name="btnDelete.Text" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit Folder</value>
+  <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Folders</value>
+  <data name="ddlSearchColumnEmail.Text" xml:space="preserve">
+    <value>E-mail Address</value>
   </data>
-  <data name="valRequireFolderName.ErrorMessage" xml:space="preserve">
-    <value>Enter Folder Name</value>
+  <data name="gvAccountsDisplayName.HeaderText" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="valRequireFolderName.Text" xml:space="preserve">
-    <value>*</value>
+  <data name="gvAccountsEmail.HeaderText" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="locFolderName.Text" xml:space="preserve">
-    <value>Folder Name:</value>
+  <data name="gvPopupAccounts.EmptyDataText" xml:space="preserve">
+    <value>No accounts found.</value>
   </data>
-  <data name="locFolderUrl.Text" xml:space="preserve">
-    <value>Folder Url:</value>
+  <data name="gvUsers.EmptyDataText" xml:space="preserve">
+    <value>The list of users is empty. Click "Add..." button.</value>
   </data>
-  <data name="locFolderSize" xml:space="preserve">
-    <value>Folder Limit Size (Gb):</value>
+  <data name="gvUsersAccount.HeaderText" xml:space="preserve">
+    <value>Users</value>
   </data>
-  <data name="rangeFolderSize" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="valRequireFolderSize.ErrorMessage" xml:space="preserve">
-    <value>Enter Folder Size</value>
-  </data>
-  <data name="locQuotaType" xml:space="preserve">
-    <value>Quota Type:</value>
-  </data>
-  <data name="valRequireFolderSize" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="rbtnQuotaHard" xml:space="preserve">
-    <value>Hard</value>
-  </data>
-  <data name="rbtnQuotaSoft" xml:space="preserve">
-    <value>Soft</value>
-  </data>
-  <data name="colFolderGeneralSettings.Text" xml:space="preserve">
-    <value>General Settings</value>
+  <data name="headerAddAccounts.Text" xml:space="preserve">
+    <value>Enabled Users</value>
   </data>
 </root>

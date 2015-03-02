@@ -50,9 +50,9 @@ namespace WebsitePanel.WebDav.Core.Managers
                 children = ConnectToWebDavServer().Select(x => new WebDavResource
                 {
                     Href = new Uri(x.Url), 
-                    ItemType = ItemType.Folder, 
-                    ContentLength = x.Size, 
-                    AllocatedSpace = x.FRSMQuotaMB, 
+                    ItemType = ItemType.Folder,
+                    ContentLength = x.Size * 1024 * 1024,
+                    AllocatedSpace = x.FRSMQuotaMB * 1024 * 1024, 
                     IsRootItem = true
                 }).ToArray();
             }

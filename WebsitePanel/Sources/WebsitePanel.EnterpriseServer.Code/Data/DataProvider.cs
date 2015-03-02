@@ -4543,6 +4543,69 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void DeleteAllEnterpriseFolderOwaUsers(int itemId, int folderId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteAllEnterpriseFolderOwaUsers",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderID", folderId)
+            );
+        }
+
+        public static int AddEnterpriseFolderOwaUser(int itemId, int folderId, int accountId)
+        {
+            SqlParameter id = new SqlParameter("@ESOwsaUserId", SqlDbType.Int);
+            id.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddEnterpriseFolderOwaUser",
+                id,
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderID", folderId),
+                new SqlParameter("@AccountId", accountId)
+            );
+
+            // read identity
+            return Convert.ToInt32(id.Value);
+        }
+
+        public static IDataReader GetEnterpriseFolderOwaUsers(int itemId, int folderId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetEnterpriseFolderOwaUsers",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderID", folderId)
+            );
+        }
+
+        public static IDataReader GetEnterpriseFolderId(int itemId, string folderName)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetEnterpriseFolderId",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderName", folderName)
+            );
+        }
+
+        public static IDataReader GetUserEnterpriseFolderWithOwaEditPermission(int itemId, int accountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetUserEnterpriseFolderWithOwaEditPermission",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountID", accountId)
+            );
+        }
+
         #endregion
 
         #region Support Service Levels
