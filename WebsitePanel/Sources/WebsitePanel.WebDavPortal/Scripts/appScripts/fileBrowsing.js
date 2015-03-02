@@ -86,10 +86,11 @@ WspFileBrowser.prototype = {
             "columnDefs": [
                 {
                     "render": function(data, type, row) {
-                        return '<img class="table-icon" src="' + row.IconHref + '"/>' +
-                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link ' + (row.IsFolder ?  'processing-dialog':'') + '" title="' + row.DisplayName + '">' +
+                        return '<div class="column-name"><img class="table-icon" src="' + row.IconHref + '"/>' +
+                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link" title="' + row.DisplayName + '">' +
                                     row.DisplayName +
-                                '</a>';
+                                '</a>' + (row.IsRoot ? '<span id="quota">' + wsp.fileBrowser.bytesToSize(row.Size) + ' / ' + wsp.fileBrowser.bytesToSize(row.Quota) + '</span>' : '')
+                        +'</div>';
                     },
                     "targets": 0
                 },
@@ -186,6 +187,14 @@ WspFileBrowser.prototype = {
                 }
             });
         };
+    },
+
+    bytesToSize: function(bytes) {
+        if (bytes == 0) return '0 Byte';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
     }
 };
 

@@ -151,11 +151,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (string.IsNullOrEmpty(dtRequest.Search.Value) == false)
             {
-                folderItems = _webdavManager.SearchFiles(WspContext.User.ItemId, pathPart, dtRequest.Search.Value, WspContext.User.Login, true).Select(x => new WebDavResource(null, x));
+                folderItems = _webdavManager.SearchFiles(WspContext.User.ItemId, pathPart, dtRequest.Search.Value, WspContext.User.Login, true).Cast<WebDavResource>();
             }
             else
             {
-                folderItems = _webdavManager.OpenFolder(pathPart).Select(x=>new WebDavResource(null, x));
+                folderItems = _webdavManager.OpenFolder(pathPart).Cast<WebDavResource>();
             }
 
             var tableItems = Mapper.Map<IEnumerable<WebDavResource>, IEnumerable<ResourceTableItemModel>>(folderItems).ToList();

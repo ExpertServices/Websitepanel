@@ -45,7 +45,9 @@ namespace WebsitePanel.WebDavPortal.Mapping.Profiles.Webdav
                 .ForMember(ti => ti.LastModified, x => x.MapFrom(hi => hi.LastModified))
                 .ForMember(ti => ti.LastModifiedFormated, x => x.MapFrom(hi => hi.LastModified == DateTime.MinValue ? "--" : (new WebDavResource(null, hi)).LastModified.ToString("dd/MM/yyyy hh:mm tt")))
 
+                .ForMember(ti => ti.IsRoot, x => x.MapFrom(hi => hi.IsRootItem))
                 .ForMember(ti => ti.Size, x => x.MapFrom(hi => hi.ContentLength))
+                .ForMember(ti => ti.Quota, x => x.MapFrom(hi => hi.AllocatedSpace))
                 .ForMember(ti => ti.IsFolder, x => x.MapFrom(hi => hi.ItemType == ItemType.Folder));
         }
     }

@@ -295,6 +295,16 @@ tr.selected-file {
     display: block;
 }
 
+.column-name  {
+    position: relative;
+}
+
+.column-name #quota {
+    position: absolute;
+    right: 0px;
+    top: 20%;
+}
+
 /* Theme Mods */
 
 input,div{border-radius:0px!important;}

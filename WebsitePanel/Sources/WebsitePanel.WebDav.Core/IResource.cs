@@ -50,6 +50,7 @@ namespace WebsitePanel.WebDav.Core
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
 
+                IsRootItem = item.IsRootItem;
                 SetCredentials(credentials);
                 SetHierarchyItem(item);
             }
