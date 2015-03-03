@@ -10,7 +10,7 @@
     @if (Model != null)
     {
         string header = WspContext.User.OrganizationId;
-        string[] elements = Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+        string[] elements = string.IsNullOrEmpty(Model.UrlSuffix)? new string[0]: Model.UrlSuffix.Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
         <div class="breadcrumb-wsp">
             @if (String.IsNullOrEmpty(Model.SearchValue))
