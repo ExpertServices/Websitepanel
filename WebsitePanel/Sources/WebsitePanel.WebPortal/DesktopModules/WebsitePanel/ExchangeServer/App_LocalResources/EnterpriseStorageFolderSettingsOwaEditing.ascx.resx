@@ -127,7 +127,7 @@
     <value>Office Web App Editing</value>
   </data>
   <data name="locOwaEditingSection.Text" xml:space="preserve">
-    <value>Users</value>
+    <value>Users And Groups</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Edit Folder</value>
