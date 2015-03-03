@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Xml;
+using System.Text;
 using System.Xml.Serialization;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.DNS;
@@ -385,7 +386,9 @@ namespace WebsitePanel.EnterpriseServer
             var idn = new IdnMapping();
 
             if (itemType == typeof(DnsZone))
-                items.AddRange(dns.GetZones().Select(z => idn.GetUnicode(z)));
+                items.AddRange(dns.GetZones().Select(z =>
+                    Encoding.UTF8.GetByteCount(z) == z.Length ? // IsASCII
+                    idn.GetUnicode(z) : z ));
 
             return items;
         }
