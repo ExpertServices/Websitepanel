@@ -4676,6 +4676,37 @@ namespace WebsitePanel.EnterpriseServer
 
         #region RDS
 
+        public static int AddRdsCertificate(int serviceId, string content, byte[] hash, string fileName, DateTime? validFrom, DateTime? expiryDate)
+        {
+            SqlParameter rdsCertificateId = new SqlParameter("@RDSCertificateID", SqlDbType.Int);
+            rdsCertificateId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSCertificate",
+                rdsCertificateId,
+                new SqlParameter("@ServiceId", serviceId),
+                new SqlParameter("@Content", content),
+                new SqlParameter("@Hash", Convert.ToBase64String(hash)),
+                new SqlParameter("@FileName", fileName),
+                new SqlParameter("@ValidFrom", validFrom),
+                new SqlParameter("@ExpiryDate", expiryDate)
+            );
+
+            return Convert.ToInt32(rdsCertificateId.Value);
+        }
+
+        public static IDataReader GetRdsCertificateByServiceId(int serviceId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCertificateByServiceId",
+                new SqlParameter("@ServiceId", serviceId)
+            );
+        }
+
         public static IDataReader GetRdsCollectionSettingsByCollectionId(int collectionId)
         {
             return SqlHelper.ExecuteReader(

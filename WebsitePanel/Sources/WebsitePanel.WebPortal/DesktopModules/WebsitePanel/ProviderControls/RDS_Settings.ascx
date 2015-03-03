@@ -1,5 +1,17 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDS_Settings.ascx.cs" Inherits="WebsitePanel.Portal.ProviderControls.RDS_Settings" %>
-<table>
+<table>    
+    <tr>
+        <td colspan ="2" style="padding: 10px 0 10px 0;"><asp:FileUpload ID="upPFX" runat="server"/></td>
+    </tr>
+    <tr><td></td></tr>
+    <tr>
+        <td class="SubHead" style="width:200px" nowrap>
+            <asp:Localize runat="server" meta:resourcekey="lblPFXInstallPassword" />
+        </td>
+        <td>                        
+            <asp:TextBox ID="txtPFXInstallPassword" runat="server" TextMode="Password" Width="200px" />
+        </td>
+    </tr>
     <tr>
         <td class="SubHead" width="200" nowrap>
             <asp:Label runat="server" ID="lblConnectionBroker" meta:resourcekey="lblConnectionBroker" Text="Connection Broker:"/>

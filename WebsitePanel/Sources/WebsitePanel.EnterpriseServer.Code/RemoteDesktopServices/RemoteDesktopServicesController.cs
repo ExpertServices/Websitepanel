@@ -278,19 +278,28 @@ namespace WebsitePanel.EnterpriseServer
             return SaveRdsCollectionLocalAdminsInternal(users, collectionId);
         }
 
-        public static ResultObject InstallSessionHostsCertificate(int collectionId, byte[] certificate, string password)
+        public static ResultObject InstallSessionHostsCertificate(RdsServer rdsServer)
         {
-            return InstallSessionHostsCertificateInternal(collectionId, certificate, password);
+            return InstallSessionHostsCertificateInternal(rdsServer);
         }
 
-        private static ResultObject InstallSessionHostsCertificateInternal(int collectionId, byte[] certificate, string password)
+        public static RdsCertificate GetRdsCertificateByServiceId(int serviceId)
+        {
+            return GetRdsCertificateByServiceIdInternal(serviceId);
+        }
+
+        public static ResultObject AddRdsCertificate(RdsCertificate certificate)
+        {
+            return AddRdsCertificateInternal(certificate);
+        }
+
+        private static ResultObject InstallSessionHostsCertificateInternal(RdsServer rdsServer)
         {
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "INSTALL_CERTIFICATE");
 
             try
-            {
-                var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
-                Organization org = OrganizationController.GetOrganization(collection.ItemId);
+            {                
+                Organization org = OrganizationController.GetOrganization(rdsServer.ItemId.Value);                
 
                 if (org == null)
                 {
@@ -299,14 +308,64 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
                 }
 
-                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
-                var servers = ObjectUtils.CreateListFromDataReader<RdsServer>(DataProvider.GetRDSServersByCollectionId(collection.Id)).ToList();
+                int serviceId = GetRemoteDesktopServiceID(org.PackageId);
+                var rds = GetRemoteDesktopServices(serviceId);
+                var certificate = GetRdsCertificateByServiceIdInternal(serviceId);
+                
+                var array = Convert.FromBase64String(certificate.Hash);
+                char[] chars = new char[array.Length / sizeof(char)];
+                System.Buffer.BlockCopy(array, 0, chars, 0, array.Length);
+                string password = new string(chars);
+                byte[] content = Convert.FromBase64String(certificate.Content);
 
-                rds.InstallCertificate(certificate, password, servers.Select(s => s.FqdName).ToArray());
+                rds.InstallCertificate(content, password, new string[] {rdsServer.FqdName});
             }
             catch (Exception ex)
             {
                 throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        private static RdsCertificate GetRdsCertificateByServiceIdInternal(int serviceId)
+        {
+            var result = ObjectUtils.FillObjectFromDataReader<RdsCertificate>(DataProvider.GetRdsCertificateByServiceId(serviceId));
+
+            return result;
+        }
+
+        private static ResultObject AddRdsCertificateInternal(RdsCertificate certificate)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "ADD_RDS_SERVER");
+
+            try
+            {
+                byte[] hash = new byte[certificate.Hash.Length * sizeof(char)];
+                System.Buffer.BlockCopy(certificate.Hash.ToCharArray(), 0, hash, 0, hash.Length);
+                certificate.Id = DataProvider.AddRdsCertificate(certificate.ServiceId, certificate.Content, hash, certificate.FileName, certificate.ValidFrom, certificate.ExpiryDate);                
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                {
+                    result.AddError("Unable to add RDS Certificate", ex.InnerException);
+                }
+                else
+                {
+                    result.AddError("Unable to add RDS Certificate", ex);
+                }
             }
             finally
             {
@@ -370,7 +429,7 @@ namespace WebsitePanel.EnterpriseServer
             var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));            
 
             var organizationUsers = OrganizationController.GetOrganizationUsersPaged(collection.ItemId, null, null, null, 0, Int32.MaxValue).PageUsers;
-            var organizationAdmins = rds.GetRdsCollectionLocalAdmins(servers.First().FqdName);
+            var organizationAdmins = rds.GetRdsCollectionLocalAdmins(org.OrganizationId, collection.Name);
 
             return organizationUsers.Where(o => organizationAdmins.Select(a => a.ToLower()).Contains(o.DomainUserName.ToLower())).ToList();
         }
@@ -394,7 +453,7 @@ namespace WebsitePanel.EnterpriseServer
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
                 var servers = ObjectUtils.CreateListFromDataReader<RdsServer>(DataProvider.GetRDSServersByCollectionId(collection.Id)).ToList();                
 
-                rds.SaveRdsCollectionLocalAdmins(users, servers.Select(s => s.FqdName).ToArray());
+                rds.SaveRdsCollectionLocalAdmins(users.Select(u => u.AccountName).ToArray(), servers.Select(s => s.FqdName).ToArray(), org.OrganizationId, collection.Name);
             }
             catch (Exception ex)
             {

@@ -28,27 +28,7 @@
                                 <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName" ValidationGroup="SaveRDSCollection"></asp:RequiredFieldValidator>
 						    </td>                            
 					    </tr>                        
-					</table> 
-
-                    <wsp:CollapsiblePanel id="secSelectSertificate" runat="server"
-                        TargetControlID="panelSelectSertificate" meta:resourcekey="secSelectSertificate" Text="">
-                    </wsp:CollapsiblePanel>		
-                    
-                    <asp:Panel runat="server" ID="panelSelectSertificate">                                                
-                        <div style="padding: 10px;">
-                            <div class="FormBody">
-                                <div class="FormField">
-                                    <asp:FileUpload ID="upPFX" runat="server"/>
-                                </div>
-                                <div class="FormFieldDescription">
-                                    <asp:Localize runat="server" meta:resourcekey="lblPFXInstallPassword" />
-                                </div>
-                                <div class="FormField">
-                                    <asp:TextBox ID="txtPFXInstallPassword" runat="server" TextMode="Password" CssClass="NormalTextBox" />
-                                </div>
-                            </div>
-                        </div>                            
-                    </asp:Panel>                   
+					</table>                                                                              
 
                     <fieldset id="RDSServersPanel" runat="server">
                         <legend><asp:Localize ID="locRDSServersSection" runat="server" meta:resourcekey="locRDSServersSection" Text="RDS Servers"></asp:Localize></legend>

@@ -210,7 +210,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                 RemoteApplication app = new RemoteApplication();
                 app.Alias = (string)gvApps.DataKeys[i][0];
-                app.DisplayName = ((HyperLink)row.FindControl("lnkDisplayName")).Text;
+                app.DisplayName = ((LinkButton)row.FindControl("lnkDisplayName")).Text;
                 app.FilePath = ((HiddenField)row.FindControl("hfFilePath")).Value;
                 app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
 

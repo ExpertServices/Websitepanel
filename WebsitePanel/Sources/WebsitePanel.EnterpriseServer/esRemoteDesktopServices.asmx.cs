@@ -327,9 +327,21 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject InstallSessionHostsCertificate(int collectionId, byte[] certificate, string password)
+        public ResultObject InstallSessionHostsCertificate(RdsServer rdsServer)
         {
-            return RemoteDesktopServicesController.InstallSessionHostsCertificate(collectionId, certificate, password);
+            return RemoteDesktopServicesController.InstallSessionHostsCertificate(rdsServer);
+        }
+
+        [WebMethod]
+        public RdsCertificate GetRdsCertificateByServiceId(int serviceId)
+        {
+            return RemoteDesktopServicesController.GetRdsCertificateByServiceId(serviceId);
+        }
+
+        [WebMethod]
+        public ResultObject AddRdsCertificate(RdsCertificate certificate)
+        {
+            return RemoteDesktopServicesController.AddRdsCertificate(certificate);
         }
     }
 }

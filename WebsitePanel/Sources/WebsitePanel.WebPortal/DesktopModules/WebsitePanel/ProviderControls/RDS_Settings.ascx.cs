@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.RemoteDesktopServices;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
@@ -54,11 +55,10 @@ namespace WebsitePanel.Portal.ProviderControls
         }
 
         public void BindSettings(System.Collections.Specialized.StringDictionary settings)
-        {
+        {                
             txtConnectionBroker.Text = settings["ConnectionBroker"];
 
             GWServers = settings["GWServrsList"];
-
             UpdateLyncServersGrid();
 
             txtRootOU.Text = settings["RootOU"];
@@ -86,7 +86,26 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
             settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
 
-            settings["GWServrsList"] = GWServers;	
+            settings["GWServrsList"] = GWServers;
+
+            try
+            {
+                if (upPFX.HasFile.Equals(true))
+                {                    
+                    var certificate = new RdsCertificate
+                    {
+                        ServiceId = PanelRequest.ServiceId,
+                        Content = Convert.ToBase64String(upPFX.FileBytes),
+                        FileName = upPFX.FileName,
+                        Hash = txtPFXInstallPassword.Text
+                    };
+
+                    ES.Services.RDS.AddRdsCertificate(certificate);
+                }
+            }
+            catch (Exception)
+            {                
+            }
         }
 
         protected void chkUseCentralNPS_CheckedChanged(object sender, EventArgs e)
