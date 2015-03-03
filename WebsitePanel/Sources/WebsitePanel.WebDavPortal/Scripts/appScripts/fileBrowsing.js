@@ -1,6 +1,12 @@
 ﻿function WspFileBrowser() {
-    this.settings = { deletionBlockSelector: ".file-actions-menu .file-deletion", deletionUrl: "storage/files-group-action/delete" };
-    this.table = null;
+    this.settings = {
+        deletionBlockSelector: ".file-actions-menu .file-deletion",
+        deletionUrl: "storage/files-group-action/delete",
+        textDateModified: "Date modified",
+        textSize: "Size"
+    };
+    this.itemsTable = null;
+    this.searchTable = null;
 }
 
 WspFileBrowser.prototype = {
@@ -34,7 +40,8 @@ WspFileBrowser.prototype = {
         }).get();
     },
 
-    deleteSelectedItems: function(e) {
+    deleteSelectedItems: function (e) {
+
         $.ajax({
             type: 'POST',
             url: wsp.fileBrowser.settings.deletionUrl,
@@ -45,7 +52,7 @@ WspFileBrowser.prototype = {
 
                 wsp.fileBrowser.clearDeletedItems(model.DeletedFiles);
                 wsp.fileBrowser.refreshDeletionBlock();
-                wsp.fileBrowser.refreshDataTable();
+                wsp.fileBrowser.refreshDataTable(wsp.fileBrowser.itemsTable);
 
                 wsp.dialogs.hideProcessDialog();
             },
@@ -53,7 +60,7 @@ WspFileBrowser.prototype = {
                 wsp.messages.addErrorMessage(errorThrown);
 
                 wsp.fileBrowser.refreshDeletionBlock();
-                wsp.fileBrowser.refreshDataTable();
+                wsp.fileBrowser.refreshDataTable(wsp.fileBrowser.itemsTable);
 
                 wsp.dialogs.hideProcessDialog();
             }
@@ -79,10 +86,11 @@ WspFileBrowser.prototype = {
     },
 
     initDataTable: function (tableId, ajaxUrl) {
-        this.table = $(tableId).dataTable({
+        this.itemsTable = $(tableId).dataTable({
             "ajax": ajaxUrl,
             "processing": false,
             "serverSide": true,
+            "dom": 'rtlp',
             "columnDefs": [
                 {
                     "render": function(data, type, row) {
@@ -128,18 +136,87 @@ WspFileBrowser.prototype = {
 
         $(tableId).removeClass('dataTable');
 
-        var oTable = this.table;
-        $(tableId+'_filter input').unbind();
-        $(tableId+'_filter input').bind('keyup', function (e) {
-            if (e.keyCode == 13) {
-                oTable.fnFilter(this.value);
-            }
-        });
+        //var oTable = this.table;
+
+        //$(searchInputId).bind('keyup', function (e) {
+        //    if (e.keyCode == 13) {
+        //        oTable.fnFilter(this.value);
+        //    }
+        //});
+
+        //$(searchInputId).keydown(function (event) {
+        //    if (event.keyCode == 13) {
+        //        event.preventDefault();
+        //        return false;
+        //    }
+
+        //    return true;
+        //});
+
     },
 
-    refreshDataTable: function () {
-        if (this.table != null) {
-            this.table.fnDraw(false);
+    initSearchDataTable: function (tableId, ajaxUrl, initSearch) {
+
+        var settings = this.settings;
+        var classThis = this;
+
+        this.searchTable = $(tableId).dataTable({
+            "ajax": ajaxUrl,
+            "processing": false,
+            "serverSide": true,
+            "oSearch": { "sSearch": initSearch },
+            "dom": 'rtlp',
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="column-name">' +
+                                    '<img class="table-icon search" src="' + row.IconHref + '"/>' +
+                                    '<div class="file-info">' +
+                                        '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link" title="' + row.DisplayName + '">' +
+                                            row.DisplayName +
+                                        '</a>' +
+                                        '<div id="summary" class="summary">' + (row.Summary ? (row.Summary + '').substring(0, 500) + '...' : '') + '</div>' +
+                                        '<div>' +
+                                            '<a href="' + row.FolderUrlLocalString + '" ' + 'target="_blank" class="file-link" >' +
+                                                  row.FolderUrlAbsoluteString +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div>' +settings.textDateModified+': '+ row.LastModifiedFormated+ '</div>' +
+                                '<div>' + settings.textSize + ': ' + classThis.bytesToSize(row.Size) + '</div>';
+                    },
+                    "orderable": false,
+                    "width": "25%",
+                    "targets": 1
+                }
+            ],
+            "createdRow": function (row, data, index) {
+                $(row).addClass('element-container');
+            },
+            "fnPreDrawCallback": function () {
+                // gather info to compose a message
+                wsp.dialogs.showProcessDialog();
+                return true;
+            },
+            "fnDrawCallback": function () {
+                // in case your overlay needs to be put away automatically you can put it here
+                wsp.dialogs.hideProcessDialog();
+            }
+        });
+
+        $(tableId).removeClass('dataTable');
+
+    },
+
+    refreshDataTable: function (table) {
+        if (table != null) {
+            table.fnDraw(false);
         }
     },
 

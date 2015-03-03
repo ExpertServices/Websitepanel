@@ -89,6 +89,8 @@ namespace WebsitePanel.WebDav.Core
                 }
             }
 
+            public string Summary { get; set; }
+
             /// <summary>
             ///     Downloads content of the resource to a file specified by filename
             /// </summary>

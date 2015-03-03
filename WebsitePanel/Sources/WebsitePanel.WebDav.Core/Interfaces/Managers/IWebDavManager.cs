@@ -19,5 +19,6 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Managers
         string GetFileUrl(string path);
         void DeleteResource(string path);
         void LockFile(string path);
+        string GetFileFolderPath(string path);
     }
 }

@@ -304,7 +304,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                     var rootFolder = Path.Combine(settings.LocationDrive + ":\\", settings.HomeFolder);
                     rootFolder = Path.Combine(rootFolder, organizationId);
 
-                    var wsSql = string.Format(@"SELECT System.FileName, System.DateModified, System.Size, System.Kind, System.ItemPathDisplay, System.ItemType FROM SYSTEMINDEX WHERE System.FileName LIKE '%{0}%' AND ({1})",
+                    var wsSql = string.Format(@"SELECT System.FileName, System.DateModified, System.Size, System.Kind, System.ItemPathDisplay, System.ItemType, System.Search.AutoSummary FROM SYSTEMINDEX WHERE System.FileName LIKE '%{0}%' AND ({1})",
                         searchText, string.Join(" OR ", searchPaths.Select(x => string.Format("{0} = '{1}'", recursive ? "SCOPE" : "DIRECTORY", Path.Combine(rootFolder, x))).ToArray()));
 
                     conn.Open();
@@ -318,7 +318,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                             var file = new SystemFile {Name = reader[0] as string};
 
                             file.Changed = file.CreatedDate = reader[1] is DateTime ? (DateTime)reader[1] : new DateTime();
-                            file.Size = reader[2] is long ? (long) reader[2] : 0;
+                            file.Size = reader[2] is Decimal ? Convert.ToInt64((Decimal) reader[2]) : 0;
 
                             var kind = reader[3] is IEnumerable ? ((IEnumerable)reader[3]).Cast<string>().ToList() : null;
                             var itemType = reader[5] as string ?? string.Empty;
@@ -341,6 +341,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                                     file.RelativeUrl = file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
                                 }
                             }
+
+                            file.Summary = reader[6] as string;
 
                             result.Add(file);
                         }
