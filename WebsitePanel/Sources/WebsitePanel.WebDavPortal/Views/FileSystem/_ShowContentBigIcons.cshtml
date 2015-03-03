@@ -4,21 +4,6 @@
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 
 <div class="container">
-    
-    <div class="search-block navbar-right">
-        <div>
-            @using (Html.BeginRouteForm(FileSystemRouteNames.ShowContentPath))
-            {
-                <label>
-                    @UI.Search:
-                </label>
-                    @Html.TextBoxFor(x => x.SearchValue, new { @class = "form-control input-sm"})
-            }
-        </div>
-    </div>
-</div>
-
-<div class="container">
 
 
     <div class="row" id="resourcesDiv">

@@ -94,7 +94,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         protected void BindPopupAccounts()
         {
-            OrganizationUser[] accounts = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", null, 0, Int32.MaxValue).PageUsers;
+            ExchangeAccount[] accounts = ES.Services.EnterpriseStorage.SearchESAccounts(PanelRequest.ItemID,
+                ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
 
             accounts = accounts.Where(x => !GetUsers().Select(p => p.AccountName).Contains(x.AccountName)).ToArray();
 
@@ -206,7 +207,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { ViewState[DirectionString] = value; }
         }
 
-        protected static int CompareAccount(OrganizationUser user1, OrganizationUser user2)
+        protected static int CompareAccount(ExchangeAccount user1, ExchangeAccount user2)
         {
             return string.Compare(user1.DisplayName, user2.DisplayName);
         }

@@ -18,7 +18,10 @@ namespace WebsitePanel.WebDavPortal.Models.FileSystem
         public DateTime LastModified { get; set; }
         public string LastModifiedFormated { get; set; }
         public string IconHref { get; set; }
-
+        public string FolderUrlAbsoluteString { get; set; }
+        public string FolderUrlLocalString { get; set; }
+        public string FolderName { get; set; }
+        public string Summary { get; set; }
 
         public override dynamic this[int index]
         {

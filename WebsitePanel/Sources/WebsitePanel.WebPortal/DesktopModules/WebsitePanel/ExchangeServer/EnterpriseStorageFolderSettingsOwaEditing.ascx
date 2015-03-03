@@ -34,7 +34,7 @@
 						    <tr>
 							    <td colspan="2">
                                     <fieldset id="OwaUsersPanel" runat="server">
-                                        <legend><asp:Localize ID="locOwaEditingSection" runat="server" meta:resourcekey="locOwaEditingSection" Text="Users"></asp:Localize></legend>
+                                        <legend><asp:Localize ID="locOwaEditingSection" runat="server" meta:resourcekey="locOwaEditingSection" Text="Users And Groups"></asp:Localize></legend>
                                         <wsp:OwaUsers id="owaUsers" runat="server" />
                                     </fieldset>
 						    </tr>
