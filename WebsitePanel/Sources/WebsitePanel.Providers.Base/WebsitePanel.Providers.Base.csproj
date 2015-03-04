@@ -287,6 +287,7 @@
     <Compile Include="Statistics\StatsServer.cs" />
     <Compile Include="Statistics\StatsSite.cs" />
     <Compile Include="Statistics\StatsUser.cs" />
+    <Compile Include="Virtualization\BiosInfo.cs" />
     <Compile Include="Virtualization\ChangeJobStateReturnCode.cs" />
     <Compile Include="Virtualization\ConcreteJob.cs">
       <SubType>Code</SubType>
@@ -297,6 +298,7 @@
     <Compile Include="Virtualization\ConcreteJobState.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Virtualization\ControllerType.cs" />
     <Compile Include="Virtualization\IVirtualizationServer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -307,6 +309,7 @@
     <Compile Include="Virtualization\KvpExchangeDataItem.cs" />
     <Compile Include="Virtualization\LibraryItem.cs" />
     <Compile Include="Virtualization\LogicalDisk.cs" />
+    <Compile Include="Virtualization\MemoryInfo.cs" />
     <Compile Include="Virtualization\MonitoredObjectAlert.cs" />
     <Compile Include="Virtualization\MonitoredObjectEvent.cs" />
     <Compile Include="Virtualization\MountedDiskInfo.cs" />
@@ -321,6 +324,7 @@
     <Compile Include="Virtualization\ThumbnailSize.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Virtualization\VirtualHardDiskFormat.cs" />
     <Compile Include="Virtualization\VirtualHardDiskInfo.cs" />
     <Compile Include="Virtualization\VirtualHardDiskType.cs" />
     <Compile Include="Virtualization\VirtualMachine.cs">
