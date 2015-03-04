@@ -69,9 +69,9 @@ namespace WebsitePanel.Portal.ProviderControls
                 plCertificateInfo.Visible = true;
                 byte[] content = Convert.FromBase64String(certificate.Content);
                 var x509 = new X509Certificate2(content, password);
-                lblIssuedBy.Text = x509.Issuer.Replace("CN =", "").Replace("OU =", "").Replace("O =", "").Replace("L =", "").Replace("S =", "").Replace("C =", "");
+                lblIssuedBy.Text = x509.Issuer.Replace("CN=", "").Replace("OU=", "").Replace("O=", "").Replace("L=", "").Replace("S=", "").Replace("C=", "");
                 lblExpiryDate.Text = x509.NotAfter.ToLongDateString();
-                lblSanName.Text = x509.SubjectName.Name.Replace("CN =", "");
+                lblSanName.Text = x509.SubjectName.Name.Replace("CN=", "");
             }
         }
 
