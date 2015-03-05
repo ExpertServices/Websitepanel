@@ -532,9 +532,23 @@ namespace WebsitePanel.EnterpriseServer
         private static int AddRdsCollectionInternal(int itemId, RdsCollection collection)
         {
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "ADD_RDS_COLLECTION");
+            var domainName = IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
             try
             {
+                foreach(var server in collection.Servers)
+                {                    
+                    if (!server.FqdName.EndsWith(domainName, StringComparison.CurrentCultureIgnoreCase))
+                    {                       
+                        throw TaskManager.WriteError(new Exception("Fully Qualified Domain Name not valid."));
+                    }
+
+                    if (!CheckRDSServerAvaliable(server.FqdName))
+                    {
+                        throw TaskManager.WriteError(new Exception(string.Format("Unable to connect to {0} server.", server.FqdName)));
+                    }
+                }
+
                 // load organization
                 Organization org = OrganizationController.GetOrganization(itemId);
                 if (org == null)
@@ -822,7 +836,7 @@ namespace WebsitePanel.EnterpriseServer
                 FillRdsServerData(tmpServer);                
             }
 
-            result.Servers = tmpServers.ToArray();
+            result.Servers = tmpServers.ToArray();            
 
             return result;
         }
@@ -1016,25 +1030,22 @@ namespace WebsitePanel.EnterpriseServer
             {
                 if (CheckRDSServerAvaliable(rdsServer.FqdName))
                 {
-                    rdsServer.Id = DataProvider.AddRDSServer(rdsServer.Name, rdsServer.FqdName, rdsServer.Description);
+                    var domainName = IPGlobalProperties.GetIPGlobalProperties().DomainName;
+
+                    if (rdsServer.FqdName.EndsWith(domainName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        rdsServer.Id = DataProvider.AddRDSServer(rdsServer.Name, rdsServer.FqdName, rdsServer.Description);
+                    }
+                    else
+                    {
+                        throw TaskManager.WriteError(new Exception("Fully Qualified Domain Name not valid."));
+                    }
                 }
                 else
                 {
-                    result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER", new Exception("The server that you are adding, is not available"));
-                    return result;
+                    throw TaskManager.WriteError(new Exception(string.Format("Unable to connect to {0} server. Please double check Server Full Name setting and retry.", rdsServer.FqdName)));
                 }
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null)
-                {
-                    result.AddError("Unable to add RDS Server", ex.InnerException);
-                }
-                else
-                {
-                    result.AddError("Unable to add RDS Server", ex);
-                }
-            }
+            }            
             finally
             {
                 if (!result.IsSuccess)
@@ -1753,7 +1764,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             bool result = false;
             var ping = new Ping();
-            var reply = ping.Send(hostname, 1000);
+            var reply = ping.Send(hostname, 1000);            
 
             if (reply.Status == IPStatus.Success)
             {
@@ -1761,8 +1772,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
-        }
-
+        }        
 
         private static ResultObject DeleteRemoteDesktopServiceInternal(int itemId)
         {
@@ -1811,7 +1821,7 @@ namespace WebsitePanel.EnterpriseServer
         private static RemoteDesktopServices GetRemoteDesktopServices(int serviceId)
         {
             var rds = new RemoteDesktopServices();
-            ServiceProviderProxy.Init(rds, serviceId);
+            ServiceProviderProxy.Init(rds, serviceId);            
 
             return rds;
         }

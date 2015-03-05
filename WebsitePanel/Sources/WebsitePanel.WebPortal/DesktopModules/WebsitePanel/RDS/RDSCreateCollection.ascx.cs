@@ -69,7 +69,7 @@ namespace WebsitePanel.Portal.RDS
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("RDSCOLLECTION_NOT_CREATED", ex);
+                ShowErrorMessage("RDSCOLLECTION_NOT_CREATED", ex);
             }
         }
     }

@@ -23,8 +23,9 @@
 			<asp:TemplateField meta:resourcekey="gvUsersAccount" HeaderText="gvUsersAccount">
 				<ItemStyle Width="96%" Wrap="false" HorizontalAlign="Left">
 				</ItemStyle>
-				<ItemTemplate>
+				<ItemTemplate>                    
                     <asp:Literal ID="litAccount" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
+                    <asp:Image ID="Image1" runat="server" ImageUrl='<%# GetThemedImage("Exchange/admin_16.png") %>' Visible='<%# Convert.ToBoolean(Eval("IsVIP")) %>' ImageAlign="AbsMiddle" />
                     <asp:HiddenField ID="hdnSamAccountName" runat="server" Value='<%# Eval("SamAccountName") %>' />
 				</ItemTemplate>
 			</asp:TemplateField>
@@ -81,6 +82,7 @@
 									<asp:Image ID="imgAccount" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
 									<asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
                                     <asp:HiddenField ID="hdnSamName" runat="server" Value='<%# Eval("SamAccountName") %>' />
+                                    <asp:HiddenField ID="hdnLocalAdmin" runat="server" Value='<%# Eval("IsVIP").ToString() %>' />
 								</ItemTemplate>
 							</asp:TemplateField>
 							<asp:TemplateField meta:resourcekey="gvAccountsEmail">

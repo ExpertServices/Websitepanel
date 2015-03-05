@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.RemoteDesktopServices;
 
 namespace WebsitePanel.Portal.RDS
 {

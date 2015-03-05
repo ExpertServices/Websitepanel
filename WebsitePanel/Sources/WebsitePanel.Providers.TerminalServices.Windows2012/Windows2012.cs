@@ -1343,7 +1343,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 runSpace = OpenRunspace();
                 var feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
-                installationResult = (bool)GetPSObjectProperty(feature, "Success");               
+                installationResult = (bool)GetPSObjectProperty(feature, "Success");
+
+                if (!IsFeatureInstalled(hostName, "Desktop-Experience", runSpace))
+                {
+                    feature = AddFeature(runSpace, hostName, "Desktop-Experience", true, false);
+                }
+
+                if (!IsFeatureInstalled(hostName, "NET-Framework-Core", runSpace))
+                {
+                    feature = AddFeature(runSpace, hostName, "NET-Framework-Core", true, false);
+                }
             }            
             finally
             {
