@@ -5511,14 +5511,14 @@ GO
 IF NOT EXISTS(SELECT * FROM sys.columns 
         WHERE [name] = N'SecurityLayer' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
 BEGIN
-	ALTER TABLE [dbo].[RDSCollectionSettings] ADD SecurityLayer NAVRCHAR(20) null;
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD SecurityLayer NVARCHAR(20) null;
 END
 GO
 
 IF NOT EXISTS(SELECT * FROM sys.columns 
         WHERE [name] = N'EncryptionLevel' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
 BEGIN
-	ALTER TABLE [dbo].[RDSCollectionSettings] ADD EncryptionLevel NAVRCHAR(20) null;
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD EncryptionLevel NVARCHAR(20) null;
 END
 GO
 

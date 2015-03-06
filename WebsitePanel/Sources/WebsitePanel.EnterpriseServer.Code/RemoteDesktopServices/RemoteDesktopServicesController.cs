@@ -499,19 +499,22 @@ namespace WebsitePanel.EnterpriseServer
             var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));            
             var settings = ObjectUtils.FillObjectFromDataReader<RdsCollectionSettings>(DataProvider.GetRdsCollectionSettingsByCollectionId(collectionId));
 
-            if (settings.SecurityLayer == null)
+            if (settings != null)
             {
-                settings.SecurityLayer = SecurityLayerValues.Negotiate.ToString();
-            }
+                if (settings.SecurityLayer == null)
+                {
+                    settings.SecurityLayer = SecurityLayerValues.Negotiate.ToString();
+                }
 
-            if (settings.EncryptionLevel == null)
-            {
-                settings.EncryptionLevel = EncryptionLevel.ClientCompatible.ToString();
-            }
+                if (settings.EncryptionLevel == null)
+                {
+                    settings.EncryptionLevel = EncryptionLevel.ClientCompatible.ToString();
+                }
 
-            if (settings.AuthenticateUsingNLA == null)
-            {
-                settings.AuthenticateUsingNLA = true;
+                if (settings.AuthenticateUsingNLA == null)
+                {
+                    settings.AuthenticateUsingNLA = true;
+                }
             }
 
             return settings;
