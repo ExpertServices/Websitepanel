@@ -309,6 +309,7 @@
     <Compile Include="Virtualization\KvpExchangeDataItem.cs" />
     <Compile Include="Virtualization\LibraryItem.cs" />
     <Compile Include="Virtualization\LogicalDisk.cs" />
+    <Compile Include="Virtualization\DvdDriveInfo.cs" />
     <Compile Include="Virtualization\MemoryInfo.cs" />
     <Compile Include="Virtualization\MonitoredObjectAlert.cs" />
     <Compile Include="Virtualization\MonitoredObjectEvent.cs" />

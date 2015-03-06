@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,10 +32,12 @@ using System.Text;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public class VirtualMachineNetworkAdapter
+    public class DvdDriveInfo
     {
+        public ControllerType ControllerType { get; set; }
+        public int ControllerNumber { get; set; }
+        public int ControllerLocation { get; set; }
         public string Name { get; set; }
-        public string MacAddress { get; set; }
-        public string SwitchName { get; set; }
+        public string Id { get; set; }
     }
 }
