@@ -60,6 +60,10 @@ namespace WebsitePanel.Portal.RDS
                     {
                         user.IsVIP = true;
                     }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
                 }
 
                 users.SetUsers(remoteAppUsers.ToArray());

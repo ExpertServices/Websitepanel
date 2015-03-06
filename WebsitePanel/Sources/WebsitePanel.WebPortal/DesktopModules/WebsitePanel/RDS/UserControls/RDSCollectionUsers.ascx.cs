@@ -140,6 +140,10 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 {
                     user.IsVIP = true;
                 }
+                else
+                {
+                    user.IsVIP = false;
+                }                
             }
 
             accounts = accounts.Where(x => !GetUsers().Select(p => p.AccountName).Contains(x.AccountName)).ToArray();

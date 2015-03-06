@@ -19,6 +19,12 @@ namespace WebsitePanel.Portal.RDS
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
 
                 litCollectionName.Text = collection.DisplayName;
+
+                foreach(var user in collectionLocalAdmins)
+                {
+                    user.IsVIP = false;
+                }
+
                 users.SetUsers(collectionLocalAdmins);
             }
         }

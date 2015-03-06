@@ -28,6 +28,7 @@
                     <asp:LinkButton id="lnkDisplayName" meta:resourcekey="lnkDisplayName" runat="server" Text='<%# Eval("DisplayName")%>' CommandName="EditApplication" CommandArgument='<%# Eval("Alias") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"/>
                     <asp:HiddenField ID="hfFilePath" runat="server"  Value='<%# Eval("FilePath") %>'/>
                     <asp:HiddenField ID="hfRequiredCommandLine" runat="server"  Value='<%# Eval("RequiredCommandLine") %>'/>
+                    <asp:HiddenField ID="hfUsers" runat="server"  Value='<%# Eval("Users") != null ? "New" : null %>'/>
 				</ItemTemplate>
 			</asp:TemplateField>  
             <asp:TemplateField>

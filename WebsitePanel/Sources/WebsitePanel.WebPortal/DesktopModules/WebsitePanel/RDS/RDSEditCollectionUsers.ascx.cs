@@ -54,6 +54,10 @@ namespace WebsitePanel.Portal.RDS
                     {
                         user.IsVIP = true;
                     }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
                 }
                 
                 litCollectionName.Text = collection.DisplayName;
