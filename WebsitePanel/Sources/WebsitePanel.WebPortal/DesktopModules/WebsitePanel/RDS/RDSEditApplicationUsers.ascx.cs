@@ -52,6 +52,19 @@ namespace WebsitePanel.Portal.RDS
                 txtApplicationName.Text = remoteApp.DisplayName;
                 //var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Contains(x.AccountName));
                 var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Select(a => a.Split('\\').Last().ToLower()).Contains(x.SamAccountName.Split('\\').Last().ToLower()));
+                var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+                foreach(var user in remoteAppUsers)
+                {
+                    if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                    {
+                        user.IsVIP = true;
+                    }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
+                }
 
                 users.SetUsers(remoteAppUsers.ToArray());
             }

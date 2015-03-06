@@ -5508,6 +5508,29 @@ CREATE TABLE [dbo].[RDSCollectionSettings](
 
 GO
 
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'SecurityLayer' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD SecurityLayer NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'EncryptionLevel' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD EncryptionLevel NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'AuthenticateUsingNLA' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD AuthenticateUsingNLA BIT null;
+END
+GO
+
+
+
 IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCertificates')
 CREATE TABLE [dbo].[RDSCertificates](
 	[ID] [int] IDENTITY(1,1) NOT NULL,

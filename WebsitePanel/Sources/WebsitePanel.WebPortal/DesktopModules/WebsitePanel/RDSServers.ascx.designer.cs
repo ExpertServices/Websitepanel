@@ -40,15 +40,6 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// updatePanelUsers control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updatePanelUsers;
-        
-        /// <summary>
         /// btnAddRDSServer control.
         /// </summary>
         /// <remarks>
@@ -103,15 +94,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
         
         /// <summary>
-        /// gvRDSServers control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvRDSServers;
-        
-        /// <summary>
         /// odsRDSServersPaged control.
         /// </summary>
         /// <remarks>
@@ -119,6 +101,24 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource odsRDSServersPaged;
+        
+        /// <summary>
+        /// updatePanelUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel updatePanelUsers;
+        
+        /// <summary>
+        /// gvRDSServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvRDSServers;
         
         /// <summary>
         /// ServerInfoPanel control.

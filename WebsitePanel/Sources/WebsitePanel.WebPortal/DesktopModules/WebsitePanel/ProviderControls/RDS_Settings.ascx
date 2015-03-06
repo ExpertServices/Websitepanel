@@ -10,7 +10,7 @@
             <td class="SubHead" style="width:200px" nowrap>
                 <asp:Localize runat="server" meta:resourcekey="lblSelectFile" />
             </td>
-            <td style="padding: 10px 0 10px 0;"><asp:FileUpload ID="upPFX" onchange="this.form.submit();"  runat="server"/></td>            
+            <td style="padding: 10px 0 10px 0;"><asp:FileUpload ID="upPFX" runat="server"/></td>            
         </tr>        
         <tr><td></td></tr>
         <tr>
