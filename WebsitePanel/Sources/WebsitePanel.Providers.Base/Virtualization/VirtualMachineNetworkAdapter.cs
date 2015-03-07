@@ -36,5 +36,6 @@ namespace WebsitePanel.Providers.Virtualization
     {
         public string Name { get; set; }
         public string MacAddress { get; set; }
+        public string SwitchName { get; set; }
     }
 }

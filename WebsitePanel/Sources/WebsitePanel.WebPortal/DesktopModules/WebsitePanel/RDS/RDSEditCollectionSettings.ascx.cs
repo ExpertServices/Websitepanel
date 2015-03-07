@@ -43,7 +43,10 @@ namespace WebsitePanel.Portal.RDS
                         ClientPrinterRedirected = true,
                         ClientPrinterAsDefault = true,
                         RDEasyPrintDriverEnabled = true,
-                        MaxRedirectedMonitors = 16
+                        MaxRedirectedMonitors = 16,
+                        EncryptionLevel = EncryptionLevel.ClientCompatible.ToString(),
+                        SecurityLayer = SecurityLayerValues.Negotiate.ToString(),
+                        AuthenticateUsingNLA = true
                     };
                 }
 
@@ -89,6 +92,9 @@ namespace WebsitePanel.Portal.RDS
             chEasyPrint.Checked = collection.Settings.RDEasyPrintDriverEnabled;
             chEasyPrint.Enabled = collection.Settings.ClientPrinterRedirected;
             tbMonitorsNumber.Text = collection.Settings.MaxRedirectedMonitors.ToString();
+            cbAuthentication.Checked = collection.Settings.AuthenticateUsingNLA;
+            ddSecurityLayer.SelectedValue = collection.Settings.SecurityLayer;
+            ddEncryptionLevel.SelectedValue = collection.Settings.EncryptionLevel;
         }
 
         private bool EditCollectionSettings()
@@ -165,6 +171,9 @@ namespace WebsitePanel.Portal.RDS
             }
 
             settings.ClientDeviceRedirectionOptions = string.Join(",", redirectionOptions.ToArray());
+            settings.AuthenticateUsingNLA = cbAuthentication.Checked;
+            settings.SecurityLayer = ddSecurityLayer.SelectedItem.Value;
+            settings.EncryptionLevel = ddEncryptionLevel.SelectedItem.Value;            
 
             return settings;
         }

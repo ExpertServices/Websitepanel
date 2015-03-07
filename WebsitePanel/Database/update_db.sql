@@ -1,4 +1,4 @@
-﻿USE [${install.database}]
+USE [${install.database}]
 GO
 -- update database version
 DECLARE @build_version nvarchar(10), @build_date datetime
@@ -6042,7 +6042,7 @@ CREATE PROCEDURE [dbo].GetOrganizationRdsUsersCount
 )
 AS
 SELECT
-  @TotalNumber = Count([RDSCollectionId])
+  @TotalNumber = Count(DISTINCT([AccountId]))
   FROM [dbo].[RDSCollectionUsers]
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
@@ -8192,6 +8192,22 @@ AS
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType = 11)
+		ELSE IF @QuotaID = 450
+			SET @Result = (SELECT COUNT(DISTINCT(RCU.[AccountId])) FROM [dbo].[RDSCollectionUsers] RCU
+				INNER JOIN ExchangeAccounts EA ON EA.AccountId = RCU.AccountId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 451
+			SET @Result = (SELECT COUNT(RS.[ID]) FROM [dbo].[RDSServers] RS				
+				INNER JOIN ServiceItems  si ON RS.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 491
+			SET @Result = (SELECT COUNT(RC.[ID]) FROM [dbo].[RDSCollections] RC
+				INNER JOIN ServiceItems  si ON RC.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
 		ELSE IF @QuotaName like 'ServiceLevel.%' -- Support Service Level Quota
 		BEGIN
 			DECLARE @LevelID int
@@ -8603,6 +8619,138 @@ LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.Mail
 WHERE
 	E.UserPrincipalName = @UserPrincipalName
 RETURN
+GO
+
+
+
+--Webdav portal users settings
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'WebDavPortalUsersSettings')
+CREATE TABLE WebDavPortalUsersSettings
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccountId INT NOT NULL,
+	Settings NVARCHAR(max)
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_WebDavPortalUsersSettings_UserId')
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]
+DROP CONSTRAINT [FK_WebDavPortalUsersSettings_UserId]
+GO
+
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]  WITH CHECK ADD  CONSTRAINT [FK_WebDavPortalUsersSettings_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavPortalUsersSettingsByAccountId')
+DROP PROCEDURE GetWebDavPortalUsersSettingsByAccountId
+GO
+CREATE PROCEDURE [dbo].[GetWebDavPortalUsersSettingsByAccountId]
+(
+	@AccountId INT
+)
+AS
+SELECT TOP 1
+	US.Id,
+	US.AccountId,
+	US.Settings
+	FROM WebDavPortalUsersSettings AS US
+	WHERE AccountId = @AccountId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddWebDavPortalUsersSettings')
+DROP PROCEDURE AddWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[AddWebDavPortalUsersSettings]
+(
+	@WebDavPortalUsersSettingsId INT OUTPUT,
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+INSERT INTO WebDavPortalUsersSettings
+(
+	AccountId,
+	Settings
+)
+VALUES
+(
+	@AccountId,
+	@Settings
+)
+
+SET @WebDavPortalUsersSettingsId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateWebDavPortalUsersSettings')
+DROP PROCEDURE UpdateWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateWebDavPortalUsersSettings]
+(
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+UPDATE WebDavPortalUsersSettings
+SET
+	Settings = @Settings
+WHERE AccountId = @AccountId
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x +')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail100', NULL)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [EditorControl] = 'SmarterMail100' WHERE [DisplayName] = 'SmarterMail 10.x +'
+END
+GO
+
+
+-- Service items count by name and serviceid
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetServiceItemsCountByNameAndServiceId')
+DROP PROCEDURE GetServiceItemsCountByNameAndServiceId
+GO
+
+CREATE PROCEDURE [dbo].[GetServiceItemsCountByNameAndServiceId]
+(
+	@ActorID int,
+	@ServiceId int,
+	@ItemName nvarchar(500),
+	@GroupName nvarchar(100) = NULL,
+	@ItemTypeName nvarchar(200)
+)
+AS
+SELECT Count(*)
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+WHERE S.ServiceID = @ServiceId 
+AND SIT.TypeName = @ItemTypeName
+AND SI.ItemName = @ItemName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+RETURN 
+GO
+
+-- Hyper-V 2012 R2
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
+END
 GO
 
 -- Hyper-V 2012 R2

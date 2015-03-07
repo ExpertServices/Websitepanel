@@ -129,6 +129,9 @@
   <data name="locEnableRedirection.Text" xml:space="preserve">
     <value>Enable redirection for the following:</value>
   </data>
+  <data name="locEncryptionLevel.Text" xml:space="preserve">
+    <value>Encryption Level</value>
+  </data>
   <data name="locIdleSessionLimit.Text" xml:space="preserve">
     <value>Idle session limit:</value>
   </data>
@@ -141,6 +144,9 @@
   <data name="locPrinters.Text" xml:space="preserve">
     <value>Printers</value>
   </data>
+  <data name="locSecurityLayer.Text" xml:space="preserve">
+    <value>Security Layer</value>
+  </data>
   <data name="locSessionLimitHeader.Text" xml:space="preserve">
     <value>Set RD Session Host server timeout and reconnection settings for the session collection.</value>
   </data>
@@ -152,6 +158,9 @@
   </data>
   <data name="secRdsClientSettings.Text" xml:space="preserve">
     <value>Client Settings</value>
+  </data>
+  <data name="secRdsSecuritySettings.Text" xml:space="preserve">
+    <value>Security Settings</value>
   </data>
   <data name="secRdsSessionSettings.Text" xml:space="preserve">
     <value>Session Settings</value>

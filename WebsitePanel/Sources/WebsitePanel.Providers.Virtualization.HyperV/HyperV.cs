@@ -488,7 +488,7 @@ namespace WebsitePanel.Providers.Virtualization
             return vm;
         }
 
-        private void UpdateVirtualMachineGeneralSettings(string vmId, ManagementObject objVM, int cpuCores, int ramMB, bool bootFromCD, bool numLockEnabled)
+        private void UpdateVirtualMachineGeneralSettings(string vmId, ManagementObject objVM, int cpuCores, long ramMB, bool bootFromCD, bool numLockEnabled)
         {
             // request management service
             ManagementObject objVmsvc = GetVirtualSystemManagementService();

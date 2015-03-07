@@ -145,7 +145,7 @@
     <value>Assigned RDS Servers</value>
   </data>
   <data name="locQuota.Text" xml:space="preserve">
-    <value>Total RDS Servers Allocated:</value>
+    <value>Total Remote Desktop Servers Allocated:</value>
   </data>
   <data name="cmdDisable.Text" xml:space="preserve">
     <value>Disable</value>

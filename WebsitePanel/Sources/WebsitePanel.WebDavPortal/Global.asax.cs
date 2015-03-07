@@ -8,6 +8,7 @@ using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Web.Security;
 using System.Web.SessionState;
+using AutoMapper;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
@@ -16,6 +17,7 @@ using WebsitePanel.WebDavPortal.App_Start;
 using WebsitePanel.WebDavPortal.Controllers;
 using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.HttpHandlers;
+using WebsitePanel.WebDavPortal.Mapping;
 
 namespace WebsitePanel.WebDavPortal
 {
@@ -31,6 +33,10 @@ namespace WebsitePanel.WebDavPortal
             GlobalConfiguration.Configuration.MessageHandlers.Add(new AccessTokenHandler());
 
             DependencyResolver.SetResolver(new NinjectDependecyResolver());
+
+            AutoMapperPortalConfiguration.Configure();
+
+            Mapper.AssertConfigurationIsValid();
 
             log4net.Config.XmlConfigurator.Configure();
         }

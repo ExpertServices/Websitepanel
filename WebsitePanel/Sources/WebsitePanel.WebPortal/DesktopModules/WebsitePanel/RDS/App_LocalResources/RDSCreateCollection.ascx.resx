@@ -141,4 +141,13 @@
   <data name="gvRDSServers.Empty" xml:space="preserve">
     <value>No RDS Servers have been added yet. To add a new RDS Servers click "Add RDS Server" button.</value>
   </data>
+  <data name="lblPFXInstallPassword.Text" xml:space="preserve">
+    <value>Certificate Password</value>
+  </data>
+  <data name="lblSelectPfx.Text" xml:space="preserve">
+    <value>Select Certificate</value>
+  </data>
+  <data name="secSelectSertificate.Text" xml:space="preserve">
+    <value>Certificate</value>
+  </data>
 </root>

@@ -1074,9 +1074,13 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, int currentVal, int val, string messageKey)
+        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, long currentVal, long val, string messageKey)
         {
             CheckQuotaValue(cntx, errors, quotaName, currentVal, val, messageKey);
+        }
+        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, int currentVal, int val, string messageKey)
+        {
+            CheckQuotaValue(cntx, errors, quotaName, Convert.ToInt64(currentVal), Convert.ToInt64(val), messageKey);
         }
 
         private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, int val, string messageKey)
@@ -1094,7 +1098,7 @@ namespace WebsitePanel.EnterpriseServer
             CheckQuotaValue(cntx, errors, quotaName, 0, -1, messageKey);
         }
 
-        private static void CheckQuotaValue(PackageContext cntx, List<string> errors, string quotaName, int currentVal, int val, string messageKey)
+        private static void CheckQuotaValue(PackageContext cntx, List<string> errors, string quotaName, long currentVal, long val, string messageKey)
         {
             if (!cntx.Quotas.ContainsKey(quotaName))
                 return;
@@ -1111,7 +1115,7 @@ namespace WebsitePanel.EnterpriseServer
                 errors.Add(messageKey);
             else if (quota.QuotaTypeId == 2)
             {
-                int maxValue = quota.QuotaAllocatedValue - quota.QuotaUsedValue + currentVal;
+                long maxValue = quota.QuotaAllocatedValue - quota.QuotaUsedValue + currentVal;
                 if(val > maxValue)
                     errors.Add(messageKey + ":" + maxValue);
             }
@@ -1795,8 +1799,9 @@ namespace WebsitePanel.EnterpriseServer
                     else if (state == VirtualMachineRequestedState.Reboot)
                     {
                         // shutdown first
-                        ResultObject shutdownResult = ChangeVirtualMachineState(itemId, VirtualMachineRequestedState.ShutDown);
-                        if(!shutdownResult.IsSuccess)
+                        ResultObject shutdownResult = ChangeVirtualMachineState(itemId,
+                            VirtualMachineRequestedState.ShutDown);
+                        if (!shutdownResult.IsSuccess)
                         {
                             TaskManager.CompleteResultTask(res);
                             return shutdownResult;
@@ -1817,20 +1822,29 @@ namespace WebsitePanel.EnterpriseServer
 
                         JobResult result = vps.ChangeVirtualMachineState(machine.VirtualMachineId, state);
 
-                        // check return
-                        if (result.ReturnValue != ReturnCode.JobStarted)
+                        if (result.Job.JobState == ConcreteJobState.Completed)
                         {
                             LogReturnValueResult(res, result);
-                            TaskManager.CompleteResultTask(res);
+                            TaskManager.CompleteTask();
                             return res;
                         }
-
-                        // wait for completion
-                        if (!JobCompleted(vps, result.Job))
+                        else
                         {
-                            LogJobResult(res, result.Job);
-                            TaskManager.CompleteResultTask(res);
-                            return res;
+                            // check return
+                            if (result.ReturnValue != ReturnCode.JobStarted)
+                            {
+                                LogReturnValueResult(res, result);
+                                TaskManager.CompleteResultTask(res);
+                                return res;
+                            }
+
+                            // wait for completion
+                            if (!JobCompleted(vps, result.Job))
+                            {
+                                LogJobResult(res, result.Job);
+                                TaskManager.CompleteResultTask(res);
+                                return res;
+                            }
                         }
                     }
                 }

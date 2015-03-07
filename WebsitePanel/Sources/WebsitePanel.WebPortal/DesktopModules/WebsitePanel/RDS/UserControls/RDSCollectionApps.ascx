@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDSCollectionApps.ascx.cs" Inherits="WebsitePanel.Portal.RDS.UserControls.RDSCollectionApps" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="../../UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 
 <asp:UpdatePanel ID="RDAppsUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
@@ -8,7 +9,7 @@
 		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>        
 	</div>
 	<asp:GridView ID="gvApps" runat="server" meta:resourcekey="gvApps" AutoGenerateColumns="False"
-		Width="600px" CssSelectorClass="NormalGridView"
+		Width="600px" CssSelectorClass="NormalGridView" OnRowCommand="gvApps_RowCommand"
 		DataKeyNames="Alias">
 		<Columns>
 			<asp:TemplateField>
@@ -23,12 +24,18 @@
 			<asp:TemplateField meta:resourcekey="gvAppName" HeaderText="gvAppName">
 				<ItemStyle Width="90%" Wrap="false">
 				</ItemStyle>
-				<ItemTemplate>
-                    <asp:hyperlink id="lnkDisplayName" meta:resourcekey="lnkDisplayName" runat="server" Text='<%# Eval("DisplayName") %>' NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("Alias").ToString()) %>'/>                    
+				<ItemTemplate>                    
+                    <asp:LinkButton id="lnkDisplayName" meta:resourcekey="lnkDisplayName" runat="server" Text='<%# Eval("DisplayName")%>' CommandName="EditApplication" CommandArgument='<%# Eval("Alias") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"/>
                     <asp:HiddenField ID="hfFilePath" runat="server"  Value='<%# Eval("FilePath") %>'/>
                     <asp:HiddenField ID="hfRequiredCommandLine" runat="server"  Value='<%# Eval("RequiredCommandLine") %>'/>
 				</ItemTemplate>
-			</asp:TemplateField>            
+			</asp:TemplateField>  
+            <asp:TemplateField>
+                <ItemStyle Width="20px" />
+                <ItemTemplate>
+                    <asp:Image ID="UsersImage" ImageUrl='<%# PortalUtils.GetThemedImage("Exchange/accounting_mail_16.png")%>' runat="server" Visible='<%# Eval("Users") != null %>'/>
+                </ItemTemplate>
+            </asp:TemplateField>          
 		</Columns>
 	</asp:GridView>
     <br />

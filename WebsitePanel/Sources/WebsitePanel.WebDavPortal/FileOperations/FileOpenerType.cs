@@ -2,6 +2,6 @@
 {
     public enum FileOpenerType
     {
-        Download, OfficeOnline
+        Download, OfficeOnline, Open
     }
 }

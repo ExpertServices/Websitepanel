@@ -40,6 +40,19 @@ namespace WebsitePanel.WebDav.Core
             }
 
             /// <summary>
+            ///     Returns IFolder corresponding to path.
+            /// </summary>
+            /// <param name="path">Path to the folder.</param>
+            /// <returns>Folder corresponding to requested path.</returns>
+            public IFolder OpenFolderPaged(string path)
+            {
+                var folder = new WebDavFolder();
+                folder.SetCredentials(Credentials);
+                folder.OpenPaged(path);
+                return folder;
+            }
+
+            /// <summary>
             ///     Returns IResource corresponding to path.
             /// </summary>
             /// <param name="path">Path to the resource.</param>

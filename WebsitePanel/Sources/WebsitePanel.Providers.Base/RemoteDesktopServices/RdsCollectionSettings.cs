@@ -21,6 +21,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public bool ClientPrinterRedirected { get; set; }
         public bool ClientPrinterAsDefault { get; set; }
         public bool RDEasyPrintDriverEnabled { get; set; }
-        public int MaxRedirectedMonitors { get; set; }        
+        public int MaxRedirectedMonitors { get; set; }
+        public string SecurityLayer { get; set; }
+        public string EncryptionLevel { get; set; }
+        public bool AuthenticateUsingNLA { get; set; }
     }
 }

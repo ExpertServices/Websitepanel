@@ -47,5 +47,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public string ItemName { get; set; }
         public int? RdsCollectionId { get; set; }
         public bool ConnectionEnabled { get; set; }
+        public string Status { get; set; }
     }
 }

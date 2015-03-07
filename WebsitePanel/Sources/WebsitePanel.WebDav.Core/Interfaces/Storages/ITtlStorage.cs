@@ -1,6 +1,4 @@
-﻿using WebsitePanel.Ecommerce.EnterpriseServer;
-
-namespace WebsitePanel.WebDav.Core.Interfaces.Storages
+﻿namespace WebsitePanel.WebDav.Core.Interfaces.Storages
 {
     public interface ITtlStorage : IKeyValueStorage
     {

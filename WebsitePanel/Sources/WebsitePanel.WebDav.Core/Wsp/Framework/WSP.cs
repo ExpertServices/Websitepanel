@@ -34,7 +34,6 @@ using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
-using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.WebDav.Core.Wsp.Framework
 {
@@ -268,7 +267,7 @@ namespace WebsitePanel.WebDav.Core.Wsp.Framework
         public void ConfigureEnterpriseServerProxy(WebServicesClientProtocol proxy, bool applyPolicy)
         {
             // load ES properties
-            string serverUrl = PortalConfiguration.SiteSettings["EnterpriseServer"];
+            string serverUrl = WebDavAppConfigManager.Instance.EnterpriseServerUrl;
 
             EnterpriseServerProxyConfigurator cnfg = new EnterpriseServerProxyConfigurator();
             cnfg.EnterpriseServerUrl = serverUrl;

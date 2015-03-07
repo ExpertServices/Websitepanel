@@ -19,6 +19,8 @@ namespace WebsitePanel.WebDav.Core.Config
             HttpErrors = new HttpErrorsCollection();
             OfficeOnline = new OfficeOnlineCollection();
             OwaSupportedBrowsers = new OwaSupportedBrowsersCollection();
+            FilesToIgnore = new FilesToIgnoreCollection();
+            FileOpener = new OpenerCollection();
         }
 
         public static WebDavAppConfigManager Instance
@@ -46,6 +48,11 @@ namespace WebsitePanel.WebDav.Core.Config
             get { return _configSection.AuthTimeoutCookieName.Value; }
         }
 
+        public string EnterpriseServerUrl
+        {
+            get { return _configSection.EnterpriseServerUrl.Value; }
+        }
+
         public ElementsRendering ElementsRendering { get; private set; }
         public WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; private set; }
         public SessionKeysCollection SessionKeys { get; private set; }
@@ -53,5 +60,7 @@ namespace WebsitePanel.WebDav.Core.Config
         public HttpErrorsCollection HttpErrors { get; private set; }
         public OfficeOnlineCollection OfficeOnline { get; private set; }
         public OwaSupportedBrowsersCollection OwaSupportedBrowsers { get; private set; }
+        public FilesToIgnoreCollection FilesToIgnore { get; private set; }
+        public OpenerCollection FileOpener { get; private set; }
     }
 }

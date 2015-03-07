@@ -46,6 +46,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules);
         WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting);
         bool CheckFileServicesInstallation();
-        
+        SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive);
     }
 }

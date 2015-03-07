@@ -175,6 +175,43 @@
                         </div>                            
                     </asp:Panel>
 
+                    <wsp:CollapsiblePanel id="secRdsSecuritySettings" runat="server"
+                        TargetControlID="panelRdsSecuritySettings" meta:resourcekey="secRdsSecuritySettings" Text="">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelRdsSecuritySettings">                                                
+                        <div style="padding: 10px;">                            
+                            <table>
+                                <tr>
+                                    <td class="Label" style="width:260px;"><asp:Localize ID="locSecurityLayer" runat="server" meta:resourcekey="locSecurityLayer" Text=""></asp:Localize></td>
+                                    <td style="width:250px;">
+                                        <asp:DropDownList ID="ddSecurityLayer" runat="server" CssClass="NormalTextBox">
+                                            <asp:ListItem Value="RDP" Text="RDP Security Layer" />
+                                            <asp:ListItem Value="Negotiate" Text="Negotiate" />
+                                            <asp:ListItem Value="SSL" Text="SSL (TLS 1.0)" />
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="Label" style="width:260px;"><asp:Localize ID="locEncryptionLevel" runat="server" meta:resourcekey="locEncryptionLevel" Text=""></asp:Localize></td>
+                                    <td style="width:250px;">
+                                        <asp:DropDownList ID="ddEncryptionLevel" runat="server" CssClass="NormalTextBox">
+                                            <asp:ListItem Value="Low" Text="Low" />
+                                            <asp:ListItem Value="ClientCompatible" Text="Client Compatible" />
+                                            <asp:ListItem Value="High" Text="High" />
+                                            <asp:ListItem Value="FipsCompliant" Text="FIPS Compliant" />
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr> 
+                                <tr>                                    
+                                    <td colspan="2">
+                                        <asp:CheckBox ID="cbAuthentication" Text="Allow connections only from computers runnig Remote Desktop with Network Level Authentication" runat="server"/>
+                                    </td>
+                                </tr>                               
+                            </table>
+                        </div>                            
+                    </asp:Panel>
+
                     <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SaveRDSCollection" 
                             OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />

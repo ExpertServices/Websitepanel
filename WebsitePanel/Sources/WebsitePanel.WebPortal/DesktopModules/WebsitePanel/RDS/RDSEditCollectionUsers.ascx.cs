@@ -39,14 +39,29 @@ namespace WebsitePanel.Portal.RDS
     {
         
         protected void Page_Load(object sender, EventArgs e)
-        {
+        {            
             if (!IsPostBack)
             {
+                BindQuota();
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
                 
                 litCollectionName.Text = collection.DisplayName;
                 users.SetUsers(collectionUsers);
+            }
+        }
+
+        private void BindQuota()
+        {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            usersQuota.QuotaUsedValue = stats.CreatedRdsUsers;
+            usersQuota.QuotaValue = stats.AllocatedRdsUsers;
+
+            if (stats.AllocatedUsers != -1)
+            {
+                usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
             }
         }
 
@@ -73,6 +88,7 @@ namespace WebsitePanel.Portal.RDS
             }
 
             SaveRdsUsers();
+            BindQuota();
         }
 
         protected void btnSaveExit_Click(object sender, EventArgs e)

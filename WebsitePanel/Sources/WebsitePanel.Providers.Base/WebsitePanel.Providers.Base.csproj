@@ -135,6 +135,8 @@
     <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerDriveInfo.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerInfo.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
     <Compile Include="RemoteDesktopServices\RdsUserSession.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />
@@ -307,6 +309,7 @@
     <Compile Include="Virtualization\KvpExchangeDataItem.cs" />
     <Compile Include="Virtualization\LibraryItem.cs" />
     <Compile Include="Virtualization\LogicalDisk.cs" />
+    <Compile Include="Virtualization\DvdDriveInfo.cs" />
     <Compile Include="Virtualization\MemoryInfo.cs" />
     <Compile Include="Virtualization\MonitoredObjectAlert.cs" />
     <Compile Include="Virtualization\MonitoredObjectEvent.cs" />

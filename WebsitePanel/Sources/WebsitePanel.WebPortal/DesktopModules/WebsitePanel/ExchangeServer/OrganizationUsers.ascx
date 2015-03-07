@@ -38,7 +38,7 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <wsp:UserActions ID="userActions" runat="server" OnExecutingUserAction="userActions_OnExecutingUserAction" />
+                                        <wsp:UserActions ID="userActions" runat="server"  GridViewID="gvUsers" CheckboxesName="chkSelectedUsersIds" />
                                     </td>
                                     <td class="FormButtonsBarCleanSeparator"></td>
                                     <td>

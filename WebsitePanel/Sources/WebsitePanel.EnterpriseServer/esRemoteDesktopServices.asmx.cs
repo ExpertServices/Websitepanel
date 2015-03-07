@@ -189,9 +189,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject RemoveRdsServerFromOrganization(int rdsServerId)
+        public ResultObject RemoveRdsServerFromOrganization(int itemId, int rdsServerId)
         {
-            return RemoteDesktopServicesController.RemoveRdsServerFromOrganization(rdsServerId);
+            return RemoteDesktopServicesController.RemoveRdsServerFromOrganization(itemId, rdsServerId);
         }
 
         [WebMethod]
@@ -288,6 +288,48 @@ namespace WebsitePanel.EnterpriseServer
         public List<string> GetRdsCollectionSessionHosts(int collectionId)
         {
             return RemoteDesktopServicesController.GetRdsCollectionSessionHosts(collectionId);
+        }
+
+        [WebMethod]
+        public RdsServerInfo GetRdsServerInfo(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.GetRdsServerInfo(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public string GetRdsServerStatus(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.GetRdsServerStatus(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public ResultObject ShutDownRdsServer(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.ShutDownRdsServer(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public ResultObject RestartRdsServer(int itemId, string fqdnName)
+        {
+            return RemoteDesktopServicesController.RestartRdsServer(itemId, fqdnName);
+        }
+
+        [WebMethod]
+        public List<OrganizationUser> GetRdsCollectionLocalAdmins(int collectionId)
+        {
+            return RemoteDesktopServicesController.GetRdsCollectionLocalAdmins(collectionId);
+        }
+
+        [WebMethod]
+        public ResultObject SaveRdsCollectionLocalAdmins(OrganizationUser[] users, int collectionId)
+        {
+            return RemoteDesktopServicesController.SaveRdsCollectionLocalAdmins(users, collectionId);
+        }
+
+        [WebMethod]
+        public ResultObject InstallSessionHostsCertificate(int collectionId, byte[] certificate, string password)
+        {
+            return RemoteDesktopServicesController.InstallSessionHostsCertificate(collectionId, certificate, password);
         }
     }
 }

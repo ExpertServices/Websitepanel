@@ -72,6 +72,11 @@
 						    </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="RDS Servers:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="rdsServersQuota" runat="server" QuotaTypeId="2" DisplayGauge="true"/>
+                    </div>
                     <asp:ObjectDataSource ID="odsRDSAssignedServersPaged" runat="server" EnablePaging="True"
 							SelectCountMethod="GetOrganizationRdsServersPagedCount"
 							SelectMethod="GetOrganizationRdsServersPaged"

@@ -132,6 +132,9 @@
   <data name="btnServiceLevelOk.Text" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="cmdApply.AlternateText" xml:space="preserve">
+    <value>Apply</value>
+  </data>
   <data name="ddlUserActionsItem.Actions" xml:space="preserve">
     <value>- Actions -</value>
   </data>

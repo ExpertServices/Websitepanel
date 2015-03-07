@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
 {
@@ -42,7 +43,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         bool CreateCollection(string organizationId, RdsCollection collection);
         bool AddRdsServersToDeployment(RdsServer[] servers);
         RdsCollection GetCollection(string collectionName);
-        bool RemoveCollection(string organizationId, string collectionName);
+        bool RemoveCollection(string organizationId, string collectionName, List<RdsServer> servers);
         bool SetUsersInCollection(string organizationId, string collectionName, List<string> users);
         void AddSessionHostServerToCollection(string organizationId, string collectionName, RdsServer server);
         void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers);
@@ -69,5 +70,14 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         List<RdsUserSession> GetRdsUserSessions(string collectionName);
         void LogOffRdsUser(string unifiedSessionId, string hostServer);
         List<string> GetRdsCollectionSessionHosts(string collectionName);
+        RdsServerInfo GetRdsServerInfo(string serverName);
+        string GetRdsServerStatus(string serverName);
+        void ShutDownRdsServer(string serverName);
+        void RestartRdsServer(string serverName);
+        void SaveRdsCollectionLocalAdmins(List<OrganizationUser> users, List<string> hosts);
+        List<string> GetRdsCollectionLocalAdmins(string hostName);
+        void MoveRdsServerToTenantOU(string hostName, string organizationId);
+        void RemoveRdsServerFromTenantOU(string hostName, string organizationId);
+        void InstallCertificate(byte[] certificate, string password, List<string> hostNames);
     }
 }

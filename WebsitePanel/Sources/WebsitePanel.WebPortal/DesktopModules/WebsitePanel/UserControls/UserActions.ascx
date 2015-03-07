@@ -7,13 +7,15 @@
         return ShowProgressDialog(text);
     }
 
-    function ShowProrgess(btn) {
+    function ShowProgress(btn) {
         var action = $(btn).prev().val();
 
         if (action == 1) {
             ShowProgressDialog('Disabling users...');
         } else if (action == 2) {
             ShowProgressDialog('Enabling users...');
+        } else if (action == 3) {
+            ShowProgressDialog('Prepare...');
         } else if (action == 4) {
             ShowProgressDialog('Setting VIP...');
         } else if (action == 5) {
@@ -36,7 +38,7 @@
         </asp:DropDownList>
 
         <asp:Button ID="btnApply" runat="server" meta:resourcekey="btnApply"
-        Text="Apply" CssClass="Button1" OnClick="btnApply_Click" OnClientClick="return ShowProrgess(this);" />
+        Text="Apply" CssClass="Button1" OnClick="btnApply_Click" OnClientClick="return ShowProgress(this);" />
 
         
         <ajaxToolkit:ModalPopupExtender ID="Modal" runat="server" EnableViewState="true" TargetControlID="FakeModalPopupTarget"

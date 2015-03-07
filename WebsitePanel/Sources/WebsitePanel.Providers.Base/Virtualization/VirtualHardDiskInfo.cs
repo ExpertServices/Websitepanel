@@ -41,8 +41,8 @@ namespace WebsitePanel.Providers.Virtualization
         public string ParentPath { get; set; }
         public VirtualHardDiskType DiskType { get; set; }
         public bool SupportPersistentReservations { get; set; }
-        public long MaximumIOPS { get; set; }
-        public long MinimumIOPS { get; set; }
+        public ulong MaximumIOPS { get; set; }
+        public ulong MinimumIOPS { get; set; }
         public ControllerType VHDControllerType { get; set; }
         public int ControllerNumber { get; set; }
         public int ControllerLocation { get; set; }

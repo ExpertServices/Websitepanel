@@ -2,6 +2,7 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/RDSCollectionServers.ascx" TagName="CollectionServers" TagPrefix="wsp"%>
+<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <script type="text/javascript" src="/JavaScript/jquery.min.js?v=1.4.4"></script>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -25,9 +26,29 @@
 						    <td>
                                 <asp:TextBox ID="txtCollectionName" runat="server" CssClass="TextBox300" />
                                 <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName" ValidationGroup="SaveRDSCollection"></asp:RequiredFieldValidator>
-						    </td>
-					    </tr>
+						    </td>                            
+					    </tr>                        
 					</table> 
+
+                    <wsp:CollapsiblePanel id="secSelectSertificate" runat="server"
+                        TargetControlID="panelSelectSertificate" meta:resourcekey="secSelectSertificate" Text="">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelSelectSertificate">                                                
+                        <div style="padding: 10px;">
+                            <div class="FormBody">
+                                <div class="FormField">
+                                    <asp:FileUpload ID="upPFX" runat="server"/>
+                                </div>
+                                <div class="FormFieldDescription">
+                                    <asp:Localize runat="server" meta:resourcekey="lblPFXInstallPassword" />
+                                </div>
+                                <div class="FormField">
+                                    <asp:TextBox ID="txtPFXInstallPassword" runat="server" TextMode="Password" CssClass="NormalTextBox" />
+                                </div>
+                            </div>
+                        </div>                            
+                    </asp:Panel>                   
 
                     <fieldset id="RDSServersPanel" runat="server">
                         <legend><asp:Localize ID="locRDSServersSection" runat="server" meta:resourcekey="locRDSServersSection" Text="RDS Servers"></asp:Localize></legend>

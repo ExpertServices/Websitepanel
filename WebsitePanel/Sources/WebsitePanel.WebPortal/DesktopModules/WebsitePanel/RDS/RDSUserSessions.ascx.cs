@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.RemoteDesktopServices;
 
 namespace WebsitePanel.Portal.RDS
@@ -100,6 +102,16 @@ namespace WebsitePanel.Portal.RDS
 
             gvRDSUserSessions.DataSource = userSessions;
             gvRDSUserSessions.DataBind();
+        }
+
+        public string GetAccountImage(bool vip)
+        {
+            if (vip)
+            {
+                return GetThemedImage("Exchange/vip_user_16.png");
+            }
+
+            return GetThemedImage("Exchange/accounting_mail_16.png");
         }
     }
 }

@@ -254,6 +254,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
 			BindPopupApps();
 		}
 
+        protected void gvApps_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EditApplication")
+            {
+                Response.Redirect(GetCollectionUsersEditUrl(e.CommandArgument.ToString()));
+            }
+        }
+
         protected SortDirection Direction
         {
             get { return ViewState[DirectionString] == null ? SortDirection.Descending : (SortDirection)ViewState[DirectionString]; }

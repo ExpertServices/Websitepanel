@@ -98,9 +98,9 @@ namespace WebsitePanel.Portal.VPS
                 TimeSpan uptime = TimeSpan.FromMilliseconds(vm.Uptime);
                 uptime = uptime.Subtract(TimeSpan.FromMilliseconds(uptime.Milliseconds));
                 litUptime.Text = uptime.ToString();
-                litStatus.Text = GetLocalizedString("State." + vm.State.ToString());
+                litStatus.Text = GetLocalizedString("State." + vm.State);
                 litCreated.Text = vm.CreatedDate.ToString();
-                litHeartbeat.Text = GetLocalizedString("Heartbeat." + vm.Heartbeat.ToString());
+                litHeartbeat.Text = GetLocalizedString("Heartbeat." + vm.Heartbeat);
 
                 // CPU
                 cpuGauge.Progress = vm.CpuUsage;
