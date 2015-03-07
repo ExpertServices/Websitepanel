@@ -50,6 +50,7 @@ namespace WebsitePanel.WebDav.Core
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
 
+                IsRootItem = item.IsRootItem;
                 SetCredentials(credentials);
                 SetHierarchyItem(item);
             }
@@ -87,6 +88,8 @@ namespace WebsitePanel.WebDav.Core
                     }
                 }
             }
+
+            public string Summary { get; set; }
 
             /// <summary>
             ///     Downloads content of the resource to a file specified by filename

@@ -31,6 +31,7 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Web;
+using System.Linq;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -39,13 +40,14 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
+using AjaxControlToolkit;
 
 namespace WebsitePanel.Portal
 {
     public partial class RDSServers : WebsitePanelModuleBase
 	{
 		protected void Page_Load(object sender, EventArgs e)
-		{
+		{            
 			if (!IsPostBack)
 			{
                 gvRDSServers.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
@@ -99,6 +101,28 @@ namespace WebsitePanel.Portal
                     ShowErrorMessage("REMOTE_DESKTOP_SERVICES_REMOVE_RDSSERVER", ex);
                 }
             }
+            else if (e.CommandName == "ViewInfo")
+            {
+                try
+                {
+                    ShowInfo(e.CommandArgument.ToString());
+                }
+                catch (Exception)
+                {
+                }
+            }
+            else if (e.CommandName == "Restart")
+            {
+                Restart(e.CommandArgument.ToString());
+            }
+            else if (e.CommandName == "ShutDown")
+            {
+                ShutDown(e.CommandArgument.ToString());
+            }
+            else if (e.CommandName == "InstallCertificate")
+            {
+                InstallCertificate(e.CommandArgument.ToString());
+            }
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -106,6 +130,61 @@ namespace WebsitePanel.Portal
             gvRDSServers.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
 
             gvRDSServers.DataBind();
+        }
+
+        private void ShowInfo(string serverId)
+        {
+            ViewInfoModal.Show();
+            var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
+            var serverInfo = ES.Services.RDS.GetRdsServerInfo(rdsServer.ItemId.Value, rdsServer.FqdName);
+            litProcessor.Text = string.Format("{0}x{1} MHz", serverInfo.NumberOfCores, serverInfo.MaxClockSpeed);
+            litLoadPercentage.Text = string.Format("{0}%", serverInfo.LoadPercentage);
+            litMemoryAllocated.Text = string.Format("{0} MB", serverInfo.MemoryAllocatedMb);
+            litFreeMemory.Text = string.Format("{0} MB", serverInfo.FreeMemoryMb);
+            rpServerDrives.DataSource = serverInfo.Drives;
+            rpServerDrives.DataBind();
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
+        }
+
+        private void Restart(string serverId)
+        {
+            var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
+            ES.Services.RDS.RestartRdsServer(rdsServer.ItemId.Value, rdsServer.FqdName);
+            Response.Redirect(Request.Url.ToString(), true);
+        }
+
+        private void ShutDown(string serverId)
+        {
+            var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
+            ES.Services.RDS.ShutDownRdsServer(rdsServer.ItemId.Value, rdsServer.FqdName);
+            Response.Redirect(Request.Url.ToString(), true);
+        }
+
+        private void RefreshServerInfo()
+        {
+            var servers = odsRDSServersPaged.Select();
+            gvRDSServers.DataSource = servers;
+            gvRDSServers.DataBind();
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
+        }
+
+        private void InstallCertificate(string serverId)
+        {
+            var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));            
+
+            try
+            {
+                ES.Services.RDS.InstallSessionHostsCertificate(rdsServer);
+                ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
+                ShowSuccessMessage("RDSSESSIONHOST_CERTIFICATE_INSTALLED");
+            }
+            catch(Exception ex)
+            {
+                ShowErrorMessage("RDSSESSIONHOST_CERTIFICATE_NOT_INSTALLED", ex);
+            }
+
+            messageBoxPanel.Update();
+//            Response.Redirect(Request.Url.ToString(), true);
         }
 	}
 }

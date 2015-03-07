@@ -107,11 +107,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                         break;
                 }
 
-                var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
-
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
-
-                permissions.SetPermissions(esPermissions);
             }
             catch (Exception ex)
             {
@@ -159,10 +155,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderGeneralSettings(
                     PanelRequest.ItemID,
                     folder,
-                    permissions.GetPemissions(),
                     chkDirectoryBrowsing.Checked,
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);

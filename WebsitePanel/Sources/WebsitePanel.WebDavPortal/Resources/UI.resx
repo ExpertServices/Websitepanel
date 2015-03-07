@@ -147,11 +147,17 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
   <data name="FileUpload" xml:space="preserve">
     <value>File Upload</value>
   </data>
   <data name="GigabyteShort" xml:space="preserve">
     <value>Gb</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
   </data>
   <data name="ItemsWasRemovedFormat" xml:space="preserve">
     <value>{0} items was removed.</value>
@@ -182,6 +188,12 @@
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="SearchDocuments" xml:space="preserve">
+    <value>Search Documents</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Search Results</value>
   </data>
   <data name="SelectFilesToUpload" xml:space="preserve">
     <value>Select files to upload</value>

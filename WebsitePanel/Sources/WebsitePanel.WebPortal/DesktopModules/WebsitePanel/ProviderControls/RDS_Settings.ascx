@@ -1,5 +1,63 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDS_Settings.ascx.cs" Inherits="WebsitePanel.Portal.ProviderControls.RDS_Settings" %>
-<table>
+<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+
+<fieldset>
+    <legend>
+        <asp:Label ID="secCertificateSettings" runat="server" meta:resourcekey="secServiceSettings" Text="SSL Certificate" CssClass="NormalBold"></asp:Label>&nbsp;
+    </legend>    
+    <table>  
+        <tr>
+            <td class="SubHead" style="width:200px" nowrap>
+                <asp:Localize runat="server" meta:resourcekey="lblSelectFile" />
+            </td>
+            <td style="padding: 10px 0 10px 0;"><asp:FileUpload ID="upPFX" runat="server"/></td>            
+        </tr>        
+        <tr><td></td></tr>
+        <tr>
+            <td class="SubHead" style="width:200px" nowrap>
+                <asp:Localize runat="server" meta:resourcekey="lblPFXInstallPassword" />
+            </td>
+            <td>                        
+                <asp:TextBox ID="txtPFXInstallPassword" runat="server" TextMode="Password" Width="200px" />
+            </td>
+        </tr>
+    </table> 
+    </fieldset>
+<fieldset>   
+    <legend>
+        <asp:Label ID="currentCertificate" runat="server" meta:resourcekey="currentCertificate" Text="Current Certificate" CssClass="NormalBold"></asp:Label>&nbsp;
+    </legend>
+            <asp:Panel ID="plCertificateInfo" Visible="false" runat="server">
+            <table>
+                <tr>
+                    <td class="SubHead" style="width:200px" nowrap>
+                        <asp:Localize runat="server" meta:resourcekey="lblIssuedBy" />
+                    </td>
+                    <td class="SubHead">                        
+                        <asp:Label ID="lblIssuedBy" runat="server"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead" style="width:200px" nowrap>
+                        <asp:Localize runat="server" meta:resourcekey="lblSanName" />
+                    </td>
+                    <td class="SubHead">                        
+                        <asp:Label ID="lblSanName" runat="server"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead" style="width:200px" nowrap>
+                        <asp:Localize runat="server" meta:resourcekey="lblExpiryDate" />
+                    </td>
+                    <td class="SubHead">                        
+                        <asp:Label ID="lblExpiryDate" runat="server"/>
+                    </td>
+                </tr>                
+            </table>
+            </asp:Panel>        
+</fieldset>
+<fieldset>
+<table>       
     <tr>
         <td class="SubHead" width="200" nowrap>
             <asp:Label runat="server" ID="lblConnectionBroker" meta:resourcekey="lblConnectionBroker" Text="Connection Broker:"/>
@@ -72,4 +130,6 @@
             </asp:GridView>
         </td>
     </tr>
-</table>
+</table>    
+</fieldset>
+<br />

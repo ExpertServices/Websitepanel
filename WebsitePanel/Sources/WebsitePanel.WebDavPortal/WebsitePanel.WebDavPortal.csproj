@@ -459,6 +459,7 @@
     <Content Include="Views\FileSystem\_ShowContentTopMenu.cshtml" />
     <Content Include="Views\FileSystem\_ShowContentBigIcons.cshtml" />
     <Content Include="Views\FileSystem\UploadFiles.cshtml" />
+    <Content Include="Views\FileSystem\ShowContentSearchResultTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

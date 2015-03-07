@@ -136,7 +136,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     var fullRemote = new StartMenuApp
                     {
                         DisplayName = string.Format("Full Desktop - {0}", host.ToLower()),
-                        FilePath = "%SystemRoot%\\system32\\mstsc.exe",
+                        FilePath = "c:\\windows\\system32\\mstsc.exe",                        
                         RequiredCommandLine = string.Format("/v:{0}", host.ToLower())
                     };
 
@@ -210,9 +210,16 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                 RemoteApplication app = new RemoteApplication();
                 app.Alias = (string)gvApps.DataKeys[i][0];
-                app.DisplayName = ((HyperLink)row.FindControl("lnkDisplayName")).Text;
+                app.DisplayName = ((LinkButton)row.FindControl("lnkDisplayName")).Text;
                 app.FilePath = ((HiddenField)row.FindControl("hfFilePath")).Value;
                 app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
+                var users = ((HiddenField)row.FindControl("hfUsers")).Value;
+
+                if (users != null)
+                {
+                    app.Users = new string[]{"New"};
+                }
+
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||

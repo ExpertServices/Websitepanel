@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace WebsitePanel.WebDav.Core.Extensions
 {
-    static class UriExtensions
+    public static class UriExtensions
     {
         public static Uri Append(this Uri uri, params string[] paths)
         {

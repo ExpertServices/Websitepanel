@@ -5508,6 +5508,46 @@ CREATE TABLE [dbo].[RDSCollectionSettings](
 
 GO
 
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'SecurityLayer' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD SecurityLayer NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'EncryptionLevel' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD EncryptionLevel NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'AuthenticateUsingNLA' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD AuthenticateUsingNLA BIT null;
+END
+GO
+
+
+
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCertificates')
+CREATE TABLE [dbo].[RDSCertificates](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceId] [int] NOT NULL,
+	[Content] [ntext] NOT NULL,
+	[Hash] [nvarchar](255) NOT NULL,
+	[FileName] [nvarchar](255) NOT NULL,
+	[ValidFrom] [datetime] NULL,
+	[ExpiryDate] [datetime] NULL
+ CONSTRAINT [PK_RDSCertificates] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 ALTER TABLE [dbo].[RDSCollectionUsers]
 DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
@@ -5547,6 +5587,66 @@ ALTER TABLE [dbo].[RDSCollectionSettings] CHECK CONSTRAINT [FK_RDSCollectionSett
 GO
 
 /*Remote Desktop Services Procedures*/
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCertificate')
+DROP PROCEDURE AddRDSCertificate
+GO
+CREATE PROCEDURE [dbo].[AddRDSCertificate]
+(
+	@RDSCertificateId INT OUTPUT,
+	@ServiceId INT,
+	@Content NTEXT,
+	@Hash NVARCHAR(255),
+	@FileName NVARCHAR(255),
+	@ValidFrom DATETIME,
+	@ExpiryDate DATETIME
+)
+AS
+INSERT INTO RDSCertificates
+(
+	ServiceId,
+	Content,
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate	
+)
+VALUES
+(
+	@ServiceId,
+	@Content,
+	@Hash,
+	@FileName,
+	@ValidFrom,
+	@ExpiryDate
+)
+
+SET @RDSCertificateId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCertificateByServiceId')
+DROP PROCEDURE GetRDSCertificateByServiceId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCertificateByServiceId]
+(
+	@ServiceId INT
+)
+AS
+SELECT TOP 1
+	Id,
+	ServiceId,
+	Content, 
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate
+	FROM RDSCertificates
+	WHERE ServiceId = @ServiceId
+	ORDER BY Id DESC
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServer')
 DROP PROCEDURE AddRDSServer
@@ -8746,11 +8846,148 @@ AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupNa
 RETURN 
 GO
 
--- Hyper-V 2012 R2
-IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
-BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
-END
+
+--ES OWA Editing
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
+CREATE TABLE EnterpriseFoldersOwaPermissions
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	ItemID INT NOT NULL,
+	FolderID INT NOT NULL, 
+	AccountID INT NOT NULL 
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_AccountId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_FolderId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId] FOREIGN KEY([FolderID])
+REFERENCES [dbo].[EnterpriseFolders] ([EnterpriseFolderID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAllEnterpriseFolderOwaUsers')
+DROP PROCEDURE DeleteAllEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[DeleteAllEnterpriseFolderOwaUsers]
+(
+	@ItemID  int,
+	@FolderID int
+)
+AS
+DELETE FROM EnterpriseFoldersOwaPermissions
+WHERE ItemId = @ItemID AND FolderID = @FolderID
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolderOwaUser')
+DROP PROCEDURE AddEnterpriseFolderOwaUser
+GO
+CREATE PROCEDURE [dbo].[AddEnterpriseFolderOwaUser]
+(
+	@ESOwsaUserId INT OUTPUT,
+	@ItemID INT,
+	@FolderID INT, 
+	@AccountID INT 
+)
+AS
+INSERT INTO EnterpriseFoldersOwaPermissions
+(
+	ItemID ,
+	FolderID, 
+	AccountID
+)
+VALUES
+(
+	@ItemID,
+	@FolderID, 
+	@AccountID 
+)
+
+SET @ESOwsaUserId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderOwaUsers')
+DROP PROCEDURE GetEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderOwaUsers]
+(
+	@ItemID INT,
+	@FolderID INT
+)
+AS
+SELECT 
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress,
+	EA.MailEnabledPublicFolder,
+	EA.MailboxPlanId,
+	EA.SubscriberNumber,
+	EA.UserPrincipalName 
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  ExchangeAccounts AS EA ON EA.AccountID = EFOP.AccountID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.FolderID = @FolderID
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderId')
+DROP PROCEDURE GetEnterpriseFolderId
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderId]
+(
+	@ItemID INT,
+	@FolderName varchar(max)
+)
+AS
+SELECT TOP 1
+	EnterpriseFolderID
+	FROM EnterpriseFolders
+	WHERE ItemId = @ItemID AND FolderName = @FolderName
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetUserEnterpriseFolderWithOwaEditPermission')
+DROP PROCEDURE GetUserEnterpriseFolderWithOwaEditPermission
+GO
+CREATE PROCEDURE [dbo].[GetUserEnterpriseFolderWithOwaEditPermission]
+(
+	@ItemID INT,
+	@AccountID INT
+)
+AS
+SELECT 
+	EF.FolderName
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  [dbo].[EnterpriseFolders] AS EF ON EF.EnterpriseFolderID = EFOP.FolderID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.AccountID = @AccountID
 GO
 
 -- Hyper-V 2012 R2
@@ -8759,3 +8996,4 @@ BEGIN
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
 END
 GO
+

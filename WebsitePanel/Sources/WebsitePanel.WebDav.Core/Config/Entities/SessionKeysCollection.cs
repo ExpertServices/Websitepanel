@@ -45,6 +45,16 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
             }
         }
 
+        public string OwaEditFoldersSessionKey
+        {
+            get
+            {
+                SessionKeysElement sessionKey =
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.OwaEditFoldersSessionKey);
+                return sessionKey != null ? sessionKey.Value : null;
+            }
+        }
+
         public string WebDavRootFoldersPermissions
         {
             get

@@ -34,7 +34,9 @@ namespace WebsitePanel.WebDav.Core.Owa
         {
             var resource = _webDavManager.GetResource(path);
 
-            var readOnly = _webDavAuthorizationService.GetPermissions(WspContext.User, path).HasFlag(WebDavPermissions.Write) == false;
+            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, path);
+
+            var readOnly = permissions.HasFlag(WebDavPermissions.Write) == false || permissions.HasFlag(WebDavPermissions.OwaEdit) == false;
 
             var cFileInfo = new CheckFileInfo
             {

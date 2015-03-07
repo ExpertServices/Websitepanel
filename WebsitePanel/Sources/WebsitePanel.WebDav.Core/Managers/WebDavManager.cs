@@ -50,9 +50,9 @@ namespace WebsitePanel.WebDav.Core.Managers
                 children = ConnectToWebDavServer().Select(x => new WebDavResource
                 {
                     Href = new Uri(x.Url), 
-                    ItemType = ItemType.Folder, 
-                    ContentLength = x.Size, 
-                    AllocatedSpace = x.FRSMQuotaMB, 
+                    ItemType = ItemType.Folder,
+                    ContentLength = x.Size * 1024 * 1024,
+                    AllocatedSpace = x.FRSMQuotaMB * 1024 * 1024, 
                     IsRootItem = true
                 }).ToArray();
             }
@@ -103,7 +103,7 @@ namespace WebsitePanel.WebDav.Core.Managers
 
         public bool IsFile(string path)
         {
-            string folder = GetFileFolder(path);
+            string folder = GetFileFolderPath(path);
 
             if (string.IsNullOrWhiteSpace(folder))
             {
@@ -124,7 +124,7 @@ namespace WebsitePanel.WebDav.Core.Managers
         {
             try
             {
-                string folder = GetFileFolder(path);
+                string folder = GetFileFolderPath(path);
 
                 var resourceName = GetResourceName(path);
 
@@ -212,7 +212,7 @@ namespace WebsitePanel.WebDav.Core.Managers
             path = RemoveLeadingFromPath(path, "edit");
             path = RemoveLeadingFromPath(path, WspContext.User.OrganizationId);
 
-            string folderPath = GetFileFolder(path);
+            string folderPath = GetFileFolderPath(path);
 
             OpenFolder(folderPath);
 
@@ -232,7 +232,7 @@ namespace WebsitePanel.WebDav.Core.Managers
         {
             try
             {
-                string folder = GetFileFolder(path);
+                string folder = GetFileFolderPath(path);
 
                 var resourceName = GetResourceName(path);
 
@@ -250,7 +250,7 @@ namespace WebsitePanel.WebDav.Core.Managers
         {
             try
             {
-                string folder = GetFileFolder(path);
+                string folder = GetFileFolderPath(path);
 
                 var resourceName = GetResourceName(path);
 
@@ -270,7 +270,7 @@ namespace WebsitePanel.WebDav.Core.Managers
         {
             try
             {
-                string folder = GetFileFolder(path);
+                string folder = GetFileFolderPath(path);
 
                 var resourceName = GetResourceName(path);
 
@@ -345,6 +345,7 @@ namespace WebsitePanel.WebDav.Core.Managers
                 webDavitem.SetLastModified(file.Changed);
                 webDavitem.ContentLength = file.Size;
                 webDavitem.AllocatedSpace = file.FRSMQuotaMB;
+                webDavitem.Summary = file.Summary;
 
                 convertResult.Add(webDavitem);
             }
@@ -372,7 +373,7 @@ namespace WebsitePanel.WebDav.Core.Managers
                 targetStream.Write(buffer, 0, n);
         }
 
-        private string GetFileFolder(string path)
+        public string GetFileFolderPath(string path)
         {
             path = path.TrimEnd('/');
 

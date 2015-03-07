@@ -63,27 +63,13 @@ namespace WebsitePanel.Portal.RDS
                 }
 
                 RdsCollection collection = new RdsCollection{ Name = txtCollectionName.Text, DisplayName = txtCollectionName.Text, Servers = servers.GetServers(), Description = "" };
-                int collectionId = ES.Services.RDS.AddRdsCollection(PanelRequest.ItemID, collection);
-
-                try
-                {
-                    if (upPFX.HasFile.Equals(true))
-                    {
-                        byte[] pfx = upPFX.FileBytes;
-                        string certPassword = txtPFXInstallPassword.Text;
-                        //ES.Services.RDS.InstallSessionHostsCertificate(collectionId, pfx, certPassword);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    messageBox.ShowErrorMessage("RDSSESSIONHOST_CERTIFICATE_NOT_INSTALLED", ex);
-                }
+                int collectionId = ES.Services.RDS.AddRdsCollection(PanelRequest.ItemID, collection);                
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID));
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("RDSCOLLECTION_NOT_CREATED", ex);
+                ShowErrorMessage("RDSCOLLECTION_NOT_CREATED", ex);
             }
         }
     }

@@ -35,6 +35,7 @@ using WebsitePanel.WebDavPortal.Models.Common.Enums;
 using WebsitePanel.WebDavPortal.Models.FileSystem;
 using WebsitePanel.WebDavPortal.UI;
 using WebsitePanel.WebDavPortal.UI.Routes;
+using WebsitePanel.WebDav.Core.Extensions;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 
@@ -143,7 +144,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult GetContentDetails(string org, string pathPart, [ModelBinder(typeof (JqueryDataTableModelBinder))] JqueryDataTableRequest dtRequest)
         {
@@ -151,16 +151,16 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (string.IsNullOrEmpty(dtRequest.Search.Value) == false)
             {
-                folderItems = _webdavManager.SearchFiles(WspContext.User.ItemId, pathPart, dtRequest.Search.Value, WspContext.User.Login, true).Select(x => new WebDavResource(null, x));
+                folderItems = _webdavManager.SearchFiles(WspContext.User.ItemId, pathPart, dtRequest.Search.Value, WspContext.User.Login, true).Cast<WebDavResource>();
             }
             else
             {
-                folderItems = _webdavManager.OpenFolder(pathPart).Select(x=>new WebDavResource(null, x));
+                folderItems = _webdavManager.OpenFolder(pathPart).Cast<WebDavResource>();
             }
 
             var tableItems = Mapper.Map<IEnumerable<WebDavResource>, IEnumerable<ResourceTableItemModel>>(folderItems).ToList();
 
-            FillContentModel(tableItems);
+            FillContentModel(tableItems, org);
 
             var orders = dtRequest.Orders.ToList();
             orders.Insert(0, new JqueryDataTableOrder{Column = 3, Ascending = false});
@@ -182,6 +182,24 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var result = children.Skip(resourseRenderCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
 
             return PartialView("_ResourseCollectionPartial", result);
+        }
+
+        public ActionResult SearchFiles(string org, string pathPart, string searchValue)
+        {
+            if (string.IsNullOrEmpty(searchValue))
+            {
+                return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
+            }
+
+            var model = new ModelForWebDav
+            {
+                UrlSuffix = pathPart,
+                Permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart),
+                UserSettings = _userSettingsManager.GetUserSettings(WspContext.User.AccountId),
+                SearchValue = searchValue
+            };
+
+            return View("ShowContentSearchResultTable", model);
         }
 
         [HttpGet]
@@ -318,7 +336,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         {
             var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
 
-            if (permissions.HasFlag(WebDavPermissions.Write) == false || Request.Browser.IsMobileDevice)
+            if (permissions.HasFlag(WebDavPermissions.Write) == false || permissions.HasFlag(WebDavPermissions.OwaEdit) == false || Request.Browser.IsMobileDevice)
             {
                 return new RedirectToRouteResult(FileSystemRouteNames.ViewOfficeOnline, null);
             }
@@ -329,17 +347,17 @@ namespace WebsitePanel.WebDavPortal.Controllers
         }
         #endregion
 
-        private void FillContentModel(IEnumerable<ResourceTableItemModel> items)
+        private void FillContentModel(IEnumerable<ResourceTableItemModel> items, string organizationId)
         {
             foreach (var item in items)
             {
                 var opener = _openerManager[Path.GetExtension(item.DisplayName)];
+                var pathPart = item.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
 
                 switch (opener)
                 {
                     case FileOpenerType.OfficeOnline:
                     {
-                        var pathPart = item.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
                         item.Url = string.Concat(Url.RouteUrl(FileSystemRouteNames.EditOfficeOnline, new {org = WspContext.User.OrganizationId, pathPart = ""}), pathPart);
                         break;
                     }
@@ -349,6 +367,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
                         break;
                     }
                 }
+
+                var folderPath = Server.UrlDecode(_webdavManager.GetFileFolderPath(pathPart));
+
+                item.FolderUrlAbsoluteString =  Server.UrlDecode(Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new  {org = organizationId, pathPart = folderPath}, Request.Url.Scheme));
+                item.FolderUrlLocalString = Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new { org = organizationId, pathPart = folderPath });
 
                 if (Request.Browser.IsMobileDevice)
                 {
