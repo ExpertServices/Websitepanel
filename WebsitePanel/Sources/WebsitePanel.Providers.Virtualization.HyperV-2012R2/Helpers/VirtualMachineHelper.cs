@@ -71,47 +71,22 @@ namespace WebsitePanel.Providers.Virtualization
             if (result != null && result.Count > 0)
             {
                 info.DynamicMemoryEnabled = Convert.ToBoolean(result[0].GetProperty("DynamicMemoryEnabled"));
-                info.Startup = Convert.ToInt64(result[0].GetProperty("Startup"));
-                info.Minimum = Convert.ToInt64(result[0].GetProperty("Minimum"));
-                info.Maximum = Convert.ToInt64(result[0].GetProperty("Maximum"));
+                info.Startup = Convert.ToInt64(result[0].GetProperty("Startup")) / Size1M;
+                info.Minimum = Convert.ToInt64(result[0].GetProperty("Minimum")) / Size1M;
+                info.Maximum = Convert.ToInt64(result[0].GetProperty("Maximum")) / Size1M;
                 info.Buffer = Convert.ToInt32(result[0].GetProperty("Buffer"));
                 info.Priority = Convert.ToInt32(result[0].GetProperty("Priority"));
             }
             return info;
         }
 
-        public static BiosInfo GetVMBios(PowerShellManager powerShell, string name)
-        {
-            BiosInfo info = new BiosInfo();
-
-            Command cmd = new Command("Get-VMBios");
-
-            cmd.Parameters.Add("VMName", name);
-
-            Collection<PSObject> result = powerShell.Execute(cmd, false);
-            if (result != null && result.Count > 0)
-            {
-                info.NumLockEnabled = Convert.ToBoolean(result[0].GetProperty("NumLockEnabled"));
-
-                List<string> startupOrders = new List<string>();
-
-                foreach (var item in (IEnumerable)result[0].GetProperty("StartupOrder"))
-                    startupOrders.Add(item.ToString());
-
-                info.StartupOrder = startupOrders.ToArray();
-            }
-            return info;
-        }
 
         public static VirtualHardDiskInfo[] GetVirtualHardDisks(PowerShellManager powerShell, string name)
         {
-
             List<VirtualHardDiskInfo> disks = new List<VirtualHardDiskInfo>();
 
-            Command cmd = new Command("Get-VMHardDiskDrive");
-            cmd.Parameters.Add("VMName", name);
+            Collection<PSObject> result = GetVirtualHardDisksPS(powerShell, name);
 
-            Collection<PSObject> result = powerShell.Execute(cmd, false);
             if (result != null && result.Count > 0)
             {
                 foreach (PSObject d in result)
@@ -135,6 +110,14 @@ namespace WebsitePanel.Providers.Virtualization
             return disks.ToArray();
         }
 
+        public static Collection<PSObject> GetVirtualHardDisksPS(PowerShellManager powerShell, string name)
+        {
+            Command cmd = new Command("Get-VMHardDiskDrive");
+            cmd.Parameters.Add("VMName", name);
+
+            return powerShell.Execute(cmd, false);
+        }
+
         public static void GetVirtualHardDiskDetail(PowerShellManager powerShell, string path, ref VirtualHardDiskInfo disk)
         {
             if (!string.IsNullOrEmpty(path))
@@ -155,21 +138,6 @@ namespace WebsitePanel.Providers.Virtualization
         }
 
 
-
-
-        public static void UpdateBios(PowerShellManager powerShell, VirtualMachine vm, bool bootFromCD, bool numLockEnabled)
-        {
-            Command cmd = new Command("Set-VMBios");
-
-            cmd.Parameters.Add("VMName", vm.Name);
-            cmd.Parameters.Add(numLockEnabled ? "EnableNumLock" : "DisableNumLock");
-            var bootOrder = bootFromCD
-                ? new[] { "CD", "IDE", "LegacyNetworkAdapter", "Floppy" }
-                : new[] { "IDE", "CD", "LegacyNetworkAdapter", "Floppy" };
-            cmd.Parameters.Add("StartupOrder", bootOrder);
-
-            powerShell.Execute(cmd, false);
-        }
         public static void UpdateProcessors(PowerShellManager powerShell, VirtualMachine vm, int cpuCores, int cpuLimitSettings, int cpuReserveSettings, int cpuWeightSettings)
         {
             Command cmd = new Command("Set-VMProcessor");
@@ -187,7 +155,7 @@ namespace WebsitePanel.Providers.Virtualization
             Command cmd = new Command("Set-VMMemory");
 
             cmd.Parameters.Add("VMName", vm.Name);
-            cmd.Parameters.Add("StartupBytes", ramMB);
+            cmd.Parameters.Add("StartupBytes", ramMB * Size1M);
 
             powerShell.Execute(cmd, false);
         }

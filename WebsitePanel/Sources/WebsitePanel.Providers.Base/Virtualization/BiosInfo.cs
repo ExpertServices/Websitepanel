@@ -36,5 +36,6 @@ namespace WebsitePanel.Providers.Virtualization
     {
         public bool NumLockEnabled { get; set; }
         public string[] StartupOrder { get; set; }
+        public bool BootFromCD { get; set; }
     }
 }

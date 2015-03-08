@@ -13,8 +13,25 @@ namespace WebsitePanel.Providers.Virtualization
     {
         public static DvdDriveInfo Get(PowerShellManager powerShell, string vmName)
         {
-            DvdDriveInfo info = new DvdDriveInfo();
+            DvdDriveInfo info = null;
 
+            PSObject result = GetPS(powerShell, vmName);
+
+            if (result != null)
+            {
+                info = new DvdDriveInfo();
+                info.Id = result.GetString("Id");
+                info.Name = result.GetString("Name");
+                info.ControllerType = result.GetEnum<ControllerType>("ControllerType");
+                info.ControllerNumber = result.GetInt("ControllerNumber");
+                info.ControllerLocation = result.GetInt("ControllerLocation");
+                info.Path = result.GetString("Path");
+            }
+            return info;
+        }
+
+        public static PSObject GetPS(PowerShellManager powerShell, string vmName)
+        {
             Command cmd = new Command("Get-VMDvdDrive");
 
             cmd.Parameters.Add("VMName", vmName);
@@ -23,13 +40,10 @@ namespace WebsitePanel.Providers.Virtualization
 
             if (result != null && result.Count > 0)
             {
-                info.Id = result[0].GetString("Id");
-                info.Name = result[0].GetString("Name");
-                info.ControllerType = result[0].GetEnum<ControllerType>("ControllerType");
-                info.ControllerNumber = result[0].GetInt("ControllerNumber");
-                info.ControllerLocation = result[0].GetInt("ControllerLocation");
+                return result[0];
             }
-            return info;
+            
+            return null;
         }
 
         public static void Set(PowerShellManager powerShell, string vmName, string path)
@@ -56,13 +70,9 @@ namespace WebsitePanel.Providers.Virtualization
 
         public static void Add(PowerShellManager powerShell, string vmName)
         {
-            var dvd = Get(powerShell, vmName);
-
             Command cmd = new Command("Add-VMDvdDrive");
 
             cmd.Parameters.Add("VMName", vmName);
-            cmd.Parameters.Add("ControllerNumber", dvd.ControllerNumber);
-            cmd.Parameters.Add("ControllerLocation", dvd.ControllerLocation);
 
             powerShell.Execute(cmd, false);
         }

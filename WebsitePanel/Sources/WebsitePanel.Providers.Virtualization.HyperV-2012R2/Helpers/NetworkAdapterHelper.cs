@@ -49,18 +49,17 @@ namespace WebsitePanel.Providers.Virtualization
             return adapters.FirstOrDefault(a => a.MacAddress == macAddress);
         }
 
-        public static void Update(PowerShellManager powerShell, VirtualMachine vm, string switchId, string portName, string macAddress, string adapterName, bool legacyAdapter)
+        public static void Update(PowerShellManager powerShell, VirtualMachine vm)
         {
             // External NIC
             if (!vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalNicMacAddress))
             {
-                // delete adapter
                 Delete(powerShell, vm.Name, vm.ExternalNicMacAddress);
                 vm.ExternalNicMacAddress = null; // reset MAC
             }
-            else if (vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalNicMacAddress))
+            else if (vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalNicMacAddress)
+                && Get(powerShell,vm.Name,vm.ExternalNicMacAddress) == null)
             {
-                // add external adapter
                 Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
 
@@ -70,35 +69,41 @@ namespace WebsitePanel.Providers.Virtualization
                 Delete(powerShell, vm.Name, vm.PrivateNicMacAddress);
                 vm.PrivateNicMacAddress = null; // reset MAC
             }
-            else if (vm.PrivateNetworkEnabled && !String.IsNullOrEmpty(vm.PrivateNicMacAddress))
+            else if (vm.PrivateNetworkEnabled && !String.IsNullOrEmpty(vm.PrivateNicMacAddress)
+                 && Get(powerShell, vm.Name, vm.PrivateNicMacAddress) == null)
             {
-                Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                Add(powerShell, vm.Name, vm.PrivateSwitchId, vm.PrivateNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
         }
 
         public static void Add(PowerShellManager powerShell, string vmName, string switchId, string macAddress, string adapterName, bool legacyAdapter)
         {
-            //var dvd = Get(powerShell, vmName);
+            Command cmd = new Command("Add-VMNetworkAdapter");
 
-            //Command cmd = new Command("Add-VMDvdDrive");
+            cmd.Parameters.Add("VMName", vmName);
+            cmd.Parameters.Add("Name", adapterName);
+            cmd.Parameters.Add("SwitchName", switchId);
 
-            //cmd.Parameters.Add("VMName", vmName);
-            //cmd.Parameters.Add("ControllerNumber", dvd.ControllerNumber);
-            //cmd.Parameters.Add("ControllerLocation", dvd.ControllerLocation);
+            if (String.IsNullOrEmpty(macAddress))
+                cmd.Parameters.Add("DynamicMacAddress");
+            else
+                cmd.Parameters.Add("StaticMacAddress", macAddress);
 
-            //powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, false);
         }
         public static void Delete(PowerShellManager powerShell, string vmName, string macAddress)
         {
-            //var dvd = Get(powerShell, vmName);
+            var networkAdapter = Get(powerShell, vmName, macAddress);
 
-            //Command cmd = new Command("Add-VMDvdDrive");
+            if (networkAdapter == null)
+                return;
 
-            //cmd.Parameters.Add("VMName", vmName);
-            //cmd.Parameters.Add("ControllerNumber", dvd.ControllerNumber);
-            //cmd.Parameters.Add("ControllerLocation", dvd.ControllerLocation);
+            Command cmd = new Command("Remove-VMNetworkAdapter");
 
-            //powerShell.Execute(cmd, false);
+            cmd.Parameters.Add("VMName", vmName);
+            cmd.Parameters.Add("Name", networkAdapter.Name);
+
+            powerShell.Execute(cmd, false);
         }
     }
 }

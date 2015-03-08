@@ -54,6 +54,7 @@
       <Link>VersionInfo.cs</Link>
     </Compile>
     <Compile Include="Extensions\PSObjectExtension.cs" />
+    <Compile Include="Helpers\BiosHelper.cs" />
     <Compile Include="Helpers\NetworkAdapterHelper.cs" />
     <Compile Include="Helpers\DvdDriveHelper.cs" />
     <Compile Include="PowerShellManager.cs" />
