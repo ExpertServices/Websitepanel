@@ -120,6 +120,9 @@
   <data name="btnAddRDSServer.Text" xml:space="preserve">
     <value>Add RDS Server</value>
   </data>
+  <data name="gvPopupStatus.HeaderText" xml:space="preserve">
+    <value>Status</value>
+  </data>
   <data name="gvRDSServers.Empty" xml:space="preserve">
     <value>The list of RDS Servers is empty.&lt;br&gt;&lt;br&gt;To add a new Server click "Add RDS Sever" button.</value>
   </data>

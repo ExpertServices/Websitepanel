@@ -5508,6 +5508,23 @@ CREATE TABLE [dbo].[RDSCollectionSettings](
 
 GO
 
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCertificates')
+CREATE TABLE [dbo].[RDSCertificates](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceId] [int] NOT NULL,
+	[Content] [ntext] NOT NULL,
+	[Hash] [nvarchar](255) NOT NULL,
+	[FileName] [nvarchar](255) NOT NULL,
+	[ValidFrom] [datetime] NULL,
+	[ExpiryDate] [datetime] NULL
+ CONSTRAINT [PK_RDSCertificates] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 ALTER TABLE [dbo].[RDSCollectionUsers]
 DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
@@ -5547,6 +5564,66 @@ ALTER TABLE [dbo].[RDSCollectionSettings] CHECK CONSTRAINT [FK_RDSCollectionSett
 GO
 
 /*Remote Desktop Services Procedures*/
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCertificate')
+DROP PROCEDURE AddRDSCertificate
+GO
+CREATE PROCEDURE [dbo].[AddRDSCertificate]
+(
+	@RDSCertificateId INT OUTPUT,
+	@ServiceId INT,
+	@Content NTEXT,
+	@Hash NVARCHAR(255),
+	@FileName NVARCHAR(255),
+	@ValidFrom DATETIME,
+	@ExpiryDate DATETIME
+)
+AS
+INSERT INTO RDSCertificates
+(
+	ServiceId,
+	Content,
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate	
+)
+VALUES
+(
+	@ServiceId,
+	@Content,
+	@Hash,
+	@FileName,
+	@ValidFrom,
+	@ExpiryDate
+)
+
+SET @RDSCertificateId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCertificateByServiceId')
+DROP PROCEDURE GetRDSCertificateByServiceId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCertificateByServiceId]
+(
+	@ServiceId INT
+)
+AS
+SELECT TOP 1
+	Id,
+	ServiceId,
+	Content, 
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate
+	FROM RDSCertificates
+	WHERE ServiceId = @ServiceId
+	ORDER BY Id DESC
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServer')
 DROP PROCEDURE AddRDSServer
@@ -6042,7 +6119,7 @@ CREATE PROCEDURE [dbo].GetOrganizationRdsUsersCount
 )
 AS
 SELECT
-  @TotalNumber = Count([RDSCollectionId])
+  @TotalNumber = Count(DISTINCT([AccountId]))
   FROM [dbo].[RDSCollectionUsers]
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
@@ -8192,6 +8269,22 @@ AS
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType = 11)
+		ELSE IF @QuotaID = 450
+			SET @Result = (SELECT COUNT(DISTINCT(RCU.[AccountId])) FROM [dbo].[RDSCollectionUsers] RCU
+				INNER JOIN ExchangeAccounts EA ON EA.AccountId = RCU.AccountId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 451
+			SET @Result = (SELECT COUNT(RS.[ID]) FROM [dbo].[RDSServers] RS				
+				INNER JOIN ServiceItems  si ON RS.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 491
+			SET @Result = (SELECT COUNT(RC.[ID]) FROM [dbo].[RDSCollections] RC
+				INNER JOIN ServiceItems  si ON RC.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
 		ELSE IF @QuotaName like 'ServiceLevel.%' -- Support Service Level Quota
 		BEGIN
 			DECLARE @LevelID int

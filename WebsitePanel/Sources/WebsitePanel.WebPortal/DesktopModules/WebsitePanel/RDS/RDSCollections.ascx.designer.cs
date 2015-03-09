@@ -112,6 +112,24 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.GridView gvRDSCollections;
         
         /// <summary>
+        /// locQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locQuota;
+        
+        /// <summary>
+        /// collectionsQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer collectionsQuota;
+        
+        /// <summary>
         /// odsRDSCollectionsPaged control.
         /// </summary>
         /// <remarks>

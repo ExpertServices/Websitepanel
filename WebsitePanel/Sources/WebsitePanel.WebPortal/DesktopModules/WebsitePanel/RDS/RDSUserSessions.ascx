@@ -38,10 +38,11 @@
                                     <asp:GridView ID="gvRDSUserSessions" runat="server" AutoGenerateColumns="False" EnableViewState="true"
                                         Width="100%" EmptyDataText="gvRDSUserSessions" CssSelectorClass="NormalGridView"
                                         OnRowCommand="gvRDSCollections_RowCommand" AllowPaging="True" AllowSorting="True">
-                                        <Columns>
+                                        <Columns>                                            
                                             <asp:TemplateField meta:resourcekey="gvUserName" HeaderText="gvUserName">
                                                 <ItemStyle Width="30%" Wrap="false"/>
                                                 <ItemTemplate>
+                                                    <asp:Image ID="vipImage" runat="server" ImageUrl='<%# GetAccountImage(Convert.ToBoolean(Eval("IsVip"))) %>' ImageAlign="AbsMiddle"/>
                                                     <asp:Literal ID="litUserName" runat="server" Text='<%# Eval("UserName") %>'/>
                                                     <asp:HiddenField ID="hfUnifiedSessionId" runat="server"  Value='<%# Eval("UnifiedSessionId") %>'/>
                                                 </ItemTemplate>

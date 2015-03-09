@@ -355,6 +355,69 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.TextBox tbMonitorsNumber;
         
         /// <summary>
+        /// secRdsSecuritySettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secRdsSecuritySettings;
+        
+        /// <summary>
+        /// panelRdsSecuritySettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelRdsSecuritySettings;
+        
+        /// <summary>
+        /// locSecurityLayer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locSecurityLayer;
+        
+        /// <summary>
+        /// ddSecurityLayer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddSecurityLayer;
+        
+        /// <summary>
+        /// locEncryptionLevel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locEncryptionLevel;
+        
+        /// <summary>
+        /// ddEncryptionLevel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddEncryptionLevel;
+        
+        /// <summary>
+        /// cbAuthentication control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbAuthentication;
+        
+        /// <summary>
         /// buttonPanel control.
         /// </summary>
         /// <remarks>

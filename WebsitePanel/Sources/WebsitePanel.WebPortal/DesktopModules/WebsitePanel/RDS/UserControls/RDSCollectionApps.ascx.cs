@@ -210,7 +210,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
                 RemoteApplication app = new RemoteApplication();
                 app.Alias = (string)gvApps.DataKeys[i][0];
-                app.DisplayName = ((HyperLink)row.FindControl("lnkDisplayName")).Text;
+                app.DisplayName = ((LinkButton)row.FindControl("lnkDisplayName")).Text;
                 app.FilePath = ((HiddenField)row.FindControl("hfFilePath")).Value;
                 app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
 
@@ -253,6 +253,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		{
 			BindPopupApps();
 		}
+
+        protected void gvApps_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EditApplication")
+            {
+                Response.Redirect(GetCollectionUsersEditUrl(e.CommandArgument.ToString()));
+            }
+        }
 
         protected SortDirection Direction
         {

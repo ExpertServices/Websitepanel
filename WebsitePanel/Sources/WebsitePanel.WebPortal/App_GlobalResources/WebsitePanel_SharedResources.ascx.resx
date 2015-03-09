@@ -5653,6 +5653,12 @@
   <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
     <value>Collection not created</value>
   </data>
+  <data name="ERROR.RDSSESSIONHOST_CERTIFICATE_NOT_INSTALLED" xml:space="preserve">
+    <value>Session host certificate not installed</value>
+  </data>
+  <data name="Success.RDSSESSIONHOST_CERTIFICATE_INSTALLED" xml:space="preserve">
+    <value>Session host certificate has been installed</value>
+  </data>
   <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
     <value>RDS Collection settings not updated</value>
   </data>

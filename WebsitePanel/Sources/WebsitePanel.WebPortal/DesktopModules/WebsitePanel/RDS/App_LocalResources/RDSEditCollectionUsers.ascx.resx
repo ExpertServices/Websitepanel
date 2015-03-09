@@ -144,4 +144,7 @@
   <data name="secRdsUsers.Text" xml:space="preserve">
     <value>RDS Users</value>
   </data>
+  <data name="locQuota.Text" xml:space="preserve">
+    <value>Total RDS Users Assigned:</value>
+  </data>
 </root>

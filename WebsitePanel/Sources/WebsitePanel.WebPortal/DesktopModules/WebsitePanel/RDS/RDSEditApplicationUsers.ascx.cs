@@ -100,5 +100,10 @@ namespace WebsitePanel.Portal.RDS
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
             }
         }
+
+        protected void btnExit_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
+        }
     }
 }

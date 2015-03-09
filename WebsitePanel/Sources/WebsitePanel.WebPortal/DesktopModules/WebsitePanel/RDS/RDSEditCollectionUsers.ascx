@@ -1,6 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDSEditCollectionUsers.ascx.cs" Inherits="WebsitePanel.Portal.RDS.RDSEditCollectionUsers" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/RDSCollectionUsers.ascx" TagName="CollectionUsers" TagPrefix="wsp"%>
 <%@ Register Src="UserControls/RDSCollectionTabs.ascx" TagName="CollectionTabs" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
@@ -34,6 +35,11 @@
                             <wsp:CollectionUsers id="users" runat="server" />
                         </div>                            
                     </asp:Panel>
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Users Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                    </div>
                     <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SaveRDSCollection" 
                             OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />

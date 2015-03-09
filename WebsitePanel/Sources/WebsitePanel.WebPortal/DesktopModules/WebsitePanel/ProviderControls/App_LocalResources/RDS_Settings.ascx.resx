@@ -126,4 +126,7 @@
   <data name="ServerNameColumn.HeaderText" xml:space="preserve">
     <value>Server Name</value>
   </data>
+  <data name="lblPFXInstallPassword.Text" xml:space="preserve">
+    <value>Certificate Password:</value>
+  </data>
 </root>

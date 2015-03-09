@@ -325,5 +325,23 @@ namespace WebsitePanel.EnterpriseServer
         {
             return RemoteDesktopServicesController.SaveRdsCollectionLocalAdmins(users, collectionId);
         }
+
+        [WebMethod]
+        public ResultObject InstallSessionHostsCertificate(RdsServer rdsServer)
+        {
+            return RemoteDesktopServicesController.InstallSessionHostsCertificate(rdsServer);
+        }
+
+        [WebMethod]
+        public RdsCertificate GetRdsCertificateByServiceId(int serviceId)
+        {
+            return RemoteDesktopServicesController.GetRdsCertificateByServiceId(serviceId);
+        }
+
+        [WebMethod]
+        public ResultObject AddRdsCertificate(RdsCertificate certificate)
+        {
+            return RemoteDesktopServicesController.AddRdsCertificate(certificate);
+        }
     }
 }

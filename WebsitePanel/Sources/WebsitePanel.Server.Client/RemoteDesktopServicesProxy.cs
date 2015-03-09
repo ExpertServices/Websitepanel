@@ -18,7 +18,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     using System.Web.Services.Protocols;
     using System;
     using System.Diagnostics;
-    using WebsitePanel.Providers.HostedSolution;
     
     
     /// <remarks/>
@@ -97,6 +96,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         private System.Threading.SendOrPostCallback MoveRdsServerToTenantOUOperationCompleted;
         
         private System.Threading.SendOrPostCallback RemoveRdsServerFromTenantOUOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback InstallCertificateOperationCompleted;
         
         /// <remarks/>
         public RemoteDesktopServices() {
@@ -204,6 +205,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event RemoveRdsServerFromTenantOUCompletedEventHandler RemoveRdsServerFromTenantOUCompleted;
+        
+        /// <remarks/>
+        public event InstallCertificateCompletedEventHandler InstallCertificateCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -419,18 +423,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/RemoveCollection", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool RemoveCollection(string organizationId, string collectionName) {
+        public bool RemoveCollection(string organizationId, string collectionName, RdsServer[] servers) {
             object[] results = this.Invoke("RemoveCollection", new object[] {
                         organizationId,
-                        collectionName});
+                        collectionName,
+                        servers});
             return ((bool)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginRemoveCollection(string organizationId, string collectionName, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginRemoveCollection(string organizationId, string collectionName, RdsServer[] servers, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("RemoveCollection", new object[] {
                         organizationId,
-                        collectionName}, callback, asyncState);
+                        collectionName,
+                        servers}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -440,18 +446,19 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void RemoveCollectionAsync(string organizationId, string collectionName) {
-            this.RemoveCollectionAsync(organizationId, collectionName, null);
+        public void RemoveCollectionAsync(string organizationId, string collectionName, RdsServer[] servers) {
+            this.RemoveCollectionAsync(organizationId, collectionName, servers, null);
         }
         
         /// <remarks/>
-        public void RemoveCollectionAsync(string organizationId, string collectionName, object userState) {
+        public void RemoveCollectionAsync(string organizationId, string collectionName, RdsServer[] servers, object userState) {
             if ((this.RemoveCollectionOperationCompleted == null)) {
                 this.RemoveCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRemoveCollectionOperationCompleted);
             }
             this.InvokeAsync("RemoveCollection", new object[] {
                         organizationId,
-                        collectionName}, this.RemoveCollectionOperationCompleted, userState);
+                        collectionName,
+                        servers}, this.RemoveCollectionOperationCompleted, userState);
         }
         
         private void OnRemoveCollectionOperationCompleted(object arg) {
@@ -1507,17 +1514,21 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SaveRdsCollectionLocalAdmins", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SaveRdsCollectionLocalAdmins(OrganizationUser[] users, string[] hosts) {
+        public void SaveRdsCollectionLocalAdmins(string[] users, string[] hosts, string organizationId, string collectionName) {
             this.Invoke("SaveRdsCollectionLocalAdmins", new object[] {
                         users,
-                        hosts});
+                        hosts,
+                        organizationId,
+                        collectionName});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSaveRdsCollectionLocalAdmins(OrganizationUser[] users, string[] hosts, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSaveRdsCollectionLocalAdmins(string[] users, string[] hosts, string organizationId, string collectionName, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SaveRdsCollectionLocalAdmins", new object[] {
                         users,
-                        hosts}, callback, asyncState);
+                        hosts,
+                        organizationId,
+                        collectionName}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -1526,18 +1537,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void SaveRdsCollectionLocalAdminsAsync(OrganizationUser[] users, string[] hosts) {
-            this.SaveRdsCollectionLocalAdminsAsync(users, hosts, null);
+        public void SaveRdsCollectionLocalAdminsAsync(string[] users, string[] hosts, string organizationId, string collectionName) {
+            this.SaveRdsCollectionLocalAdminsAsync(users, hosts, organizationId, collectionName, null);
         }
         
         /// <remarks/>
-        public void SaveRdsCollectionLocalAdminsAsync(OrganizationUser[] users, string[] hosts, object userState) {
+        public void SaveRdsCollectionLocalAdminsAsync(string[] users, string[] hosts, string organizationId, string collectionName, object userState) {
             if ((this.SaveRdsCollectionLocalAdminsOperationCompleted == null)) {
                 this.SaveRdsCollectionLocalAdminsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSaveRdsCollectionLocalAdminsOperationCompleted);
             }
             this.InvokeAsync("SaveRdsCollectionLocalAdmins", new object[] {
                         users,
-                        hosts}, this.SaveRdsCollectionLocalAdminsOperationCompleted, userState);
+                        hosts,
+                        organizationId,
+                        collectionName}, this.SaveRdsCollectionLocalAdminsOperationCompleted, userState);
         }
         
         private void OnSaveRdsCollectionLocalAdminsOperationCompleted(object arg) {
@@ -1550,16 +1563,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetRdsCollectionLocalAdmins", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string[] GetRdsCollectionLocalAdmins(string hostName) {
+        public string[] GetRdsCollectionLocalAdmins(string organizationId, string collectionName) {
             object[] results = this.Invoke("GetRdsCollectionLocalAdmins", new object[] {
-                        hostName});
+                        organizationId,
+                        collectionName});
             return ((string[])(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetRdsCollectionLocalAdmins(string hostName, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetRdsCollectionLocalAdmins(string organizationId, string collectionName, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetRdsCollectionLocalAdmins", new object[] {
-                        hostName}, callback, asyncState);
+                        organizationId,
+                        collectionName}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -1569,17 +1584,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void GetRdsCollectionLocalAdminsAsync(string hostName) {
-            this.GetRdsCollectionLocalAdminsAsync(hostName, null);
+        public void GetRdsCollectionLocalAdminsAsync(string organizationId, string collectionName) {
+            this.GetRdsCollectionLocalAdminsAsync(organizationId, collectionName, null);
         }
         
         /// <remarks/>
-        public void GetRdsCollectionLocalAdminsAsync(string hostName, object userState) {
+        public void GetRdsCollectionLocalAdminsAsync(string organizationId, string collectionName, object userState) {
             if ((this.GetRdsCollectionLocalAdminsOperationCompleted == null)) {
                 this.GetRdsCollectionLocalAdminsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsCollectionLocalAdminsOperationCompleted);
             }
             this.InvokeAsync("GetRdsCollectionLocalAdmins", new object[] {
-                        hostName}, this.GetRdsCollectionLocalAdminsOperationCompleted, userState);
+                        organizationId,
+                        collectionName}, this.GetRdsCollectionLocalAdminsOperationCompleted, userState);
         }
         
         private void OnGetRdsCollectionLocalAdminsOperationCompleted(object arg) {
@@ -1672,6 +1688,52 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             if ((this.RemoveRdsServerFromTenantOUCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.RemoveRdsServerFromTenantOUCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/InstallCertificate", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void InstallCertificate([System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] certificate, string password, string[] hostNames) {
+            this.Invoke("InstallCertificate", new object[] {
+                        certificate,
+                        password,
+                        hostNames});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginInstallCertificate(byte[] certificate, string password, string[] hostNames, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("InstallCertificate", new object[] {
+                        certificate,
+                        password,
+                        hostNames}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndInstallCertificate(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void InstallCertificateAsync(byte[] certificate, string password, string[] hostNames) {
+            this.InstallCertificateAsync(certificate, password, hostNames, null);
+        }
+        
+        /// <remarks/>
+        public void InstallCertificateAsync(byte[] certificate, string password, string[] hostNames, object userState) {
+            if ((this.InstallCertificateOperationCompleted == null)) {
+                this.InstallCertificateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnInstallCertificateOperationCompleted);
+            }
+            this.InvokeAsync("InstallCertificate", new object[] {
+                        certificate,
+                        password,
+                        hostNames}, this.InstallCertificateOperationCompleted, userState);
+        }
+        
+        private void OnInstallCertificateOperationCompleted(object arg) {
+            if ((this.InstallCertificateCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.InstallCertificateCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -2300,4 +2362,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void RemoveRdsServerFromTenantOUCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void InstallCertificateCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

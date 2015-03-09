@@ -47,8 +47,8 @@
                         <Columns>
                             <asp:TemplateField HeaderText="gvCollectionName" SortExpression="DisplayName">
 							    <ItemStyle Width="40%"></ItemStyle>
-							    <ItemTemplate>                                    
-                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("DisplayName").ToString() %></asp:hyperlink>
+							    <ItemTemplate>  
+                                    <asp:LinkButton id="lnkCollectionName" meta:resourcekey="lnkCollectionName" runat="server" CommandName="EditCollection" CommandArgument='<%# Eval("Id") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"><%# Eval("DisplayName").ToString() %></asp:LinkButton>                                                                 
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvServer">
@@ -66,6 +66,11 @@
 		                    </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Collections Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="collectionsQuota" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                    </div>
                     <asp:ObjectDataSource ID="odsRDSCollectionsPaged" runat="server" EnablePaging="True"
 							SelectCountMethod="GetRDSCollectonsPagedCount"
 							SelectMethod="GetRDSCollectonsPaged"

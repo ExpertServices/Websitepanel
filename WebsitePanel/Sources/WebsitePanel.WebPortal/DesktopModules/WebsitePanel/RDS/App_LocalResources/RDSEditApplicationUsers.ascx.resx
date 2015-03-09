@@ -153,4 +153,10 @@
   <data name="locLblApplicationName" xml:space="preserve">
     <value>Application Name</value>
   </data>
+  <data name="btnExit.Text" xml:space="preserve">
+    <value>Back to Applications List</value>
+  </data>
+  <data name="btnSaveExit.Text" xml:space="preserve">
+    <value>Save Changes and Exit</value>
+  </data>
 </root>

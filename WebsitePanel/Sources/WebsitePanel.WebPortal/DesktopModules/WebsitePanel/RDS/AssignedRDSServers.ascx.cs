@@ -41,15 +41,29 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
             {
-
+                BindQuota(cntx);
             }
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            
             if (cntx.Quotas.ContainsKey(Quotas.RDS_SERVERS))
             {
                 btnAddServerToOrg.Enabled = (!(cntx.Quotas[Quotas.RDS_SERVERS].QuotaAllocatedValue <= gvRDSAssignedServers.Rows.Count) || (cntx.Quotas[Quotas.RDS_SERVERS].QuotaAllocatedValue == -1));
+            }
+        }
+
+        private void BindQuota(PackageContext cntx)
+        {
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            rdsServersQuota.QuotaUsedValue = stats.CreatedRdsServers;
+            rdsServersQuota.QuotaValue = stats.AllocatedRdsServers;
+
+            if (stats.AllocatedUsers != -1)
+            {
+                rdsServersQuota.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
             }
         }
 
