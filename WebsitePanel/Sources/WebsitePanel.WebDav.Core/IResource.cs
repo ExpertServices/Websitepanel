@@ -260,7 +260,7 @@ namespace WebsitePanel.WebDav.Core
             {
                 get
                 {
-                    string displayName = _href.AbsoluteUri.Trim('/').Replace(_baseUri.AbsoluteUri.Trim('/'), "");
+                    string displayName = _href.ToString().Trim('/').Replace(_baseUri.ToString().Trim('/'), "");
                     displayName = Regex.Replace(displayName, "\\/$", "");
                     Match displayNameMatch = Regex.Match(displayName, "([\\/]+)$");
                     if (displayNameMatch.Success)
