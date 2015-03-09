@@ -183,6 +183,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DataTableHelper.cs" />
+    <Compile Include="Helpers\ViewDataHelper.cs" />
     <Compile Include="HttpHandlers\AccessTokenHandler.cs" />
     <Compile Include="HttpHandlers\FileTransferRequestHandler.cs" />
     <Compile Include="Mapping\AutoMapperPortalConfiguration.cs" />
