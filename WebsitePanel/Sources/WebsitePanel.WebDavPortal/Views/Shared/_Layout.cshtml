@@ -47,6 +47,9 @@
     </div>
     
     <div class="prevent-deselect">
+        @Html.Partial("_ProcessDialog", null)
+        @Html.Partial("_ConfirmDialog")
+
         @RenderSection("popups", required: false)
     </div>
     
@@ -62,9 +65,9 @@
         @Scripts.Render("~/bundles/authScripts")
         
         <script>
-            $(document).ready(function() {
-                StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
-            });
+    $(document).ready(function () {
+        StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+    });
         </script>
     }
 

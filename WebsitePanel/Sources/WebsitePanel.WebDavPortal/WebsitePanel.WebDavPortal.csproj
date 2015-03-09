@@ -183,6 +183,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DataTableHelper.cs" />
+    <Compile Include="Helpers\ViewDataHelper.cs" />
     <Compile Include="HttpHandlers\AccessTokenHandler.cs" />
     <Compile Include="HttpHandlers\FileTransferRequestHandler.cs" />
     <Compile Include="Mapping\AutoMapperPortalConfiguration.cs" />
@@ -459,6 +460,7 @@
     <Content Include="Views\FileSystem\_ShowContentTopMenu.cshtml" />
     <Content Include="Views\FileSystem\_ShowContentBigIcons.cshtml" />
     <Content Include="Views\FileSystem\UploadFiles.cshtml" />
+    <Content Include="Views\FileSystem\ShowContentSearchResultTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

@@ -117,121 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Actions" xml:space="preserve">
-    <value>Actions</value>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Add...</value>
   </data>
-  <data name="Byte" xml:space="preserve">
-    <value>Byte</value>
+  <data name="btnAddSelected.Text" xml:space="preserve">
+    <value>Add Accounts</value>
   </data>
-  <data name="Bytes" xml:space="preserve">
-    <value>Bytes</value>
-  </data>
-  <data name="Cancel" xml:space="preserve">
+  <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="CancelAll" xml:space="preserve">
-    <value>Cancel All</value>
-  </data>
-  <data name="Close" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="Confirm" xml:space="preserve">
-    <value>Confirm</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
+  <data name="btnDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="DeleteFileQuestion" xml:space="preserve">
-    <value>Delete File?</value>
+  <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="Details" xml:space="preserve">
-    <value>Details</value>
+  <data name="ddlSearchColumnEmail.Text" xml:space="preserve">
+    <value>E-mail Address</value>
   </data>
-  <data name="DialogsContentConfrimFileDeletion" xml:space="preserve">
-    <value>Are you sure you want to delete {0} item(s)?</value>
+  <data name="gvAccountsDisplayName.HeaderText" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value>Error</value>
+  <data name="gvAccountsEmail.HeaderText" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="ExabyteShort" xml:space="preserve">
-    <value>EB</value>
+  <data name="gvPopupAccounts.EmptyDataText" xml:space="preserve">
+    <value>No accounts found.</value>
   </data>
-  <data name="File" xml:space="preserve">
-    <value>File</value>
+  <data name="gvUsers.EmptyDataText" xml:space="preserve">
+    <value>The list of users is empty. Click "Add..." button.</value>
   </data>
-  <data name="FileUpload" xml:space="preserve">
-    <value>File Upload</value>
+  <data name="gvUsersAccount.HeaderText" xml:space="preserve">
+    <value>Users</value>
   </data>
-  <data name="GigabyteShort" xml:space="preserve">
-    <value>Gb</value>
-  </data>
-  <data name="Info" xml:space="preserve">
-    <value>Info</value>
-  </data>
-  <data name="ItemsWasRemovedFormat" xml:space="preserve">
-    <value>{0} items was removed.</value>
-  </data>
-  <data name="KilobyteShort" xml:space="preserve">
-    <value>KB</value>
-  </data>
-  <data name="MegabyteShort" xml:space="preserve">
-    <value>MB</value>
-  </data>
-  <data name="Modified" xml:space="preserve">
-    <value>Modified</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="NoFilesAreSelected" xml:space="preserve">
-    <value>No files are selected.</value>
-  </data>
-  <data name="NotAFile" xml:space="preserve">
-    <value>Not a file.</value>
-  </data>
-  <data name="OrDragAndDropFilesHere" xml:space="preserve">
-    <value>or drag and drop files here.</value>
-  </data>
-  <data name="PetabyteShort" xml:space="preserve">
-    <value>PB</value>
-  </data>
-  <data name="PleaseWaitWithDots" xml:space="preserve">
-    <value>Please wait...</value>
-  </data>
-  <data name="Processing" xml:space="preserve">
-    <value>Processing</value>
-  </data>
-  <data name="ProcessingWithDots" xml:space="preserve">
-    <value>Processing...</value>
-  </data>
-  <data name="Search" xml:space="preserve">
-    <value>Search</value>
-  </data>
-  <data name="SearchDocuments" xml:space="preserve">
-    <value>Search Documents</value>
-  </data>
-  <data name="SearchResults" xml:space="preserve">
-    <value>Search Results</value>
-  </data>
-  <data name="SelectFilesToUpload" xml:space="preserve">
-    <value>Select files to upload</value>
-  </data>
-  <data name="Size" xml:space="preserve">
-    <value>Size</value>
-  </data>
-  <data name="Table" xml:space="preserve">
-    <value>Table</value>
-  </data>
-  <data name="TerabyteShort" xml:space="preserve">
-    <value>TB</value>
-  </data>
-  <data name="Type" xml:space="preserve">
-    <value>Type</value>
-  </data>
-  <data name="Upload" xml:space="preserve">
-    <value>Upload</value>
-  </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+  <data name="headerAddAccounts.Text" xml:space="preserve">
+    <value>Enabled Users</value>
   </data>
 </root>

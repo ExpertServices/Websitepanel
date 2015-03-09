@@ -65,7 +65,7 @@ function nchar(num) {
 	function getRandomChars(_charsRange, _length, _target) {
 		var _arr = [];
 		var l1 = _charsRange[0];
-		var rest = _charsRange[1] - _charsRange[0];
+		var rest = _charsRange[1] - _charsRange[0] + 1;
 		// 
 		while (_arr.length < _length) {
 			var charCode = Math.floor(Math.random() * rest);
