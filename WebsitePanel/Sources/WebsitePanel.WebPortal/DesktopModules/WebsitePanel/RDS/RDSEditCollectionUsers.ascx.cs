@@ -77,6 +77,12 @@ namespace WebsitePanel.Portal.RDS
             {
                 usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
             }
+            
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
+            {
+                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
+                users.ButtonAddEnabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
+            }
         }
 
         private bool SaveRdsUsers()

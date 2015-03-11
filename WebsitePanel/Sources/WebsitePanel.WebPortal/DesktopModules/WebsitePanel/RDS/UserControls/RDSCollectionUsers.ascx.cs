@@ -42,6 +42,18 @@ namespace WebsitePanel.Portal.RDS.UserControls
 	{
         public const string DirectionString = "DirectionString";
 
+        public bool ButtonAddEnabled
+        {
+            get
+            {
+                return btnAdd.Enabled;
+            }
+            set
+            {
+                btnAdd.Enabled = value;
+            }
+        }
+
 		protected enum SelectedState
 		{
 			All,
@@ -74,14 +86,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 }";
                 Page.ClientScript.RegisterClientScriptBlock(typeof(RDSCollectionUsers), "SelectAllCheckboxes",
 					script, true);
-			}
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
-            {
-                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
-                btnAdd.Enabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
-            }
+			}            
 		}
 
 		protected void btnAdd_Click(object sender, EventArgs e)
