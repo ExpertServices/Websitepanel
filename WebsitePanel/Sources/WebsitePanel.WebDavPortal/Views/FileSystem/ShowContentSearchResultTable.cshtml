@@ -1,0 +1,28 @@
+﻿@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDavPortal.UI.Routes
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+           
+
+@Html.Partial("_ShowContentTopMenu", Model)
+
+<div class="prevent-deselect container">
+    <table id="search-items-table" class="display table table-striped table-bordered noselect" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>@UI.File</th>
+                <th>@UI.Details</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function() {
+            wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+            wsp.fileBrowser.initSearchDataTable('#search-items-table', '@Url.RouteUrl(FileSystemRouteNames.ShowContentDetails)', '@Model.SearchValue');
+        });
+    </script>
+}
+
