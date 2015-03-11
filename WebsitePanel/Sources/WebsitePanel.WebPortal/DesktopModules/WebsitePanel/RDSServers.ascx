@@ -15,10 +15,8 @@
         <wsp:SimpleMessageBox id="messageBox" runat="server" />
     </ContentTemplate>    
 </asp:UpdatePanel>
-<asp:UpdatePanel runat="server" ID="updatePanelUsers">
-    <ContentTemplate>         
 
-        <div class="FormButtonsBar">
+<div class="FormButtonsBar">
             <div class="Left">
                 <asp:Button ID="btnAddRDSServer" runat="server"
                     meta:resourcekey="btnAddRDSServer" Text="Add RDS Server" CssClass="Button3"
@@ -35,11 +33,20 @@
                             <asp:ListItem>100</asp:ListItem>   
                     </asp:DropDownList>  
 
-                    <asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100">
-                    </asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton" CausesValidation="false"/>
+                    <asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"/>
+                    <asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton" CausesValidation="false"/>                    
                 </asp:Panel>
             </div>
         </div>
+<asp:ObjectDataSource ID="odsRDSServersPaged" runat="server" EnablePaging="True" SelectCountMethod="GetRDSServersPagedCount"
+            SelectMethod="GetRDSServersPaged" SortParameterName="sortColumn" TypeName="WebsitePanel.Portal.RDSHelper" OnSelected="odsRDSServersPaged_Selected">
+            <SelectParameters>
+                <asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />                                
+            </SelectParameters>
+        </asp:ObjectDataSource>
+
+<asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional">
+    <ContentTemplate>                 
 
         <asp:GridView id="gvRDSServers" runat="server" AutoGenerateColumns="False"
 	        AllowPaging="True" AllowSorting="True"
@@ -84,7 +91,7 @@
                 </asp:TemplateField>
                 <asp:TemplateField>
 			        <ItemTemplate>
-				        <asp:LinkButton ID="lnkInstallCertificate" runat="server" Text="Certificate" Visible='<%# Eval("ItemId") != null && Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>'
+				        <asp:LinkButton ID="lnkInstallCertificate" runat="server" Text="Certificate" Visible='<%# Convert.ToBoolean(Eval("SslAvailable")) && Eval("ItemId") != null && Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>'
 					        CommandName="InstallCertificate" CommandArgument='<%# Eval("Id") %>' ToolTip="Repair Certificate"
                             OnClientClick="if(confirm('Are you sure you want to install certificate?')) ShowProgressDialog('Installing certificate...'); else return false;"></asp:LinkButton>                        
 			        </ItemTemplate>
@@ -97,13 +104,7 @@
 			        </ItemTemplate>
 		        </asp:TemplateField>
 	        </Columns>
-        </asp:GridView>
-        <asp:ObjectDataSource ID="odsRDSServersPaged" runat="server" EnablePaging="True" SelectCountMethod="GetRDSServersPagedCount"
-            SelectMethod="GetRDSServersPaged" SortParameterName="sortColumn" TypeName="WebsitePanel.Portal.RDSHelper" OnSelected="odsRDSServersPaged_Selected">
-            <SelectParameters>
-                <asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />                
-            </SelectParameters>
-        </asp:ObjectDataSource>
+        </asp:GridView>        
 
         <asp:Panel ID="ServerInfoPanel" runat="server" CssClass="Popup" style="display:none">
             <table class="Popup-Header" cellpadding="0" cellspacing="0">

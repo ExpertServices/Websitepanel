@@ -122,6 +122,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetRdsCertificateByServiceIdOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetRdsCertificateByItemIdOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddRdsCertificateOperationCompleted;
         
         /// <remarks/>
@@ -266,6 +268,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetRdsCertificateByServiceIdCompletedEventHandler GetRdsCertificateByServiceIdCompleted;
+        
+        /// <remarks/>
+        public event GetRdsCertificateByItemIdCompletedEventHandler GetRdsCertificateByItemIdCompleted;
         
         /// <remarks/>
         public event AddRdsCertificateCompletedEventHandler AddRdsCertificateCompleted;
@@ -2336,6 +2341,47 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCertificateByItemId", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RdsCertificate GetRdsCertificateByItemId(int itemId) {
+            object[] results = this.Invoke("GetRdsCertificateByItemId", new object[] {
+                        itemId});
+            return ((RdsCertificate)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsCertificateByItemId(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsCertificateByItemId", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public RdsCertificate EndGetRdsCertificateByItemId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((RdsCertificate)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsCertificateByItemIdAsync(int itemId) {
+            this.GetRdsCertificateByItemIdAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsCertificateByItemIdAsync(int itemId, object userState) {
+            if ((this.GetRdsCertificateByItemIdOperationCompleted == null)) {
+                this.GetRdsCertificateByItemIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsCertificateByItemIdOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsCertificateByItemId", new object[] {
+                        itemId}, this.GetRdsCertificateByItemIdOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsCertificateByItemIdOperationCompleted(object arg) {
+            if ((this.GetRdsCertificateByItemIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsCertificateByItemIdCompleted(this, new GetRdsCertificateByItemIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/AddRdsCertificate", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ResultObject AddRdsCertificate(RdsCertificate certificate) {
             object[] results = this.Invoke("AddRdsCertificate", new object[] {
@@ -3565,6 +3611,32 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal GetRdsCertificateByServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RdsCertificate Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RdsCertificate)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsCertificateByItemIdCompletedEventHandler(object sender, GetRdsCertificateByItemIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsCertificateByItemIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsCertificateByItemIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

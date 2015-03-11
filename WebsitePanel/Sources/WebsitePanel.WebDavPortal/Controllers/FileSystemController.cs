@@ -383,7 +383,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
             foreach (var item in items)
             {
                 var opener = _openerManager[Path.GetExtension(item.DisplayName)];
-                var pathPart = item.Href.AbsolutePath.Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
+                //var pathPart = item.Href.ToString().Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
+                var pathPart = item.Href.ToStringPath().Replace("/" + WspContext.User.OrganizationId, "").TrimStart('/');
 
                 switch (opener)
                 {

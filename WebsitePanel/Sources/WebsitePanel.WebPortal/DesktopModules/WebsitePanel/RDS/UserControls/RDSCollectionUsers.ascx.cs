@@ -42,6 +42,18 @@ namespace WebsitePanel.Portal.RDS.UserControls
 	{
         public const string DirectionString = "DirectionString";
 
+        public bool ButtonAddEnabled
+        {
+            get
+            {
+                return btnAdd.Enabled;
+            }
+            set
+            {
+                btnAdd.Enabled = value;
+            }
+        }
+
 		protected enum SelectedState
 		{
 			All,
@@ -74,14 +86,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 }";
                 Page.ClientScript.RegisterClientScriptBlock(typeof(RDSCollectionUsers), "SelectAllCheckboxes",
 					script, true);
-			}
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
-            {
-                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
-                btnAdd.Enabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
-            }
+			}            
 		}
 
 		protected void btnAdd_Click(object sender, EventArgs e)
@@ -132,6 +137,19 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		protected void BindPopupAccounts()
 		{
             OrganizationUser[] accounts = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+            var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+            foreach (var user in accounts)
+            {
+                if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                {
+                    user.IsVIP = true;
+                }
+                else
+                {
+                    user.IsVIP = false;
+                }                
+            }
 
             accounts = accounts.Where(x => !GetUsers().Select(p => p.AccountName).Contains(x.AccountName)).ToArray();
             Array.Sort(accounts, CompareAccount);
@@ -221,7 +239,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     {
                         AccountName = (string)gvPopupAccounts.DataKeys[i][0],
                         DisplayName = ((Literal)row.FindControl("litDisplayName")).Text,
-                        SamAccountName = ((HiddenField)row.FindControl("hdnSamName")).Value
+                        SamAccountName = ((HiddenField)row.FindControl("hdnSamName")).Value,
+                        IsVIP = Convert.ToBoolean(((HiddenField)row.FindControl("hdnLocalAdmin")).Value)
                     });
                 }
             }

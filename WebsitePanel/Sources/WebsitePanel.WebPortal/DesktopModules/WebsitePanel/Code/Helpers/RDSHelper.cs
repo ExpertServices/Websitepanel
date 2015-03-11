@@ -57,6 +57,7 @@ namespace WebsitePanel.Portal
                 if (rdsServer.ItemId.HasValue)
                 {
                     rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(rdsServer.ItemId.Value, rdsServer.FqdName);
+                    rdsServer.SslAvailable = ES.Services.RDS.GetRdsCertificateByItemId(rdsServer.ItemId.Value) != null;
                 }
             }
 

@@ -11,16 +11,16 @@
     <div class="FormContentRDSConf">           
 	    <table>
             <tr>
-                <td class="FormLabel150"><asp:Localize ID="locServerName" runat="server" meta:resourcekey="locServerName" Text="Server Full Name:"></asp:Localize></td>
+                <td class="FormLabel260"><asp:Localize ID="locServerName" runat="server" meta:resourcekey="locServerName" Text="Server  Fully Qualified Domain Name:"></asp:Localize></td>
 			    <td>
-				    <asp:TextBox ID="txtServerName" runat="server" CssClass="NormalTextBox" Width="145px"></asp:TextBox>    
+				    <asp:TextBox ID="txtServerName" runat="server" CssClass="NormalTextBox" Width="300px"></asp:TextBox>    
                     <asp:RequiredFieldValidator ID="valServerName" runat="server" ErrorMessage="*" ControlToValidate="txtServerName"></asp:RequiredFieldValidator>                          
 			    </td>
 		    </tr>
             <tr>
-                <td class="FormLabel150"><asp:Localize ID="locServerComments" runat="server" meta:resourcekey="locServerComments" Text="Server Comments:"></asp:Localize></td>
+                <td class="FormLabel260"><asp:Localize ID="locServerComments" runat="server" meta:resourcekey="locServerComments" Text="Server Comments:"></asp:Localize></td>
 			    <td>
-				    <asp:TextBox ID="txtServerComments" runat="server" CssClass="NormalTextBox" Width="145px"></asp:TextBox>                     
+				    <asp:TextBox ID="txtServerComments" runat="server" CssClass="NormalTextBox" Width="300px"></asp:TextBox>                     
 			    </td>
 		    </tr>
 	    </table>

@@ -339,6 +339,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public RdsCertificate GetRdsCertificateByItemId(int itemId)
+        {
+            return RemoteDesktopServicesController.GetRdsCertificateByItemId(itemId);
+        }
+
+        [WebMethod]
         public ResultObject AddRdsCertificate(RdsCertificate certificate)
         {
             return RemoteDesktopServicesController.AddRdsCertificate(certificate);

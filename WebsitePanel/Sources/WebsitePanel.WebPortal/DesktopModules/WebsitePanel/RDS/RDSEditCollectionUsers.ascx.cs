@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
@@ -45,6 +46,19 @@ namespace WebsitePanel.Portal.RDS
                 BindQuota();
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+                foreach (var user in collectionUsers)
+                {
+                    if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                    {
+                        user.IsVIP = true;
+                    }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
+                }
                 
                 litCollectionName.Text = collection.DisplayName;
                 users.SetUsers(collectionUsers);
@@ -62,6 +76,12 @@ namespace WebsitePanel.Portal.RDS
             if (stats.AllocatedUsers != -1)
             {
                 usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+            }
+            
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
+            {
+                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
+                users.ButtonAddEnabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
             }
         }
 

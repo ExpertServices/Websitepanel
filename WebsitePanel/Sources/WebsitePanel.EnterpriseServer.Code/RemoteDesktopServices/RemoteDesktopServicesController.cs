@@ -288,6 +288,11 @@ namespace WebsitePanel.EnterpriseServer
             return GetRdsCertificateByServiceIdInternal(serviceId);
         }
 
+        public static RdsCertificate GetRdsCertificateByItemId(int itemId)
+        {
+            return GetRdsCertificateByItemIdInternal(itemId);
+        }
+
         public static ResultObject AddRdsCertificate(RdsCertificate certificate)
         {
             return AddRdsCertificateInternal(certificate);
@@ -341,6 +346,21 @@ namespace WebsitePanel.EnterpriseServer
 
         private static RdsCertificate GetRdsCertificateByServiceIdInternal(int serviceId)
         {
+            var result = ObjectUtils.FillObjectFromDataReader<RdsCertificate>(DataProvider.GetRdsCertificateByServiceId(serviceId));
+
+            return result;
+        }
+
+        private static RdsCertificate GetRdsCertificateByItemIdInternal(int itemId)
+        {
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+            {
+                return null;
+            }
+
+            int serviceId = GetRemoteDesktopServiceID(org.PackageId);
             var result = ObjectUtils.FillObjectFromDataReader<RdsCertificate>(DataProvider.GetRdsCertificateByServiceId(serviceId));
 
             return result;
@@ -431,7 +451,7 @@ namespace WebsitePanel.EnterpriseServer
             var organizationUsers = OrganizationController.GetOrganizationUsersPaged(collection.ItemId, null, null, null, 0, Int32.MaxValue).PageUsers;
             var organizationAdmins = rds.GetRdsCollectionLocalAdmins(org.OrganizationId, collection.Name);
 
-            return organizationUsers.Where(o => organizationAdmins.Select(a => a.ToLower()).Contains(o.DomainUserName.ToLower())).ToList();
+            return organizationUsers.Where(o => organizationAdmins.Select(a => a.ToLower()).Contains(o.SamAccountName.ToLower())).ToList();
         }
 
         private static ResultObject SaveRdsCollectionLocalAdminsInternal(OrganizationUser[] users, int collectionId)
@@ -479,19 +499,22 @@ namespace WebsitePanel.EnterpriseServer
             var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));            
             var settings = ObjectUtils.FillObjectFromDataReader<RdsCollectionSettings>(DataProvider.GetRdsCollectionSettingsByCollectionId(collectionId));
 
-            if (settings.SecurityLayer == null)
+            if (settings != null)
             {
-                settings.SecurityLayer = SecurityLayerValues.Negotiate.ToString();
-            }
+                if (settings.SecurityLayer == null)
+                {
+                    settings.SecurityLayer = SecurityLayerValues.Negotiate.ToString();
+                }
 
-            if (settings.EncryptionLevel == null)
-            {
-                settings.EncryptionLevel = EncryptionLevel.ClientCompatible.ToString();
-            }
+                if (settings.EncryptionLevel == null)
+                {
+                    settings.EncryptionLevel = EncryptionLevel.ClientCompatible.ToString();
+                }
 
-            if (settings.AuthenticateUsingNLA == null)
-            {
-                settings.AuthenticateUsingNLA = true;
+                if (settings.AuthenticateUsingNLA == null)
+                {
+                    settings.AuthenticateUsingNLA = true;
+                }
             }
 
             return settings;
@@ -512,9 +535,23 @@ namespace WebsitePanel.EnterpriseServer
         private static int AddRdsCollectionInternal(int itemId, RdsCollection collection)
         {
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "ADD_RDS_COLLECTION");
+            var domainName = IPGlobalProperties.GetIPGlobalProperties().DomainName;
 
             try
             {
+                foreach(var server in collection.Servers)
+                {                    
+                    if (!server.FqdName.EndsWith(domainName, StringComparison.CurrentCultureIgnoreCase))
+                    {                       
+                        throw TaskManager.WriteError(new Exception("Fully Qualified Domain Name not valid."));
+                    }
+
+                    if (!CheckRDSServerAvaliable(server.FqdName))
+                    {
+                        throw TaskManager.WriteError(new Exception(string.Format("Unable to connect to {0} server.", server.FqdName)));
+                    }
+                }
+
                 // load organization
                 Organization org = OrganizationController.GetOrganization(itemId);
                 if (org == null)
@@ -802,7 +839,7 @@ namespace WebsitePanel.EnterpriseServer
                 FillRdsServerData(tmpServer);                
             }
 
-            result.Servers = tmpServers.ToArray();
+            result.Servers = tmpServers.ToArray();            
 
             return result;
         }
@@ -996,25 +1033,22 @@ namespace WebsitePanel.EnterpriseServer
             {
                 if (CheckRDSServerAvaliable(rdsServer.FqdName))
                 {
-                    rdsServer.Id = DataProvider.AddRDSServer(rdsServer.Name, rdsServer.FqdName, rdsServer.Description);
+                    var domainName = IPGlobalProperties.GetIPGlobalProperties().DomainName;
+
+                    if (rdsServer.FqdName.EndsWith(domainName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        rdsServer.Id = DataProvider.AddRDSServer(rdsServer.Name, rdsServer.FqdName, rdsServer.Description);
+                    }
+                    else
+                    {
+                        throw TaskManager.WriteError(new Exception("Fully Qualified Domain Name not valid."));
+                    }
                 }
                 else
                 {
-                    result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER", new Exception("The server that you are adding, is not available"));
-                    return result;
+                    throw TaskManager.WriteError(new Exception(string.Format("Unable to connect to {0} server. Please double check Server Full Name setting and retry.", rdsServer.FqdName)));
                 }
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null)
-                {
-                    result.AddError("Unable to add RDS Server", ex.InnerException);
-                }
-                else
-                {
-                    result.AddError("Unable to add RDS Server", ex);
-                }
-            }
+            }            
             finally
             {
                 if (!result.IsSuccess)
@@ -1733,7 +1767,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             bool result = false;
             var ping = new Ping();
-            var reply = ping.Send(hostname, 1000);
+            var reply = ping.Send(hostname, 1000);            
 
             if (reply.Status == IPStatus.Success)
             {
@@ -1741,8 +1775,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
-        }
-
+        }        
 
         private static ResultObject DeleteRemoteDesktopServiceInternal(int itemId)
         {
@@ -1791,7 +1824,7 @@ namespace WebsitePanel.EnterpriseServer
         private static RemoteDesktopServices GetRemoteDesktopServices(int serviceId)
         {
             var rds = new RemoteDesktopServices();
-            ServiceProviderProxy.Init(rds, serviceId);
+            ServiceProviderProxy.Init(rds, serviceId);            
 
             return rds;
         }

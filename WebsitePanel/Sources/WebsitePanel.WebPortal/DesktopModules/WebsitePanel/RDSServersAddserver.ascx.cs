@@ -62,8 +62,8 @@ namespace WebsitePanel.Portal
                 ResultObject result = ES.Services.RDS.AddRdsServer(rdsServer);
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
-                {
-                    messageBox.ShowMessage(result, "", "");
+                {                    
+                    messageBox.ShowMessage(result, "RDSSERVER_NOT_ADDED", "");
                     return;
                 }
 
@@ -71,7 +71,7 @@ namespace WebsitePanel.Portal
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("", ex);
+                ShowErrorMessage("RDSSERVER_NOT_ADDED", ex);
             }
         }
 

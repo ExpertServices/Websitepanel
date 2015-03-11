@@ -26,8 +26,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using AjaxControlToolkit;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
@@ -39,7 +41,7 @@ namespace WebsitePanel.Portal.ProviderControls
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            FillCertificateInfo();
         }
 
         public string GWServers
@@ -54,6 +56,25 @@ namespace WebsitePanel.Portal.ProviderControls
             }
         }
 
+        private void FillCertificateInfo()
+        {
+            var certificate = ES.Services.RDS.GetRdsCertificateByServiceId(PanelRequest.ServiceId);
+
+            if (certificate != null)
+            {
+                var array = Convert.FromBase64String(certificate.Hash);
+                char[] chars = new char[array.Length / sizeof(char)];
+                System.Buffer.BlockCopy(array, 0, chars, 0, array.Length);
+                string password = new string(chars);
+                plCertificateInfo.Visible = true;
+                byte[] content = Convert.FromBase64String(certificate.Content);
+                var x509 = new X509Certificate2(content, password);
+                lblIssuedBy.Text = x509.Issuer.Replace("CN=", "").Replace("OU=", "").Replace("O=", "").Replace("L=", "").Replace("S=", "").Replace("C=", "");
+                lblExpiryDate.Text = x509.NotAfter.ToLongDateString();
+                lblSanName.Text = x509.SubjectName.Name.Replace("CN=", "");
+            }
+        }
+
         public void BindSettings(System.Collections.Specialized.StringDictionary settings)
         {                
             txtConnectionBroker.Text = settings["ConnectionBroker"];
@@ -62,6 +83,7 @@ namespace WebsitePanel.Portal.ProviderControls
             UpdateLyncServersGrid();
 
             txtRootOU.Text = settings["RootOU"];
+            txtComputersRootOu.Text = settings["ComputersRootOU"];
             txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
 
             if (!string.IsNullOrEmpty(settings["UseCentralNPS"]) && bool.TrueString == settings["UseCentralNPS"])
@@ -82,6 +104,7 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             settings["ConnectionBroker"] = txtConnectionBroker.Text;
             settings["RootOU"] = txtRootOU.Text;
+            settings["ComputersRootOU"] = txtComputersRootOu.Text;
             settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
             settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
             settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
@@ -163,7 +186,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 GWServers = str.TrimEnd(';');
                 UpdateLyncServersGrid();
             }
-        }
+        }       
     }
 
     public class GWServer
