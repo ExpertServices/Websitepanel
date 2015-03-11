@@ -47,6 +47,18 @@ namespace WebsitePanel.WebDavPortal
             #region Enterprise storage 
 
             routes.MapRoute(
+                    name: FileSystemRouteNames.SearchFiles,
+                    url: "storage/search/{org}/{*pathPart}",
+                    defaults: new { controller = "FileSystem", action = "SearchFiles", pathPart = UrlParameter.Optional }
+                    );
+
+            routes.MapRoute(
+                    name: FileSystemRouteNames.SearchFilesContent,
+                    url: "storage/ajax/search/{org}/{*pathPart}",
+                    defaults: new { controller = "FileSystem", action = "SearchFilesContent", pathPart = UrlParameter.Optional }
+                    );
+
+            routes.MapRoute(
                     name: FileSystemRouteNames.ChangeWebDavViewType,
                     url: "storage/change-view-type/{viewType}",
                     defaults: new { controller = "FileSystem", action = "ChangeViewType" }

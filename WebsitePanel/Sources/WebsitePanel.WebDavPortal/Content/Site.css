@@ -60,6 +60,17 @@ tr.selected-file {
 
 .table-icon {
     height: 30px;
+    vertical-align: top;
+}
+
+.column-name .file-info {
+    display: inline-block;
+    padding-left: 5px;
+    width: 90%;
+}
+
+.table-icon.search {
+    height: 45px;
 }
 
 .noselect {
@@ -77,6 +88,8 @@ tr.selected-file {
 
 #webdav-items-table .file-link {
     padding-left: 5px;
+    padding-top: 5px;
+    display: inline-block;
     vertical-align: middle !important;
 }
 
@@ -84,6 +97,11 @@ tr.selected-file {
     display: inline-block;
     vertical-align: bottom;
     height: 32px;
+}
+
+#summary.summary {
+    font-size: 11px;
+    color: rgb(152, 152, 152);
 }
 
 .drag-and-drop-area input {
@@ -252,15 +270,28 @@ tr.selected-file {
     width: 200px;
 }
 
-.search-block {
-    float: right;
+.breadcrumb-wsp {
+    display: inline-block;
+    padding-top: 5px;    
 }
 
-.search-block input, .search-block label {
+.search-block {
+    float: right;
+    margin-right: 10px !important;
+    width: 36%;
+}
+
+.search-block input{
+    display: inline-block;
+    font-weight: normal;
+}
+
+.search-block label {
     display: inline-block;
     width: initial;
     font-weight: normal;
 }
+
 
 .elements-container {
     padding-top: 10px;
@@ -293,6 +324,16 @@ tr.selected-file {
     padding-left: 10px;
     padding-top: 3px;
     display: block;
+}
+
+.column-name  {
+    position: relative;
+}
+
+.column-name #quota {
+    position: absolute;
+    right: 0px;
+    top: 20%;
 }
 
 /* Theme Mods */
@@ -361,4 +402,10 @@ div#breadcrumb_wrapper a:last-child {
 .header-portal-title {
     float: none;
     display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .navbar-right {
+        margin-right: 0;
+    }
 }
