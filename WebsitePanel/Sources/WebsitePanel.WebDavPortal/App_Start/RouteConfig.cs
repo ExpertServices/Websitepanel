@@ -47,6 +47,20 @@ namespace WebsitePanel.WebDavPortal
             #region Enterprise storage 
 
             routes.MapRoute(
+                name: FileSystemRouteNames.ItemExist,
+                url: "storage/item-exist/{org}/{*pathPart}",
+                defaults:
+                    new { controller = "FileSystem", action = "ItemExist", pathPart = UrlParameter.Optional }
+                );
+
+            routes.MapRoute(
+                name: FileSystemRouteNames.NewWebDavItem,
+                url: "storage/new/{org}/{*pathPart}",
+                defaults:
+                    new { controller = "FileSystem", action = "NewWebDavItem", pathPart = UrlParameter.Optional }
+                );
+
+            routes.MapRoute(
                     name: FileSystemRouteNames.SearchFiles,
                     url: "storage/search/{org}/{*pathPart}",
                     defaults: new { controller = "FileSystem", action = "SearchFiles", pathPart = UrlParameter.Optional }

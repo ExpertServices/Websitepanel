@@ -2,8 +2,16 @@
     this.settings = {
         deletionBlockSelector: ".file-actions-menu .file-deletion",
         deletionUrl: "storage/files-group-action/delete",
+        fileExistUrl: "storage/fileExist",
         textDateModified: "Date modified",
-        textSize: "Size"
+        textSize: "Size",
+        textItemExist: "File already exists",
+        textItemExistFunc: function() {
+            return textItemExist;
+        } ,
+        createNewItemDialogId: "#createNewItemDialog",
+        createNewItemButtonId: "#create-button",
+        createNewItemTitleId:  '#create-dalog-label'
     };
     this.itemsTable = null;
     this.searchTable = null;
@@ -272,6 +280,40 @@ WspFileBrowser.prototype = {
         var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+    },
+
+    showCreateNewItemDialog: function (extension, target, title) {
+        $(this.settings.createNewItemButtonId).data('extension', extension);
+        $(this.settings.createNewItemButtonId).data('target', target);
+
+        $(this.settings.createNewItemDialogId + " input").val("");
+
+        $(this.settings.createNewItemTitleId).text($(this.settings.createNewItemTitleId).data('title') + " " + title);
+
+        $(this.settings.createNewItemDialogId).modal();
+    },
+
+    hideCreateNewItemDialog: function () {
+        $(this.settings.createNewItemDialogId).modal('hide');
+    },
+
+    uniqueFileNameFieldRule: function(fieldId) {
+
+        return {
+            url: this.settings.fileExistUrl,
+            type: "post",
+            data: {
+                newItemName: function() {
+                    return $(fieldId).val() + $(wsp.fileBrowser.settings.createNewItemButtonId).data('extension');
+                } 
+            },
+            beforeSend: function(response) {
+                wsp.dialogs.showInlineProcessing(fieldId);
+            },
+            complete: function() {
+                wsp.dialogs.hideInlineProcessing(fieldId);
+            }
+        };
     }
 };
 

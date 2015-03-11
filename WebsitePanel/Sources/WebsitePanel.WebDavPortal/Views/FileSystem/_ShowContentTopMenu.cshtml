@@ -56,6 +56,17 @@
                    data-target-title-text="@UI.DeleteFileQuestion"
                    data-target-content="@UI.DialogsContentConfrimFileDeletion">@UI.Delete</a>
             </div>
+            <div class="dropdown create-new-item navbar-left">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                    @UI.Create
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-extension=".docx" data-target="_blank">@UI.WordDocument</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-extension=".xlsx" data-target="_blank">@UI.ExcelWorkbook</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-extension=".pptx" data-target="_blank">@UI.PowerPointPresentation</a></li>
+                </ul>
+            </div>
         }
 
         <div class="file-upload navbar-right">

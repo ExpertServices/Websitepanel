@@ -251,10 +251,15 @@ tr.selected-file {
 
 .file-actions-menu .file-deletion {
     display: none;
+    margin-right: 10px;
 }
 
 .file-actions-menu .file-upload {
     display: inline-block;
+}
+
+.create-new-item {
+    margin-top: -2px;
 }
 
 #message-area {
@@ -334,6 +339,15 @@ tr.selected-file {
     position: absolute;
     right: 0px;
     top: 20%;
+}
+
+
+.small-processing {
+    display: none;
+}
+
+#filenameForm input {
+    max-width: 100%;
 }
 
 /* Theme Mods */

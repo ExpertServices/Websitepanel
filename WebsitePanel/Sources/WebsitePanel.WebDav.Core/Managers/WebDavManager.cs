@@ -240,9 +240,9 @@ namespace WebsitePanel.WebDav.Core.Managers
 
                 return _currentFolder.GetResource(resourceName);
             }
-            catch (InvalidOperationException exception)
+            catch (Exception)
             {
-                throw new ResourceNotFoundException("Resource not found", exception);
+                return null;
             }
         }
 

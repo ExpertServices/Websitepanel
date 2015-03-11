@@ -303,6 +303,36 @@ namespace WebsitePanel.WebDavPortal.Controllers
             return Json(model);
         }
 
+        public ActionResult NewWebDavItem(string org, string pathPart)
+        {
+            var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
+            var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.FirstOrDefault(x => x.Extension == Path.GetExtension(pathPart));
+
+            if (permissions.HasFlag(WebDavPermissions.Write) == false || (owaOpener != null && permissions.HasFlag(WebDavPermissions.OwaEdit) == false))
+            {
+                return new RedirectToRouteResult(FileSystemRouteNames.ShowContentPath, null);
+            }
+
+            if (owaOpener != null)
+            {
+                return ShowOfficeDocument(org, pathPart, owaOpener.OwaNewFileView);
+            }
+
+            return new RedirectToRouteResult(FileSystemRouteNames.ShowContentPath, null);
+        }
+
+        [HttpPost]
+        public JsonResult ItemExist(string org, string pathPart, string newItemName)
+        {
+            var exist = _webdavManager.FileExist(string.Format("{0}/{1}", pathPart, newItemName));
+
+            return new JsonResult()
+            {
+                Data = !exist
+            };
+        }
+
         #region Owa Actions
 
         public ActionResult ShowOfficeDocument(string org, string pathPart, string owaOpenerUri)
@@ -345,6 +375,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             return ShowOfficeDocument(org, pathPart, owaOpener.OwaEditor);
         }
+
         #endregion
 
         private void FillContentModel(IEnumerable<ResourceTableItemModel> items, string organizationId)
