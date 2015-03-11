@@ -346,6 +346,10 @@ tr.selected-file {
     display: none;
 }
 
+#filenameForm input {
+    max-width: 100%;
+}
+
 /* Theme Mods */
 
 input,div{border-radius:0px!important;}

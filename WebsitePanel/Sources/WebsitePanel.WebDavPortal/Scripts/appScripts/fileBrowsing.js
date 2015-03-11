@@ -10,7 +10,8 @@
             return textItemExist;
         } ,
         createNewItemDialogId: "#createNewItemDialog",
-        createNewItemButtonId: "#create-button"
+        createNewItemButtonId: "#create-button",
+        createNewItemTitleId:  '#create-dalog-label'
     };
     this.itemsTable = null;
     this.searchTable = null;
@@ -281,11 +282,13 @@ WspFileBrowser.prototype = {
         return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
     },
 
-    showCreateNewItemDialog: function (extension, target) {
+    showCreateNewItemDialog: function (extension, target, title) {
         $(this.settings.createNewItemButtonId).data('extension', extension);
         $(this.settings.createNewItemButtonId).data('target', target);
 
         $(this.settings.createNewItemDialogId + " input").val("");
+
+        $(this.settings.createNewItemTitleId).text($(this.settings.createNewItemTitleId).data('title') + " " + title);
 
         $(this.settings.createNewItemDialogId).modal();
     },
