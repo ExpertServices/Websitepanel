@@ -325,7 +325,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         [HttpPost]
         public JsonResult ItemExist(string org, string pathPart, string newItemName)
         {
-            var exist = _webdavManager.FileExist(string.Format("{0}/{1}", pathPart, newItemName));
+            var exist = _webdavManager.FileExist(string.Format("{0}/{1}", pathPart.TrimEnd('/'), newItemName.Trim('/')));
 
             return new JsonResult()
             {

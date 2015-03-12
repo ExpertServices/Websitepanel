@@ -102,6 +102,7 @@ tr.selected-file {
 #summary.summary {
     font-size: 11px;
     color: rgb(152, 152, 152);
+    word-wrap: break-word;
 }
 
 .drag-and-drop-area input {
@@ -266,13 +267,25 @@ tr.selected-file {
     margin-top: 15px;
 }
 
-#processDialog .dialog-text {
+#processDialog .dialog-text, .container  .dialog-text{
     display: inline-block;
     margin-left: 10px;
 }
 
 #processDialog .modal-dialog {
     width: 200px;
+}
+
+.dataTables_processing {
+    width: 185px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    left: 43% !important;
+    background: initial !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #CDCDCD;
+    height: 44px !important;
+    z-index: 30;
 }
 
 .breadcrumb-wsp {
