@@ -8,6 +8,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string OwaViewKey = "OwaView";
         private const string OwaEditorKey = "OwaEditor";
         private const string OwaMobileViewKey = "OwaMobileView";
+        private const string OwaNewFileViewKey = "OwaNewFileView";
 
         [ConfigurationProperty(ExtensionKey, IsKey = true, IsRequired = true)]
         public string Extension
@@ -36,6 +37,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return this[OwaMobileViewKey].ToString(); }
             set { this[OwaMobileViewKey] = value; }
+        }
+
+        [ConfigurationProperty(OwaNewFileViewKey, IsKey = true, IsRequired = true)]
+        public string OwaNewFileView
+        {
+            get { return this[OwaNewFileViewKey].ToString(); }
+            set { this[OwaNewFileViewKey] = value; }
         }
     }
 }

@@ -50,6 +50,7 @@ namespace WebsitePanel.WebDav.Core
                 SendChunked = false;
                 AllowWriteStreamBuffering = false;
 
+                IsRootItem = item.IsRootItem;
                 SetCredentials(credentials);
                 SetHierarchyItem(item);
             }
@@ -87,6 +88,8 @@ namespace WebsitePanel.WebDav.Core
                     }
                 }
             }
+
+            public string Summary { get; set; }
 
             /// <summary>
             ///     Downloads content of the resource to a file specified by filename
@@ -257,7 +260,7 @@ namespace WebsitePanel.WebDav.Core
             {
                 get
                 {
-                    string displayName = _href.AbsoluteUri.Trim('/').Replace(_baseUri.AbsoluteUri.Trim('/'), "");
+                    string displayName = _href.ToString().Trim('/').Replace(_baseUri.ToString().Trim('/'), "");
                     displayName = Regex.Replace(displayName, "\\/$", "");
                     Match displayNameMatch = Regex.Match(displayName, "([\\/]+)$");
                     if (displayNameMatch.Success)
@@ -480,7 +483,7 @@ namespace WebsitePanel.WebDav.Core
             {
                 _href = href;
 
-                var baseUrl = href.AbsoluteUri.Remove(href.AbsoluteUri.Length - href.Segments.Last().Length);
+                var baseUrl = href.ToString().Remove(href.ToString().Length - href.ToString().Trim('/').Split('/').Last().Length);
 
                 _baseUri = new Uri(baseUrl);
             }

@@ -183,6 +183,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DataTableHelper.cs" />
+    <Compile Include="Helpers\ViewDataHelper.cs" />
     <Compile Include="HttpHandlers\AccessTokenHandler.cs" />
     <Compile Include="HttpHandlers\FileTransferRequestHandler.cs" />
     <Compile Include="Mapping\AutoMapperPortalConfiguration.cs" />
@@ -369,6 +370,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.responsive.scss" />
     <Content Include="Content\DataTables-1.10.4\css\dataTables.jqueryui.scss" />
+    <Content Include="Content\OwaFiles\Empty.docx" />
+    <Content Include="Content\OwaFiles\Empty.pptx" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\appScripts\authentication.js" />
     <Content Include="Scripts\appScripts\dialogs.js" />
@@ -376,6 +379,7 @@
     <Content Include="Scripts\appScripts\messages.js" />
     <Content Include="Scripts\appScripts\recalculateResourseHeight.js" />
     <Content Include="Scripts\appScripts\uploadingData2.js" />
+    <Content Include="Scripts\appScripts\wsp-webdav.js" />
     <Content Include="Scripts\appScripts\wsp.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -459,6 +463,7 @@
     <Content Include="Views\FileSystem\_ShowContentTopMenu.cshtml" />
     <Content Include="Views\FileSystem\_ShowContentBigIcons.cshtml" />
     <Content Include="Views\FileSystem\UploadFiles.cshtml" />
+    <Content Include="Views\FileSystem\ShowContentSearchResultTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

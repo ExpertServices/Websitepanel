@@ -168,4 +168,7 @@
   <data name="rbtnQuotaSoft" xml:space="preserve">
     <value>Soft</value>
   </data>
+  <data name="colFolderGeneralSettings.Text" xml:space="preserve">
+    <value>General Settings</value>
+  </data>
 </root>

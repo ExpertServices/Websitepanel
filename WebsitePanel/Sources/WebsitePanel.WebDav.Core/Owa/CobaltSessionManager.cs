@@ -2,8 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.Caching;
+using System.Web;
 using Cobalt;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
@@ -72,9 +74,20 @@ namespace WebsitePanel.WebDav.Core.Owa
 
             var token = _tokenManager.GetToken(accessTokenId);
 
-            var fileBytes = _webDavManager.GetFileBytes(token.FilePath);
+            Atom atom;
 
-            var atom = new AtomFromByteArray(fileBytes);
+            if (_webDavManager.FileExist(token.FilePath))
+            {
+                var fileBytes = _webDavManager.GetFileBytes(token.FilePath);
+
+                atom = new AtomFromByteArray(fileBytes);
+            }
+            else
+            {
+                var filePath = HttpContext.Current.Server.MapPath(WebDavAppConfigManager.Instance.OfficeOnline.NewFilePath + Path.GetExtension(token.FilePath));
+
+                atom = new AtomFromByteArray(File.ReadAllBytes(filePath));
+            }
 
             Cobalt.Metrics o1;
             cobaltFile.GetCobaltFilePartition(FilePartitionId.Content).SetStream(RootId.Default.Value, atom, out o1);
