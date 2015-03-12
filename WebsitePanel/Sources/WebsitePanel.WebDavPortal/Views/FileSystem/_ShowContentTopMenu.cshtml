@@ -25,7 +25,9 @@
             }
             else
             {
-                <a href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath)" class="processing-dialog">@UI.SearchResults</a>
+                <a href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath)" class="processing-dialog">@(elements.Any() ?elements.Last():WspContext.User.OrganizationId)</a>
+                <span style="top: 2px;"> / </span>
+                <span>@UI.SearchResults</span>
             }
         </div>
 

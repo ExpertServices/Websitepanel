@@ -277,12 +277,14 @@ tr.selected-file {
 }
 
 .dataTables_processing {
-    width: 165px !important;
-    margin: 0 !important;;
-    padding: 0 !important;;
-    left: 43% !important;;
-    background: initial !important;;
-    background-color: #FFFFFF !important;;
+    width: 185px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    left: 43% !important;
+    background: initial !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #CDCDCD;
+    height: 44px !important;
 }
 
 .breadcrumb-wsp {
