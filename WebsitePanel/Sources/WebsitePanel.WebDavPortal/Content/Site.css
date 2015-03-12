@@ -285,6 +285,7 @@ tr.selected-file {
     background-color: #FFFFFF !important;
     border: 1px solid #CDCDCD;
     height: 44px !important;
+    z-index: 30;
 }
 
 .breadcrumb-wsp {
