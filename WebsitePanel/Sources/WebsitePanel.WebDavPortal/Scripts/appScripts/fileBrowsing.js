@@ -11,7 +11,8 @@
         } ,
         createNewItemDialogId: "#createNewItemDialog",
         createNewItemButtonId: "#create-button",
-        createNewItemTitleId:  '#create-dalog-label'
+        createNewItemTitleId: '#create-dalog-label',
+        processingDialogDom: '<div><img src="/Content/Images/indicator_medium.gif"><h4 class="dialog-text">Please wait...</h4></div>'
     };
     this.itemsTable = null;
     this.searchTable = null;
@@ -96,7 +97,7 @@ WspFileBrowser.prototype = {
     initDataTable: function (tableId, ajaxUrl) {
         this.itemsTable = $(tableId).dataTable({
             "ajax": ajaxUrl,
-            "processing": false,
+            "processing": true,
             "serverSide": true,
             "dom": 'rtlp',
             "columnDefs": [
@@ -131,14 +132,8 @@ WspFileBrowser.prototype = {
             "createdRow": function(row, data, index) {
                 $(row).addClass('element-container');
             },
-            "fnPreDrawCallback": function () {
-                // gather info to compose a message
-                wsp.dialogs.showProcessDialog();
-                return true;
-            },
-            "fnDrawCallback": function () {
-                // in case your overlay needs to be put away automatically you can put it here
-                wsp.dialogs.hideProcessDialog();
+            "oLanguage": {
+                "sProcessing": this.settings.processingDialogDom
             }
         });
 
@@ -170,7 +165,7 @@ WspFileBrowser.prototype = {
 
         this.searchTable = $(tableId).dataTable({
             "ajax": ajaxUrl,
-            "processing": false,
+            "processing": true,
             "serverSide": true,
             "oSearch": { "sSearch": initSearch },
             "dom": 'rtlp',
@@ -207,14 +202,8 @@ WspFileBrowser.prototype = {
             "createdRow": function (row, data, index) {
                 $(row).addClass('element-container');
             },
-            "fnPreDrawCallback": function () {
-                // gather info to compose a message
-                wsp.dialogs.showProcessDialog();
-                return true;
-            },
-            "fnDrawCallback": function () {
-                // in case your overlay needs to be put away automatically you can put it here
-                wsp.dialogs.hideProcessDialog();
+            "oLanguage": {
+                "sProcessing": this.settings.processingDialogDom
             }
         });
 
