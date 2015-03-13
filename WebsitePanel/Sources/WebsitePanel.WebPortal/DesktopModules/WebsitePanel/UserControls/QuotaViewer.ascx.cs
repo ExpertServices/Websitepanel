@@ -92,7 +92,7 @@ namespace WebsitePanel.Portal
 
         private void UpdateControl()
         {
-            int total = gauge.Total;
+            long total = gauge.Total;
             if (QuotaTypeId == 1)
             {
                 litValue.Text = (total == 0) ? GetLocalizedString("Text.Disabled") : GetLocalizedString("Text.Enabled");

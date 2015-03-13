@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,14 +29,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Management;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public class VirtualSwitch : ServiceProviderItem
+    public class DvdDriveInfo
     {
-        [Persistent]
-        public string SwitchId { get; set; }
-        public string SwitchType { get; set; }
+        public ControllerType ControllerType { get; set; }
+        public int ControllerNumber { get; set; }
+        public int ControllerLocation { get; set; }
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Path { get; set; }
     }
 }

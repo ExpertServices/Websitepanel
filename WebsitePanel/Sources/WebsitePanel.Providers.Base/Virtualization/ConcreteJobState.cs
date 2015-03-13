@@ -42,6 +42,9 @@ namespace WebsitePanel.Providers.Virtualization
         Completed = 7,
         Terminated = 8,
         Killed = 9,
-        Exception = 10
+        Exception = 10,
+
+        NotStarted = 11,
+        Failed = 12,
     }
 }

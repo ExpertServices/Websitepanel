@@ -1,4 +1,4 @@
-﻿USE [${install.database}]
+USE [${install.database}]
 GO
 -- update database version
 DECLARE @build_version nvarchar(10), @build_date datetime
@@ -8846,6 +8846,12 @@ AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupNa
 RETURN 
 GO
 
+-- Hyper-V 2012 R2
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
+END
+GO
 
 --ES OWA Editing
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
