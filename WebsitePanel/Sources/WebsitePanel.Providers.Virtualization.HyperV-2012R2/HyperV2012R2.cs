@@ -59,7 +59,7 @@ namespace WebsitePanel.Providers.Virtualization
     {
         #region Constants
         private const string CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG = "WebsitePanel.HyperV.UseDiskPartClearReadOnlyFlag";
-        private const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization";
+        private const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization\v2";
         private const string WMI_CIMV2_NAMESPACE = @"root\cimv2";
 
         private const int SWITCH_PORTS_NUMBER = 1024;
@@ -174,6 +174,8 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.Status = result[0].GetProperty("Status").ToString();
                     vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
                     vm.Generation = result[0].GetInt("Generation");
+                    vm.ProcessorCount = result[0].GetInt("ProcessorCount");
+                    vm.ParentSnapshotId = result[0].GetString("ParentSnapshotId");
 
                     vm.Heartbeat = VirtualMachineHelper.GetVMHeartBeatStatus(PowerShell, vm.Name);
 
@@ -187,7 +189,7 @@ namespace WebsitePanel.Providers.Virtualization
                         vm.RamSize = memoryInfo.Startup;
 
                         // BIOS 
-                        BiosInfo biosInfo = BiosHelper.GetVMBios(PowerShell, vm.Name, vm.Generation);
+                        BiosInfo biosInfo = BiosHelper.Get(PowerShell, vm.Name, vm.Generation);
                         vm.NumLockEnabled = biosInfo.NumLockEnabled;
                         vm.BootFromCD = biosInfo.BootFromCD;
 
@@ -219,6 +221,7 @@ namespace WebsitePanel.Providers.Virtualization
             return vm;
  
         }
+
         public List<VirtualMachine> GetVirtualMachines()
         {
             HostedSolutionLog.LogStart("GetVirtualMachines");
@@ -255,11 +258,10 @@ namespace WebsitePanel.Providers.Virtualization
 
         public byte[] GetVirtualMachineThumbnailImage(string vmId, ThumbnailSize size)
         {
-            //ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId, (SummaryInformationRequest)size);
-            //wmi.Dump(objSummary);
-            //return GetTumbnailFromSummaryInformation(objSummary, size);
-            // TODO:
-            return (byte[]) (new ImageConverter()).ConvertTo(new Bitmap(80, 60), typeof (byte[]));
+            ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId, (SummaryInformationRequest)size);
+            wmi.Dump(objSummary);
+            return GetTumbnailFromSummaryInformation(objSummary, size);
+            //return (byte[]) (new ImageConverter()).ConvertTo(new Bitmap(80, 60), typeof (byte[]));
         }
 
         private byte[] GetTumbnailFromSummaryInformation(ManagementBaseObject objSummary, ThumbnailSize size)
@@ -436,7 +438,7 @@ namespace WebsitePanel.Providers.Virtualization
                 var realVm = GetVirtualMachineEx(vm.VirtualMachineId);
 
                 DvdDriveHelper.Update(PowerShell, realVm, vm.DvdDriveInstalled); // Dvd should be before bios because bios sets boot order
-                BiosHelper.UpdateBios(PowerShell, realVm, vm.BootFromCD, vm.NumLockEnabled);
+                BiosHelper.Update(PowerShell, realVm, vm.BootFromCD, vm.NumLockEnabled);
                 VirtualMachineHelper.UpdateProcessors(PowerShell, realVm, vm.CpuCores, CpuLimitSettings, CpuReserveSettings, CpuWeightSettings);
                 VirtualMachineHelper.UpdateMemory(PowerShell, realVm, vm.RamSize);
                 NetworkAdapterHelper.Update(PowerShell, vm);
@@ -661,7 +663,7 @@ namespace WebsitePanel.Providers.Virtualization
                 paramList.ForEach(p => cmd.Parameters.Add(p));
 
                 PowerShell.Execute(cmd, false);
-                jobResult = CreateSuccessJobResult();
+                jobResult = JobHelper.CreateSuccessResult();
             }
             catch (Exception ex)
             {
@@ -852,26 +854,31 @@ namespace WebsitePanel.Providers.Virtualization
         #endregion
 
         #region Snapshots
+
         public List<VirtualMachineSnapshot> GetVirtualMachineSnapshots(string vmId)
         {
-            // get all VM setting objects
-            ManagementObject objVmSettings = GetVirtualMachineSettingsObject(vmId);
-            VirtualMachineSnapshot runningSnapshot = CreateSnapshotFromWmiObject(objVmSettings);
-
-            // load snapshots
-            ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId, SummaryInformationRequest.Snapshots);
-            ManagementBaseObject[] objSnapshots = (ManagementBaseObject[])objSummary["Snapshots"];
-
             List<VirtualMachineSnapshot> snapshots = new List<VirtualMachineSnapshot>();
 
-            if (objSnapshots != null)
+            try
             {
-                foreach (ManagementBaseObject objSnapshot in objSnapshots)
+                var vm = GetVirtualMachine(vmId);
+
+                Command cmd = new Command("Get-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
                 {
-                    VirtualMachineSnapshot snapshot = CreateSnapshotFromWmiObject(objSnapshot);
-                    snapshot.IsCurrent = (runningSnapshot.ParentId == snapshot.Id);
-                    snapshots.Add(snapshot);
+                    foreach (PSObject psSnapshot in result)
+                    {
+                        snapshots.Add(SnapshotHelper.GetFromPS(psSnapshot, vm.ParentSnapshotId));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetVirtualMachineSnapshots", ex);
+                throw;
             }
 
             return snapshots;
@@ -879,103 +886,116 @@ namespace WebsitePanel.Providers.Virtualization
 
         public VirtualMachineSnapshot GetSnapshot(string snapshotId)
         {
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-            return CreateSnapshotFromWmiObject(objSnapshot);
+            try
+            {
+                Command cmd = new Command("Get-VMSnapshot");
+                cmd.Parameters.Add("Id", snapshotId);
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
+                {
+                    return SnapshotHelper.GetFromPS(result[0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetSnapshot", ex);
+                throw;
+            }
+
+            return null;
         }
 
         public JobResult CreateSnapshot(string vmId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
 
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+                Command cmd = new Command("Checkpoint-VM");
+                cmd.Parameters.Add("Name", vm.Name);
 
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("CreateVirtualSystemSnapshot");
-            inParams["SourceSystem"] = objVm;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("CreateVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("CreateSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult RenameSnapshot(string vmId, string snapshotId, string name)
         {
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
+                var snapshot = GetSnapshot(snapshotId);
 
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
+                Command cmd = new Command("Rename-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+                cmd.Parameters.Add("Name", snapshot.Name);
+                cmd.Parameters.Add("NewName", name);
 
-            // rename snapshot
-            objSnapshot["ElementName"] = name;
-
-            // save
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("ModifyVirtualSystem");
-            inParams["ComputerSystem"] = objVm.Path.Path;
-            inParams["SystemSettingData"] = objSnapshot.GetText(TextFormat.CimDtd20);
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("ModifyVirtualSystem", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("RenameSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult ApplySnapshot(string vmId, string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
+                var snapshot = GetSnapshot(snapshotId);
 
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+                Command cmd = new Command("Restore-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+                cmd.Parameters.Add("Name", snapshot.Name);
 
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            ManagementObjectCollection objRelated = objVm.GetRelated("Msvm_SettingsDefineState");
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("ApplyVirtualSystemSnapshot");
-            inParams["ComputerSystem"] = objVm.Path.Path;
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("ApplyVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("ApplySnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult DeleteSnapshot(string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // load snapshot object
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("RemoveVirtualSystemSnapshot");
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("RemoveVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            try
+            {
+                var snapshot = GetSnapshot(snapshotId);
+                SnapshotHelper.Delete(PowerShell, snapshot, false);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("DeleteSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult DeleteSnapshotSubtree(string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // load snapshot object
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("RemoveVirtualSystemSnapshotTree");
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("RemoveVirtualSystemSnapshotTree", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            try
+            {
+                var snapshot = GetSnapshot(snapshotId);
+                SnapshotHelper.Delete(PowerShell, snapshot, true);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("DeleteSnapshot", ex);
+                throw;
+            }
         }
 
         public byte[] GetSnapshotThumbnailImage(string snapshotId, ThumbnailSize size)
@@ -983,6 +1003,7 @@ namespace WebsitePanel.Providers.Virtualization
             ManagementBaseObject objSummary = GetSnapshotSummaryInformation(snapshotId, (SummaryInformationRequest)size);
             return GetTumbnailFromSummaryInformation(objSummary, size);
         }
+
         #endregion
 
         #region DVD operations
@@ -1029,7 +1050,7 @@ namespace WebsitePanel.Providers.Virtualization
             }
 
             HostedSolutionLog.LogEnd("InsertDVD");
-            return CreateSuccessJobResult();
+            return JobHelper.CreateSuccessResult();
         }
 
         public JobResult EjectDVD(string vmId)
@@ -1049,7 +1070,7 @@ namespace WebsitePanel.Providers.Virtualization
             }
 
             HostedSolutionLog.LogEnd("InsertDVD");
-            return CreateSuccessJobResult();
+            return JobHelper.CreateSuccessResult();
         }
         #endregion
 
@@ -1276,8 +1297,7 @@ namespace WebsitePanel.Providers.Virtualization
             }
             catch
             {
-                // TODO
-                // add logging...
+                HostedSolutionLog.LogError("GetKVPItems", new Exception("msvm_KvpExchangeComponent"));
 
                 return pairs;
             }
@@ -1306,7 +1326,71 @@ namespace WebsitePanel.Providers.Virtualization
                 pairs.Add(new KvpExchangeDataItem(name, data));
             }
 
-            return pairs;
+            return pairs; 
+            
+            //HostedSolutionLog.LogStart("GetKVPItems");
+            //HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
+            //HostedSolutionLog.DebugInfo("exchangeItemsName: {0}", exchangeItemsName);
+
+            //List<KvpExchangeDataItem> pairs = new List<KvpExchangeDataItem>();
+
+            //try
+            //{
+            //    var vm = GetVirtualMachine(vmId);
+
+            //    Command cmdGetVm = new Command("Get-WmiObject");
+
+            //    cmdGetVm.Parameters.Add("Namespace", WMI_VIRTUALIZATION_NAMESPACE);
+            //    cmdGetVm.Parameters.Add("Class", "Msvm_ComputerSystem");
+            //    cmdGetVm.Parameters.Add("Filter", "ElementName = '" + vm.Name + "'");
+
+            //    Collection<PSObject> result = PowerShell.Execute(cmdGetVm, false);
+
+            //    if (result != null && result.Count > 0)
+            //    {
+            //        dynamic resultDynamic = result[0];//.Invoke();
+            //        var kvp = resultDynamic.GetRelated("Msvm_KvpExchangeComponent");
+
+            //        // return XML pairs
+            //        string[] xmlPairs = null; 
+                    
+            //        foreach (dynamic a in kvp)
+            //        {
+            //            xmlPairs = a[exchangeItemsName];
+            //            break;
+            //        }
+                    
+            //        if (xmlPairs == null)
+            //            return pairs;
+
+            //        // join all pairs
+            //        StringBuilder sb = new StringBuilder();
+            //        sb.Append("<result>");
+            //        foreach (string xmlPair in xmlPairs)
+            //            sb.Append(xmlPair);
+            //        sb.Append("</result>");
+
+            //        // parse pairs
+            //        XmlDocument doc = new XmlDocument();
+            //        doc.LoadXml(sb.ToString());
+
+            //        foreach (XmlNode nodeName in doc.SelectNodes("/result/INSTANCE/PROPERTY[@NAME='Name']/VALUE"))
+            //        {
+            //            string name = nodeName.InnerText;
+            //            string data = nodeName.ParentNode.ParentNode.SelectSingleNode("PROPERTY[@NAME='Data']/VALUE").InnerText;
+            //            pairs.Add(new KvpExchangeDataItem(name, data));
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    HostedSolutionLog.LogError("GetKVPItems", ex);
+            //    throw;
+            //}
+
+            //HostedSolutionLog.LogEnd("GetKVPItems");
+
+            //return pairs; 
         }
 
         public JobResult AddKVPItems(string vmId, KvpExchangeDataItem[] items)
@@ -1832,13 +1916,12 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
             try
             {
-                
                 Command cmd = new Command("Get-Job");
 
                 if (!string.IsNullOrEmpty(jobId)) cmd.Parameters.Add("Id", jobId);
 
                 Collection<PSObject> result = PowerShell.Execute( cmd, false);
-                job = CreateJobFromPSObject(result);
+                job = JobHelper.CreateFromPSObject(result);
             }
             catch (Exception ex)
             {
@@ -2123,35 +2206,15 @@ exit", Convert.ToInt32(objDisk["Index"])));
         {
             return value == null ? 0 : Convert.ToInt64(value);
         }
+
+        //protected VirtualMachineSnapshot GetSnapshotById(string id)
+        //{
+        //    var vms = GetVirtualMachines();
+        //    var allSnapshots = vms.SelectMany(vm => GetVirtualMachineSnapshots(vm.Id.ToString()));
+
+        //    return allSnapshots.FirstOrDefault(s => s.Id == id);
+        //}
         
-        protected JobResult CreateSuccessJobResult()
-        {
-            JobResult result = new JobResult();
-
-            result.Job = new ConcreteJob(){JobState = ConcreteJobState.Completed};
-            result.ReturnValue = ReturnCode.OK;
-
-            return result;
-        }
-        protected JobResult CreateJobResultFromPSResults(Collection<PSObject> objJob)
-        {
-            if (objJob == null || objJob.Count == 0)
-                return null;
-            
-            JobResult result = new JobResult();
-
-            result.Job = CreateJobFromPSObject(objJob);
-            
-            result.ReturnValue = ReturnCode.JobStarted;
-            switch (result.Job.JobState)
-            {
-                case ConcreteJobState.Failed:
-                    result.ReturnValue = ReturnCode.Failed;
-                    break;
-            }
-
-            return result;
-        }
 
         protected JobResult CreateJobResultFromWmiMethodResults(ManagementBaseObject outParams)
         {
@@ -2201,29 +2264,12 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         private ManagementObject GetSnapshotObject(string snapshotId)
         {
-            return wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", snapshotId);
+            return wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", snapshotId) ??
+                   wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", "Microsoft:" + snapshotId);
         }
 
 
-        private VirtualMachineSnapshot CreateSnapshotFromWmiObject(ManagementBaseObject objSnapshot)
-        {
-            if (objSnapshot == null || objSnapshot.Properties.Count == 0)
-                return null;
-
-            VirtualMachineSnapshot snapshot = new VirtualMachineSnapshot();
-            snapshot.Id = (string)objSnapshot["InstanceID"];
-            snapshot.Name = (string)objSnapshot["ElementName"];
-
-            string parentId = (string)objSnapshot["Parent"];
-            if (!String.IsNullOrEmpty(parentId))
-            {
-                int idx = parentId.IndexOf("Microsoft:");
-                snapshot.ParentId = parentId.Substring(idx, parentId.Length - idx - 1);
-            }
-            snapshot.Created = wmi.ToDateTime((string)objSnapshot["CreationTime"]);
-
-            return snapshot;
-        }
+     
 
         private VirtualSwitch CreateSwitchFromWmiObject(ManagementObject objSwitch)
         {
@@ -2236,36 +2282,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
             return sw;
         }
 
-        private ConcreteJob CreateJobFromPSObject(Collection<PSObject> objJob)
-        {
-            if (objJob == null || objJob.Count == 0)
-                return null;
-
-            ConcreteJob job = new ConcreteJob();
-            job.Id = objJob[0].GetProperty<int>("Id").ToString();
-            job.JobState = objJob[0].GetEnum<ConcreteJobState>("JobStateInfo");
-            job.Caption = objJob[0].GetProperty<string>("Name");
-            job.Description = objJob[0].GetProperty<string>("Command");
-            job.StartTime = objJob[0].GetProperty<DateTime>("PSBeginTime");
-            job.ElapsedTime = objJob[0].GetProperty<DateTime?>("PSEndTime") ?? DateTime.Now;
-
-            // PercentComplete
-            job.PercentComplete = 0;
-            var progress = (PSDataCollection<ProgressRecord>)objJob[0].GetProperty("Progress");
-            if (progress != null && progress.Count > 0)
-                job.PercentComplete = progress[0].PercentComplete;
-            
-            // Errors
-            var errors = (PSDataCollection<ErrorRecord>)objJob[0].GetProperty("Error");
-            if (errors != null && errors.Count > 0)
-            {
-                job.ErrorDescription = errors[0].ErrorDetails.Message + ". " + errors[0].ErrorDetails.RecommendedAction;
-                job.ErrorCode = errors[0].Exception != null ? -1 : 0;
-            }
-
-            return job;
-        }
-        
         private ConcreteJob CreateJobFromWmiObject(ManagementBaseObject objJob)
         {
             if (objJob == null || objJob.Properties.Count == 0)
@@ -2276,7 +2292,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             job.JobState = (ConcreteJobState)Convert.ToInt32(objJob["JobState"]);
             job.Caption = (string)objJob["Caption"];
             job.Description = (string)objJob["Description"];
-            job.StartTime = wmi.ToDateTime((string)objJob["StartTime"]);
+            job.StartTime = Wmi.ToDateTime((string)objJob["StartTime"]);
             // TODO proper parsing of WMI time spans, e.g. 00000000000001.325247:000
             job.ElapsedTime = DateTime.Now; //wmi.ToDateTime((string)objJob["ElapsedTime"]);
             job.ErrorCode = Convert.ToInt32(objJob["ErrorCode"]);

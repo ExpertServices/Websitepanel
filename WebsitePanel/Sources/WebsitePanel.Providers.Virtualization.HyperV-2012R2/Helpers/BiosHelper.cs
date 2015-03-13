@@ -12,7 +12,7 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public static class BiosHelper
     {
-        public static BiosInfo GetVMBios(PowerShellManager powerShell, string name, int generation)
+        public static BiosInfo Get(PowerShellManager powerShell, string name, int generation)
         {
             BiosInfo info = new BiosInfo();
 
@@ -76,7 +76,7 @@ namespace WebsitePanel.Providers.Virtualization
             return info;
         }
 
-        public static void UpdateBios(PowerShellManager powerShell, VirtualMachine vm, bool bootFromCD, bool numLockEnabled)
+        public static void Update(PowerShellManager powerShell, VirtualMachine vm, bool bootFromCD, bool numLockEnabled)
         {
             // for Win2012R2+ and Win8.1+
             if (vm.Generation == 2)

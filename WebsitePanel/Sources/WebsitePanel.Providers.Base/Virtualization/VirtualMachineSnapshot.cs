@@ -37,6 +37,7 @@ namespace WebsitePanel.Providers.Virtualization
         public string Id { get; set; }
         public string CheckPointId { get; set; }
         public string Name { get; set; }
+        public string VMName { get; set; }
         public string ParentId { get; set; }
         public DateTime Created { get; set; }
         public bool IsCurrent { get; set; }

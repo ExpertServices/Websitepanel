@@ -57,6 +57,8 @@
     <Compile Include="Helpers\BiosHelper.cs" />
     <Compile Include="Helpers\NetworkAdapterHelper.cs" />
     <Compile Include="Helpers\DvdDriveHelper.cs" />
+    <Compile Include="Helpers\JobHelper.cs" />
+    <Compile Include="Helpers\SnapshotHelper.cs" />
     <Compile Include="PowerShellManager.cs" />
     <Compile Include="HyperV2012R2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
