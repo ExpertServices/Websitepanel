@@ -115,7 +115,7 @@ namespace WebsitePanel.Providers.Virtualization
         }
 
         // Converts a given datetime in DMTF format to System.DateTime object.
-        internal System.DateTime ToDateTime(string dmtfDate)
+        internal static System.DateTime ToDateTime(string dmtfDate)
         {
             System.DateTime initializer = System.DateTime.MinValue;
             int year = initializer.Year;
