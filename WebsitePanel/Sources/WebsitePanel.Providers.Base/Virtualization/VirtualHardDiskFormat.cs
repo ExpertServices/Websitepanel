@@ -34,7 +34,7 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public enum VirtualHardDiskFormat
     {
-        VHD = 1,
-        VHDX = 2
+        VHD = 0,
+        VHDX = 1
     }
 }
