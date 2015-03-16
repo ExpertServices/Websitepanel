@@ -148,7 +148,7 @@ namespace WebsitePanel.WebDav.Core
             public IResource GetResource(string name)
             {
                 IHierarchyItem item =
-                    _children.Single(i => i.DisplayName.Trim('/') == name.Trim('/'));
+                    _children.Single(i => i.DisplayName.ToLowerInvariant().Trim('/') == name.ToLowerInvariant().Trim('/'));
                 var resource = new WebDavResource();
                 resource.SetCredentials(_credentials);
                 resource.SetHierarchyItem(item);
@@ -295,11 +295,11 @@ namespace WebsitePanel.WebDav.Core
                     {
                         XmlResponseList = XmlDoc.GetElementsByTagName("d:response");
                     }
-                    var children = new WebDavHierarchyItem[XmlResponseList.Count];
+                    var children = new WebDavResource[XmlResponseList.Count];
                     int counter = 0;
                     foreach (XmlNode XmlCurrentResponse in XmlResponseList)
                     {
-                        var item = new WebDavHierarchyItem();
+                        var item = new WebDavResource();
                         item.SetCredentials(_credentials);
 
                         foreach (XmlNode XmlCurrentNode in XmlCurrentResponse.ChildNodes)

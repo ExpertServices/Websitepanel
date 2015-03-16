@@ -8859,3 +8859,158 @@ AND SI.ItemName = @ItemName
 AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
 RETURN 
 GO
+
+
+--ES OWA Editing
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
+CREATE TABLE EnterpriseFoldersOwaPermissions
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	ItemID INT NOT NULL,
+	FolderID INT NOT NULL, 
+	AccountID INT NOT NULL 
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_AccountId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_FolderId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId] FOREIGN KEY([FolderID])
+REFERENCES [dbo].[EnterpriseFolders] ([EnterpriseFolderID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAllEnterpriseFolderOwaUsers')
+DROP PROCEDURE DeleteAllEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[DeleteAllEnterpriseFolderOwaUsers]
+(
+	@ItemID  int,
+	@FolderID int
+)
+AS
+DELETE FROM EnterpriseFoldersOwaPermissions
+WHERE ItemId = @ItemID AND FolderID = @FolderID
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolderOwaUser')
+DROP PROCEDURE AddEnterpriseFolderOwaUser
+GO
+CREATE PROCEDURE [dbo].[AddEnterpriseFolderOwaUser]
+(
+	@ESOwsaUserId INT OUTPUT,
+	@ItemID INT,
+	@FolderID INT, 
+	@AccountID INT 
+)
+AS
+INSERT INTO EnterpriseFoldersOwaPermissions
+(
+	ItemID ,
+	FolderID, 
+	AccountID
+)
+VALUES
+(
+	@ItemID,
+	@FolderID, 
+	@AccountID 
+)
+
+SET @ESOwsaUserId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderOwaUsers')
+DROP PROCEDURE GetEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderOwaUsers]
+(
+	@ItemID INT,
+	@FolderID INT
+)
+AS
+SELECT 
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress,
+	EA.MailEnabledPublicFolder,
+	EA.MailboxPlanId,
+	EA.SubscriberNumber,
+	EA.UserPrincipalName 
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  ExchangeAccounts AS EA ON EA.AccountID = EFOP.AccountID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.FolderID = @FolderID
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderId')
+DROP PROCEDURE GetEnterpriseFolderId
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderId]
+(
+	@ItemID INT,
+	@FolderName varchar(max)
+)
+AS
+SELECT TOP 1
+	EnterpriseFolderID
+	FROM EnterpriseFolders
+	WHERE ItemId = @ItemID AND FolderName = @FolderName
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetUserEnterpriseFolderWithOwaEditPermission')
+DROP PROCEDURE GetUserEnterpriseFolderWithOwaEditPermission
+GO
+CREATE PROCEDURE [dbo].[GetUserEnterpriseFolderWithOwaEditPermission]
+(
+	@ItemID INT,
+	@AccountID INT
+)
+AS
+SELECT 
+	EF.FolderName
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  [dbo].[EnterpriseFolders] AS EF ON EF.EnterpriseFolderID = EFOP.FolderID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.AccountID = @AccountID
+GO
+
+
+-- CRM2015 Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2015')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1205, 24, N'CRM', N'Hosted MS CRM 2015', N'WebsitePanel.Providers.HostedSolution.CRMProvider2015, WebsitePanel.Providers.HostedSolution.Crm2015', N'CRM2011', NULL)
+END
+GO
+

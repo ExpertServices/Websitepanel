@@ -20,8 +20,10 @@
                 </div>
                 <div class="FormBody">
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
-                    <div class="FormButtonsBarClean">
-                        <div class="FormButtonsBarCleanLeft">
+
+                    <div>
+
+                        <div>
                             <table>
                                 <tr height="23">
                                     <td class="FormLabel150"><asp:Localize runat="server" ID="locDisplayName" meta:resourcekey="locDisplayName" /></td>
@@ -55,8 +57,7 @@
                             <br />
                         </div>
                         
-                        <div class="FormButtonsBarCleanRight">
-                            
+                        <div>
                             <asp:GridView ID="gvRoles" runat="server" AutoGenerateColumns="False" EnableViewState="true"
                                 Width="100%"  CssSelectorClass="NormalGridView" 
                                 AllowPaging="False" AllowSorting="False" DataKeyNames="RoleID" >
@@ -74,6 +75,7 @@
                             </asp:GridView>
                         </div>
                         <br />
+
                         <asp:Button runat="server" ID="btnUpdate" Text="Save Changes" meta:resourcekey="btnUpdate"   CssClass="Button1"  onclick="btnUpdate_Click" />
                         <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" CssClass="Button1"
 		                    meta:resourcekey="btnSaveExit" OnClick="btnSaveExit_Click"></asp:Button>

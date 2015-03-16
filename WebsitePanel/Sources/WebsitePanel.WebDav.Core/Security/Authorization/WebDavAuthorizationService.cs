@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Cobalt;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
@@ -54,6 +55,17 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
                 }
             }
 
+            var owaEditFolders = GetOwaFoldersWithEditPermission(principal);
+
+            if (owaEditFolders.Contains(rootFolder))
+            {
+                resultPermissions |= WebDavPermissions.OwaEdit;
+            }
+            else
+            {
+                resultPermissions |= WebDavPermissions.OwaRead;
+            }
+
             return resultPermissions;
         }
 
@@ -104,6 +116,42 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
             }
 
             return groups ?? new ExchangeAccount[0];
+        }
+
+        private IEnumerable<string> GetOwaFoldersWithEditPermission(WspPrincipal principal)
+        {
+            var folders = HttpContext.Current.Session != null ? HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.OwaEditFoldersSessionKey] as IEnumerable<string> : null;
+
+            if (folders != null)
+            {
+                return folders;
+            }
+
+            var accountsIds = new List<int>();
+
+            accountsIds.Add(principal.AccountId);
+
+            var groups = GetUserSecurityGroups(principal);
+
+            accountsIds.AddRange(groups.Select(x=>x.AccountId));
+
+            try
+            {
+                folders = WspContext.Services.EnterpriseStorage.GetUserEnterpriseFolderWithOwaEditPermission(principal.ItemId, accountsIds.ToArray());
+            }
+            catch (Exception)
+            {
+                //TODO remove try catch when es &portal will be updated
+                return new List<string>();
+            }
+
+
+            if (HttpContext.Current.Session != null)
+            {
+                HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.OwaEditFoldersSessionKey] = folders;
+            }
+
+            return folders;
         }
     }
 }

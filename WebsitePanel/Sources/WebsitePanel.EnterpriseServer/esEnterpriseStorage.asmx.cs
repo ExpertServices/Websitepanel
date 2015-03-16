@@ -196,6 +196,36 @@ namespace WebsitePanel.EnterpriseServer
             EnterpriseStorageController.StartSetEnterpriseFolderSettingsBackgroundTask(itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
         }
 
+        [WebMethod]
+        public void SetEnterpriseFolderGeneralSettings(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
+        {
+            EnterpriseStorageController.SetESGeneralSettings(itemId, folder, directoyBrowsingEnabled, quota, quotaType);
+        }
+
+        [WebMethod]
+        public void SetEnterpriseFolderPermissionSettings(int itemId, SystemFile folder, ESPermission[] permissions)
+        {
+            EnterpriseStorageController.SetESFolderPermissionSettings(itemId, folder, permissions);
+        }
+
+        [WebMethod]
+        public OrganizationUser[] GetFolderOwaAccounts(int itemId, SystemFile folder)
+        {
+           return  EnterpriseStorageController.GetFolderOwaAccounts(itemId, folder.Name);
+        }
+
+        [WebMethod]
+        public void SetFolderOwaAccounts(int itemId, SystemFile folder, OrganizationUser[] users)
+        {
+            EnterpriseStorageController.SetFolderOwaAccounts(itemId, folder.Name, users);
+        }
+
+        [WebMethod]
+        public List<string> GetUserEnterpriseFolderWithOwaEditPermission(int itemId, List<int> accountIds)
+        {
+            return EnterpriseStorageController.GetUserEnterpriseFolderWithOwaEditPermission(itemId, accountIds);
+        }
+
         #endregion
 
         #region Statistics

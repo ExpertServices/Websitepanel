@@ -4,6 +4,7 @@
 @using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.FileOperations
 @using Ninject;
+@using WebsitePanel.WebDavPortal.Helpers
 @using WebsitePanel.WebDavPortal.Resources
 @using WebsitePanel.WebDavPortal.UI
 @using WebsitePanel.WebDavPortal.UI.Routes
@@ -63,7 +64,7 @@
                     <p class="progress-text">@percent%</p>
                 </div>
             </div>
-            <p>@Math.Round(Convert.ToDecimal(resource.ContentLength) / 1024, 2) / @Math.Round(Convert.ToDecimal(resource.AllocatedSpace) / 1024, 2) @UI.GigabyteShort</p>
+            <p>@ViewDataHelper.BytesToSize(resource.ContentLength) / @ViewDataHelper.BytesToSize(resource.AllocatedSpace)</p>
         }
 
         <div class="selected-element-overlay">

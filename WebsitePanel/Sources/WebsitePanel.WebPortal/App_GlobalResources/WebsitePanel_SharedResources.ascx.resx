@@ -5444,7 +5444,7 @@
     <value>ESS licenses per organization</value>
   </data>
   <data name="ResourceGroup.Hosted CRM2013" xml:space="preserve">
-    <value>Hosted CRM 2013</value>
+    <value>Hosted CRM 2013/2015</value>
   </data>
   <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_0" xml:space="preserve">
     <value>CRM users quota (Professional license) has been reached.</value>

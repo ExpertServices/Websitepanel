@@ -1,6 +1,21 @@
 ﻿function WspFileBrowser() {
-    this.settings = { deletionBlockSelector: ".file-actions-menu .file-deletion", deletionUrl: "storage/files-group-action/delete" };
-    this.table = null;
+    this.settings = {
+        deletionBlockSelector: ".file-actions-menu .file-deletion",
+        deletionUrl: "storage/files-group-action/delete",
+        fileExistUrl: "storage/fileExist",
+        textDateModified: "Date modified",
+        textSize: "Size",
+        textItemExist: "File already exists",
+        textItemExistFunc: function() {
+            return textItemExist;
+        } ,
+        createNewItemDialogId: "#createNewItemDialog",
+        createNewItemButtonId: "#create-button",
+        createNewItemTitleId: '#create-dalog-label',
+        processingDialogDom: '<div><img src="/Content/Images/indicator_medium.gif"><h4 class="dialog-text">Please wait...</h4></div>'
+    };
+    this.itemsTable = null;
+    this.searchTable = null;
 }
 
 WspFileBrowser.prototype = {
@@ -34,7 +49,8 @@ WspFileBrowser.prototype = {
         }).get();
     },
 
-    deleteSelectedItems: function(e) {
+    deleteSelectedItems: function (e) {
+
         $.ajax({
             type: 'POST',
             url: wsp.fileBrowser.settings.deletionUrl,
@@ -45,7 +61,7 @@ WspFileBrowser.prototype = {
 
                 wsp.fileBrowser.clearDeletedItems(model.DeletedFiles);
                 wsp.fileBrowser.refreshDeletionBlock();
-                wsp.fileBrowser.refreshDataTable();
+                wsp.fileBrowser.refreshDataTable(wsp.fileBrowser.itemsTable);
 
                 wsp.dialogs.hideProcessDialog();
             },
@@ -53,7 +69,7 @@ WspFileBrowser.prototype = {
                 wsp.messages.addErrorMessage(errorThrown);
 
                 wsp.fileBrowser.refreshDeletionBlock();
-                wsp.fileBrowser.refreshDataTable();
+                wsp.fileBrowser.refreshDataTable(wsp.fileBrowser.itemsTable);
 
                 wsp.dialogs.hideProcessDialog();
             }
@@ -79,17 +95,19 @@ WspFileBrowser.prototype = {
     },
 
     initDataTable: function (tableId, ajaxUrl) {
-        this.table = $(tableId).dataTable({
+        this.itemsTable = $(tableId).dataTable({
             "ajax": ajaxUrl,
-            "processing": false,
+            "processing": true,
             "serverSide": true,
+            "dom": 'rtlp',
             "columnDefs": [
                 {
                     "render": function(data, type, row) {
-                        return '<img class="table-icon" src="' + row.IconHref + '"/>' +
-                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link ' + (row.IsFolder ?  'processing-dialog':'') + '" title="' + row.DisplayName + '">' +
+                        return '<div class="column-name"><img class="table-icon" src="' + row.IconHref + '"/>' +
+                            '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link" title="' + row.DisplayName + '">' +
                                     row.DisplayName +
-                                '</a>';
+                                '</a>' + (row.IsRoot ? '<span id="quota">' + wsp.fileBrowser.bytesToSize(row.Size) + ' / ' + wsp.fileBrowser.bytesToSize(row.Quota) + '</span>' : '')
+                        +'</div>';
                     },
                     "targets": 0
                 },
@@ -114,31 +132,88 @@ WspFileBrowser.prototype = {
             "createdRow": function(row, data, index) {
                 $(row).addClass('element-container');
             },
-            "fnPreDrawCallback": function () {
-                // gather info to compose a message
-                wsp.dialogs.showProcessDialog();
-                return true;
-            },
-            "fnDrawCallback": function () {
-                // in case your overlay needs to be put away automatically you can put it here
-                wsp.dialogs.hideProcessDialog();
+            "oLanguage": {
+                "sProcessing": this.settings.processingDialogDom
             }
         });
 
         $(tableId).removeClass('dataTable');
 
-        var oTable = this.table;
-        $(tableId+'_filter input').unbind();
-        $(tableId+'_filter input').bind('keyup', function (e) {
-            if (e.keyCode == 13) {
-                oTable.fnFilter(this.value);
-            }
-        });
+        //var oTable = this.table;
+
+        //$(searchInputId).bind('keyup', function (e) {
+        //    if (e.keyCode == 13) {
+        //        oTable.fnFilter(this.value);
+        //    }
+        //});
+
+        //$(searchInputId).keydown(function (event) {
+        //    if (event.keyCode == 13) {
+        //        event.preventDefault();
+        //        return false;
+        //    }
+
+        //    return true;
+        //});
+
     },
 
-    refreshDataTable: function () {
-        if (this.table != null) {
-            this.table.fnDraw(false);
+    initSearchDataTable: function (tableId, ajaxUrl, initSearch) {
+
+        var settings = this.settings;
+        var classThis = this;
+
+        this.searchTable = $(tableId).dataTable({
+            "ajax": ajaxUrl,
+            "processing": true,
+            "serverSide": true,
+            "oSearch": { "sSearch": initSearch },
+            "dom": 'rtlp',
+            "columnDefs": [
+                {
+                    "render": function (data, type, row) {
+                        return '<div class="column-name">' +
+                                    '<img class="table-icon search" src="' + row.IconHref + '"/>' +
+                                    '<div class="file-info">' +
+                                        '<a href="' + row.Url + '" ' + (row.IsTargetBlank ? 'target="_blank"' : '') + ' class="file-link" title="' + row.DisplayName + '">' +
+                                            row.DisplayName +
+                                        '</a>' +
+                                        '<div id="summary" class="summary">' + (row.Summary ? (row.Summary + '').substring(0, 500) + '...' : '') + '</div>' +
+                                        '<div>' +
+                                            '<a href="' + row.FolderUrlLocalString + '" ' + 'target="_blank" class="file-link" >' +
+                                                  row.FolderUrlAbsoluteString +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>';
+                    },
+                    "targets": 0
+                },
+                {
+                    "render": function (data, type, row) {
+                        return '<div>' +settings.textDateModified+': '+ row.LastModifiedFormated+ '</div>' +
+                                '<div>' + settings.textSize + ': ' + classThis.bytesToSize(row.Size) + '</div>';
+                    },
+                    "orderable": false,
+                    "width": "25%",
+                    "targets": 1
+                }
+            ],
+            "createdRow": function (row, data, index) {
+                $(row).addClass('element-container');
+            },
+            "oLanguage": {
+                "sProcessing": this.settings.processingDialogDom
+            }
+        });
+
+        $(tableId).removeClass('dataTable');
+
+    },
+
+    refreshDataTable: function (table) {
+        if (table != null) {
+            table.fnDraw(false);
         }
     },
 
@@ -185,6 +260,48 @@ WspFileBrowser.prototype = {
                     recalculateResourseHeight();
                 }
             });
+        };
+    },
+
+    bytesToSize: function(bytes) {
+        if (bytes == 0) return '0 Byte';
+        var k = 1024;
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+    },
+
+    showCreateNewItemDialog: function (extension, target, title) {
+        $(this.settings.createNewItemButtonId).data('extension', extension);
+        $(this.settings.createNewItemButtonId).data('target', target);
+
+        $(this.settings.createNewItemDialogId + " input").val("");
+
+        $(this.settings.createNewItemTitleId).text($(this.settings.createNewItemTitleId).data('title') + " " + title);
+
+        $(this.settings.createNewItemDialogId).modal();
+    },
+
+    hideCreateNewItemDialog: function () {
+        $(this.settings.createNewItemDialogId).modal('hide');
+    },
+
+    uniqueFileNameFieldRule: function(fieldId) {
+
+        return {
+            url: this.settings.fileExistUrl,
+            type: "post",
+            data: {
+                newItemName: function() {
+                    return $(fieldId).val() + $(wsp.fileBrowser.settings.createNewItemButtonId).data('extension');
+                } 
+            },
+            beforeSend: function(response) {
+                wsp.dialogs.showInlineProcessing(fieldId);
+            },
+            complete: function() {
+                wsp.dialogs.hideInlineProcessing(fieldId);
+            }
         };
     }
 };

@@ -81,6 +81,16 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback SetEnterpriseFolderSettingsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback SetEnterpriseFolderGeneralSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetEnterpriseFolderPermissionSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetFolderOwaAccountsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetFolderOwaAccountsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetStatisticsOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetStatisticsByOrganizationOperationCompleted;
@@ -168,6 +178,21 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event SetEnterpriseFolderSettingsCompletedEventHandler SetEnterpriseFolderSettingsCompleted;
+        
+        /// <remarks/>
+        public event SetEnterpriseFolderGeneralSettingsCompletedEventHandler SetEnterpriseFolderGeneralSettingsCompleted;
+        
+        /// <remarks/>
+        public event SetEnterpriseFolderPermissionSettingsCompletedEventHandler SetEnterpriseFolderPermissionSettingsCompleted;
+        
+        /// <remarks/>
+        public event GetFolderOwaAccountsCompletedEventHandler GetFolderOwaAccountsCompleted;
+        
+        /// <remarks/>
+        public event SetFolderOwaAccountsCompletedEventHandler SetFolderOwaAccountsCompleted;
+        
+        /// <remarks/>
+        public event GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventHandler GetUserEnterpriseFolderWithOwaEditPermissionCompleted;
         
         /// <remarks/>
         public event GetStatisticsCompletedEventHandler GetStatisticsCompleted;
@@ -1224,6 +1249,237 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetEnterpriseFolderGeneralSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetEnterpriseFolderGeneralSettings(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType) {
+            this.Invoke("SetEnterpriseFolderGeneralSettings", new object[] {
+                        itemId,
+                        folder,
+                        directoyBrowsingEnabled,
+                        quota,
+                        quotaType});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetEnterpriseFolderGeneralSettings(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetEnterpriseFolderGeneralSettings", new object[] {
+                        itemId,
+                        folder,
+                        directoyBrowsingEnabled,
+                        quota,
+                        quotaType}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetEnterpriseFolderGeneralSettings(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetEnterpriseFolderGeneralSettingsAsync(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType) {
+            this.SetEnterpriseFolderGeneralSettingsAsync(itemId, folder, directoyBrowsingEnabled, quota, quotaType, null);
+        }
+        
+        /// <remarks/>
+        public void SetEnterpriseFolderGeneralSettingsAsync(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType, object userState) {
+            if ((this.SetEnterpriseFolderGeneralSettingsOperationCompleted == null)) {
+                this.SetEnterpriseFolderGeneralSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetEnterpriseFolderGeneralSettingsOperationCompleted);
+            }
+            this.InvokeAsync("SetEnterpriseFolderGeneralSettings", new object[] {
+                        itemId,
+                        folder,
+                        directoyBrowsingEnabled,
+                        quota,
+                        quotaType}, this.SetEnterpriseFolderGeneralSettingsOperationCompleted, userState);
+        }
+        
+        private void OnSetEnterpriseFolderGeneralSettingsOperationCompleted(object arg) {
+            if ((this.SetEnterpriseFolderGeneralSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetEnterpriseFolderGeneralSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetEnterpriseFolderPermissionSetting" +
+            "s", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetEnterpriseFolderPermissionSettings(int itemId, SystemFile folder, ESPermission[] permissions) {
+            this.Invoke("SetEnterpriseFolderPermissionSettings", new object[] {
+                        itemId,
+                        folder,
+                        permissions});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetEnterpriseFolderPermissionSettings(int itemId, SystemFile folder, ESPermission[] permissions, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetEnterpriseFolderPermissionSettings", new object[] {
+                        itemId,
+                        folder,
+                        permissions}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetEnterpriseFolderPermissionSettings(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetEnterpriseFolderPermissionSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions) {
+            this.SetEnterpriseFolderPermissionSettingsAsync(itemId, folder, permissions, null);
+        }
+        
+        /// <remarks/>
+        public void SetEnterpriseFolderPermissionSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions, object userState) {
+            if ((this.SetEnterpriseFolderPermissionSettingsOperationCompleted == null)) {
+                this.SetEnterpriseFolderPermissionSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetEnterpriseFolderPermissionSettingsOperationCompleted);
+            }
+            this.InvokeAsync("SetEnterpriseFolderPermissionSettings", new object[] {
+                        itemId,
+                        folder,
+                        permissions}, this.SetEnterpriseFolderPermissionSettingsOperationCompleted, userState);
+        }
+        
+        private void OnSetEnterpriseFolderPermissionSettingsOperationCompleted(object arg) {
+            if ((this.SetEnterpriseFolderPermissionSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetEnterpriseFolderPermissionSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetFolderOwaAccounts", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationUser[] GetFolderOwaAccounts(int itemId, SystemFile folder) {
+            object[] results = this.Invoke("GetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder});
+            return ((OrganizationUser[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetFolderOwaAccounts(int itemId, SystemFile folder, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationUser[] EndGetFolderOwaAccounts(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationUser[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetFolderOwaAccountsAsync(int itemId, SystemFile folder) {
+            this.GetFolderOwaAccountsAsync(itemId, folder, null);
+        }
+        
+        /// <remarks/>
+        public void GetFolderOwaAccountsAsync(int itemId, SystemFile folder, object userState) {
+            if ((this.GetFolderOwaAccountsOperationCompleted == null)) {
+                this.GetFolderOwaAccountsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetFolderOwaAccountsOperationCompleted);
+            }
+            this.InvokeAsync("GetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder}, this.GetFolderOwaAccountsOperationCompleted, userState);
+        }
+        
+        private void OnGetFolderOwaAccountsOperationCompleted(object arg) {
+            if ((this.GetFolderOwaAccountsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetFolderOwaAccountsCompleted(this, new GetFolderOwaAccountsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetFolderOwaAccounts", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetFolderOwaAccounts(int itemId, SystemFile folder, OrganizationUser[] users) {
+            this.Invoke("SetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder,
+                        users});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetFolderOwaAccounts(int itemId, SystemFile folder, OrganizationUser[] users, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder,
+                        users}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetFolderOwaAccounts(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetFolderOwaAccountsAsync(int itemId, SystemFile folder, OrganizationUser[] users) {
+            this.SetFolderOwaAccountsAsync(itemId, folder, users, null);
+        }
+        
+        /// <remarks/>
+        public void SetFolderOwaAccountsAsync(int itemId, SystemFile folder, OrganizationUser[] users, object userState) {
+            if ((this.SetFolderOwaAccountsOperationCompleted == null)) {
+                this.SetFolderOwaAccountsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetFolderOwaAccountsOperationCompleted);
+            }
+            this.InvokeAsync("SetFolderOwaAccounts", new object[] {
+                        itemId,
+                        folder,
+                        users}, this.SetFolderOwaAccountsOperationCompleted, userState);
+        }
+        
+        private void OnSetFolderOwaAccountsOperationCompleted(object arg) {
+            if ((this.SetFolderOwaAccountsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetFolderOwaAccountsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetUserEnterpriseFolderWithOwaEditPe" +
+            "rmission", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetUserEnterpriseFolderWithOwaEditPermission(int itemId, int[] accountIds) {
+            object[] results = this.Invoke("GetUserEnterpriseFolderWithOwaEditPermission", new object[] {
+                        itemId,
+                        accountIds});
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetUserEnterpriseFolderWithOwaEditPermission(int itemId, int[] accountIds, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetUserEnterpriseFolderWithOwaEditPermission", new object[] {
+                        itemId,
+                        accountIds}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string[] EndGetUserEnterpriseFolderWithOwaEditPermission(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetUserEnterpriseFolderWithOwaEditPermissionAsync(int itemId, int[] accountIds) {
+            this.GetUserEnterpriseFolderWithOwaEditPermissionAsync(itemId, accountIds, null);
+        }
+        
+        /// <remarks/>
+        public void GetUserEnterpriseFolderWithOwaEditPermissionAsync(int itemId, int[] accountIds, object userState) {
+            if ((this.GetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted == null)) {
+                this.GetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted);
+            }
+            this.InvokeAsync("GetUserEnterpriseFolderWithOwaEditPermission", new object[] {
+                        itemId,
+                        accountIds}, this.GetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted, userState);
+        }
+        
+        private void OnGetUserEnterpriseFolderWithOwaEditPermissionOperationCompleted(object arg) {
+            if ((this.GetUserEnterpriseFolderWithOwaEditPermissionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetUserEnterpriseFolderWithOwaEditPermissionCompleted(this, new GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetStatistics", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public OrganizationStatistics GetStatistics(int itemId) {
             object[] results = this.Invoke("GetStatistics", new object[] {
@@ -2052,6 +2308,70 @@ namespace WebsitePanel.EnterpriseServer {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetEnterpriseFolderSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetEnterpriseFolderGeneralSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetEnterpriseFolderPermissionSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetFolderOwaAccountsCompletedEventHandler(object sender, GetFolderOwaAccountsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetFolderOwaAccountsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetFolderOwaAccountsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationUser[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationUser[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetFolderOwaAccountsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventHandler(object sender, GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetUserEnterpriseFolderWithOwaEditPermissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]

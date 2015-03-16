@@ -12,6 +12,9 @@ namespace WebsitePanel.WebDavPortal.UI.Routes
         public const string ShowContentDetails = "ShowContentDetailsRoute";
         public const string ShowOfficeOnlinePath_ = "ShowOfficeOnlineRoute";
         public const string ViewOfficeOnline = "ViewOfficeOnlineRoute";
+        public const string NewFileOfficeOnline = "NewFileOfficeOnlineRoute";
+        public const string NewWebDavItem = "NewWebDavItemRoute";
+        public const string ItemExist = "ItemExistRoute";
         public const string EditOfficeOnline = "EditOfficeOnlineRoute";
 
         public const string ShowAdditionalContent = "ShowAdditionalContentRoute";
@@ -21,5 +24,8 @@ namespace WebsitePanel.WebDavPortal.UI.Routes
         public const string DeleteFiles = "DeleteFilesRoute";
 
         public const string DownloadFile = "DownloadFileRoute";
+
+        public const string SearchFiles = "SearchFilesRoute";
+        public const string SearchFilesContent = "SearchFilesPostRoute";
     }
 }
