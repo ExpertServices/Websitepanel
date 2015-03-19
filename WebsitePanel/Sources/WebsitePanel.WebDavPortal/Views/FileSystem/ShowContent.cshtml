@@ -1,0 +1,61 @@
+﻿@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Client
+@using Ninject
+@using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDav.Core.Entities.Account.Enums
+@using WebsitePanel.WebDav.Core.Interfaces.Managers
+@using WebsitePanel.WebDav.Core.Security.Authorization.Enums
+@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDavPortal.UI
+@using WebsitePanel.WebDavPortal.UI.Routes
+
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+
+
+@if (Model != null && !string.IsNullOrEmpty(Model.Error))
+{
+    <span class="col-sm-offset-1" style="color: #A94442; font-weight: bold;">@Model.Error</span>
+}
+else
+{
+   @Html.Partial("_ShowContentTopMenu", Model)
+    
+   @Html.Action("ContentList", "FileSystem", new { model = Model });
+}
+
+
+@section scripts{
+    <script>
+        wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+    </script>
+    
+    @if (Model.UserSettings.WebDavViewType == FolderViewTypes.BigIcons)
+    {
+        @Scripts.Render("~/bundles/bigIconsScripts")
+
+        <script>
+            $(document).ready(function () {
+                @if (string.IsNullOrEmpty(Model.SearchValue))
+                {
+                    @:wsp.fileBrowser.initBigIcons('#resourcesDiv', '@Url.RouteUrl(FileSystemRouteNames.ShowAdditionalContent)');
+                }
+                recalculateResourseHeight();
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            $(document).ready(function () {
+                wsp.fileBrowser.setSettings({ deletionUrl: "@Url.RouteUrl(FileSystemRouteNames.DeleteFiles)" });
+                wsp.fileBrowser.initDataTable('#webdav-items-table', '@Url.RouteUrl(FileSystemRouteNames.ShowContentDetails)');
+            });
+        </script>
+    }
+}
+
+@section popups
+{
+    @Html.Partial("_ProcessDialog", null)
+    @Html.Partial("_ConfirmDialog")
+}
