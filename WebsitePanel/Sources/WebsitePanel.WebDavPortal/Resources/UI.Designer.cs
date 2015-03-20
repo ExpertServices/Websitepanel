@@ -70,6 +70,24 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Byte.
+        /// </summary>
+        public static string Byte {
+            get {
+                return ResourceManager.GetString("Byte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bytes.
+        /// </summary>
+        public static string Bytes {
+            get {
+                return ResourceManager.GetString("Bytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -102,6 +120,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Confirm {
             get {
                 return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        public static string Create {
+            get {
+                return ResourceManager.GetString("Create", resourceCulture);
             }
         }
         
@@ -142,11 +169,56 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter file name.
+        /// </summary>
+        public static string EnterFileName {
+            get {
+                return ResourceManager.GetString("EnterFileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Error {
             get {
                 return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EB.
+        /// </summary>
+        public static string ExabyteShort {
+            get {
+                return ResourceManager.GetString("ExabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Excel workbook.
+        /// </summary>
+        public static string ExcelWorkbook {
+            get {
+                return ResourceManager.GetString("ExcelWorkbook", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        public static string File {
+            get {
+                return ResourceManager.GetString("File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File name.
+        /// </summary>
+        public static string FileName {
+            get {
+                return ResourceManager.GetString("FileName", resourceCulture);
             }
         }
         
@@ -169,11 +241,47 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        public static string Info {
+            get {
+                return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File already exist.
+        /// </summary>
+        public static string ItemExist {
+            get {
+                return ResourceManager.GetString("ItemExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} items was removed..
         /// </summary>
         public static string ItemsWasRemovedFormat {
             get {
                 return ResourceManager.GetString("ItemsWasRemovedFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KB.
+        /// </summary>
+        public static string KilobyteShort {
+            get {
+                return ResourceManager.GetString("KilobyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MB.
+        /// </summary>
+        public static string MegabyteShort {
+            get {
+                return ResourceManager.GetString("MegabyteShort", resourceCulture);
             }
         }
         
@@ -223,11 +331,29 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PB.
+        /// </summary>
+        public static string PetabyteShort {
+            get {
+                return ResourceManager.GetString("PetabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait....
         /// </summary>
         public static string PleaseWaitWithDots {
             get {
                 return ResourceManager.GetString("PleaseWaitWithDots", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Powerpoint presentation.
+        /// </summary>
+        public static string PowerPointPresentation {
+            get {
+                return ResourceManager.GetString("PowerPointPresentation", resourceCulture);
             }
         }
         
@@ -259,6 +385,24 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search Documents.
+        /// </summary>
+        public static string SearchDocuments {
+            get {
+                return ResourceManager.GetString("SearchDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search Results.
+        /// </summary>
+        public static string SearchResults {
+            get {
+                return ResourceManager.GetString("SearchResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select files to upload.
         /// </summary>
         public static string SelectFilesToUpload {
@@ -286,6 +430,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TB.
+        /// </summary>
+        public static string TerabyteShort {
+            get {
+                return ResourceManager.GetString("TerabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
         public static string Type {
@@ -300,6 +453,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Upload {
             get {
                 return ResourceManager.GetString("Upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Word document.
+        /// </summary>
+        public static string WordDocument {
+            get {
+                return ResourceManager.GetString("WordDocument", resourceCulture);
             }
         }
         

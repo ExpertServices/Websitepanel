@@ -84,7 +84,7 @@ namespace WebsitePanel.Providers.Web.Iis
                 X509CertificateCollection existCerts2 = storeMy.Certificates.Find(X509FindType.FindBySerialNumber, servercert.SerialNumber, false);
                 var certData = existCerts2[0].Export(X509ContentType.Pfx);
                 storeMy.Close();
-                var x509Cert = new X509Certificate2(certData);
+                var x509Cert = new X509Certificate2(certData, string.Empty, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
 
                 if (UseCCS)
                 {
@@ -176,10 +176,10 @@ namespace WebsitePanel.Providers.Web.Iis
 		    if (UseCCS)
 		    {
 		        // We need to use this constructor or we won't be able to export this certificate
-		        x509Cert = new X509Certificate2(certificate, password, X509KeyStorageFlags.Exportable);
+		        x509Cert = new X509Certificate2(certificate, password, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
 
 		        var certData = x509Cert.Export(X509ContentType.Pfx);
-		        var convertedCert = new X509Certificate2(certData, string.Empty, X509KeyStorageFlags.Exportable);
+		        var convertedCert = new X509Certificate2(certData, string.Empty, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
 
 		        // Attempts to move certificate to CCS UNC path
 		        try
@@ -205,7 +205,7 @@ namespace WebsitePanel.Providers.Web.Iis
 		    }
 		    else
 		    {
-		        x509Cert = new X509Certificate2(certificate, password);
+		        x509Cert = new X509Certificate2(certificate, password, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
 
 		        // Step 1: Register X.509 certificate in the store
 		        // Trying to keep X.509 store open as less as possible
@@ -278,7 +278,7 @@ namespace WebsitePanel.Providers.Web.Iis
 		            // Read certificate data from file
 		            var certData = new byte[fileStream.Length];
 		            fileStream.Read(certData, 0, (int) fileStream.Length);
-		            var convertedCert = new X509Certificate2(certData, CCSCommonPassword, X509KeyStorageFlags.Exportable);
+		            var convertedCert = new X509Certificate2(certData, CCSCommonPassword, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
 
                     fileStream.Close();
 
@@ -311,7 +311,7 @@ namespace WebsitePanel.Providers.Web.Iis
                 {
                     hostNames.AddRange(certificate.Extensions.Cast<X509Extension>()
                         .Where(e => e.Oid.Value == "2.5.29.17") // Subject Alternative Names
-                        .SelectMany(e => e.Format(true).Split(new[] {"\r\n", "\n", "\n"}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split('=')[1])));
+                        .SelectMany(e => e.Format(true).Split(new[] {"\r\n", "\n", "\n"}, StringSplitOptions.RemoveEmptyEntries).Where(s => s.Contains("=")).Select(s => s.Split('=')[1])).Where(s => !s.Contains(" ")));
                 }
 
                 var simpleName = certificate.GetNameInfo(X509NameType.SimpleName, false);
@@ -320,7 +320,20 @@ namespace WebsitePanel.Providers.Web.Iis
                     hostNames.Add(simpleName);
                 }
 
-                // For every hostname (only one if using old school dedicated IP binding)
+                var wildcardHostName = hostNames.SingleOrDefault(h => h.StartsWith("*."));
+
+                // If a wildcard certificate is used
+                if (wildcardHostName != null)
+                {
+                    if (!dedicatedIp)
+                    {
+                        // If using a wildcard ssl and not a dedicated IP, we take all the matching bindings on the site and use it to bind to SSL also.
+                        hostNames.Remove(wildcardHostName);
+                        hostNames.AddRange(website.Bindings.Where(b => !string.IsNullOrEmpty(b.Host) && b.Host.EndsWith(wildcardHostName.Substring(2))).Select(b => b.Host));
+                    }
+                }
+
+                // For every hostname
                 foreach (var hostName in hostNames)
                 {
                     var bindingInformation = string.Format("{0}:443:{1}", website.SiteIPAddress ?? "*", dedicatedIp ? "" : hostName);

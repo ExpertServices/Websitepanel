@@ -280,7 +280,7 @@
                         <tr >
                             <td class="OrgStatsGroup" width="100%" colspan="2">
                                 <asp:Localize ID="locCRM2013" runat="server" meta:resourcekey="locCRM2013"
-                                    Text="CRM 2013"></asp:Localize>
+                                    Text="CRM 2013/2015"></asp:Localize>
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">

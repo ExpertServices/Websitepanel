@@ -69,7 +69,7 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "webman", ResourceKey = "Tab.WebManagement", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebManagement" },
             new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" },
 		};
-
+        protected string SharedIdAddres { get; set; }
 		private int PackageId
 		{
 			get { return (int)ViewState["PackageId"]; }
@@ -198,6 +198,16 @@ namespace WebsitePanel.Portal
             {
                 litIPAddress.Text = site.SiteIPAddress;
             }
+            else
+            {
+                IPAddressInfo[] ipsGeneral = ES.Services.Servers.GetIPAddresses(IPAddressPool.General, PanelRequest.ServerId);
+                bool generalIPExists = ipsGeneral.Any() && !string.IsNullOrEmpty(ipsGeneral[0].ExternalIP);
+                if (generalIPExists)
+                {
+                    lblSharedIP.Text = string.Format("({0})", ipsGeneral[0].ExternalIP); 
+                }
+                lblSharedIP.Visible = generalIPExists;
+            }
 
             dedicatedIP.Visible = site.IsDedicatedIP;
             sharedIP.Visible = !site.IsDedicatedIP;
@@ -312,7 +322,7 @@ namespace WebsitePanel.Portal
             // AppPool
             AppPoolState appPoolState = ES.Services.WebServers.GetAppPoolState(PanelRequest.ItemID);
             BindAppPoolState(appPoolState);
-
+            
 			// bind pointers
 			BindPointers();
 

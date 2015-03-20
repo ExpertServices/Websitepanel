@@ -56,15 +56,15 @@ namespace WebsitePanel.Portal
             set { ViewState["DisplayText"] = value; }
         }
 
-        public int Progress
+        public long Progress
         {
-            get { return (ViewState["Progress"] != null) ? (int)ViewState["Progress"] : 0; }
+            get { return (ViewState["Progress"] != null) ? (long)ViewState["Progress"] : 0; }
             set { ViewState["Progress"] = value; }
         }
 
-        public int Total
+        public long Total
         {
-            get { return (ViewState["Total"] != null) ? (int)ViewState["Total"] : 0; }
+            get { return (ViewState["Total"] != null) ? (long)ViewState["Total"] : 0; }
             set { ViewState["Total"] = value; }
         }
 
@@ -101,7 +101,7 @@ namespace WebsitePanel.Portal
             string bkgSrc = Page.ResolveUrl(PortalUtils.GetThemedImage("gauge_bkg.gif"));
 
             // calculate the width of the gauge
-            int fTotal = Total;
+            long fTotal = Total;
             int percent = (fTotal > 0) ? Convert.ToInt32(Math.Round((double)Progress / (double)fTotal * 100)) : 0;
 
             double fFilledWidth = (fTotal > 0) ? ((double)Progress / (double)fTotal * Width) : 0;

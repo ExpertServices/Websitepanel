@@ -213,6 +213,9 @@
   <data name="Heartbeat.OK" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="Heartbeat.Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
   <data name="locChangeHostname.Text" xml:space="preserve">
     <value>Change VPS Host Name</value>
   </data>
@@ -272,6 +275,9 @@
   </data>
   <data name="State.Starting" xml:space="preserve">
     <value>Starting</value>
+  </data>
+  <data name="State.Running" xml:space="preserve">
+    <value>Running</value>
   </data>
   <data name="State.Stopping" xml:space="preserve">
     <value>Stopping</value>

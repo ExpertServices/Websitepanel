@@ -49,7 +49,7 @@ namespace WebsitePanel.EnterpriseServer
 		public const string Exchange = "Exchange";
         public const string HostedOrganizations = "Hosted Organizations";
         public const string HostedCRM = "Hosted CRM";
-        public const string HostedCRM2013 = "Hosted CRM2013";
+        public const string HostedCRM2013 = "Hosted CRM2013"; // CRM 2013/2015
         public const string VPS = "VPS";
         public const string BlackBerry = "BlackBerry";
         public const string OCS = "OCS";

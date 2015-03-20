@@ -211,18 +211,24 @@ namespace WebsitePanel.Portal.UserControls
 
         private void ShowActionList()
         {
+            var checkboxColumn = gvItems.Columns[0];
             websiteActions.Visible = false;
             mailActions.Visible = false;
+            checkboxColumn.Visible = false;
 
             switch (QuotaName)
             {
                 case "Web.Sites":
                     websiteActions.Visible = true;
+                    checkboxColumn.Visible = true;
                     break;
                 case "Mail.Accounts":
                     ProviderInfo provider = ES.Services.Servers.GetPackageServiceProvider(PanelSecurity.PackageId, "Mail");
                     if (provider.EditorControl == "SmarterMail100")
+                    {
                         mailActions.Visible = true;
+                        checkboxColumn.Visible = true;
+                    }
                     break;
             }
         }

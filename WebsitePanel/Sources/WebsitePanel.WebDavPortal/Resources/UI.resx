@@ -120,6 +120,12 @@
   <data name="Actions" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="Byte" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="Bytes" xml:space="preserve">
+    <value>Bytes</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -131,6 +137,9 @@
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
@@ -144,8 +153,23 @@
   <data name="DialogsContentConfrimFileDeletion" xml:space="preserve">
     <value>Are you sure you want to delete {0} item(s)?</value>
   </data>
+  <data name="EnterFileName" xml:space="preserve">
+    <value>Please enter file name</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="ExabyteShort" xml:space="preserve">
+    <value>EB</value>
+  </data>
+  <data name="ExcelWorkbook" xml:space="preserve">
+    <value>Excel workbook</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File name</value>
   </data>
   <data name="FileUpload" xml:space="preserve">
     <value>File Upload</value>
@@ -153,8 +177,20 @@
   <data name="GigabyteShort" xml:space="preserve">
     <value>Gb</value>
   </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="ItemExist" xml:space="preserve">
+    <value>File already exist</value>
+  </data>
   <data name="ItemsWasRemovedFormat" xml:space="preserve">
     <value>{0} items was removed.</value>
+  </data>
+  <data name="KilobyteShort" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="MegabyteShort" xml:space="preserve">
+    <value>MB</value>
   </data>
   <data name="Modified" xml:space="preserve">
     <value>Modified</value>
@@ -171,8 +207,14 @@
   <data name="OrDragAndDropFilesHere" xml:space="preserve">
     <value>or drag and drop files here.</value>
   </data>
+  <data name="PetabyteShort" xml:space="preserve">
+    <value>PB</value>
+  </data>
   <data name="PleaseWaitWithDots" xml:space="preserve">
     <value>Please wait...</value>
+  </data>
+  <data name="PowerPointPresentation" xml:space="preserve">
+    <value>Powerpoint presentation</value>
   </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing</value>
@@ -183,6 +225,12 @@
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="SearchDocuments" xml:space="preserve">
+    <value>Search Documents</value>
+  </data>
+  <data name="SearchResults" xml:space="preserve">
+    <value>Search Results</value>
+  </data>
   <data name="SelectFilesToUpload" xml:space="preserve">
     <value>Select files to upload</value>
   </data>
@@ -192,11 +240,17 @@
   <data name="Table" xml:space="preserve">
     <value>Table</value>
   </data>
+  <data name="TerabyteShort" xml:space="preserve">
+    <value>TB</value>
+  </data>
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Upload</value>
+  </data>
+  <data name="WordDocument" xml:space="preserve">
+    <value>Word document</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
