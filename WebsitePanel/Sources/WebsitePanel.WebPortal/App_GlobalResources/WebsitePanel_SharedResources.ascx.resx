@@ -5680,6 +5680,9 @@
   <data name="ERROR.RDSSERVER_NOT_ADDED" xml:space="preserve">
     <value>RDS Server not added</value>
   </data>
+  <data name="ERROR.RDSSERVER_NOT_UPDATED" xml:space="preserve">
+    <value>RDS Server not updated</value>
+  </data>
   <data name="Success.RDSSESSIONHOST_CERTIFICATE_INSTALLED" xml:space="preserve">
     <value>Session host certificate has been installed</value>
   </data>

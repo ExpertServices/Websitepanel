@@ -795,4 +795,7 @@
   <data name="ModuleTitle.RDSServersAddserver" xml:space="preserve">
     <value>Add New RDS Server</value>
   </data>
+  <data name="ModuleTitle.RDSServersEditServer" xml:space="preserve">
+    <value>Edit RDS Server</value>
+  </data>
 </root>

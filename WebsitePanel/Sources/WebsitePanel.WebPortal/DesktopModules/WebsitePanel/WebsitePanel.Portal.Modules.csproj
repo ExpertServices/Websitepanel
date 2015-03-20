@@ -330,6 +330,13 @@
     <Compile Include="RDSServers.ascx.designer.cs">
       <DependentUpon>RDSServers.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDSServersEditServer.ascx.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDSServersEditServer.ascx.designer.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\AssignedRDSServers.ascx.cs">
       <DependentUpon>AssignedRDSServers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4514,7 +4521,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\SettingsRdsSetupLetter.ascx.resx" />
+    <Content Include="App_LocalResources\RDSServersEditServer.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
+    <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />
     <Content Include="RDS\RDSEditApplicationUsers.ascx" />
