@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,26 +27,39 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 using System.Text;
-using WebsitePanel.Providers.Utils;
-using System.Management;
-using System.Xml;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
+
+using System.Management;
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
+
+using System.Reflection;
+using System.Globalization;
+
+using System.Xml;
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
 
 using Vds = Microsoft.Storage.Vds;
 using System.Configuration;
+﻿using System.Linq;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public class HyperV : HostingServiceProviderBase, IVirtualizationServer
+    public class HyperV2012R2 : HostingServiceProviderBase, IVirtualizationServer
     {
         #region Constants
         private const string CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG = "WebsitePanel.HyperV.UseDiskPartClearReadOnlyFlag";
-        private const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization";
+        private const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization\v2";
         private const string WMI_CIMV2_NAMESPACE = @"root\cimv2";
 
         private const int SWITCH_PORTS_NUMBER = 1024;
@@ -57,6 +70,7 @@ namespace WebsitePanel.Providers.Virtualization
 
         private const string KVP_RAM_SUMMARY_KEY = "VM-RAM-Summary";
         private const string KVP_HDD_SUMMARY_KEY = "VM-HDD-Summary";
+
         private const Int64 Size1G = 0x40000000;
         private const Int64 Size1M = 0x100000;
 
@@ -119,140 +133,127 @@ namespace WebsitePanel.Providers.Virtualization
         #endregion
 
         #region Constructors
-        public HyperV()
+        public HyperV2012R2()
         {
         }
         #endregion
 
         #region Virtual Machines
+        
         public VirtualMachine GetVirtualMachine(string vmId)
         {
-            ManagementObject objVm = wmi.GetWmiObject("msvm_ComputerSystem", "Name = '{0}'", vmId);
-            if (objVm == null)
-                return null;
+            return GetVirtualMachineInternal(vmId, false);
+        }
+        
+        public VirtualMachine GetVirtualMachineEx(string vmId)
+        {
+            return GetVirtualMachineInternal(vmId, true);
+        }
 
-            VirtualMachine vm = CreateVirtualMachineFromWmiObject(objVm);
+        protected VirtualMachine GetVirtualMachineInternal(string vmId, bool extendedInfo)
+        {
+            HostedSolutionLog.LogStart("GetVirtualMachine");
+            HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
 
-            // load summary information
-            ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId,
-                SummaryInformationRequest.Heartbeat,
-                SummaryInformationRequest.MemoryUsage,
-                SummaryInformationRequest.ProcessorLoad,
-                SummaryInformationRequest.CreationTime);
+            VirtualMachine vm = new VirtualMachine();
 
-            vm.Heartbeat = (OperationalStatus)Convert.ToInt32(objSummary["Heartbeat"]);
-            vm.CpuUsage = Convert.ToInt32(objSummary["ProcessorLoad"]);
-            vm.RamUsage = 0; // Convert.ToInt32(objSummary["MemoryUsage"]);
-            vm.CreatedDate = wmi.ToDateTime((string)objSummary["CreationTime"]);
-
-            // try reading RAM and HDD from WebsitePanel.VmConfig service using KVP
-            List<KvpExchangeDataItem> vmKvps = GetKVPItems(vmId);
-            foreach (KvpExchangeDataItem vmKvp in vmKvps)
+            try
             {
-                // RAM
-                if (vmKvp.Name == KVP_RAM_SUMMARY_KEY)
-                {
-                    string[] ram = vmKvp.Data.Split(':');
-                    int freeRam = Int32.Parse(ram[0]);
-                    int availRam = Int32.Parse(ram[1]);
+                Command cmd = new Command("Get-VM");
 
-                    vm.RamUsage = availRam - freeRam;
-                }
+                cmd.Parameters.Add("Id", vmId);
 
-                // HDD
-                if (vmKvp.Name == KVP_HDD_SUMMARY_KEY)
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
                 {
-                    string[] disksArray = vmKvp.Data.Split(';');
-                    vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
-                    for(int i = 0; i < disksArray.Length; i++)
+                    vm.Name = result[0].GetProperty("Name").ToString();
+                    vm.State = result[0].GetEnum<VirtualMachineState>("State");
+                    vm.CpuUsage = ConvertNullableToInt32(result[0].GetProperty("CpuUsage"));
+                    vm.RamUsage = ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Size1M;
+                    vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
+                    vm.Status = result[0].GetProperty("Status").ToString();
+                    vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
+                    vm.Generation = result[0].GetInt("Generation");
+                    vm.ProcessorCount = result[0].GetInt("ProcessorCount");
+                    vm.ParentSnapshotId = result[0].GetString("ParentSnapshotId");
+
+                    vm.Heartbeat = VirtualMachineHelper.GetVMHeartBeatStatus(PowerShell, vm.Name);
+
+                    vm.CreatedDate = DateTime.Now;
+
+                    if (extendedInfo)
                     {
-                        string[] disk = disksArray[i].Split(':');
-                        vm.HddLogicalDisks[i] = new LogicalDisk();
-                        vm.HddLogicalDisks[i].DriveLetter = disk[0];
-                        vm.HddLogicalDisks[i].FreeSpace = Int32.Parse(disk[1]);
-                        vm.HddLogicalDisks[i].Size = Int32.Parse(disk[2]);
+                        vm.CpuCores = VirtualMachineHelper.GetVMProcessors(PowerShell, vm.Name);
+
+                        MemoryInfo memoryInfo = VirtualMachineHelper.GetVMMemory(PowerShell, vm.Name);
+                        vm.RamSize = memoryInfo.Startup;
+
+                        // BIOS 
+                        BiosInfo biosInfo = BiosHelper.Get(PowerShell, vm.Name, vm.Generation);
+                        vm.NumLockEnabled = biosInfo.NumLockEnabled;
+                        vm.BootFromCD = biosInfo.BootFromCD;
+
+                        // DVD drive
+                        var dvdInfo = DvdDriveHelper.Get(PowerShell, vm.Name);
+                        vm.DvdDriveInstalled = dvdInfo != null;
+
+                        // HDD
+                        vm.Disks = HardDriveHelper.Get(PowerShell, vm.Name);
+
+                        if (vm.Disks != null && vm.Disks.GetLength(0) > 0)
+                        {
+                            vm.VirtualHardDrivePath = vm.Disks[0].Path;
+                            vm.HddSize = Convert.ToInt32(vm.Disks[0].FileSize / Size1G);
+                        }
+
+                        // network adapters
+                        vm.Adapters = NetworkAdapterHelper.Get(PowerShell, vm.Name);
                     }
                 }
             }
-
-            return vm;
-        }
-
-        public VirtualMachine GetVirtualMachineEx(string vmId)
-        {
-            ManagementObject objVm = wmi.GetWmiObject("msvm_ComputerSystem", "Name = '{0}'", vmId);
-            if (objVm == null)
-                return null;
-
-            // general settings
-            VirtualMachine vm = CreateVirtualMachineFromWmiObject(objVm);
-
-            // CPU
-            ManagementObject objCpu = wmi.GetWmiObject("Msvm_ProcessorSettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.CpuCores = Convert.ToInt32(objCpu["VirtualQuantity"]);
-
-            // RAM
-            ManagementObject objRam = wmi.GetWmiObject("Msvm_MemorySettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.RamSize = Convert.ToInt32(objRam["VirtualQuantity"]);
-
-            // other settings
-            ManagementObject objSettings = GetVirtualMachineSettingsObject(vmId);
-
-            // BIOS (num lock)
-            vm.NumLockEnabled = Convert.ToBoolean(objSettings["BIOSNumLock"]);
-
-            // BIOS (boot order)
-            // BootOrder = 0 - Boot from floppy, 1 - Boot from CD, 2 - Boot from disk, 3 - PXE Boot 
-            UInt16[] bootOrder = (UInt16[])objSettings["BootOrder"];
-            vm.BootFromCD = (bootOrder[0] == 1);
-
-            // DVD drive
-            ManagementObject objDvd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Synthetic DVD Drive'"
-                + " and InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.DvdDriveInstalled = (objDvd != null);
-
-            // HDD
-            ManagementObject objVhd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual Hard Disk'"
-                + " and InstanceID like 'Microsoft:{0}%'", vmId);
-
-            if(objVhd != null)
+            catch (Exception ex)
             {
-                vm.VirtualHardDrivePath = ((string[])objVhd["Connection"])[0];
-
-                // get VHD size
-                VirtualHardDiskInfo vhdInfo = GetVirtualHardDiskInfo(vm.VirtualHardDrivePath);
-                if (vhdInfo != null)
-                    vm.HddSize = Convert.ToInt32(vhdInfo.MaxInternalSize / Size1G);
+                HostedSolutionLog.LogError("GetVirtualMachine", ex);
+                throw;
             }
 
-            // network adapters
-            List<VirtualMachineNetworkAdapter> nics = new List<VirtualMachineNetworkAdapter>();
-            ManagementObject objVM = GetVirtualMachineObject(vmId);
-
-            // synthetic adapters
-            foreach (ManagementObject objNic in wmi.GetWmiObjects("Msvm_SyntheticEthernetPortSettingData", "InstanceID like 'Microsoft:{0}%'", vmId))
-                nics.Add(new VirtualMachineNetworkAdapter() { Name = (string)objNic["ElementName"], MacAddress = (string)objNic["Address"] });
-
-            // legacy adapters
-            foreach (ManagementObject objNic in wmi.GetWmiObjects("Msvm_EmulatedEthernetPortSettingData", "InstanceID like 'Microsoft:{0}%'", vmId))
-                nics.Add(new VirtualMachineNetworkAdapter() { Name = (string)objNic["ElementName"], MacAddress = (string)objNic["Address"] });
-
-            vm.Adapters = nics.ToArray();
-
+            HostedSolutionLog.LogEnd("GetVirtualMachine");
             return vm;
+ 
         }
 
         public List<VirtualMachine> GetVirtualMachines()
         {
-            List<VirtualMachine> vms = new List<VirtualMachine>();
+            HostedSolutionLog.LogStart("GetVirtualMachines");
 
-            ManagementObjectCollection objVms = wmi.ExecuteWmiQuery("select * from msvm_ComputerSystem where Name <> ElementName");
-            foreach (ManagementObject objVm in objVms)
-                vms.Add(CreateVirtualMachineFromWmiObject(objVm));
+            List<VirtualMachine> vmachines = new List<VirtualMachine>();
 
-            return vms;
+            try
+            {
+                Command cmd = new Command("Get-VM");
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                foreach (PSObject current in result)
+                {
+                    VirtualMachine vm = new VirtualMachine
+                    {
+                        VirtualMachineId = current.GetProperty("Id").ToString(),
+                        Name = current.GetProperty("Name").ToString(),
+                        State = (VirtualMachineState)Enum.Parse(typeof(VirtualMachineState), current.GetProperty("State").ToString()),
+                        Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds)
+                    };
+                    vmachines.Add(vm);
+                }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetVirtualMachines", ex);
+                throw;
+            }
+
+            HostedSolutionLog.LogEnd("GetVirtualMachines");
+            return vmachines;
+
         }
 
         public byte[] GetVirtualMachineThumbnailImage(string vmId, ThumbnailSize size)
@@ -260,6 +261,7 @@ namespace WebsitePanel.Providers.Virtualization
             ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId, (SummaryInformationRequest)size);
             wmi.Dump(objSummary);
             return GetTumbnailFromSummaryInformation(objSummary, size);
+            //return (byte[]) (new ImageConverter()).ConvertTo(new Bitmap(80, 60), typeof (byte[]));
         }
 
         private byte[] GetTumbnailFromSummaryInformation(ManagementBaseObject objSummary, ThumbnailSize size)
@@ -321,220 +323,79 @@ namespace WebsitePanel.Providers.Virtualization
         public VirtualMachine CreateVirtualMachine(VirtualMachine vm)
         {
             // evaluate paths
-            vm.RootFolderPath               = FileUtils.EvaluateSystemVariables(vm.RootFolderPath);
-            vm.OperatingSystemTemplatePath  = FileUtils.EvaluateSystemVariables(vm.OperatingSystemTemplatePath);
-            vm.VirtualHardDrivePath         = FileUtils.EvaluateSystemVariables(vm.VirtualHardDrivePath);
+            vm.RootFolderPath = FileUtils.EvaluateSystemVariables(vm.RootFolderPath);
+            vm.OperatingSystemTemplatePath = FileUtils.EvaluateSystemVariables(vm.OperatingSystemTemplatePath);
+            vm.VirtualHardDrivePath = FileUtils.EvaluateSystemVariables(vm.VirtualHardDrivePath);
 
-            string vmID = null;
-
-            // request management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // display name
-            ManagementObject objGlobalSettings = wmi.GetWmiClass("msvm_VirtualSystemGlobalSettingData").CreateInstance();
-            objGlobalSettings["ElementName"] = vm.Name;
-
-            // VM folders
-            objGlobalSettings["ExternalDataRoot"] = vm.RootFolderPath;
-            objGlobalSettings["SnapshotDataRoot"] = vm.RootFolderPath;
-
-            wmi.Dump(objGlobalSettings);
-
-            // startup/shutdown actions
-            if (AutomaticStartActionSettings != 100)
+            try
             {
-                objGlobalSettings["AutomaticStartupAction"] = AutomaticStartActionSettings;
-                objGlobalSettings["AutomaticStartupActionDelay"] = String.Format("000000000000{0:d2}.000000:000", AutomaticStartupDelaySettings);
+                // Add new VM
+                Command cmdNew = new Command("New-VM");
+                cmdNew.Parameters.Add("Name", vm.Name);
+                cmdNew.Parameters.Add("VHDPath", vm.VirtualHardDrivePath);
+                PowerShell.Execute(cmdNew, false);
+
+                // Set VM
+                Command cmdSet = new Command("Set-VM");
+                cmdSet.Parameters.Add("Name", vm.Name);
+                cmdSet.Parameters.Add("SmartPagingFilePath", vm.RootFolderPath);
+                cmdSet.Parameters.Add("SnapshotFileLocation", vm.RootFolderPath);
+                // startup/shutdown actions
+                var autoStartAction = (AutomaticStartAction) AutomaticStartActionSettings;
+                var autoStopAction = (AutomaticStopAction) AutomaticStartActionSettings;
+                if (autoStartAction != AutomaticStartAction.Undefined)
+                {
+                    cmdSet.Parameters.Add("AutomaticStartAction", autoStartAction.ToString());
+                    cmdSet.Parameters.Add("AutomaticStartDelay", AutomaticStartupDelaySettings);
+                }
+                if (autoStopAction != AutomaticStopAction.Undefined)
+                    cmdSet.Parameters.Add("AutomaticStopAction", autoStopAction.ToString());
+                PowerShell.Execute(cmdSet, false);
+
+                // Get created machine Id
+                var createdMachine = GetVirtualMachines().FirstOrDefault(m => m.Name == vm.Name);
+                if (createdMachine == null)
+                    throw new Exception("Can't find created machine");
+                vm.VirtualMachineId = createdMachine.VirtualMachineId;
+
+                // Update common settings
+                UpdateVirtualMachine(vm);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("CreateVirtualMachine", ex);
+                throw;
             }
 
-            if (AutomaticStopActionSettings != 100)
-                objGlobalSettings["AutomaticShutdownAction"] = AutomaticStopActionSettings;
-
-            if (AutomaticRecoveryActionSettings != 100)
-                objGlobalSettings["AutomaticRecoveryAction"] = AutomaticRecoveryActionSettings;
-
-            // create machine
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("DefineVirtualSystem");
-            inParams["SystemSettingData"] = objGlobalSettings.GetText(TextFormat.CimDtd20);
-            inParams["ResourceSettingData"] = new string[]{};
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("DefineVirtualSystem", inParams, null);
-            ManagementObject objVM = wmi.GetWmiObjectByPath((string)outParams["DefinedSystem"]);
-
-            // job
-            JobResult job = CreateJobResultFromWmiMethodResults(outParams); ;
-
-            // read VM id
-            vmID = (string)objVM["Name"];
-
-            // update general settings
-            UpdateVirtualMachineGeneralSettings(vmID, objVM,
-                vm.CpuCores,
-                vm.RamSize,
-                vm.BootFromCD,
-                vm.NumLockEnabled);
-
-            // hard disks
-            // load IDE 0 controller
-            ManagementObject objIDE0 = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Emulated IDE Controller'"
-                    + " and InstanceID Like 'Microsoft:{0}%' and Address = 0", vmID);
-
-            // load default hard disk drive
-            ManagementObject objDefaultHdd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Synthetic Disk Drive'"
-                    + " and InstanceID like '%Default'");
-            ManagementObject objHdd = (ManagementObject)objDefaultHdd.Clone();
-            objHdd["Parent"] = objIDE0.Path;
-            objHdd["Address"] = 0;
-
-            // add HDD to VM resources
-            ManagementObject objAddedHDD = AddVirtualMachineResources(objVM, objHdd);
-
-            // attach VHD
-            string fullVhdPath = vm.VirtualHardDrivePath;
-            ManagementObject objDefaultVHD = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual Hard Disk'"
-                    + " and InstanceID like '%Default'");
-            ManagementObject objVhd = (ManagementObject)objDefaultVHD.Clone();
-            objVhd["Parent"] = objAddedHDD.Path.Path;
-            objVhd["Connection"] = new string[] { fullVhdPath };
-
-            // add VHD to the system
-            AddVirtualMachineResources(objVM, objVhd);
-
-            // DVD drive
-            if (vm.DvdDriveInstalled)
-            {
-                AddVirtualMachineDvdDrive(vmID, objVM);
-            }
-
-            // add external adapter
-            if (vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalSwitchId))
-                AddNetworkAdapter(objVM, vm.ExternalSwitchId, vm.Name, vm.ExternalNicMacAddress, EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
-
-            // add private adapter
-            if (vm.PrivateNetworkEnabled && !String.IsNullOrEmpty(vm.PrivateSwitchId))
-                AddNetworkAdapter(objVM, vm.PrivateSwitchId, vm.Name, vm.PrivateNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
-
-            // add management adapter
-            if (vm.ManagementNetworkEnabled && !String.IsNullOrEmpty(vm.ManagementSwitchId))
-                AddNetworkAdapter(objVM, vm.ManagementSwitchId, vm.Name, vm.ManagementNicMacAddress, MANAGEMENT_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
-
-            vm.VirtualMachineId = vmID;
             return vm;
         }
 
         public VirtualMachine UpdateVirtualMachine(VirtualMachine vm)
         {
-            string vmId = vm.VirtualMachineId;
+            HostedSolutionLog.LogStart("UpdateVirtualMachine");
+            HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vm.VirtualMachineId);
 
-            // get VM object
-            ManagementObject objVM = GetVirtualMachineObject(vmId);
-
-            // update general settings
-            UpdateVirtualMachineGeneralSettings(vmId, objVM,
-                vm.CpuCores,
-                vm.RamSize,
-                vm.BootFromCD,
-                vm.NumLockEnabled);
-
-            // check DVD drive
-            ManagementObject objDvdDrive = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Synthetic DVD Drive'"
-                    + " and InstanceID like 'Microsoft:{0}%' and Address = 0", vmId);
-
-            if (vm.DvdDriveInstalled && objDvdDrive == null)
-                AddVirtualMachineDvdDrive(vmId, objVM);
-            else if (!vm.DvdDriveInstalled && objDvdDrive != null)
-                RemoveVirtualMachineResources(objVM, objDvdDrive);
-
-            // External NIC
-            if (!vm.ExternalNetworkEnabled
-                && !String.IsNullOrEmpty(vm.ExternalNicMacAddress))
+            try
             {
-                // delete adapter
-                DeleteNetworkAdapter(objVM, vm.ExternalNicMacAddress);
+                var realVm = GetVirtualMachineEx(vm.VirtualMachineId);
 
-                // reset MAC
-                vm.ExternalNicMacAddress = null;
+                DvdDriveHelper.Update(PowerShell, realVm, vm.DvdDriveInstalled); // Dvd should be before bios because bios sets boot order
+                BiosHelper.Update(PowerShell, realVm, vm.BootFromCD, vm.NumLockEnabled);
+                VirtualMachineHelper.UpdateProcessors(PowerShell, realVm, vm.CpuCores, CpuLimitSettings, CpuReserveSettings, CpuWeightSettings);
+                VirtualMachineHelper.UpdateMemory(PowerShell, realVm, vm.RamSize);
+                NetworkAdapterHelper.Update(PowerShell, vm);
             }
-            else if(vm.ExternalNetworkEnabled
-                && !String.IsNullOrEmpty(vm.ExternalNicMacAddress))
+            catch (Exception ex)
             {
-                // add external adapter
-                AddNetworkAdapter(objVM, vm.ExternalSwitchId, vm.Name, vm.ExternalNicMacAddress, EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                HostedSolutionLog.LogError("UpdateVirtualMachine", ex);
+                throw;
             }
 
-
-            // Private NIC
-            if (!vm.PrivateNetworkEnabled
-                && !String.IsNullOrEmpty(vm.PrivateNicMacAddress))
-            {
-                // delete adapter
-                DeleteNetworkAdapter(objVM, vm.PrivateNicMacAddress);
-
-                // reset MAC
-                vm.PrivateNicMacAddress = null;
-            }
-            else if (vm.PrivateNetworkEnabled
-                && !String.IsNullOrEmpty(vm.PrivateNicMacAddress))
-            {
-                // add private adapter
-                AddNetworkAdapter(objVM, vm.PrivateSwitchId, vm.Name, vm.PrivateNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
-            }
-
+            HostedSolutionLog.LogEnd("UpdateVirtualMachine");
+           
             return vm;
         }
 
-        private void UpdateVirtualMachineGeneralSettings(string vmId, ManagementObject objVM, int cpuCores, long ramMB, bool bootFromCD, bool numLockEnabled)
-        {
-            // request management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // VM resources
-            List<string> vmConfig = new List<string>();
-
-            // get system settings
-            ManagementObject objSettings = GetVirtualMachineSettingsObject(vmId);
-
-            // BIOS (num lock)
-            objSettings["BIOSNumLock"] = numLockEnabled;
-
-            // BIOS (boot order)
-            // BootOrder = 0 - Boot from floppy, 1 - Boot from CD, 2 - Boot from disk, 3 - PXE Boot 
-            objSettings["BootOrder"] = bootFromCD ? new int[] { 1, 2, 3, 0 } : new int[] { 2, 1, 3, 0 };
-
-            // modify machine settings
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("ModifyVirtualSystem");
-            inParams["ComputerSystem"] = objVM;
-            inParams["SystemSettingData"] = objSettings.GetText(TextFormat.CimDtd20);
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("ModifyVirtualSystem", inParams, null);
-            JobResult job = CreateJobResultFromWmiMethodResults(outParams);
-
-            // setup CPU
-            ManagementObject objCpu = wmi.GetWmiObject("Msvm_ProcessorSettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            objCpu["VirtualQuantity"] = cpuCores;
-            objCpu["Limit"] = Convert.ToInt64(CpuLimitSettings * 1000);
-            objCpu["Reservation"] = Convert.ToInt64(CpuReserveSettings * 1000);
-            objCpu["Weight"] = CpuWeightSettings;
-            vmConfig.Add(objCpu.GetText(TextFormat.CimDtd20));
-
-            // setup RAM
-            ManagementObject objRam = wmi.GetWmiObject("Msvm_MemorySettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            objRam["VirtualQuantity"] = ramMB.ToString();
-            objRam["Reservation"] = ramMB.ToString();
-            objRam["Limit"] = ramMB.ToString();
-            vmConfig.Add(objRam.GetText(TextFormat.CimDtd20));
-
-            // modify machine resources
-            inParams = objVmsvc.GetMethodParameters("ModifyVirtualSystemResources");
-            inParams["ComputerSystem"] = objVM;
-            inParams["ResourceSettingData"] = vmConfig.ToArray();
-            outParams = objVmsvc.InvokeMethod("ModifyVirtualSystemResources", inParams, null);
-            job = CreateJobResultFromWmiMethodResults(outParams);
-        }
 
         private void AddVirtualMachineDvdDrive(string vmId, ManagementObject objVM)
         {
@@ -612,7 +473,7 @@ namespace WebsitePanel.Providers.Virtualization
                 }
                 objExtNic["ElementName"] = adapterName;
 
-                if(!legacyAdapter)
+                if (!legacyAdapter)
                     objExtNic["VirtualSystemIdentifiers"] = new string[] { Guid.NewGuid().ToString("B") };
 
                 // add NIC
@@ -699,32 +560,90 @@ namespace WebsitePanel.Providers.Virtualization
 
         public JobResult ChangeVirtualMachineState(string vmId, VirtualMachineRequestedState newState)
         {
-            // target computer
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+            HostedSolutionLog.LogStart("ChangeVirtualMachineState");
+            var jobResult = new JobResult();
 
-            // get method
-            ManagementBaseObject inParams = objVm.GetMethodParameters("RequestStateChange");
-            inParams["RequestedState"] = (Int32)newState;
+            var vm = GetVirtualMachine(vmId);
 
-            // invoke method
-            ManagementBaseObject outParams = objVm.InvokeMethod("RequestStateChange", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            try
+            {
+                string cmdTxt;
+                List<string> paramList = new List<string>();
+
+                switch (newState)
+                {
+                    case VirtualMachineRequestedState.Start:
+                        cmdTxt = "Start-VM";
+                        break;
+                    case VirtualMachineRequestedState.Pause:
+                        cmdTxt = "Suspend-VM";
+                        break;
+                    case VirtualMachineRequestedState.Reset:
+                        cmdTxt = "Restart-VM";
+                        break;
+                    case VirtualMachineRequestedState.Resume:
+                        cmdTxt = "Resume-VM";
+                        break;
+                    case VirtualMachineRequestedState.ShutDown:
+                        cmdTxt = "Stop-VM";
+                        break;
+                    case VirtualMachineRequestedState.TurnOff:
+                        cmdTxt = "Stop-VM";
+                        paramList.Add("TurnOff");
+                        break;
+                    case VirtualMachineRequestedState.Save:
+                        cmdTxt = "Save-VM";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("newState");
+                }
+
+                Command cmd = new Command(cmdTxt);
+
+                cmd.Parameters.Add("Name", vm.Name);
+                //cmd.Parameters.Add("AsJob");
+                paramList.ForEach(p => cmd.Parameters.Add(p));
+
+                PowerShell.Execute(cmd, false);
+                jobResult = JobHelper.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("ChangeVirtualMachineState", ex);
+                throw;
+            }
+
+            HostedSolutionLog.LogEnd("ChangeVirtualMachineState");
+
+            return jobResult;
         }
 
         public ReturnCode ShutDownVirtualMachine(string vmId, bool force, string reason)
         {
-            // load virtual machine object
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
-            ManagementObject objShutdown = wmi.GetRelatedWmiObject(objVm, "msvm_ShutdownComponent");
+            HostedSolutionLog.LogStart("ShutDownVirtualMachine");
+            ReturnCode returnCode  = ReturnCode.OK;
 
-            // execute InitiateShutdown method
-            ManagementBaseObject inParams = objShutdown.GetMethodParameters("InitiateShutdown");
-            inParams["Force"] = force;
-            inParams["Reason"] = reason;
+            var vm = GetVirtualMachine(vmId);
 
-            // invoke method
-            ManagementBaseObject outParams = objShutdown.InvokeMethod("InitiateShutdown", inParams, null);
-            return (ReturnCode)Convert.ToInt32(outParams["ReturnValue"]);
+            try
+            {
+                Command cmd = new Command("Stop-VM");
+
+                cmd.Parameters.Add("Name", vm.Name);
+                if (force) cmd.Parameters.Add("Force");
+                //if (!string.IsNullOrEmpty(reason)) cmd.Parameters.Add("Reason", reason);
+
+                PowerShell.Execute(cmd, false);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("ShutDownVirtualMachine", ex);
+                throw;
+            }
+
+            HostedSolutionLog.LogEnd("ShutDownVirtualMachine");
+
+            return returnCode;
         }
 
         public List<ConcreteJob> GetVirtualMachineJobs(string vmId)
@@ -877,26 +796,31 @@ namespace WebsitePanel.Providers.Virtualization
         #endregion
 
         #region Snapshots
+
         public List<VirtualMachineSnapshot> GetVirtualMachineSnapshots(string vmId)
         {
-            // get all VM setting objects
-            ManagementObject objVmSettings = GetVirtualMachineSettingsObject(vmId);
-            VirtualMachineSnapshot runningSnapshot = CreateSnapshotFromWmiObject(objVmSettings);
-
-            // load snapshots
-            ManagementBaseObject objSummary = GetVirtualMachineSummaryInformation(vmId, SummaryInformationRequest.Snapshots);
-            ManagementBaseObject[] objSnapshots = (ManagementBaseObject[])objSummary["Snapshots"];
-
             List<VirtualMachineSnapshot> snapshots = new List<VirtualMachineSnapshot>();
 
-            if (objSnapshots != null)
+            try
             {
-                foreach (ManagementBaseObject objSnapshot in objSnapshots)
+                var vm = GetVirtualMachine(vmId);
+
+                Command cmd = new Command("Get-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
                 {
-                    VirtualMachineSnapshot snapshot = CreateSnapshotFromWmiObject(objSnapshot);
-                    snapshot.IsCurrent = (runningSnapshot.ParentId == snapshot.Id);
-                    snapshots.Add(snapshot);
+                    foreach (PSObject psSnapshot in result)
+                    {
+                        snapshots.Add(SnapshotHelper.GetFromPS(psSnapshot, vm.ParentSnapshotId));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetVirtualMachineSnapshots", ex);
+                throw;
             }
 
             return snapshots;
@@ -904,103 +828,116 @@ namespace WebsitePanel.Providers.Virtualization
 
         public VirtualMachineSnapshot GetSnapshot(string snapshotId)
         {
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-            return CreateSnapshotFromWmiObject(objSnapshot);
+            try
+            {
+                Command cmd = new Command("Get-VMSnapshot");
+                cmd.Parameters.Add("Id", snapshotId);
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
+                {
+                    return SnapshotHelper.GetFromPS(result[0]);
+                }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetSnapshot", ex);
+                throw;
+            }
+
+            return null;
         }
 
         public JobResult CreateSnapshot(string vmId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
 
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+                Command cmd = new Command("Checkpoint-VM");
+                cmd.Parameters.Add("Name", vm.Name);
 
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("CreateVirtualSystemSnapshot");
-            inParams["SourceSystem"] = objVm;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("CreateVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("CreateSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult RenameSnapshot(string vmId, string snapshotId, string name)
         {
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
+                var snapshot = GetSnapshot(snapshotId);
 
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
+                Command cmd = new Command("Rename-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+                cmd.Parameters.Add("Name", snapshot.Name);
+                cmd.Parameters.Add("NewName", name);
 
-            // rename snapshot
-            objSnapshot["ElementName"] = name;
-
-            // save
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("ModifyVirtualSystem");
-            inParams["ComputerSystem"] = objVm.Path.Path;
-            inParams["SystemSettingData"] = objSnapshot.GetText(TextFormat.CimDtd20);
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("ModifyVirtualSystem", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("RenameSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult ApplySnapshot(string vmId, string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
+            try
+            {
+                var vm = GetVirtualMachine(vmId);
+                var snapshot = GetSnapshot(snapshotId);
 
-            // load virtual machine
-            ManagementObject objVm = GetVirtualMachineObject(vmId);
+                Command cmd = new Command("Restore-VMSnapshot");
+                cmd.Parameters.Add("VMName", vm.Name);
+                cmd.Parameters.Add("Name", snapshot.Name);
 
-            // load snapshot
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            ManagementObjectCollection objRelated = objVm.GetRelated("Msvm_SettingsDefineState");
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("ApplyVirtualSystemSnapshot");
-            inParams["ComputerSystem"] = objVm.Path.Path;
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("ApplyVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("ApplySnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult DeleteSnapshot(string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // load snapshot object
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("RemoveVirtualSystemSnapshot");
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("RemoveVirtualSystemSnapshot", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            try
+            {
+                var snapshot = GetSnapshot(snapshotId);
+                SnapshotHelper.Delete(PowerShell, snapshot, false);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("DeleteSnapshot", ex);
+                throw;
+            }
         }
 
         public JobResult DeleteSnapshotSubtree(string snapshotId)
         {
-            // get VM management service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // load snapshot object
-            ManagementObject objSnapshot = GetSnapshotObject(snapshotId);
-
-            // get method params
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("RemoveVirtualSystemSnapshotTree");
-            inParams["SnapshotSettingData"] = objSnapshot.Path.Path;
-
-            // invoke method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("RemoveVirtualSystemSnapshotTree", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            try
+            {
+                var snapshot = GetSnapshot(snapshotId);
+                SnapshotHelper.Delete(PowerShell, snapshot, true);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("DeleteSnapshot", ex);
+                throw;
+            }
         }
 
         public byte[] GetSnapshotThumbnailImage(string snapshotId, ThumbnailSize size)
@@ -1008,185 +945,182 @@ namespace WebsitePanel.Providers.Virtualization
             ManagementBaseObject objSummary = GetSnapshotSummaryInformation(snapshotId, (SummaryInformationRequest)size);
             return GetTumbnailFromSummaryInformation(objSummary, size);
         }
+
         #endregion
 
         #region DVD operations
         public string GetInsertedDVD(string vmId)
         {
-            // find CD/DVD disk
-            ManagementObject objDvd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual CD/DVD Disk'"
-                    + " and InstanceID Like 'Microsoft:{0}%'", vmId);
+            HostedSolutionLog.LogStart("GetInsertedDVD");
+            HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
 
-            if(objDvd == null)
+            DvdDriveInfo dvdInfo;
+
+            try
+            {
+                var vm = GetVirtualMachineEx(vmId);
+                dvdInfo = DvdDriveHelper.Get(PowerShell, vm.Name);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetInsertedDVD", ex);
+                throw;
+            }
+
+            if (dvdInfo == null)
                 return null;
 
-            string[] path = (string[])objDvd["Connection"];
-            if (path != null && path.Length > 0)
-                return path[0];
-
-            return null;
+            HostedSolutionLog.LogEnd("GetInsertedDVD");
+            return dvdInfo.Path;
         }
 
         public JobResult InsertDVD(string vmId, string isoPath)
         {
-            isoPath = FileUtils.EvaluateSystemVariables(isoPath);
+            HostedSolutionLog.LogStart("InsertDVD");
+            HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
+            HostedSolutionLog.DebugInfo("Path: {0}", isoPath);
 
-            // find DVD drive
-            ManagementObject objDvdDrive = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Synthetic DVD Drive'"
-                    + " and InstanceID Like 'Microsoft:{0}%'", vmId);
+            try
+            {
+                var vm = GetVirtualMachineEx(vmId);
+                DvdDriveHelper.Set(PowerShell, vm.Name, isoPath);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("InsertDVD", ex);
+                throw;
+            }
 
-            // create CD/DVD disk
-            ManagementObject objDefaultDVD = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual CD/DVD Disk'"
-                    + " and InstanceID like '%Default'");
-            ManagementObject objDvd = (ManagementObject)objDefaultDVD.Clone();
-            objDvd["Parent"] = objDvdDrive.Path;
-            objDvd["Connection"] = new string[] { isoPath };
-
-            // get VM service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
-
-            // get method
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("AddVirtualSystemResources");
-            inParams["TargetSystem"] = GetVirtualMachineObject(vmId);
-            inParams["ResourceSettingData"] = new string[] { objDvd.GetText(TextFormat.CimDtd20) };
-
-            // execute method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("AddVirtualSystemResources", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            HostedSolutionLog.LogEnd("InsertDVD");
+            return JobHelper.CreateSuccessResult();
         }
 
         public JobResult EjectDVD(string vmId)
         {
-            // find CD/DVD disk
-            ManagementObject objDvd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual CD/DVD Disk'"
-                    + " and InstanceID Like 'Microsoft:{0}%'", vmId);
+            HostedSolutionLog.LogStart("InsertDVD");
+            HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
 
-            // get VM service
-            ManagementObject objVmsvc = GetVirtualSystemManagementService();
+            try
+            {
+                var vm = GetVirtualMachineEx(vmId);
+                DvdDriveHelper.Set(PowerShell, vm.Name, null);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("InsertDVD", ex);
+                throw;
+            }
 
-            // get method
-            ManagementBaseObject inParams = objVmsvc.GetMethodParameters("RemoveVirtualSystemResources");
-            inParams["TargetSystem"] = GetVirtualMachineObject(vmId);
-            inParams["ResourceSettingData"] = new object[] { objDvd.Path.Path };
-
-            // execute method
-            ManagementBaseObject outParams = objVmsvc.InvokeMethod("RemoveVirtualSystemResources", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            HostedSolutionLog.LogEnd("InsertDVD");
+            return JobHelper.CreateSuccessResult();
         }
         #endregion
 
         #region Virtual Switches
         public List<VirtualSwitch> GetSwitches()
         {
-            List<VirtualSwitch> switches = new List<VirtualSwitch>();
-
-            // load wmi objects
-            ManagementObjectCollection objSwitches = wmi.GetWmiObjects("msvm_VirtualSwitch");
-            foreach (ManagementObject objSwitch in objSwitches)
-                switches.Add(CreateSwitchFromWmiObject(objSwitch));
-
-            return switches;
+            return GetSwitches(null, null);
         }
 
         public List<VirtualSwitch> GetExternalSwitches(string computerName)
         {
-            Wmi cwmi = new Wmi(computerName, WMI_VIRTUALIZATION_NAMESPACE);
+            return GetSwitches(computerName, "External");
+        }
 
-            Dictionary<string, string> switches = new Dictionary<string, string>();
-            List<VirtualSwitch> list = new List<VirtualSwitch>();
+        private List<VirtualSwitch> GetSwitches(string computerName, string type)
+        {
+            HostedSolutionLog.LogStart("GetSwitches");
+            HostedSolutionLog.DebugInfo("ComputerName: {0}", computerName);
 
-            // load external adapters
-            Dictionary<string, string> adapters = new Dictionary<string, string>();
-            ManagementObjectCollection objAdapters = cwmi.GetWmiObjects("Msvm_ExternalEthernetPort");
-            foreach (ManagementObject objAdapter in objAdapters)
-                adapters.Add((string)objAdapter["DeviceID"], "1");
+            List<VirtualSwitch> switches = new List<VirtualSwitch>();
 
-            // get active connections
-            ManagementObjectCollection objConnections = cwmi.GetWmiObjects("Msvm_ActiveConnection");
-            foreach (ManagementObject objConnection in objConnections)
+            try
             {
-                // check LAN andpoint
-                ManagementObject objLanEndpoint = new ManagementObject(new ManagementPath((string)objConnection["Dependent"]));
-                string endpointName = (string)objLanEndpoint["Name"];
+                
+                Command cmd = new Command("Get-VMSwitch");
 
-                if (!endpointName.StartsWith("/DEVICE/"))
-                    continue;
+                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                endpointName = endpointName.Substring(8);
-
-                if (adapters.ContainsKey(endpointName))
+                Collection<PSObject> result = PowerShell.Execute(cmd,false);
+                foreach (PSObject current in result)
                 {
-                    // get switch port
-                    ManagementObject objPort = new ManagementObject(new ManagementPath((string)objConnection["Antecedent"]));
-                    string switchId = (string)objPort["SystemName"];
-                    if (switches.ContainsKey(switchId))
-                        continue;
-
-                    // add info about switch
-                    ManagementObject objSwitch = cwmi.GetRelatedWmiObject(objPort, "Msvm_VirtualSwitch");
-                    switches.Add(switchId, (string)objSwitch["ElementName"]);
+                    VirtualSwitch sw = new VirtualSwitch();
+                    sw.SwitchId = current.GetProperty("Name").ToString();
+                    sw.Name = current.GetProperty("Name").ToString();
+                    sw.SwitchType = current.GetProperty("SwitchType").ToString();
+                    switches.Add(sw);
                 }
             }
-
-            foreach (string switchId in switches.Keys)
+            catch (Exception ex)
             {
-                VirtualSwitch sw = new VirtualSwitch();
-                sw.SwitchId = switchId;
-                sw.Name = switches[switchId];
-                list.Add(sw);
+                HostedSolutionLog.LogError("GetSwitches", ex);
+                throw;
             }
 
-            return list;
+            HostedSolutionLog.LogEnd("GetSwitches");
+            return switches;
         }
 
         public bool SwitchExists(string switchId)
         {
-            ManagementObject objSwitch = wmi.GetWmiObject("msvm_VirtualSwitch", "Name = '{0}'", switchId);
-            return (objSwitch != null);
+            return GetSwitches().Any(s => s.Name == switchId);
         }
 
         public VirtualSwitch CreateSwitch(string name)
         {
-            // generate ID for new virtual switch
-            string id = Guid.NewGuid().ToString();
+            // Create private switch
 
-            // get switch management object
-            ManagementObject objNetworkSvc = GetVirtualSwitchManagementService();
+            HostedSolutionLog.LogStart("CreateSwitch");
+            HostedSolutionLog.DebugInfo("Name: {0}", name);
 
-            ManagementBaseObject inParams = objNetworkSvc.GetMethodParameters("CreateSwitch");
-            inParams["Name"] = id;
-            inParams["FriendlyName"] = name;
-            inParams["NumLearnableAddresses"] = SWITCH_PORTS_NUMBER;
+            VirtualSwitch virtualSwitch = null;
 
-            // invoke method
-            ManagementBaseObject outParams = objNetworkSvc.InvokeMethod("CreateSwitch", inParams, null);
+            try
+            {
+                Command cmd = new Command("New-VMSwitch");
 
-            // process output parameters
-            ManagementObject objSwitch = wmi.GetWmiObjectByPath((string)outParams["CreatedVirtualSwitch"]);
-            return CreateSwitchFromWmiObject(objSwitch);
+                cmd.Parameters.Add("SwitchType", "Private");
+                cmd.Parameters.Add("Name", name);
+
+                Collection<PSObject> result = PowerShell.Execute(cmd, false);
+                if (result != null && result.Count > 0)
+                {
+                    virtualSwitch = new VirtualSwitch();
+                    virtualSwitch.SwitchId = result[0].GetString("Name");
+                    virtualSwitch.Name = result[0].GetString("Name");
+                    virtualSwitch.SwitchType = result[0].GetString("SwitchType");
+                }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("CreateSwitch", ex);
+                throw;
+            }
+
+            HostedSolutionLog.LogEnd("CreateSwitch");
+            return virtualSwitch;
         }
 
         public ReturnCode DeleteSwitch(string switchId)
         {
-            // find requested switch
-            ManagementObject objSwitch = wmi.GetWmiObject("msvm_VirtualSwitch", "Name = '{0}'", switchId);
+            HostedSolutionLog.LogStart("DeleteSwitch");
+            HostedSolutionLog.DebugInfo("switchId: {0}", switchId);
 
-            if (objSwitch == null)
-                throw new Exception("Virtual switch with the specified ID was not found.");
+            try
+            {
+                Command cmd = new Command("Remove-VMSwitch");
+                cmd.Parameters.Add("Name", switchId);
+                PowerShell.Execute(cmd, false);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("DeleteSwitch", ex);
+                throw;
+            }
 
-            // get switch management object
-            ManagementObject objNetworkSvc = GetVirtualSwitchManagementService();
-
-            // get method params
-            ManagementBaseObject inParams = objNetworkSvc.GetMethodParameters("DeleteSwitch");
-            inParams["VirtualSwitch"] = objSwitch.Path.Path;
-
-            ManagementBaseObject outParams = (ManagementBaseObject)objNetworkSvc.InvokeMethod("DeleteSwitch", inParams, null);
-            return (ReturnCode)Convert.ToInt32(outParams["ReturnValue"]);
+            HostedSolutionLog.LogEnd("DeleteSwitch");
+            return ReturnCode.OK;
         }
         #endregion
 
@@ -1200,7 +1134,7 @@ namespace WebsitePanel.Providers.Virtualization
 
             if (!File.Exists(path))
             {
-                Log.WriteWarning("The folder does not contain 'index.xml' file: {0}", path);
+                HostedSolutionLog.LogWarning("The folder does not contain 'index.xml' file: {0}", path);
                 return null;
             }
 
@@ -1213,8 +1147,8 @@ namespace WebsitePanel.Providers.Virtualization
 
             XmlNodeList nodeItems = xml.SelectNodes("/items/item");
 
-            if(nodeItems.Count == 0)
-                Log.WriteWarning("index.xml found, but contains 0 items: {0}", path);
+            if (nodeItems.Count == 0)
+                HostedSolutionLog.LogWarning("index.xml found, but contains 0 items: {0}", path);
 
             foreach (XmlNode nodeItem in nodeItems)
             {
@@ -1305,8 +1239,7 @@ namespace WebsitePanel.Providers.Virtualization
             }
             catch
             {
-                // TODO
-                // add logging...
+                HostedSolutionLog.LogError("GetKVPItems", new Exception("msvm_KvpExchangeComponent"));
 
                 return pairs;
             }
@@ -1335,7 +1268,71 @@ namespace WebsitePanel.Providers.Virtualization
                 pairs.Add(new KvpExchangeDataItem(name, data));
             }
 
-            return pairs;
+            return pairs; 
+            
+            //HostedSolutionLog.LogStart("GetKVPItems");
+            //HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
+            //HostedSolutionLog.DebugInfo("exchangeItemsName: {0}", exchangeItemsName);
+
+            //List<KvpExchangeDataItem> pairs = new List<KvpExchangeDataItem>();
+
+            //try
+            //{
+            //    var vm = GetVirtualMachine(vmId);
+
+            //    Command cmdGetVm = new Command("Get-WmiObject");
+
+            //    cmdGetVm.Parameters.Add("Namespace", WMI_VIRTUALIZATION_NAMESPACE);
+            //    cmdGetVm.Parameters.Add("Class", "Msvm_ComputerSystem");
+            //    cmdGetVm.Parameters.Add("Filter", "ElementName = '" + vm.Name + "'");
+
+            //    Collection<PSObject> result = PowerShell.Execute(cmdGetVm, false);
+
+            //    if (result != null && result.Count > 0)
+            //    {
+            //        dynamic resultDynamic = result[0];//.Invoke();
+            //        var kvp = resultDynamic.GetRelated("Msvm_KvpExchangeComponent");
+
+            //        // return XML pairs
+            //        string[] xmlPairs = null; 
+                    
+            //        foreach (dynamic a in kvp)
+            //        {
+            //            xmlPairs = a[exchangeItemsName];
+            //            break;
+            //        }
+                    
+            //        if (xmlPairs == null)
+            //            return pairs;
+
+            //        // join all pairs
+            //        StringBuilder sb = new StringBuilder();
+            //        sb.Append("<result>");
+            //        foreach (string xmlPair in xmlPairs)
+            //            sb.Append(xmlPair);
+            //        sb.Append("</result>");
+
+            //        // parse pairs
+            //        XmlDocument doc = new XmlDocument();
+            //        doc.LoadXml(sb.ToString());
+
+            //        foreach (XmlNode nodeName in doc.SelectNodes("/result/INSTANCE/PROPERTY[@NAME='Name']/VALUE"))
+            //        {
+            //            string name = nodeName.InnerText;
+            //            string data = nodeName.ParentNode.ParentNode.SelectSingleNode("PROPERTY[@NAME='Data']/VALUE").InnerText;
+            //            pairs.Add(new KvpExchangeDataItem(name, data));
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    HostedSolutionLog.LogError("GetKVPItems", ex);
+            //    throw;
+            //}
+
+            //HostedSolutionLog.LogEnd("GetKVPItems");
+
+            //return pairs; 
         }
 
         public JobResult AddKVPItems(string vmId, KvpExchangeDataItem[] items)
@@ -1428,33 +1425,17 @@ namespace WebsitePanel.Providers.Virtualization
         #region Storage
         public VirtualHardDiskInfo GetVirtualHardDiskInfo(string vhdPath)
         {
-            ManagementObject objImgSvc = GetImageManagementService();
-
-            // get method params
-            ManagementBaseObject inParams = objImgSvc.GetMethodParameters("GetVirtualHardDiskInfo");
-            inParams["Path"] = FileUtils.EvaluateSystemVariables(vhdPath);
-
-            // execute method
-            ManagementBaseObject outParams = (ManagementBaseObject)objImgSvc.InvokeMethod("GetVirtualHardDiskInfo", inParams, null);
-            ReturnCode result = (ReturnCode)Convert.ToInt32(outParams["ReturnValue"]);
-            if (result == ReturnCode.OK)
+            try
             {
-                // create XML
-                string xml = (string)outParams["Info"];
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(xml);
-
-                // read properties
-                VirtualHardDiskInfo vhd = new VirtualHardDiskInfo();
-                vhd.DiskType = (VirtualHardDiskType)Enum.Parse(typeof(VirtualHardDiskType), GetPropertyValue("Type", doc), true);
-                vhd.FileSize = Int64.Parse(GetPropertyValue("FileSize", doc));
-                vhd.InSavedState = Boolean.Parse(GetPropertyValue("InSavedState", doc));
-                vhd.InUse = Boolean.Parse(GetPropertyValue("InUse", doc));
-                vhd.MaxInternalSize = Int64.Parse(GetPropertyValue("MaxInternalSize", doc));
-                vhd.ParentPath = GetPropertyValue("ParentPath", doc);
-                return vhd;
+                VirtualHardDiskInfo hardDiskInfo = new VirtualHardDiskInfo();
+                HardDriveHelper.GetVirtualHardDiskDetail(PowerShell, vhdPath, ref hardDiskInfo);
+                return hardDiskInfo;
             }
-            return null;
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetVirtualHardDiskInfo", ex);
+                throw;
+            }
         }
 
         private string GetPropertyValue(string propertyName, XmlDocument doc)
@@ -1498,7 +1479,7 @@ namespace WebsitePanel.Providers.Virtualization
 
                 string diskAddress = String.Format("Port{0}Path{1}Target{2}Lun{3}", portNumber, pathId, targetId, lun);
 
-                Log.WriteInfo("Disk address: " + diskAddress);
+                HostedSolutionLog.LogInfo("Disk address: " + diskAddress);
 
                 // find mounted disk using VDS
                 Vds.Advanced.AdvancedDisk advancedDisk = null;
@@ -1506,14 +1487,14 @@ namespace WebsitePanel.Providers.Virtualization
 
                 // first attempt
                 System.Threading.Thread.Sleep(3000);
-                Log.WriteInfo("Trying to find mounted disk - first attempt");
+                HostedSolutionLog.LogInfo("Trying to find mounted disk - first attempt");
                 FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
 
                 // second attempt
                 if (advancedDisk == null)
                 {
                     System.Threading.Thread.Sleep(20000);
-                    Log.WriteInfo("Trying to find mounted disk - second attempt");
+                    HostedSolutionLog.LogInfo("Trying to find mounted disk - second attempt");
                     FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
                 }
 
@@ -1534,7 +1515,7 @@ namespace WebsitePanel.Providers.Virtualization
                 if (useDiskPartToClearReadOnly)
                 {
                     // *** Clear Read-Only and bring disk online with DiskPart ***
-                    Log.WriteInfo("Clearing disk Read-only flag and bringing disk online");
+                    HostedSolutionLog.LogInfo("Clearing disk Read-only flag and bringing disk online");
 
                     if (objDisk != null)
                     {
@@ -1545,7 +1526,7 @@ attributes disk clear readonly
 online disk
 exit", Convert.ToInt32(objDisk["Index"])));
 
-                        Log.WriteInfo("DiskPart Result: " + diskPartResult);
+                        HostedSolutionLog.LogInfo("DiskPart Result: " + diskPartResult);
                     }
                 }
                 else
@@ -1554,7 +1535,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // clear Read-Only
                     if ((advancedDisk.Flags & Vds.DiskFlags.ReadOnly) == Vds.DiskFlags.ReadOnly)
                     {
-                        Log.WriteInfo("Clearing disk Read-only flag");
+                        HostedSolutionLog.LogInfo("Clearing disk Read-only flag");
                         advancedDisk.ClearFlags(Vds.DiskFlags.ReadOnly);
                         while ((advancedDisk.Flags & Vds.DiskFlags.ReadOnly) == Vds.DiskFlags.ReadOnly)
                         {
@@ -1566,7 +1547,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // bring disk ONLINE
                     if (advancedDisk.Status == Vds.DiskStatus.Offline)
                     {
-                        Log.WriteInfo("Bringing disk online");
+                        HostedSolutionLog.LogInfo("Bringing disk online");
                         advancedDisk.Online();
                         while (advancedDisk.Status == Vds.DiskStatus.Offline)
                         {
@@ -1583,18 +1564,18 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
 
                 // find volumes using VDS
-                Log.WriteInfo("Querying disk volumes with VDS");
+                HostedSolutionLog.LogInfo("Querying disk volumes with VDS");
                 foreach (Vds.Volume volume in diskPack.Volumes)
                 {
                     string letter = volume.DriveLetter.ToString();
-                    if(letter != "")
+                    if (letter != "")
                         volumes.Add(letter);
                 }
 
                 // find volumes using WMI
                 if (volumes.Count == 0 && objDisk != null)
                 {
-                    Log.WriteInfo("Querying disk volumes with WMI");
+                    HostedSolutionLog.LogInfo("Querying disk volumes with WMI");
                     foreach (ManagementObject objPartition in objDisk.GetRelated("Win32_DiskPartition"))
                     {
                         foreach (ManagementObject objVolume in objPartition.GetRelated("Win32_LogicalDisk"))
@@ -1604,7 +1585,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     }
                 }
 
-                Log.WriteInfo("Volumes found: " + volumes.Count);
+                HostedSolutionLog.LogInfo("Volumes found: " + volumes.Count);
 
                 // info object
                 MountedDiskInfo info = new MountedDiskInfo();
@@ -1612,7 +1593,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 info.DiskVolumes = volumes.ToArray();
                 return info;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // unmount disk
                 UnmountVirtualHardDisk(vhdPath);
@@ -1686,9 +1667,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         public JobResult ConvertVirtualHardDisk(string sourcePath, string destinationPath, VirtualHardDiskType diskType)
         {
-            sourcePath = FileUtils.EvaluateSystemVariables(sourcePath);
-            destinationPath = FileUtils.EvaluateSystemVariables(destinationPath);
-
             // check source file
             if (!FileExists(sourcePath))
                 throw new Exception("Source VHD cannot be found: " + sourcePath);
@@ -1697,17 +1675,26 @@ exit", Convert.ToInt32(objDisk["Index"])));
             string destFolder = Path.GetDirectoryName(destinationPath);
             if (!DirectoryExists(destFolder))
                 CreateFolder(destFolder);
+            
+            sourcePath = FileUtils.EvaluateSystemVariables(sourcePath);
+            destinationPath = FileUtils.EvaluateSystemVariables(destinationPath); 
+            
+            try
+            {
+                Command cmd = new Command("Convert-VHD");
 
-            ManagementObject objImgSvc = GetImageManagementService();
+                cmd.Parameters.Add("Path", sourcePath);
+                cmd.Parameters.Add("DestinationPath", destinationPath);
+                cmd.Parameters.Add("VHDType", diskType.ToString());
 
-            // get method params
-            ManagementBaseObject inParams = objImgSvc.GetMethodParameters("ConvertVirtualHardDisk");
-            inParams["SourcePath"] = sourcePath;
-            inParams["DestinationPath"] = destinationPath;
-            inParams["Type"] = (UInt16)diskType;
-
-            ManagementBaseObject outParams = (ManagementBaseObject)objImgSvc.InvokeMethod("ConvertVirtualHardDisk", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+                PowerShell.Execute(cmd, false);
+                return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("ConvertVirtualHardDisk", ex);
+                throw;
+            }
         }
 
         public void DeleteRemoteFile(string path)
@@ -1773,7 +1760,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             }
 
             // extend volume
-            Vds.Async extendEvent = diskVolume.BeginExtend(new Vds.InputDisk[]{ inputDisk }, null, null);
+            Vds.Async extendEvent = diskVolume.BeginExtend(new Vds.InputDisk[] { inputDisk }, null, null);
             while (!extendEvent.IsCompleted)
                 System.Threading.Thread.Sleep(100);
             diskVolume.EndExtend(extendEvent);
@@ -1810,8 +1797,8 @@ exit", Convert.ToInt32(objDisk["Index"])));
             // temp file name on "system" drive available through hidden share
             string tempPath = Path.Combine(GetTempRemoteFolder(), Guid.NewGuid().ToString("N"));
 
-            Log.WriteInfo("Read remote file: " + path);
-            Log.WriteInfo("Local file temp path: " + tempPath);
+            HostedSolutionLog.LogInfo("Read remote file: " + path);
+            HostedSolutionLog.LogInfo("Local file temp path: " + tempPath);
 
             // copy remote file to temp file (WMI)
             if (!CopyFile(path, tempPath))
@@ -1819,7 +1806,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
             // read content of temp file
             string remoteTempPath = ConvertToUNC(tempPath);
-            Log.WriteInfo("Remote file temp path: " + remoteTempPath);
+            HostedSolutionLog.LogInfo("Remote file temp path: " + remoteTempPath);
 
             string content = File.ReadAllText(remoteTempPath);
 
@@ -1853,8 +1840,29 @@ exit", Convert.ToInt32(objDisk["Index"])));
         #region Jobs
         public ConcreteJob GetJob(string jobId)
         {
-            ManagementObject objJob = wmi.GetWmiObject("CIM_ConcreteJob", "InstanceID = '{0}'", jobId);
-            return CreateJobFromWmiObject(objJob);
+            HostedSolutionLog.LogStart("GetJob");
+            HostedSolutionLog.DebugInfo("jobId: {0}", jobId);
+
+            Runspace runSpace = null;
+            ConcreteJob job;
+
+            try
+            {
+                Command cmd = new Command("Get-Job");
+
+                if (!string.IsNullOrEmpty(jobId)) cmd.Parameters.Add("Id", jobId);
+
+                Collection<PSObject> result = PowerShell.Execute( cmd, false);
+                job = JobHelper.CreateFromPSObject(result);
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetJob", ex);
+                throw;
+            }
+
+            HostedSolutionLog.LogEnd("GetJob");
+            return job;
         }
 
         public List<ConcreteJob> GetAllJobs()
@@ -1952,7 +1960,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
                 if (vps == null)
                 {
-                    Log.WriteWarning(String.Format("Virtual machine '{0}' object with ID '{1}' was not found. Change state operation aborted.",
+                    HostedSolutionLog.LogWarning(String.Format("Virtual machine '{0}' object with ID '{1}' was not found. Change state operation aborted.",
                         vm.Name, vm.VirtualMachineId));
                     return;
                 }
@@ -1972,7 +1980,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // check result
                     if (result.ReturnValue != ReturnCode.JobStarted)
                     {
-                        Log.WriteWarning(String.Format("Cannot {0} '{1}' virtual machine: {2}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot {0} '{1}' virtual machine: {2}",
                             state, vm.Name, result.ReturnValue));
                         return;
                     }
@@ -1980,7 +1988,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // wait for completion
                     if (!JobCompleted(result.Job))
                     {
-                        Log.WriteWarning(String.Format("Cannot complete {0} '{1}' of virtual machine: {1}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot complete {0} '{1}' of virtual machine: {1}",
                             state, vm.Name, result.Job.ErrorDescription));
                         return;
                     }
@@ -2007,7 +2015,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // check result
                     if (result.ReturnValue != ReturnCode.JobStarted)
                     {
-                        Log.WriteWarning(String.Format("Cannot {0} '{1}' virtual machine: {2}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot {0} '{1}' virtual machine: {2}",
                             state, vm.Name, result.ReturnValue));
                         return;
                     }
@@ -2015,7 +2023,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // wait for completion
                     if (!JobCompleted(result.Job))
                     {
-                        Log.WriteWarning(String.Format("Cannot complete {0} '{1}' of virtual machine: {1}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot complete {0} '{1}' of virtual machine: {1}",
                             state, vm.Name, result.Job.ErrorDescription));
                         return;
                     }
@@ -2024,7 +2032,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             }
             catch (Exception ex)
             {
-                Log.WriteError(String.Format("Error {0} Virtual Machine '{1}'",
+                HostedSolutionLog.LogError(String.Format("Error {0} Virtual Machine '{1}'",
                     started ? "starting" : "turning off",
                     vm.Name), ex);
             }
@@ -2039,7 +2047,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
                 if (vps == null)
                 {
-                    Log.WriteWarning(String.Format("Virtual machine '{0}' object with ID '{1}' was not found. Delete operation aborted.",
+                    HostedSolutionLog.LogWarning(String.Format("Virtual machine '{0}' object with ID '{1}' was not found. Delete operation aborted.",
                         vm.Name, vm.VirtualMachineId));
                     return;
                 }
@@ -2051,7 +2059,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // check result
                     if (result.ReturnValue != ReturnCode.JobStarted)
                     {
-                        Log.WriteWarning(String.Format("Cannot Turn off '{0}' virtual machine before deletion: {1}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot Turn off '{0}' virtual machine before deletion: {1}",
                             vm.Name, result.ReturnValue));
                         return;
                     }
@@ -2059,7 +2067,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     // wait for completion
                     if (!JobCompleted(result.Job))
                     {
-                        Log.WriteWarning(String.Format("Cannot complete Turn off '{0}' of virtual machine before deletion: {1}",
+                        HostedSolutionLog.LogWarning(String.Format("Cannot complete Turn off '{0}' of virtual machine before deletion: {1}",
                             vm.Name, result.Job.ErrorDescription));
                         return;
                     }
@@ -2072,7 +2080,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 // check result
                 if (result.ReturnValue != ReturnCode.JobStarted)
                 {
-                    Log.WriteWarning(String.Format("Cannot delete '{0}' virtual machine: {1}",
+                    HostedSolutionLog.LogWarning(String.Format("Cannot delete '{0}' virtual machine: {1}",
                         vm.Name, result.ReturnValue));
                     return;
                 }
@@ -2080,7 +2088,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 // wait for completion
                 if (!JobCompleted(result.Job))
                 {
-                    Log.WriteWarning(String.Format("Cannot complete deletion of '{0}' virtual machine: {1}",
+                    HostedSolutionLog.LogWarning(String.Format("Cannot complete deletion of '{0}' virtual machine: {1}",
                         vm.Name, result.Job.ErrorDescription));
                     return;
                 }
@@ -2093,7 +2101,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 }
                 catch (Exception ex)
                 {
-                    Log.WriteError(String.Format("Cannot delete virtual machine folder '{0}'",
+                    HostedSolutionLog.LogError(String.Format("Cannot delete virtual machine folder '{0}'",
                         vm.RootFolderPath), ex);
                 }
                 #endregion
@@ -2101,7 +2109,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             }
             catch (Exception ex)
             {
-                Log.WriteError(String.Format("Error deleting Virtual Machine '{0}'", vm.Name), ex);
+                HostedSolutionLog.LogError(String.Format("Error deleting Virtual Machine '{0}'", vm.Name), ex);
             }
         }
 
@@ -2114,12 +2122,32 @@ exit", Convert.ToInt32(objDisk["Index"])));
             }
             catch (Exception ex)
             {
-                Log.WriteError(String.Format("Error deleting Virtual Switch '{0}'", vs.Name), ex);
+                HostedSolutionLog.LogError(String.Format("Error deleting Virtual Switch '{0}'", vs.Name), ex);
             }
         }
         #endregion
 
         #region Private Methods
+
+        internal int ConvertNullableToInt32(object value)
+        {
+            return value == null ? 0 : Convert.ToInt32(value);
+        }
+
+        internal long ConvertNullableToInt64(object value)
+        {
+            return value == null ? 0 : Convert.ToInt64(value);
+        }
+
+        //protected VirtualMachineSnapshot GetSnapshotById(string id)
+        //{
+        //    var vms = GetVirtualMachines();
+        //    var allSnapshots = vms.SelectMany(vm => GetVirtualMachineSnapshots(vm.Id.ToString()));
+
+        //    return allSnapshots.FirstOrDefault(s => s.Id == id);
+        //}
+        
+
         protected JobResult CreateJobResultFromWmiMethodResults(ManagementBaseObject outParams)
         {
             JobResult result = new JobResult();
@@ -2168,41 +2196,12 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         private ManagementObject GetSnapshotObject(string snapshotId)
         {
-            return wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", snapshotId);
+            return wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", snapshotId) ??
+                   wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", "Microsoft:" + snapshotId);
         }
 
-        private VirtualMachine CreateVirtualMachineFromWmiObject(ManagementObject objVm)
-        {
-            if (objVm == null || objVm.Properties.Count == 0)
-                return null;
 
-            VirtualMachine vm = new VirtualMachine();
-            vm.VirtualMachineId = (string)objVm["Name"];
-            vm.Name = (string)objVm["ElementName"];
-            vm.State = (VirtualMachineState)Convert.ToInt32(objVm["EnabledState"]);
-            vm.Uptime = Convert.ToInt64(objVm["OnTimeInMilliseconds"]);
-            return vm;
-        }
-
-        private VirtualMachineSnapshot CreateSnapshotFromWmiObject(ManagementBaseObject objSnapshot)
-        {
-            if (objSnapshot == null || objSnapshot.Properties.Count == 0)
-                return null;
-
-            VirtualMachineSnapshot snapshot = new VirtualMachineSnapshot();
-            snapshot.Id = (string)objSnapshot["InstanceID"];
-            snapshot.Name = (string)objSnapshot["ElementName"];
-
-            string parentId = (string)objSnapshot["Parent"];
-            if (!String.IsNullOrEmpty(parentId))
-            {
-                int idx = parentId.IndexOf("Microsoft:");
-                snapshot.ParentId = parentId.Substring(idx, parentId.Length - idx - 1);
-            }
-            snapshot.Created = wmi.ToDateTime((string)objSnapshot["CreationTime"]);
-
-            return snapshot;
-        }
+     
 
         private VirtualSwitch CreateSwitchFromWmiObject(ManagementObject objSwitch)
         {
@@ -2225,7 +2224,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             job.JobState = (ConcreteJobState)Convert.ToInt32(objJob["JobState"]);
             job.Caption = (string)objJob["Caption"];
             job.Description = (string)objJob["Description"];
-            job.StartTime = wmi.ToDateTime((string)objJob["StartTime"]);
+            job.StartTime = Wmi.ToDateTime((string)objJob["StartTime"]);
             // TODO proper parsing of WMI time spans, e.g. 00000000000001.325247:000
             job.ElapsedTime = DateTime.Now; //wmi.ToDateTime((string)objJob["ElapsedTime"]);
             job.ErrorCode = Convert.ToInt32(objJob["ErrorCode"]);
@@ -2307,7 +2306,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
         #region Remote File Methods
         public bool FileExists(string path)
         {
-            Log.WriteInfo("Check remote file exists: " + path);
+            HostedSolutionLog.LogInfo("Check remote file exists: " + path);
 
             if (path.StartsWith(@"\\")) // network share
                 return File.Exists(path);
@@ -2333,8 +2332,8 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         public bool CopyFile(string sourceFileName, string destinationFileName)
         {
-            Log.WriteInfo("Copy file - source: " + sourceFileName);
-            Log.WriteInfo("Copy file - destination: " + destinationFileName);
+            HostedSolutionLog.LogInfo("Copy file - source: " + sourceFileName);
+            HostedSolutionLog.LogInfo("Copy file - destination: " + destinationFileName);
 
             if (sourceFileName.StartsWith(@"\\")) // network share
             {
@@ -2499,5 +2498,17 @@ exit", Convert.ToInt32(objDisk["Index"])));
             return !String.IsNullOrEmpty(connString);
         }
         #endregion Hyper-V Cloud
+
+        #region PowerShell integration
+
+        private PowerShellManager _powerShell;
+        protected PowerShellManager PowerShell
+        {
+            get { return _powerShell ?? (_powerShell = new PowerShellManager()); }
+        }
+
+        #endregion
+
+
     }
 }
