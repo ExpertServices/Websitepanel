@@ -4553,7 +4553,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\SettingsRdsSetupLetter.ascx.resx" />
-    <Content Include="App_LocalResources\RDSServersEditServer.ascx.resx" /
+    <Content Include="App_LocalResources\RDSServersEditServer.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageEditFolderTabs.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsFolderPermissions.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
