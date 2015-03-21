@@ -215,7 +215,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 app.RequiredCommandLine = ((HiddenField)row.FindControl("hfRequiredCommandLine")).Value;
                 var users = ((HiddenField)row.FindControl("hfUsers")).Value;
 
-                if (users != null)
+                if (!string.IsNullOrEmpty(users))
                 {
                     app.Users = new string[]{"New"};
                 }

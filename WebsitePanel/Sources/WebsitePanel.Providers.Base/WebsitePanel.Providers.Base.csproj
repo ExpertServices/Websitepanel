@@ -288,6 +288,8 @@
     <Compile Include="Statistics\StatsServer.cs" />
     <Compile Include="Statistics\StatsSite.cs" />
     <Compile Include="Statistics\StatsUser.cs" />
+    <Compile Include="Virtualization\AutomaticStopAction.cs" />
+    <Compile Include="Virtualization\AutomaticStartAction.cs" />
     <Compile Include="Virtualization\BiosInfo.cs" />
     <Compile Include="Virtualization\ChangeJobStateReturnCode.cs" />
     <Compile Include="Virtualization\ConcreteJob.cs">

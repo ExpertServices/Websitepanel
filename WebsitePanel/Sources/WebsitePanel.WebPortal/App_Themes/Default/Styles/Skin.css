@@ -54,9 +54,9 @@ legend {font-weight:700; color:#428bca; padding:0 4px;}
 legend span.NormalBold {display:inline;}
 .Tabs {width:100%;}
 .Separator {display:none;}
-.Tabs span {display:table; table-layout:fixed; width:100%; table-layout:fixed;}
+.Tabs span {display:table; table-layout:fixed; min-width:100%; table-layout:fixed;}
 .Tabs span span {display:table-cell; width:15%; text-align:center; padding:0;}
-.Tabs a {display:block; padding:10px 0; text-decoration:none; border-bottom:1px solid #ddd;}
+.Tabs a {display:block; padding:10px 5px; text-decoration:none; border-bottom:1px solid #ddd;}
 .Tabs a:Hover {background:#eee; text-decoration:none;}
 .Tabs a.ActiveTab {border:1px solid #ddd; border-bottom:none; color:#555; margin-bottom:-1px;}
 .Tabs a.ActiveTab:hover {background:none;}

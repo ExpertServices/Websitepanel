@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\HyperV2012R2\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -53,9 +53,14 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Constants.cs" />
     <Compile Include="Extensions\PSObjectExtension.cs" />
+    <Compile Include="Helpers\BiosHelper.cs" />
+    <Compile Include="Helpers\HardDriveHelper.cs" />
     <Compile Include="Helpers\NetworkAdapterHelper.cs" />
     <Compile Include="Helpers\DvdDriveHelper.cs" />
+    <Compile Include="Helpers\JobHelper.cs" />
+    <Compile Include="Helpers\SnapshotHelper.cs" />
     <Compile Include="PowerShellManager.cs" />
     <Compile Include="HyperV2012R2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

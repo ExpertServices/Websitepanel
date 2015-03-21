@@ -99,6 +99,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback InstallCertificateOperationCompleted;
         
+        private System.Threading.SendOrPostCallback MoveSessionHostToRdsOUOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -208,6 +210,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event InstallCertificateCompletedEventHandler InstallCertificateCompleted;
+        
+        /// <remarks/>
+        public event MoveSessionHostToRdsOUCompletedEventHandler MoveSessionHostToRdsOUCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1738,6 +1743,46 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/MoveSessionHostToRdsOU", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void MoveSessionHostToRdsOU(string hostName) {
+            this.Invoke("MoveSessionHostToRdsOU", new object[] {
+                        hostName});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginMoveSessionHostToRdsOU(string hostName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("MoveSessionHostToRdsOU", new object[] {
+                        hostName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndMoveSessionHostToRdsOU(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void MoveSessionHostToRdsOUAsync(string hostName) {
+            this.MoveSessionHostToRdsOUAsync(hostName, null);
+        }
+        
+        /// <remarks/>
+        public void MoveSessionHostToRdsOUAsync(string hostName, object userState) {
+            if ((this.MoveSessionHostToRdsOUOperationCompleted == null)) {
+                this.MoveSessionHostToRdsOUOperationCompleted = new System.Threading.SendOrPostCallback(this.OnMoveSessionHostToRdsOUOperationCompleted);
+            }
+            this.InvokeAsync("MoveSessionHostToRdsOU", new object[] {
+                        hostName}, this.MoveSessionHostToRdsOUOperationCompleted, userState);
+        }
+        
+        private void OnMoveSessionHostToRdsOUOperationCompleted(object arg) {
+            if ((this.MoveSessionHostToRdsOUCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.MoveSessionHostToRdsOUCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2366,4 +2411,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void InstallCertificateCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void MoveSessionHostToRdsOUCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

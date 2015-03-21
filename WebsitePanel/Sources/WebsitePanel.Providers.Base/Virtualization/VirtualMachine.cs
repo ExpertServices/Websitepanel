@@ -136,5 +136,11 @@ namespace WebsitePanel.Providers.Virtualization
         [Persistent]
         public int Generation { get; set; }
 
+        [Persistent]
+        public int ProcessorCount { get; set; }
+
+        [Persistent]
+        public string ParentSnapshotId { get; set; }
+
     }
 }

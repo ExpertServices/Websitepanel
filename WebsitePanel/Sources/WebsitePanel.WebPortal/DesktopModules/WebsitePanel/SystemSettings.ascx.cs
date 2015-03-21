@@ -51,6 +51,7 @@ namespace WebsitePanel.Portal
 		public const string SMTP_ENABLE_SSL = "SmtpEnableSsl";
 		public const string BACKUPS_PATH = "BackupsPath";
         public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
+        public const string RDS_MAIN_CONTROLLER = "RdsMainController";
 
         /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
@@ -136,6 +137,25 @@ namespace WebsitePanel.Portal
                 // Original WebsitePanel Extensions
                 txtFileManagerEditableExtensions.Text = FileManager.ALLOWED_EDIT_EXTENSIONS.Replace(",", System.Environment.NewLine);
             }
+
+            // RDS
+            var services = ES.Services.RDS.GetRdsServices();
+
+            foreach(var service in services)
+            {
+                ddlRdsController.Items.Add(new ListItem(service.ServiceName, service.ServiceId.ToString()));
+            }
+
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.RDS_SETTINGS);
+
+            if (settings != null && !string.IsNullOrEmpty(settings[RDS_MAIN_CONTROLLER]))
+            {
+                ddlRdsController.SelectedValue = settings[RDS_MAIN_CONTROLLER];
+            }
+            else if (ddlRdsController.Items.Count > 0)
+            {
+                ddlRdsController.SelectedValue = ddlRdsController.Items[0].Value;
+            }
 		}
 
 		private void SaveSettings()
@@ -206,6 +226,16 @@ namespace WebsitePanel.Portal
 
                 result = ES.Services.System.SetSystemSettings(
                     WSP.SystemSettings.FILEMANAGER_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                settings = new WSP.SystemSettings();
+                settings[RDS_MAIN_CONTROLLER] = ddlRdsController.SelectedValue;
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.RDS_SETTINGS, settings);
 
                 if (result < 0)
                 {

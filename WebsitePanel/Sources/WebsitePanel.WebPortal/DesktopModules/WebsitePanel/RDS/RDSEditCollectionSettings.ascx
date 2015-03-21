@@ -205,7 +205,7 @@
                                 </tr> 
                                 <tr>                                    
                                     <td colspan="2">
-                                        <asp:CheckBox ID="cbAuthentication" Text="Allow connections only from computers runnig Remote Desktop with Network Level Authentication" runat="server"/>
+                                        <asp:CheckBox ID="cbAuthentication" Text="Allow connections only from computers running Remote Desktop with Network Level Authentication" runat="server"/>
                                     </td>
                                 </tr>                               
                             </table>

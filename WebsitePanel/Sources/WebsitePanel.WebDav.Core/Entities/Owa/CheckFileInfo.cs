@@ -37,6 +37,10 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         public bool RestrictedWebViewOnly { get; set; }
         [DataMember]
         public string ClientUrl { get; set; }
+        [DataMember]
+        public bool CloseButtonClosesWindow { get; set; }
+        //[DataMember]
+        //public string CloseUrl { get; set; }
         //[DataMember]
         //public bool UserCanNotWriteRelative { get; set; }
         
@@ -59,8 +63,7 @@ namespace WebsitePanel.WebDav.Core.Entities.Owa
         //public string BreadcrumbFolderUrl { get; set; }
         //[DataMember]
         //public string ClientUrl { get; set; }
-        //[DataMember]
-        //public bool CloseButtonClosesWindow { get; set; }
+    
         //[DataMember]
         //public string CloseUrl { get; set; }
         //[DataMember]

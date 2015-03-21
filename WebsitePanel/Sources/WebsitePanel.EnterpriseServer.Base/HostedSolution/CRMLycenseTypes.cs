@@ -41,7 +41,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int LIMITED = 2;
         public const int ESS = 22;
 
-        // CRM 2013
+        // CRM 2013/2015
         public const int PROFESSIONAL = 0;
         public const int BASIC = 2;
         public const int ESSENTIAL = 5;

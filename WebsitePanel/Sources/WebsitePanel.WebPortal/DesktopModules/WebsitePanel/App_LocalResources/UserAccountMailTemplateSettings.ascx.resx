@@ -147,4 +147,7 @@
   <data name="lnkDomainLookupLetter.Text" xml:space="preserve">
     <value>Domain MX and NS Letter</value>
   </data>
+  <data name="lnkRdsSetupLetter.Text" xml:space="preserve">
+    <value>RDS Setup Letter</value>
+  </data>
 </root>

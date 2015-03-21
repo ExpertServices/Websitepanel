@@ -40,9 +40,11 @@ namespace WebsitePanel.Portal.RDS
     {
         
         protected void Page_Load(object sender, EventArgs e)
-        {            
+        {
+            users.Module = Module;        
+
             if (!IsPostBack)
-            {
+            {                
                 BindQuota();
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
@@ -76,6 +78,12 @@ namespace WebsitePanel.Portal.RDS
             if (stats.AllocatedUsers != -1)
             {
                 usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+            }
+            
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
+            {
+                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
+                users.ButtonAddEnabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
             }
         }
 

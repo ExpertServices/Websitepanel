@@ -1,5 +1,9 @@
 ﻿function WspDialogs() {
-    this.settings = { dialogId: "#confirm-dialog", processDialogId: "#processDialog" };
+    this.settings = {
+        dialogId: "#confirm-dialog",
+        processDialogId: "#processDialog",
+        inlineProcessDialog: '.glyphicon-refresh'
+    };
 }
 
 WspDialogs.prototype =
@@ -36,6 +40,14 @@ WspDialogs.prototype =
 
     hideProcessDialog: function() {
         $(this.settings.processDialogId).modal('hide');
-}
+    },
+
+    showInlineProcessing: function(itemId) {
+        $(itemId).parent().find(this.settings.inlineProcessDialog).show();
+    },
+
+    hideInlineProcessing: function (itemId) {
+        $(itemId).parent().find(this.settings.inlineProcessDialog).hide();
+    }
 };
 

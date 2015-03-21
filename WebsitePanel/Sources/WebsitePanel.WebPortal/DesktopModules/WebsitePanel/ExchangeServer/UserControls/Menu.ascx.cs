@@ -240,10 +240,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         }
 
-        private void PrepareSharePointMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        private void PrepareSharePointMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath, string menuItemText)
         {
             MenuGroup sharepointGroup =
-                    new MenuGroup(GetLocalizedString("Text.SharePointGroup"), imagePath + "sharepoint24.png");
+                    new MenuGroup(menuItemText, imagePath + "sharepoint24.png");
             sharepointGroup.MenuItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings"));
@@ -314,9 +314,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 PrepareBlackBerryMenu(cntx, groups, imagePath);
 
             //SharePoint menu group;
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
             {
-                PrepareSharePointMenu(cntx, groups, imagePath);
+                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointFoundationServerGroup"));
+            }
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointServer))
+            {
+                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointServerGroup"));
             }
 
             //CRM Menu

@@ -646,5 +646,21 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void MoveSessionHostToRdsOU(string hostName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' MoveSessionHostToRdsOU", ProviderSettings.ProviderName);
+                RDSProvider.MoveSessionHostToRdsOU(hostName);
+                Log.WriteEnd("'{0}' MoveSessionHostToRdsOU", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' MoveSessionHostToRdsOU", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

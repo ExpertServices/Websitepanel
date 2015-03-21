@@ -155,7 +155,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         private static int GetHostedSharePointServiceId(int packageId)
         {
-            return PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
         }
 
         

@@ -162,4 +162,10 @@
   <data name="litFileManagerEditableExtensions.Text" xml:space="preserve">
     <value>(One (1) extension per line)</value>
   </data>
+  <data name="lblRdsController.Text" xml:space="preserve">
+    <value>Main RDS Controller:</value>
+  </data>
+  <data name="RdsSettings.Text" xml:space="preserve">
+    <value>RDS</value>
+  </data>
 </root>

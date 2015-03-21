@@ -13,6 +13,8 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.Module = Module;
+
             if (!IsPostBack)
             {                
                 var collectionLocalAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);

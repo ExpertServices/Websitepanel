@@ -88,6 +88,8 @@ namespace WebsitePanel.Portal
                         result = ES.Services.RDS.RemoveRdsServer(rdsServerId);
                     }
 
+                    ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
+
                     if (!result.IsSuccess)
                     {
                         messageBox.ShowMessage(result, "REMOTE_DESKTOP_SERVICES_REMOVE_RDSSERVER", "RDS");
@@ -123,6 +125,10 @@ namespace WebsitePanel.Portal
             {
                 InstallCertificate(e.CommandArgument.ToString());
             }
+            else if (e.CommandName == "EditServer")
+            {
+                EditServer(e.CommandArgument.ToString());
+            }
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -136,7 +142,7 @@ namespace WebsitePanel.Portal
         {
             ViewInfoModal.Show();
             var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
-            var serverInfo = ES.Services.RDS.GetRdsServerInfo(rdsServer.ItemId.Value, rdsServer.FqdName);
+            var serverInfo = ES.Services.RDS.GetRdsServerInfo(null, rdsServer.FqdName);
             litProcessor.Text = string.Format("{0}x{1} MHz", serverInfo.NumberOfCores, serverInfo.MaxClockSpeed);
             litLoadPercentage.Text = string.Format("{0}%", serverInfo.LoadPercentage);
             litMemoryAllocated.Text = string.Format("{0} MB", serverInfo.MemoryAllocatedMb);
@@ -149,14 +155,14 @@ namespace WebsitePanel.Portal
         private void Restart(string serverId)
         {
             var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
-            ES.Services.RDS.RestartRdsServer(rdsServer.ItemId.Value, rdsServer.FqdName);
+            ES.Services.RDS.RestartRdsServer(null, rdsServer.FqdName);
             Response.Redirect(Request.Url.ToString(), true);
         }
 
         private void ShutDown(string serverId)
         {
             var rdsServer = ES.Services.RDS.GetRdsServer(Convert.ToInt32(serverId));
-            ES.Services.RDS.ShutDownRdsServer(rdsServer.ItemId.Value, rdsServer.FqdName);
+            ES.Services.RDS.ShutDownRdsServer(null, rdsServer.FqdName);
             Response.Redirect(Request.Url.ToString(), true);
         }
 
@@ -184,7 +190,11 @@ namespace WebsitePanel.Portal
             }
 
             messageBoxPanel.Update();
-//            Response.Redirect(Request.Url.ToString(), true);
+        }
+
+        private void EditServer(string serverId)
+        {
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "edit_rdsserver", "SpaceID=" + PanelSecurity.PackageId, "ServerId=" + serverId));
         }
 	}
 }

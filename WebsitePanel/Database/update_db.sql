@@ -5548,18 +5548,32 @@ CREATE TABLE [dbo].[RDSCertificates](
 
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+END
+ELSE
+	PRINT 'FK_RDSCollectionUsers_RDSCollectionId not EXISTS'
+GO
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_UserId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+END	
+ELSE
+	PRINT 'FK_RDSCollectionUsers_UserId not EXISTS'
 GO
 
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
-GO
-
-ALTER TABLE [dbo].[RDSServers]
-DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSServers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSServers]
+	DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+END	
+ELSE
+	PRINT 'FK_RDSServers_RDSCollectionId not EXISTS'	
 GO
 
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
@@ -8846,6 +8860,12 @@ AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupNa
 RETURN 
 GO
 
+-- Hyper-V 2012 R2
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
+END
+GO
 
 --ES OWA Editing
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
@@ -8990,10 +9010,122 @@ SELECT
 	WHERE EFOP.ItemID = @ItemID AND EFOP.AccountID = @AccountID
 GO
 
--- Hyper-V 2012 R2
-IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
+
+-- CRM2015 Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2015')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1205, 24, N'CRM', N'Hosted MS CRM 2015', N'WebsitePanel.Providers.HostedSolution.CRMProvider2015, WebsitePanel.Providers.HostedSolution.Crm2015', N'CRM2011', NULL)
 END
 GO
 
+-- RDS Setup Instructions
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'CC' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'CC', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+
+DECLARE @RDSSetupLetterHtmlBody nvarchar(2500)
+
+Set @RDSSetupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>RDS Setup Information</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+
+<a name="top"></a>
+<div class="Header">
+	RDS Setup Information
+</div>
+</div>
+</body>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'HtmlBody', @RDSSetupLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @RDSSetupLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'Subject', N'RDS setup')
+END
+GO
+
+DECLARE @RDSSetupLetterTextBody nvarchar(2500)
+
+Set @RDSSetupLetterTextBody = N'=================================
+   RDS Setup Information
+=================================
+<ad:if test="#user#">
+Hello #user.FirstName#,
+</ad:if>
+
+Please, find below RDS setup instructions.
+
+If you have any questions, feel free to contact our support department at any time.
+
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'TextBody', @RDSSetupLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @RDSSetupLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'TextBody'
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Foundation Server')
+BEGIN	
+	DECLARE @group_order AS INT
+	DECLARE @group_controller AS NVARCHAR(1000)
+	DECLARE @group_id AS INT
+	DECLARE @provider_id AS INT
+
+	UPDATE [dbo].[ResourceGroups] SET GroupName = 'Sharepoint Foundation Server' WHERE GroupName = 'Hosted Sharepoint'
+	SELECT @group_order = GroupOrder, @group_controller = GroupController FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Foundation Server'	
+	SELECT TOP 1 @group_id = GroupId + 1 From [dbo].[ResourceGroups] ORDER BY GroupID DESC
+	SELECT TOP 1 @provider_id = ProviderId + 1 From [dbo].[Providers] ORDER BY ProviderID DESC
+	UPDATE [dbo].[ResourceGroups] SET GroupOrder = GroupOrder + 1 WHERE GroupOrder > @group_order
+	INSERT INTO [dbo].[ResourceGroups] (GroupID, GroupName, GroupOrder, GroupController, ShowGroup) VALUES (@group_id, 'Sharepoint Server', @group_order + 1, @group_controller, 1)
+	INSERT INTO [dbo].[Providers] (ProviderID, GroupID, ProviderName, DisplayName, ProviderType, EditorControl, DisableAutoDiscovery)
+		(SELECT @provider_id, @group_id, ProviderName, DisplayName, ProviderType, EditorControl, DisableAutoDiscovery FROM [dbo].[Providers] WHERE ProviderName = 'HostedSharePoint2013')
+
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (550, @group_id, 1, 'HostedSharePointServer.Sites', 'SharePoint Site Collections', 2, 0)
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (551, @group_id, 2, 'HostedSharePointServer.MaxStorage', 'Max site storage, MB', 3, 0)
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (552, @group_id, 3, 'HostedSharePointServer.UseSharedSSL', 'Use shared SSL Root', 1, 0)
+END

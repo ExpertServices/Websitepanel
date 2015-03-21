@@ -342,7 +342,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                                 }
                             }
 
-                            file.Summary = reader[6] as string;
+                            file.Summary = SanitizeXmlString(reader[6] as string);
 
                             result.Add(file);
                         }
@@ -353,6 +353,36 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             return result.ToArray();
         }
 
+
+        public string SanitizeXmlString(string xml)
+        {
+            if (xml == null)
+            {
+                return null;
+            }
+
+            var buffer = new StringBuilder(xml.Length);
+
+            foreach (char c in xml.Where(c => IsLegalXmlChar(c)))
+            {
+                buffer.Append(c);
+            }
+
+            return buffer.ToString();
+        }
+
+        public bool IsLegalXmlChar(int character)
+        {
+            return
+            (
+                 character == 0x9 /* == '\t' == 9   */          ||
+                 character == 0xA /* == '\n' == 10  */          ||
+                 character == 0xD /* == '\r' == 13  */          ||
+                (character >= 0x20 && character <= 0xD7FF) ||
+                (character >= 0xE000 && character <= 0xFFFD) ||
+                (character >= 0x10000 && character <= 0x10FFFF)
+            );
+        }
 
         #region HostingServiceProvider methods
         

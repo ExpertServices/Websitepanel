@@ -70,6 +70,18 @@
 			</tr>
 		</table>
 	</asp:Panel>
+
+    <wsp:CollapsiblePanel ID="RdsSettings" runat="server" TargetControlID="PanelRdsSettings" meta:resourcekey="RdsSettings" Text="RDS" />
+    <asp:Panel ID="PanelRdsSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblRdsController" runat="server" meta:resourcekey="lblRdsController" />
+				<td style="width:200px;">
+                    <asp:DropDownList ID="ddlRdsController" runat="server" CssClass="HugeTextBox200"/>
+                </td>
+			</tr>
+		</table>
+    </asp:Panel>
 </div>
 <div class="FormFooter">
 	<asp:Button runat="server" ID="btnSaveSettings" meta:resourcekey="btnSaveSettings" 

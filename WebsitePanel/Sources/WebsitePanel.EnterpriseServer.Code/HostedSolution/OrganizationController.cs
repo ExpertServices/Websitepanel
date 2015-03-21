@@ -963,7 +963,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     PackageContext cntxTmp = PackageController.GetPackageContext(org.PackageId);
 
-                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                     {
                         SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, org.Id, string.Empty, string.Empty, string.Empty, 0, 0);
                         stats.CreatedSharePointSiteCollections = sharePointStats.TotalRowCount;
@@ -1044,11 +1044,11 @@ namespace WebsitePanel.EnterpriseServer
 
                                     PackageContext cntxTmp = PackageController.GetPackageContext(org.PackageId);
 
-                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                                     {
                                         SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, o.Id, string.Empty, string.Empty, string.Empty, 0, 0);
                                         stats.CreatedSharePointSiteCollections += sharePointStats.TotalRowCount;
-                                    }
+                                    }                                    
 
                                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                                     {
@@ -1112,7 +1112,7 @@ namespace WebsitePanel.EnterpriseServer
                 stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
                 stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
 
-                if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+                if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 {
                     stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].QuotaAllocatedValue;
                 }

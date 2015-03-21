@@ -49,18 +49,21 @@ namespace WebsitePanel.Providers.Virtualization
         Deleted = 32775,
         Pausing = 32776
         */
+        Snapshotting = 32771,
+        Migrating = 32772,
+        Deleted = 32775,
 
         Unknown = 0,
         Other = 1,
         Running = 2,
         Off = 3,
-        Stopping = 4,
-        Saved = 6,
-        Paused = 9,
-        Starting = 10,
-        Reset = 11,
-        Saving = 32773,
-        Pausing = 32776,
+        Stopping = 32774, // new 4
+        Saved = 32769, // new 6
+        Paused = 32768, // new 9
+        Starting = 32770, // new 10
+        Reset = 10, // new 11
+        Saving = 32773, // new 32773
+        Pausing = 32776, // new 32776
         Resuming = 32777,
         FastSaved = 32779,
         FastSaving = 32780,

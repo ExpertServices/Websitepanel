@@ -177,10 +177,10 @@
   <data name="lbViewInfo.Text" xml:space="preserve">
     <value>View Info</value>
   </data>
-  <data name="locFreeSpace" xml:space="preserve">
+  <data name="locFreeSpace.Text" xml:space="preserve">
     <value>Free Space:</value>
   </data>
-  <data name="locSize" xml:space="preserve">
+  <data name="locSize.Text" xml:space="preserve">
     <value>Size:</value>
   </data>
   <data name="locVolumeName.Text" xml:space="preserve">

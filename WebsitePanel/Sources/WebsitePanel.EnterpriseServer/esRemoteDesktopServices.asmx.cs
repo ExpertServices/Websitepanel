@@ -291,25 +291,25 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsServerInfo GetRdsServerInfo(int itemId, string fqdnName)
+        public RdsServerInfo GetRdsServerInfo(int? itemId, string fqdnName)
         {
             return RemoteDesktopServicesController.GetRdsServerInfo(itemId, fqdnName);
         }
 
         [WebMethod]
-        public string GetRdsServerStatus(int itemId, string fqdnName)
+        public string GetRdsServerStatus(int? itemId, string fqdnName)
         {
             return RemoteDesktopServicesController.GetRdsServerStatus(itemId, fqdnName);
         }
 
         [WebMethod]
-        public ResultObject ShutDownRdsServer(int itemId, string fqdnName)
+        public ResultObject ShutDownRdsServer(int? itemId, string fqdnName)
         {
             return RemoteDesktopServicesController.ShutDownRdsServer(itemId, fqdnName);
         }
 
         [WebMethod]
-        public ResultObject RestartRdsServer(int itemId, string fqdnName)
+        public ResultObject RestartRdsServer(int? itemId, string fqdnName)
         {
             return RemoteDesktopServicesController.RestartRdsServer(itemId, fqdnName);
         }
@@ -339,7 +339,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsCertificate GetRdsCertificateByItemId(int itemId)
+        public RdsCertificate GetRdsCertificateByItemId(int? itemId)
         {
             return RemoteDesktopServicesController.GetRdsCertificateByItemId(itemId);
         }
@@ -348,6 +348,24 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject AddRdsCertificate(RdsCertificate certificate)
         {
             return RemoteDesktopServicesController.AddRdsCertificate(certificate);
+        }
+
+        [WebMethod]
+        public List<ServiceInfo> GetRdsServices()
+        {
+            return RemoteDesktopServicesController.GetRdsServices();
+        }
+
+        [WebMethod]
+        public string GetRdsSetupLetter(int itemId, int? accountId)
+        {
+            return RemoteDesktopServicesController.GetRdsSetupLetter(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
+        {
+            return RemoteDesktopServicesController.SendRdsSetupLetter(itemId, accountId, to, cc);
         }
     }
 }

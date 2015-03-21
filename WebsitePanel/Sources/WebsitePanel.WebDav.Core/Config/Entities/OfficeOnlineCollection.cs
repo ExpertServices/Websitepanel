@@ -13,12 +13,14 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
         {
             IsEnabled = ConfigSection.OfficeOnline.IsEnabled;
             Url = ConfigSection.OfficeOnline.Url;
+            NewFilePath = ConfigSection.OfficeOnline.CobaltNewFilePath;
             CobaltFileTtl = ConfigSection.OfficeOnline.CobaltFileTtl;
             _officeExtensions = ConfigSection.OfficeOnline.Cast<OfficeOnlineElement>().ToList();
         }
 
         public bool IsEnabled { get; private set; }
         public string Url { get; private set; }
+        public string NewFilePath { get; private set; }
         public int CobaltFileTtl { get; private set; }
 
         public IEnumerator<OfficeOnlineElement> GetEnumerator()

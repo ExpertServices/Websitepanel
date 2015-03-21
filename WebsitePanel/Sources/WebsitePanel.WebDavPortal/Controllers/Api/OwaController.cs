@@ -54,22 +54,24 @@ namespace WebsitePanel.WebDavPortal.Controllers.Api
         {
             var token = _tokenManager.GetToken(accessTokenId);
 
-            var fileInfo = _wopiServer.GetCheckFileInfo(token.FilePath);
+            var fileInfo = _wopiServer.GetCheckFileInfo(token);
 
-            var urlPart = Url.Route(FileSystemRouteNames.ShowContentPath, new { org = WspContext.User.OrganizationId, pathPart = token.FilePath });
+            if (fileInfo.Size <= 1)
+            {
+                return fileInfo;
+            }
+
+            var urlPart = Url.Route(FileSystemRouteNames.ShowContentPath, new {org = WspContext.User.OrganizationId, pathPart = token.FilePath});
             var url = new Uri(Request.RequestUri, urlPart).ToString();
 
             fileInfo.DownloadUrl = url;
-            fileInfo.ClientUrl = _webDavManager.GetFileUrl(token.FilePath);
 
             return fileInfo;
         }
 
         public HttpResponseMessage GetFile(int accessTokenId)
         {
-            var token = _tokenManager.GetToken(accessTokenId);
-
-            var bytes = _webDavManager.GetFileBytes(token.FilePath);
+            var bytes = _wopiServer.GetFileBytes(accessTokenId);
 
             var result = new HttpResponseMessage(HttpStatusCode.OK);
 

@@ -83,6 +83,7 @@ namespace WebsitePanel.Portal.ProviderControls
             UpdateLyncServersGrid();
 
             txtRootOU.Text = settings["RootOU"];
+            txtComputersRootOu.Text = settings["ComputersRootOU"];
             txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
 
             if (!string.IsNullOrEmpty(settings["UseCentralNPS"]) && bool.TrueString == settings["UseCentralNPS"])
@@ -103,6 +104,7 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             settings["ConnectionBroker"] = txtConnectionBroker.Text;
             settings["RootOU"] = txtRootOU.Text;
+            settings["ComputersRootOU"] = txtComputersRootOu.Text;
             settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
             settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
             settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;

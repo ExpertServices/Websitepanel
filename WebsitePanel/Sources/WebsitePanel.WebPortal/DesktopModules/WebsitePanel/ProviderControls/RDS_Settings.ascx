@@ -78,6 +78,15 @@
     </tr>
     <tr>
         <td class="SubHead" width="200" nowrap>
+            <asp:Label runat="server" ID="lblComputersRootOU" meta:resourcekey="lblComputersRootOU" Text="Computers Root OU:"/>
+        </td>
+        <td class="Normal">
+            <asp:TextBox runat="server" ID="txtComputersRootOu" MaxLength="1000" Width="200px" />
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtComputersRootOu" ErrorMessage="*" Display="Dynamic" />
+        </td>
+    </tr>
+    <tr>
+        <td class="SubHead" width="200" nowrap>
             <asp:Label runat="server" ID="lblPrimaryDomainController" meta:resourcekey="lblPrimaryDomainController" Text="Primary Domain Controller:"/>
         </td>
         <td class="Normal">

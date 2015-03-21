@@ -151,7 +151,7 @@
     <value>Contacts</value>
   </data>
   <data name="Text.CRM2013Group" xml:space="preserve">
-    <value>Hosted Organization - CRM 2013</value>
+    <value>Hosted Organization - CRM 2013/2015</value>
   </data>
   <data name="Text.CRMGroup" xml:space="preserve">
     <value>Hosted Organization - CRM</value>
@@ -234,9 +234,12 @@
   <data name="Text.Setup" xml:space="preserve">
     <value>Setup</value>
   </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>Hosted Organization - SharePoint</value>
+  <data name="Text.SharePointFoundationServerGroup" xml:space="preserve">
+    <value>Hosted Organization - SharePoint Foundation Server</value>
   </data>
+  <data name="Text.SharePointServerGroup" xml:space="preserve">
+    <value>Hosted Organization - SharePoint Server</value>
+  </data>  
   <data name="Text.SiteCollections" xml:space="preserve">
     <value>Sharepoint Sites</value>
   </data>

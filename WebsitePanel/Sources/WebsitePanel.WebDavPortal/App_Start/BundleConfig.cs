@@ -35,6 +35,10 @@ namespace WebsitePanel.WebDavPortal
                 "~/Scripts/appScripts/wsp.js"
                ));
 
+            bundles.Add(new ScriptBundle("~/bundles/appScripts-webdav").Include(
+                "~/Scripts/appScripts/wsp-webdav.js"
+               ));
+
             bundles.Add(new ScriptBundle("~/bundles/bigIconsScripts").Include(
                 "~/Scripts/appScripts/recalculateResourseHeight.js"
                ));
