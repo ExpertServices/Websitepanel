@@ -122,7 +122,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             // Log operation.
             TaskManager.StartTask("HOSTEDSHAREPOINT", "GET_LANGUAGES");
 
-            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
             if (serviceId == 0)
             {
                 return new int[] { };
@@ -236,7 +236,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Check if stats resource is available
-            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.HostedSharePoint);
+            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.SharepointFoundationServer);
             if (serviceId == 0)
             {
                 return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_UNAVAILABLE;
@@ -790,7 +790,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
         private static int GetHostedSharePointServiceId(int packageId)
         {
-            return PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
         }
 
         private static List<SharePointSiteCollection> GetOrganizationSharePointSiteCollections(int orgId)

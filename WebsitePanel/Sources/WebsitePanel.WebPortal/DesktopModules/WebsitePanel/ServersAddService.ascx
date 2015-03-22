@@ -17,7 +17,7 @@
 	    <tr>
 		    <td class="SubHead" style="height: 34px"><asp:Label ID="lblServiceName" runat="server" meta:resourcekey="lblServiceName" Text="Service name:"></asp:Label></td>
 		    <td class="NormalBold" style="height: 34px">
-			    <asp:TextBox id="serviceName" runat="server" CssClass="Huge"></asp:TextBox>
+			    <asp:TextBox id="serviceName" runat="server" CssClass="Huge" style="width: 300px;"></asp:TextBox>
 			    <asp:RequiredFieldValidator id="serviceNameValidator" meta:resourcekey="serviceNameValidator" runat="server" ErrorMessage="Please specify service name" ControlToValidate="serviceName"
 				    Display="Dynamic"></asp:RequiredFieldValidator>
 		    </td>

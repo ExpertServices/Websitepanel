@@ -355,5 +355,17 @@ namespace WebsitePanel.EnterpriseServer
         {
             return RemoteDesktopServicesController.GetRdsServices();
         }
+
+        [WebMethod]
+        public string GetRdsSetupLetter(int itemId, int? accountId)
+        {
+            return RemoteDesktopServicesController.GetRdsSetupLetter(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
+        {
+            return RemoteDesktopServicesController.SendRdsSetupLetter(itemId, accountId, to, cc);
+        }
     }
 }

@@ -43,6 +43,8 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Providers.Web;
+using System.Net.Mail;
+using System.Collections;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -306,6 +308,91 @@ namespace WebsitePanel.EnterpriseServer
         private static List<ServiceInfo> GetRdsServicesInternal()
         {
             return ObjectUtils.CreateListFromDataSet<ServiceInfo>(DataProvider.GetServicesByGroupName(SecurityContext.User.UserId, ResourceGroups.RDS));
+        }
+
+        public static string GetRdsSetupLetter(int itemId, int? accountId)
+        {
+            return GetRdsSetupLetterInternal(itemId, accountId);
+        }
+
+        public static int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
+        {
+            return SendRdsSetupLetterInternal(itemId, accountId, to, cc);
+        }
+
+        private static string GetRdsSetupLetterInternal(int itemId, int? accountId)
+        {
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+            {
+                return null;
+            }
+            
+            UserInfo user = PackageController.GetPackageOwner(org.PackageId);
+            UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.RDS_SETUP_LETTER);
+            string settingName = user.HtmlMail ? "HtmlBody" : "TextBody";
+            string body = settings[settingName];
+
+            if (String.IsNullOrEmpty(body))
+            {
+                return null;
+            }
+            
+            string result = EvaluateMailboxTemplate(body, org, accountId, itemId);
+
+            return user.HtmlMail ? result : result.Replace("\n", "<br/>");
+        }
+
+        private static int SendRdsSetupLetterInternal(int itemId, int? accountId, string to, string cc)
+        {            
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
+
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+            
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+            {
+                return -1;
+            }
+                        
+            UserInfo user = PackageController.GetPackageOwner(org.PackageId);            
+            UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.RDS_SETUP_LETTER);
+            string from = settings["From"];
+
+            if (cc == null)
+            {
+                cc = settings["CC"];
+            }
+
+            string subject = settings["Subject"];
+            string body = user.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
+            bool isHtml = user.HtmlMail;
+            MailPriority priority = MailPriority.Normal;
+
+            if (!String.IsNullOrEmpty(settings["Priority"]))
+            {
+                priority = (MailPriority)Enum.Parse(typeof(MailPriority), settings["Priority"], true);
+            }
+
+            if (String.IsNullOrEmpty(body))
+            {
+                return 0;
+            }
+            
+            if (to == null)
+            {
+                to = user.Email;
+            }
+            
+            subject = EvaluateMailboxTemplate(subject, org, accountId, itemId);
+            body = EvaluateMailboxTemplate(body, org, accountId, itemId);
+            
+            return MailHelper.SendMessage(from, to, cc, subject, body, priority, isHtml);
         }
 
         private static ResultObject InstallSessionHostsCertificateInternal(RdsServer rdsServer)
@@ -1841,6 +1928,26 @@ namespace WebsitePanel.EnterpriseServer
         private static string GetFormattedCollectionName(string displayName, string organizationId)
         {
             return string.Format("{0}-{1}", organizationId, displayName.Replace(" ", "_"));
+        }
+
+        private static string EvaluateMailboxTemplate(string template, Organization org, int? accountId, int itemId)
+        {
+            OrganizationUser user = null;
+
+            if (accountId.HasValue)
+            {
+                user = OrganizationController.GetAccount(itemId, accountId.Value);
+            }
+
+            Hashtable items = new Hashtable();                                   
+            items["Organization"] = org;
+
+            if (user != null)
+            {
+                items["account"] = user;
+            }
+
+            return PackageController.EvaluateTemplate(template, items);
         }
     }
 }
