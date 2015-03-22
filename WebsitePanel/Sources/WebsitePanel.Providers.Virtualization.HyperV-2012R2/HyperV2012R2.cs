@@ -57,25 +57,6 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public class HyperV2012R2 : HostingServiceProviderBase, IVirtualizationServer
     {
-        #region Constants
-        private const string CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG = "WebsitePanel.HyperV.UseDiskPartClearReadOnlyFlag";
-        private const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization\v2";
-        private const string WMI_CIMV2_NAMESPACE = @"root\cimv2";
-
-        private const int SWITCH_PORTS_NUMBER = 1024;
-        private const string LIBRARY_INDEX_FILE_NAME = "index.xml";
-        private const string EXTERNAL_NETWORK_ADAPTER_NAME = "External Network Adapter";
-        private const string PRIVATE_NETWORK_ADAPTER_NAME = "Private Network Adapter";
-        private const string MANAGEMENT_NETWORK_ADAPTER_NAME = "Management Network Adapter";
-
-        private const string KVP_RAM_SUMMARY_KEY = "VM-RAM-Summary";
-        private const string KVP_HDD_SUMMARY_KEY = "VM-HDD-Summary";
-
-        private const Int64 Size1G = 0x40000000;
-        private const Int64 Size1M = 0x100000;
-
-        #endregion
-
         #region Provider Settings
         protected string ServerNameSettings
         {
@@ -119,16 +100,17 @@ namespace WebsitePanel.Providers.Virtualization
         #endregion
 
         #region Fields
-        private Wmi _wmi = null;
 
+        private PowerShellManager _powerShell;
+        protected PowerShellManager PowerShell
+        {
+            get { return _powerShell ?? (_powerShell = new PowerShellManager(ServerNameSettings)); }
+        }
+        
+        private Wmi _wmi;
         private Wmi wmi
         {
-            get
-            {
-                if (_wmi == null)
-                    _wmi = new Wmi(ServerNameSettings, WMI_VIRTUALIZATION_NAMESPACE);
-                return _wmi;
-            }
+            get { return _wmi ?? (_wmi = new Wmi(ServerNameSettings, Constants.WMI_VIRTUALIZATION_NAMESPACE)); }
         }
         #endregion
 
@@ -169,7 +151,7 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.Name = result[0].GetProperty("Name").ToString();
                     vm.State = result[0].GetEnum<VirtualMachineState>("State");
                     vm.CpuUsage = ConvertNullableToInt32(result[0].GetProperty("CpuUsage"));
-                    vm.RamUsage = ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Size1M;
+                    vm.RamUsage = ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M;
                     vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
                     vm.Status = result[0].GetProperty("Status").ToString();
                     vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
@@ -203,7 +185,7 @@ namespace WebsitePanel.Providers.Virtualization
                         if (vm.Disks != null && vm.Disks.GetLength(0) > 0)
                         {
                             vm.VirtualHardDrivePath = vm.Disks[0].Path;
-                            vm.HddSize = Convert.ToInt32(vm.Disks[0].FileSize / Size1G);
+                            vm.HddSize = Convert.ToInt32(vm.Disks[0].FileSize / Constants.Size1G);
                         }
 
                         // network adapters
@@ -219,7 +201,6 @@ namespace WebsitePanel.Providers.Virtualization
 
             HostedSolutionLog.LogEnd("GetVirtualMachine");
             return vm;
- 
         }
 
         public List<VirtualMachine> GetVirtualMachines()
@@ -557,6 +538,7 @@ namespace WebsitePanel.Providers.Virtualization
             PowerShell.Execute(cmdSet, true);
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
         }
+
         #endregion
 
         #region Snapshots
@@ -895,7 +877,7 @@ namespace WebsitePanel.Providers.Virtualization
         #region Library
         public LibraryItem[] GetLibraryItems(string path)
         {
-            path = Path.Combine(FileUtils.EvaluateSystemVariables(path), LIBRARY_INDEX_FILE_NAME);
+            path = Path.Combine(FileUtils.EvaluateSystemVariables(path), Constants.LIBRARY_INDEX_FILE_NAME);
 
             // convert to UNC if it is a remote computer
             path = ConvertToUNC(path);
@@ -971,14 +953,6 @@ namespace WebsitePanel.Providers.Virtualization
             return items.ToArray();
         }
 
-        private string ConvertToUNC(string path)
-        {
-            if (String.IsNullOrEmpty(ServerNameSettings)
-                || path.StartsWith(@"\\"))
-                return path;
-
-            return String.Format(@"\\{0}\{1}", ServerNameSettings, path.Replace(":", "$"));
-        }
         #endregion
 
         #region KVP
@@ -1208,6 +1182,39 @@ namespace WebsitePanel.Providers.Virtualization
 
         public MountedDiskInfo MountVirtualHardDisk(string vhdPath)
         {
+            //MountedDiskInfo diskInfo = new MountedDiskInfo();
+            //vhdPath = FileUtils.EvaluateSystemVariables(vhdPath);
+
+            //// Mount disk
+            //Command cmd = new Command("Mount-VHD");
+
+            //cmd.Parameters.Add("Path", vhdPath);
+            //cmd.Parameters.Add("PassThru");
+
+            //// Get disk address
+            //var result = PowerShell.Execute(cmd, true);
+
+            //try
+            //{
+            //    if (result == null || result.Count == 0)
+            //        throw new Exception("Failed to mount disk");
+
+            //    diskInfo.DiskAddress = result[0].GetString("DiskNumber");
+
+            //    // Get disk volumes
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    // unmount disk
+            //    UnmountVirtualHardDisk(vhdPath);
+
+            //    // throw error
+            //    throw ex;
+            //}
+
+            //return diskInfo; 
+            
             ManagementObject objImgSvc = GetImageManagementService();
 
             // get method params
@@ -1264,11 +1271,11 @@ namespace WebsitePanel.Providers.Virtualization
 
                 // check if DiskPart must be used to bring disk online and clear read-only flag
                 bool useDiskPartToClearReadOnly = false;
-                if (ConfigurationManager.AppSettings[CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG] != null)
-                    useDiskPartToClearReadOnly = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG]);
+                if (ConfigurationManager.AppSettings[Constants.CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG] != null)
+                    useDiskPartToClearReadOnly = Boolean.Parse(ConfigurationManager.AppSettings[Constants.CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG]);
 
                 // determine disk index for DiskPart
-                Wmi cimv2 = new Wmi(ServerNameSettings, WMI_CIMV2_NAMESPACE);
+                Wmi cimv2 = new Wmi(ServerNameSettings, Constants.WMI_CIMV2_NAMESPACE);
                 ManagementObject objDisk = cimv2.GetWmiObject("win32_diskdrive",
                     "Model='Msft Virtual Disk SCSI Disk Device' and ScsiTargetID={0} and ScsiLogicalUnit={1} and scsiPort={2}",
                     targetId, lun, portNumber);
@@ -1401,29 +1408,23 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         public ReturnCode UnmountVirtualHardDisk(string vhdPath)
         {
-            ManagementObject objImgSvc = GetImageManagementService();
+            Command cmd = new Command("Dismount-VHD");
 
-            // get method params
-            ManagementBaseObject inParams = objImgSvc.GetMethodParameters("Unmount");
-            inParams["Path"] = FileUtils.EvaluateSystemVariables(vhdPath);
+            cmd.Parameters.Add("Path", FileUtils.EvaluateSystemVariables(vhdPath));
 
-            ManagementBaseObject outParams = (ManagementBaseObject)objImgSvc.InvokeMethod("Unmount", inParams, null);
-            return (ReturnCode)Convert.ToInt32(outParams["ReturnValue"]);
+            PowerShell.Execute(cmd, true);
+            return ReturnCode.OK;
         }
 
         public JobResult ExpandVirtualHardDisk(string vhdPath, UInt64 sizeGB)
         {
-            const UInt64 Size1G = 0x40000000;
+            Command cmd = new Command("Resize-VHD");
 
-            ManagementObject objImgSvc = GetImageManagementService();
+            cmd.Parameters.Add("Path", FileUtils.EvaluateSystemVariables(vhdPath));
+            cmd.Parameters.Add("SizeBytes", sizeGB * Constants.Size1G);
 
-            // get method params
-            ManagementBaseObject inParams = objImgSvc.GetMethodParameters("ExpandVirtualHardDisk");
-            inParams["Path"] = FileUtils.EvaluateSystemVariables(vhdPath);
-            inParams["MaxInternalSize"] = sizeGB * Size1G;
-
-            ManagementBaseObject outParams = (ManagementBaseObject)objImgSvc.InvokeMethod("ExpandVirtualHardDisk", inParams, null);
-            return CreateJobResultFromWmiMethodResults(outParams);
+            PowerShell.Execute(cmd, true);
+            return JobHelper.CreateSuccessResult(ReturnCode.JobStarted); 
         }
 
         public JobResult ConvertVirtualHardDisk(string sourcePath, string destinationPath, VirtualHardDiskType diskType)
@@ -1888,15 +1889,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
             return value == null ? 0 : Convert.ToInt64(value);
         }
 
-        //protected VirtualMachineSnapshot GetSnapshotById(string id)
-        //{
-        //    var vms = GetVirtualMachines();
-        //    var allSnapshots = vms.SelectMany(vm => GetVirtualMachineSnapshots(vm.Id.ToString()));
-
-        //    return allSnapshots.FirstOrDefault(s => s.Id == id);
-        //}
-        
-
         protected JobResult CreateJobResultFromWmiMethodResults(ManagementBaseObject outParams)
         {
             JobResult result = new JobResult();
@@ -1918,19 +1910,9 @@ exit", Convert.ToInt32(objDisk["Index"])));
             return result;
         }
 
-        private ManagementObject GetJobWmiObject(string id)
-        {
-            return wmi.GetWmiObject("msvm_ConcreteJob", "InstanceID = '{0}'", id);
-        }
-
         private ManagementObject GetVirtualSystemManagementService()
         {
             return wmi.GetWmiObject("msvm_VirtualSystemManagementService");
-        }
-
-        private ManagementObject GetVirtualSwitchManagementService()
-        {
-            return wmi.GetWmiObject("msvm_VirtualSwitchManagementService");
         }
 
         protected ManagementObject GetImageManagementService()
@@ -1949,18 +1931,13 @@ exit", Convert.ToInt32(objDisk["Index"])));
                    wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", "Microsoft:" + snapshotId);
         }
 
-
-     
-
-        private VirtualSwitch CreateSwitchFromWmiObject(ManagementObject objSwitch)
+        private string ConvertToUNC(string path)
         {
-            if (objSwitch == null || objSwitch.Properties.Count == 0)
-                return null;
+            if (String.IsNullOrEmpty(ServerNameSettings)
+                || path.StartsWith(@"\\"))
+                return path;
 
-            VirtualSwitch sw = new VirtualSwitch();
-            sw.SwitchId = (string)objSwitch["Name"];
-            sw.Name = (string)objSwitch["ElementName"];
-            return sw;
+            return String.Format(@"\\{0}\{1}", ServerNameSettings, path.Replace(":", "$"));
         }
 
         private ConcreteJob CreateJobFromWmiObject(ManagementBaseObject objJob)
@@ -2061,7 +2038,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 return File.Exists(path);
             else
             {
-                Wmi cimv2 = new Wmi(ServerNameSettings, WMI_CIMV2_NAMESPACE);
+                Wmi cimv2 = new Wmi(ServerNameSettings, Constants.WMI_CIMV2_NAMESPACE);
                 ManagementObject objFile = cimv2.GetWmiObject("CIM_Datafile", "Name='{0}'", path.Replace("\\", "\\\\"));
                 return (objFile != null);
             }
@@ -2073,7 +2050,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 return Directory.Exists(path);
             else
             {
-                Wmi cimv2 = new Wmi(ServerNameSettings, WMI_CIMV2_NAMESPACE);
+                Wmi cimv2 = new Wmi(ServerNameSettings, Constants.WMI_CIMV2_NAMESPACE);
                 ManagementObject objDir = cimv2.GetWmiObject("Win32_Directory", "Name='{0}'", path.Replace("\\", "\\\\"));
                 return (objDir != null);
             }
@@ -2097,7 +2074,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                     return false;
 
                 // copy using WMI
-                Wmi cimv2 = new Wmi(ServerNameSettings, WMI_CIMV2_NAMESPACE);
+                Wmi cimv2 = new Wmi(ServerNameSettings, Constants.WMI_CIMV2_NAMESPACE);
                 ManagementObject objFile = cimv2.GetWmiObject("CIM_Datafile", "Name='{0}'", sourceFileName.Replace("\\", "\\\\"));
                 if (objFile == null)
                     throw new Exception("Source file does not exists: " + sourceFileName);
@@ -2247,17 +2224,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
             return !String.IsNullOrEmpty(connString);
         }
         #endregion Hyper-V Cloud
-
-        #region PowerShell integration
-
-        private PowerShellManager _powerShell;
-        protected PowerShellManager PowerShell
-        {
-            get { return _powerShell ?? (_powerShell = new PowerShellManager(ServerNameSettings)); }
-        }
-
-        #endregion
-
-
+        
     }
 }

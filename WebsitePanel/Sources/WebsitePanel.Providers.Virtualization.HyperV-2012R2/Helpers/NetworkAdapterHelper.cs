@@ -10,15 +10,7 @@ using System.Threading.Tasks;
 namespace WebsitePanel.Providers.Virtualization
 {
     public static class NetworkAdapterHelper
-    { 
-        #region Constants
-        
-        private const string EXTERNAL_NETWORK_ADAPTER_NAME = "External Network Adapter";
-        private const string PRIVATE_NETWORK_ADAPTER_NAME = "Private Network Adapter";
-        private const string MANAGEMENT_NETWORK_ADAPTER_NAME = "Management Network Adapter";
-
-        #endregion
-
+    {
         public static VirtualMachineNetworkAdapter[] Get(PowerShellManager powerShell, string vmName)
         {
             List<VirtualMachineNetworkAdapter> adapters = new List<VirtualMachineNetworkAdapter>();
@@ -60,7 +52,7 @@ namespace WebsitePanel.Providers.Virtualization
             else if (vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalNicMacAddress)
                 && Get(powerShell,vm.Name,vm.ExternalNicMacAddress) == null)
             {
-                Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, Constants.EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
 
             // Private NIC
@@ -72,7 +64,7 @@ namespace WebsitePanel.Providers.Virtualization
             else if (vm.PrivateNetworkEnabled && !String.IsNullOrEmpty(vm.PrivateNicMacAddress)
                  && Get(powerShell, vm.Name, vm.PrivateNicMacAddress) == null)
             {
-                Add(powerShell, vm.Name, vm.PrivateSwitchId, vm.PrivateNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                Add(powerShell, vm.Name, vm.PrivateSwitchId, vm.PrivateNicMacAddress, Constants.PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
         }
 

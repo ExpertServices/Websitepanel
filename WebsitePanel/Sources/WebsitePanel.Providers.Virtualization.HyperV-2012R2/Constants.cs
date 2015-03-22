@@ -8,6 +8,16 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public static class Constants
     {
+        public const string CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG = "WebsitePanel.HyperV.UseDiskPartClearReadOnlyFlag";
+        public const string WMI_VIRTUALIZATION_NAMESPACE = @"root\virtualization\v2";
+        public const string WMI_CIMV2_NAMESPACE = @"root\cimv2";
+
+        public const string LIBRARY_INDEX_FILE_NAME = "index.xml";
+
+        public const string EXTERNAL_NETWORK_ADAPTER_NAME = "External Network Adapter";
+        public const string PRIVATE_NETWORK_ADAPTER_NAME = "Private Network Adapter";
+        public const string MANAGEMENT_NETWORK_ADAPTER_NAME = "Management Network Adapter";
+
         public const Int64 Size1G = 0x40000000;
         public const Int64 Size1M = 0x100000;
     }
