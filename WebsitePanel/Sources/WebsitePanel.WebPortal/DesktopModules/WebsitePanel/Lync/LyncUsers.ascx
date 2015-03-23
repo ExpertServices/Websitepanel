@@ -67,7 +67,7 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-                            <asp:BoundField HeaderText="gvUsersEmail" meta:resourcekey="gvUsersEmail" DataField="SipAddress" SortExpression="PrimaryUri" ItemStyle-Width="25%" />
+                            <asp:BoundField HeaderText="gvUsersEmail" meta:resourcekey="gvUsersEmail" DataField="SipAddress" SortExpression="SipAddress" ItemStyle-Width="25%" />
                             <asp:BoundField HeaderText="gvLyncUserPlan" meta:resourcekey="gvLyncUserPlan" DataField="LyncUserPlanName" SortExpression="LyncUserPlanName" ItemStyle-Width="25%" />
                             <asp:TemplateField>
                                 <ItemTemplate>
