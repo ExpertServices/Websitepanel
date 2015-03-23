@@ -5548,18 +5548,32 @@ CREATE TABLE [dbo].[RDSCertificates](
 
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+END
+ELSE
+	PRINT 'FK_RDSCollectionUsers_RDSCollectionId not EXISTS'
+GO
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_UserId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+END	
+ELSE
+	PRINT 'FK_RDSCollectionUsers_UserId not EXISTS'
 GO
 
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
-GO
-
-ALTER TABLE [dbo].[RDSServers]
-DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSServers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSServers]
+	DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+END	
+ELSE
+	PRINT 'FK_RDSServers_RDSCollectionId not EXISTS'	
 GO
 
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
@@ -8995,3 +9009,14 @@ SELECT
 	LEFT JOIN  [dbo].[EnterpriseFolders] AS EF ON EF.EnterpriseFolderID = EFOP.FolderID
 	WHERE EFOP.ItemID = @ItemID AND EFOP.AccountID = @AccountID
 GO
+
+
+-- CRM2015 Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2015')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1205, 24, N'CRM', N'Hosted MS CRM 2015', N'WebsitePanel.Providers.HostedSolution.CRMProvider2015, WebsitePanel.Providers.HostedSolution.Crm2015', N'CRM2011', NULL)
+END
+GO
+

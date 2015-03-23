@@ -195,6 +195,7 @@
     <Compile Include="Code\ProviderControls\IDatabaseEditUserControl.cs" />
     <Compile Include="Code\ProviderControls\IFtpEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IHostingServiceProviderSettings.cs" />
+    <Compile Include="Code\ProviderControls\IVirtualMachineCreateControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditDomainControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditForwardingControl.cs" />

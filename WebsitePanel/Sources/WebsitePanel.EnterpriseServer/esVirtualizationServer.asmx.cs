@@ -37,7 +37,10 @@ using System.ComponentModel;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 using Microsoft.Web.Services3;
-
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.Virtualization;
+using WebsitePanel.Providers.ResultObjects; 
 using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.EnterpriseServer
@@ -183,7 +186,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public IntResult CreateVirtualMachine(int packageId,
                 string hostname, string osTemplateFile, string password, string summaryLetterEmail,
-                int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock,
+                int generation, int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock,
                 bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
                 bool externalNetworkEnabled, int externalAddressesNumber, bool randomExternalAddresses, int[] externalAddresses,
                 bool privateNetworkEnabled, int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses)

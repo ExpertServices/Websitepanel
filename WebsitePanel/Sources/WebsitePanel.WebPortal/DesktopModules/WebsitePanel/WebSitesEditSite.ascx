@@ -66,7 +66,7 @@
                                 </asp:DropDownList>
                             </div>
                         </fieldset>
-                    </asp:PlaceHolder>
+                    </asp:PlaceHolder> 
                     <asp:PlaceHolder runat="server" ID="ChooseDatabaseUserPanel">
                         <fieldset>
                             <legend>
@@ -120,6 +120,7 @@
                         <td>
                             <asp:Panel ID="sharedIP" runat="server">
                                 <asp:Localize ID="locSharedIPAddress" runat="server" meta:resourcekey="locSharedIPAddress" Text="IP address: Shared" />
+                                <asp:Label ID="lblSharedIP" runat="server"/>
                                 &nbsp;&nbsp;&nbsp;
                                 <asp:LinkButton ID="cmdSwitchToDedicatedIP" meta:resourcekey="cmdSwitchToDedicatedIP" runat="server" Text="Switch to dedicated IP" OnClick="cmdSwitchToDedicatedIP_Click"></asp:LinkButton>
                             </asp:Panel>

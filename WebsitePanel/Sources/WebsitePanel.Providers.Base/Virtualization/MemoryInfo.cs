@@ -35,9 +35,9 @@ namespace WebsitePanel.Providers.Virtualization
     public class MemoryInfo
     {
         public bool DynamicMemoryEnabled { get; set; }
-        public Int64 Startup { get; set; }
-        public Int64 Minimum { get; set; }
-        public Int64 Maximum { get; set; }
+        public int Startup { get; set; }
+        public int Minimum { get; set; }
+        public int Maximum { get; set; }
         public int Buffer { get; set; }
         public int Priority { get; set; }
     }

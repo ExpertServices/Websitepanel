@@ -62,9 +62,9 @@ namespace WebsitePanel.Providers.Virtualization
             if (result != null && result.Count > 0)
             {
                 info.DynamicMemoryEnabled = Convert.ToBoolean(result[0].GetProperty("DynamicMemoryEnabled"));
-                info.Startup = Convert.ToInt64(result[0].GetProperty("Startup")) / Constants.Size1M;
-                info.Minimum = Convert.ToInt64(result[0].GetProperty("Minimum")) / Constants.Size1M;
-                info.Maximum = Convert.ToInt64(result[0].GetProperty("Maximum")) / Constants.Size1M;
+                info.Startup = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Startup")) / Constants.Size1M);
+                info.Minimum = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Minimum")) / Constants.Size1M);
+                info.Maximum = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Maximum")) / Constants.Size1M);
                 info.Buffer = Convert.ToInt32(result[0].GetProperty("Buffer"));
                 info.Priority = Convert.ToInt32(result[0].GetProperty("Priority"));
             }

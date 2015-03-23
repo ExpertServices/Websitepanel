@@ -42,6 +42,8 @@ namespace WebsitePanel.Portal.VPS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            LoadCustomProviderControl();
+
             if (!IsPostBack)
             {
                 BindFormControls();
@@ -52,6 +54,26 @@ namespace WebsitePanel.Portal.VPS
 
             // toggle
             ToggleControls();
+        }
+
+        private void LoadCustomProviderControl()
+        {
+            try
+            {
+                LoadProviderControl(PanelSecurity.PackageId, "VPS", providerControl, "Create.ascx");
+            }
+            catch { /* skip */ }
+        }
+
+        private IVirtualMachineCreateControl CustomProviderControl
+        {
+            get
+            {
+                if (providerControl.Controls.Count == 0)
+                    return null;
+
+                return (IVirtualMachineCreateControl)providerControl.Controls[0];
+            }
         }
 
         private void ToggleWizardSteps()
@@ -112,6 +134,13 @@ namespace WebsitePanel.Portal.VPS
                 ddlCpu.Items.Add(i.ToString());
 
             ddlCpu.SelectedIndex = ddlCpu.Items.Count - 1; // select last (maximum) item
+
+            // the custom provider control
+            if (CustomProviderControl != null)
+            {
+                IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)providerControl.Controls[0];
+                ctrl.BindItem(new VirtualMachine());  
+            }
 
             // external network details
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_EXTERNAL_NETWORK_ENABLED))
@@ -287,6 +316,15 @@ namespace WebsitePanel.Portal.VPS
 
             try
             {
+                VirtualMachine virtualMachine = new VirtualMachine();
+
+                // the custom provider control
+                if (CustomProviderControl != null)
+                {
+                    IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)providerControl.Controls[0];
+                    ctrl.SaveItem(virtualMachine);
+                }
+
                 // collect and prepare data
                 string hostname = String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim());
 
