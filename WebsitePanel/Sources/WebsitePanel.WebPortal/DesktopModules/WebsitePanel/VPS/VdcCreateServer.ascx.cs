@@ -343,7 +343,7 @@ namespace WebsitePanel.Portal.VPS
                 // create virtual machine
                 IntResult res = ES.Services.VPS.CreateVirtualMachine(PanelSecurity.PackageId,
                     hostname, listOperatingSystems.SelectedValue, adminPassword, summaryEmail,
-                    Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
+                    virtualMachine.Generation, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
                     Utils.ParseInt(txtHdd.Text.Trim()), Utils.ParseInt(txtSnapshots.Text.Trim()),
                     chkDvdInstalled.Checked, chkBootFromCd.Checked, chkNumLock.Checked,
                     chkStartShutdown.Checked, chkPauseResume.Checked, chkReboot.Checked, chkReset.Checked, chkReinstall.Checked,
