@@ -9133,3 +9133,137 @@ BEGIN
 	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
 		VALUES (552, @group_id, 3, 'HostedSharePointServer.UseSharedSSL', 'Use shared SSL Root', 1, 0)
 END
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetLyncUsers')
+DROP PROCEDURE GetLyncUsers
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE PROCEDURE [dbo].[GetLyncUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+CREATE TABLE #TempLyncUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[UserPrincipalName] [nvarchar](300) NULL,
+	[SipAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL,
+	[LyncUserPlanId] [int] NOT NULL,		
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+)
+
+DECLARE @condition nvarchar(700)
+SET @condition = ''
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	SET @condition = 'ORDER BY ea.DisplayName'
+END
+
+IF (@SortColumn = 'UserPrincipalName')
+BEGIN
+	SET @condition = 'ORDER BY ea.UserPrincipalName'
+END
+
+IF (@SortColumn = 'SipAddress')
+BEGIN
+	SET @condition = 'ORDER BY ou.SipAddress'
+END
+
+IF (@SortColumn = 'LyncUserPlanName')
+BEGIN
+	SET @condition = 'ORDER BY lp.LyncUserPlanName'
+END
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+	INSERT INTO 
+		#TempLyncUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.UserPrincipalName,
+		ou.SipAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID ' + @condition
+
+exec sp_executesql @sql, N'@ItemID int',@ItemID
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempLyncUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+	BEGIN
+		IF (@SortColumn = 'DisplayName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+		END
+		IF (@SortColumn = 'UserPrincipalName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+		END
+
+		IF (@SortColumn = 'SipAddress')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY SipAddress DESC
+		END
+
+		IF (@SortColumn = 'LyncUserPlanName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
+		END
+	END
+	ELSE
+	BEGIN
+        SELECT * FROM #TempLyncUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+	END	
+END
+
+DROP TABLE #TempLyncUsers
+
+GO
