@@ -40,9 +40,11 @@ namespace WebsitePanel.Portal.RDS
     {
         
         protected void Page_Load(object sender, EventArgs e)
-        {            
+        {
+            users.Module = Module;        
+
             if (!IsPostBack)
-            {
+            {                
                 BindQuota();
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);

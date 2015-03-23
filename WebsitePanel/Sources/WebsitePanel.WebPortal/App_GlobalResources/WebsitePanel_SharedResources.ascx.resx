@@ -3301,6 +3301,12 @@
   <data name="Success.ORGANIZATION_LETTER_SEND" xml:space="preserve">
     <value>Organization user setup instructions have been sent</value>
   </data>
+  <data name="Error.RDS_SETUP_LETTER_SEND" xml:space="preserve">
+    <value>Error sending setup instructions</value>
+  </data>
+  <data name="Success.RDS_SETUP_LETTER_SEND" xml:space="preserve">
+    <value>Setup instructions have been sent</value>
+  </data>
   <data name="Quota.MsSQL2005.MaxLogSize" xml:space="preserve">
     <value>Max Log Size, MB</value>
   </data>
@@ -3368,6 +3374,12 @@
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>
   </data>
+  <data name="ResourceGroup.SharePoint Foundation Server" xml:space="preserve">
+    <value>SharePoint Foundation Server</value>
+  </data>
+    <data name="ResourceGroup.SharePoint Server" xml:space="preserve">
+    <value>SharePoint Server</value>
+  </data>
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>
   </data>
@@ -3378,6 +3390,12 @@
     <value>SharePoint Site Collections per Organization</value>
   </data>
   <data name="Quota.HostedSharePoint.MaxStorage" xml:space="preserve">
+    <value>Max site storage, MB</value>
+  </data>
+  <data name="Quota.HostedSharePointServer.Sites" xml:space="preserve">
+    <value>SharePoint Site Collections per Organization</value>
+  </data>
+  <data name="Quota.HostedSharePointServer.MaxStorage" xml:space="preserve">
     <value>Max site storage, MB</value>
   </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
@@ -5156,6 +5174,9 @@
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
   </data>
+  <data name="Quota.HostedSharePointServer.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
   <data name="Quota.Exchange2007.IsConsumer" xml:space="preserve">
     <value>Consumer Organization Support</value>
   </data>
@@ -5659,6 +5680,9 @@
   </data>
   <data name="ERROR.RDSSERVER_NOT_ADDED" xml:space="preserve">
     <value>RDS Server not added</value>
+  </data>
+  <data name="ERROR.RDSSERVER_NOT_UPDATED" xml:space="preserve">
+    <value>RDS Server not updated</value>
   </data>
   <data name="Success.RDSSESSIONHOST_CERTIFICATE_INSTALLED" xml:space="preserve">
     <value>Session host certificate has been installed</value>

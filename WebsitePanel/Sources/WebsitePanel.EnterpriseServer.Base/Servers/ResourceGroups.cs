@@ -44,7 +44,8 @@ namespace WebsitePanel.EnterpriseServer
         public const string Dns = "DNS";
         public const string Statistics = "Statistics";
         public const string SharePoint = "SharePoint";
-		public const string HostedSharePoint = "Hosted SharePoint";
+        public const string SharepointFoundationServer = "Sharepoint Foundation Server";
+        public const string SharepointServer = "Sharepoint Server";
 		public const string Exchange = "Exchange";
         public const string HostedOrganizations = "Hosted Organizations";
         public const string HostedCRM = "Hosted CRM"; // CRM 4/2011

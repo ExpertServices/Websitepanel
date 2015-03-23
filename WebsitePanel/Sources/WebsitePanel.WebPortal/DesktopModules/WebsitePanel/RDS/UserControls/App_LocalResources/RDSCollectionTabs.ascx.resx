@@ -135,4 +135,7 @@
   <data name="Tab.LocalAdmins" xml:space="preserve">
     <value>Local Administrators</value>
   </data>
+  <data name="Tab.RdsSetupLetter" xml:space="preserve">
+    <value>Setup Instructions</value>
+  </data>
 </root>

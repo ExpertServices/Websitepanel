@@ -95,8 +95,11 @@ namespace WebsitePanel.Portal.UserControls
                 PrepareBlackBerryMenuRoot(items);
 
             //SharePoint menu group;
-            if (Cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
-                PrepareSharePointMenuRoot(items);
+            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
+                PrepareSharePointMenuRoot(items, GetLocalizedString("Text.SharePointFoundationServerGroup"));
+
+            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointServer))
+                PrepareSharePointMenuRoot(items, GetLocalizedString("Text.SharePointServerGroup"));
 
             //CRM Menu
             if (Cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
@@ -359,7 +362,7 @@ namespace WebsitePanel.Portal.UserControls
             bbItems.Add(CreateMenuItem("BlackBerryUsers", "blackberry_users", @"Icons/blackberry_users_48.png"));
         }
 
-        private void PrepareSharePointMenuRoot(MenuItemCollection items)
+        private void PrepareSharePointMenuRoot(MenuItemCollection items, string menuItemText)
         {
             if (ShortMenu)
             {
@@ -367,7 +370,7 @@ namespace WebsitePanel.Portal.UserControls
             }
             else
             {
-                MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointGroup"), "", "", null);
+                MenuItem item = new MenuItem(menuItemText, "", "", null);
 
                 item.Selectable = false;
 

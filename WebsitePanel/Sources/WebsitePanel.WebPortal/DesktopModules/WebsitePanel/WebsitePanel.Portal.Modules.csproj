@@ -359,6 +359,13 @@
     <Compile Include="RDSServers.ascx.designer.cs">
       <DependentUpon>RDSServers.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDSServersEditServer.ascx.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDSServersEditServer.ascx.designer.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\AssignedRDSServers.ascx.cs">
       <DependentUpon>AssignedRDSServers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -428,6 +435,13 @@
     </Compile>
     <Compile Include="RDS\RDSLocalAdmins.ascx.designer.cs">
       <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSSetupLetter.ascx.cs">
+      <DependentUpon>RDSSetupLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSSetupLetter.ascx.designer.cs">
+      <DependentUpon>RDSSetupLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="RDS\RDSUserSessions.ascx.cs">
       <DependentUpon>RDSUserSessions.ascx</DependentUpon>
@@ -503,6 +517,13 @@
     </Compile>
     <Compile Include="SettingsDomainLookupLetter.ascx.designer.cs">
       <DependentUpon>SettingsDomainLookupLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsRdsSetupLetter.ascx.cs">
+      <DependentUpon>SettingsRdsSetupLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsRdsSetupLetter.ascx.designer.cs">
+      <DependentUpon>SettingsRdsSetupLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="SettingsServiceLevels.ascx.cs">
       <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
@@ -4532,11 +4553,14 @@
     <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_LocalResources\SettingsRdsSetupLetter.ascx.resx" />
+    <Content Include="App_LocalResources\RDSServersEditServer.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageEditFolderTabs.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsFolderPermissions.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
+    <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />
     <Content Include="RDS\RDSEditApplicationUsers.ascx" />
@@ -4547,6 +4571,7 @@
     <Content Include="RDS\RDSCreateCollection.ascx" />
     <Content Include="RDS\RDSCollections.ascx" />
     <Content Include="RDS\RDSLocalAdmins.ascx" />
+    <Content Include="RDS\RDSSetupLetter.ascx" />
     <Content Include="RDS\RDSUserSessions.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
@@ -4571,6 +4596,7 @@
     </Content>
     <Content Include="RDS\App_LocalResources\RDSUserSessions.ascx.resx" />
     <Content Include="RDS\App_LocalResources\RDSLocalAdmins.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSSetupLetter.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
@@ -4579,6 +4605,7 @@
     <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
     <Content Include="SettingsDomainExpirationLetter.ascx" />
     <Content Include="SettingsDomainLookupLetter.ascx" />
+    <Content Include="SettingsRdsSetupLetter.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />

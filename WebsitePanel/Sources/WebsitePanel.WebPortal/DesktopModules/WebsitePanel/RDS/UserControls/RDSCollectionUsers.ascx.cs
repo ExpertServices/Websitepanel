@@ -264,5 +264,13 @@ namespace WebsitePanel.Portal.RDS.UserControls
         {
             return string.Compare(user1.DisplayName, user2.DisplayName);
         }
+
+        protected void gvUsers_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "SetupInstructions")
+            {
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_setup_letter", "CollectionID=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID, "AccountID=" + e.CommandArgument.ToString()));
+            }
+        }
 	}
 }

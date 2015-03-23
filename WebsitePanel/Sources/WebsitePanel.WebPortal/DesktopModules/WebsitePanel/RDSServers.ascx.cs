@@ -125,6 +125,10 @@ namespace WebsitePanel.Portal
             {
                 InstallCertificate(e.CommandArgument.ToString());
             }
+            else if (e.CommandName == "EditServer")
+            {
+                EditServer(e.CommandArgument.ToString());
+            }
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -186,7 +190,11 @@ namespace WebsitePanel.Portal
             }
 
             messageBoxPanel.Update();
-//            Response.Redirect(Request.Url.ToString(), true);
+        }
+
+        private void EditServer(string serverId)
+        {
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "edit_rdsserver", "SpaceID=" + PanelSecurity.PackageId, "ServerId=" + serverId));
         }
 	}
 }

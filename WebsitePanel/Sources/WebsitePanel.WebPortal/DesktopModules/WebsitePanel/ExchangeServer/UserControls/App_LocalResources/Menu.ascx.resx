@@ -165,8 +165,11 @@
   <data name="Text.Setup" xml:space="preserve">
     <value>Setup</value>
   </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>SharePoint</value>
+  <data name="Text.SharePointFoundationServerGroup" xml:space="preserve">
+    <value>SharePoint Foundation Server</value>
+  </data>
+  <data name="Text.SharePointServerGroup" xml:space="preserve">
+    <value>SharePoint Server</value>
   </data>
   <data name="Text.OCSGroup" xml:space="preserve">
     <value>OCS</value>

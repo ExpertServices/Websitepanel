@@ -167,7 +167,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
-                    if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+                    if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                     {
                         SharePointSiteDiskSpace[] sharePointSiteDiskSpaces =
                             HostedSharePointServerController.CalculateSharePointSitesDiskSpace(org.Id, out res);

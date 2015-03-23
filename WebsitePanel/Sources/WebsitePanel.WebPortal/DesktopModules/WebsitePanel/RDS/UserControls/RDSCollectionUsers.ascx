@@ -8,7 +8,7 @@
 		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
 	</div>
 	<asp:GridView ID="gvUsers" runat="server" meta:resourcekey="gvUsers" AutoGenerateColumns="False"
-		Width="600px" CssSelectorClass="NormalGridView"
+		Width="600px" CssSelectorClass="NormalGridView" OnRowCommand="gvUsers_RowCommand"
 		DataKeyNames="AccountName">
 		<Columns>
 			<asp:TemplateField>
@@ -21,7 +21,7 @@
 				<ItemStyle Width="10px" />
 			</asp:TemplateField>
 			<asp:TemplateField meta:resourcekey="gvUsersAccount" HeaderText="gvUsersAccount">
-				<ItemStyle Width="96%" Wrap="false" HorizontalAlign="Left">
+				<ItemStyle Width="80%" Wrap="false" HorizontalAlign="Left">
 				</ItemStyle>
 				<ItemTemplate>                    
                     <asp:Literal ID="litAccount" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
@@ -29,6 +29,13 @@
                     <asp:HiddenField ID="hdnSamAccountName" runat="server" Value='<%# Eval("SamAccountName") %>' />
 				</ItemTemplate>
 			</asp:TemplateField>
+            <asp:TemplateField meta:resourcekey="gvSetupInstructions">
+                <ItemStyle Width="20%" HorizontalAlign="right"></ItemStyle>
+                <ItemTemplate>
+                    <asp:LinkButton ID="lbSetupInstructions" CommandName="SetupInstructions" CommandArgument='<%# Eval("AccountId")%>' runat="server"
+                        Text="Setup Instructions" OnClientClick="ShowProgressDialog('Loading ...');return true;"/>
+                </ItemTemplate>
+            </asp:TemplateField>
 		</Columns>
 	</asp:GridView>
     <br />
@@ -90,7 +97,7 @@
 								<ItemTemplate>
 									<asp:Literal ID="litPrimaryEmailAddress" runat="server" Text='<%# Eval("PrimaryEmailAddress") %>'></asp:Literal>
 								</ItemTemplate>
-							</asp:TemplateField>
+							</asp:TemplateField>                            
 						</Columns>
 					</asp:GridView>
 				</div>

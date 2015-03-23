@@ -236,7 +236,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 
             //Show SharePoint statistics
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
             {
                 sharePointStatsPanel.Visible = true;
 

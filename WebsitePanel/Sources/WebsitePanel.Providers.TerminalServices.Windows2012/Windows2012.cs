@@ -77,6 +77,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string RDSHelpDeskGroup = "WSP-HelpDeskAdministrators";
         private const string RDSHelpDeskGroupDescription = "WSP Help Desk Administrators";
         private const string LocalAdministratorsGroupName = "Administrators";
+        private const string RDSHelpDeskRdRapPolicyName = "RDS-HelpDesk-RDRAP";
+        private const string RDSHelpDeskRdCapPolicyName = "RDS-HelpDesk-RDCAP";
 
         #endregion
 
@@ -325,6 +327,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 foreach (var gateway in Gateways)
                 {
+                    CreateHelpDeskRdCapForce(runSpace, gateway);
+                    CreateHelpDeskRdRapForce(runSpace, gateway);
+
                     if (!CentralNps)
                     {
                         CreateRdCapForce(runSpace, gateway, capPolicyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
@@ -572,6 +577,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 ExecuteShellCommand(runSpace, cmd, false);
 
                 CheckOrCreateHelpDeskComputerGroup();
+
+                foreach(var gateway in Gateways)
+                {
+                    CreateHelpDeskRdCapForce(runSpace, gateway);
+                    CreateHelpDeskRdRapForce(runSpace, gateway);
+                }
+
                 string helpDeskGroupSamAccountName = CheckOrCreateAdGroup(GetHelpDeskGroupPath(RDSHelpDeskGroup), GetRootOUPath(), RDSHelpDeskGroup, RDSHelpDeskGroupDescription);
                 string groupName = GetLocalAdminsGroupName(collectionName);
                 string groupPath = GetGroupPath(organizationId, collectionName, groupName);
@@ -920,6 +932,59 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             ExecuteRemoteShellCommand(runSpace, gatewayHost, rdCapCommand, RdsModuleName);
         }
 
+        private void CreateHelpDeskRdCapForce(Runspace runSpace, string gatewayHost)
+        {                        
+            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(CapPath, RDSHelpDeskRdCapPolicyName)))
+            {
+                return;
+            }
+
+            var userGroupParameter = string.Format("@({0})", string.Format("\"{0}@{1}\"", RDSHelpDeskGroup, RootDomain));
+
+            Command rdCapCommand = new Command("New-Item");
+            rdCapCommand.Parameters.Add("Path", string.Format("\"{0}\"", CapPath));
+            rdCapCommand.Parameters.Add("Name", string.Format("\"{0}\"", RDSHelpDeskRdCapPolicyName));
+            rdCapCommand.Parameters.Add("UserGroups", userGroupParameter);
+            rdCapCommand.Parameters.Add("AuthMethod", 1);
+
+            ExecuteRemoteShellCommand(runSpace, gatewayHost, rdCapCommand, RdsModuleName);
+        }
+
+        private void CreateHelpDeskRdRapForce(Runspace runSpace, string gatewayHost)
+        {
+            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(RapPath, RDSHelpDeskRdRapPolicyName)))
+            {
+                return;
+            }
+
+            var userGroupParameter = string.Format("@({0})", string.Format("\"{0}@{1}\"", RDSHelpDeskGroup, RootDomain));
+            var computerGroupParameter = string.Format("\"{0}@{1}\"", RDSHelpDeskComputerGroup, RootDomain);
+
+            Command rdRapCommand = new Command("New-Item");
+            rdRapCommand.Parameters.Add("Path", string.Format("\"{0}\"", RapPath));
+            rdRapCommand.Parameters.Add("Name", string.Format("\"{0}\"", RDSHelpDeskRdRapPolicyName));
+            rdRapCommand.Parameters.Add("UserGroups", userGroupParameter);
+            rdRapCommand.Parameters.Add("ComputerGroupType", 1);
+            rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParameter);
+
+            object[] errors;
+
+            for (int i = 0; i < 3; i++)
+            {                
+                ExecuteRemoteShellCommand(runSpace, gatewayHost, rdRapCommand, out errors, RdsModuleName);
+
+                if (errors == null || !errors.Any())
+                {
+                    Log.WriteWarning("RD RAP Added Successfully");
+                    break;
+                }
+                else
+                {
+                    Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
+                }
+            }
+        }
+
         internal void RemoveRdCap(Runspace runSpace, string gatewayHost, string name)
         {
             RemoveItemRemote(runSpace, gatewayHost, string.Format(@"{0}\{1}", CapPath, name), RdsModuleName);
@@ -962,7 +1027,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     Log.WriteWarning(string.Join("\r\n", errors.Select(e => e.ToString()).ToArray()));
                 }
             }            
-        }
+        }        
 
         internal void RemoveRdRap(Runspace runSpace, string gatewayHost, string name)
         {
@@ -2061,7 +2126,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 {
                     pipeLine.Commands.AddScript(script);
                 }
-
+                
                 results = pipeLine.Invoke();
 
                 if (pipeLine.Error != null && pipeLine.Error.Count > 0)

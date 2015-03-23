@@ -63,6 +63,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public const string DEFAULT_MAILBOXPLANS = "DefaultMailboxPlans";
         public const string DEFAULT_LYNCUSERPLANS = "DefaultLyncUserPlans";
+        public const string RDS_SETUP_LETTER = "RDSSetupLetter";
 
         public int UserId;
         public string SettingsName;

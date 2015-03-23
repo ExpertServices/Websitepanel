@@ -40,8 +40,10 @@ namespace WebsitePanel.Portal.RDS
     {        
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.Module = Module;
+
             if (!IsPostBack)
-            {
+            {                
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
                 var applications = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
                 var remoteApp = applications.Where(x => x.Alias.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
