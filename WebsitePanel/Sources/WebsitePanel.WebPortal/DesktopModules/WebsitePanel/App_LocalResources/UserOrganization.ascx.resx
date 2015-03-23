@@ -151,10 +151,10 @@
     <value>Contacts</value>
   </data>
   <data name="Text.CRM2013Group" xml:space="preserve">
-    <value>Hosted Organization - CRM 2013/2015</value>
+    <value>CRM 2013/2015</value>
   </data>
   <data name="Text.CRMGroup" xml:space="preserve">
-    <value>Hosted Organization - CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="Text.CRMOrganization" xml:space="preserve">
     <value>CRM Organization</value>

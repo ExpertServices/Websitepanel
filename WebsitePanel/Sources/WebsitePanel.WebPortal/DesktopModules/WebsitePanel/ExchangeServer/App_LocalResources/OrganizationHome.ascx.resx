@@ -181,7 +181,7 @@
     <value>BlackBerry</value>
   </data>
   <data name="locCRM.Text" xml:space="preserve">
-    <value>CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="locExchangeStatistics.Text" xml:space="preserve">
     <value>Exchange</value>
@@ -227,7 +227,7 @@
   </data>
   <data name="locRemoteDesktop.Text" xml:space="preserve">
     <value>Remote Desktop</value>
-  </data>  
+  </data>
   <data name="lnkRdsServers.Text" xml:space="preserve">
     <value>RDS Servers</value>
   </data>
