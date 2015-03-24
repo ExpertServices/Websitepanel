@@ -12,12 +12,14 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public class PowerShellManager : IDisposable
     {
+        private readonly string _remoteComputerName;
         protected static InitialSessionState session = null;
 
         protected Runspace RunSpace { get; set; }
 
-        public PowerShellManager()
+        public PowerShellManager(string remoteComputerName)
         {
+            _remoteComputerName = remoteComputerName;
             OpenRunspace();
         }
 
@@ -61,24 +63,27 @@ namespace WebsitePanel.Providers.Virtualization
             return Execute(cmd, true);
         }
 
-        public Collection<PSObject> Execute(Command cmd, bool useDomainController)
+        public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter)
         {
             object[] errors;
-            return Execute(cmd, useDomainController, out errors);
+            return Execute(cmd, addComputerNameParameter, out errors);
         }
 
-        public Collection<PSObject> Execute(Command cmd, out object[] errors)
-        {
-            return Execute(cmd, true, out errors);
-        }
-
-        public Collection<PSObject> Execute(Command cmd, bool useDomainController, out object[] errors)
+        public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter, out object[] errors)
         {
             HostedSolutionLog.LogStart("Execute");
             List<object> errorList = new List<object>();
 
             HostedSolutionLog.DebugCommand(cmd);
             Collection<PSObject> results = null;
+
+            // Add computerName parameter to command if it is remote server
+            if (addComputerNameParameter)
+            {
+                if (!string.IsNullOrEmpty(_remoteComputerName))
+                    cmd.Parameters.Add("ComputerName", _remoteComputerName);
+            }
+
             // Create a pipeline
             Pipeline pipeLine = RunSpace.CreatePipeline();
             using (pipeLine)
@@ -88,6 +93,8 @@ namespace WebsitePanel.Providers.Virtualization
                 // Execute the pipeline and save the objects returned.
                 results = pipeLine.Invoke();
 
+                // Only non-terminating errors are delivered here.
+                // Terminating errors raise exceptions instead.
                 // Log out any errors in the pipeline execution
                 // NOTE: These errors are NOT thrown as exceptions! 
                 // Be sure to check this to ensure that no errors 
@@ -108,52 +115,10 @@ namespace WebsitePanel.Providers.Virtualization
             return results;
         }
 
-
-        /// <summary>
-        /// Returns the identity of the object from the shell execution result
-        /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public static string GetResultObjectIdentity(Collection<PSObject> result)
+        public static void ExceptionIfErrors(object[] errors)
         {
-            HostedSolutionLog.LogStart("GetResultObjectIdentity");
-            if (result == null)
-                throw new ArgumentNullException("result", "Execution result is not specified");
-
-            if (result.Count < 1)
-                throw new ArgumentException("Execution result is empty", "result");
-
-            if (result.Count > 1)
-                throw new ArgumentException("Execution result contains more than one object", "result");
-
-            PSMemberInfo info = result[0].Members["Identity"];
-            if (info == null)
-                throw new ArgumentException("Execution result does not contain Identity property", "result");
-
-            string ret = info.Value.ToString();
-            HostedSolutionLog.LogEnd("GetResultObjectIdentity");
-            return ret;
-        }
-
-        public static string GetResultObjectDN(Collection<PSObject> result)
-        {
-            HostedSolutionLog.LogStart("GetResultObjectDN");
-            if (result == null)
-                throw new ArgumentNullException("result", "Execution result is not specified");
-
-            if (result.Count < 1)
-                throw new ArgumentException("Execution result does not contain any object");
-
-            if (result.Count > 1)
-                throw new ArgumentException("Execution result contains more than one object");
-
-            PSMemberInfo info = result[0].Members["DistinguishedName"];
-            if (info == null)
-                throw new ArgumentException("Execution result does not contain DistinguishedName property", "result");
-
-            string ret = info.Value.ToString();
-            HostedSolutionLog.LogEnd("GetResultObjectDN");
-            return ret;
+            if (errors != null && errors.Length > 0)
+                throw new Exception("Invoke error: " + string.Join("; ", errors.Select(e => e.ToString())));
         }
     }
 }

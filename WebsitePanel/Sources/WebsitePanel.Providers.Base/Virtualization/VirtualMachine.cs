@@ -69,8 +69,8 @@ namespace WebsitePanel.Providers.Virtualization
         public int CpuUsage { get; set; }
 
         [Persistent]
-        public long RamSize { get; set; }
-        public long RamUsage { get; set; }
+        public int RamSize { get; set; }
+        public int RamUsage { get; set; }
         [Persistent]
         public int HddSize { get; set; }
         public LogicalDisk[] HddLogicalDisks { get; set; }

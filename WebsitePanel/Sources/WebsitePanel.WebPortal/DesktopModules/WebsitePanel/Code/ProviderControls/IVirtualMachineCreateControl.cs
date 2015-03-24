@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,19 +26,27 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
+using System.Data;
+using System.Configuration;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
 
-namespace WebsitePanel.Providers.Virtualization
+using WebsitePanel.Providers.Mail;
+using WebsitePanel.Providers.Virtualization;
+
+namespace WebsitePanel.Portal
 {
-    public class MemoryInfo
+    /// <summary>
+    /// Summary description for IVirtualMachineCreateControl
+    /// </summary>
+    public interface IVirtualMachineCreateControl
     {
-        public bool DynamicMemoryEnabled { get; set; }
-        public int Startup { get; set; }
-        public int Minimum { get; set; }
-        public int Maximum { get; set; }
-        public int Buffer { get; set; }
-        public int Priority { get; set; }
+        void BindItem(VirtualMachine item);
+        void SaveItem(VirtualMachine item);
     }
 }

@@ -10,15 +10,7 @@ using System.Threading.Tasks;
 namespace WebsitePanel.Providers.Virtualization
 {
     public static class NetworkAdapterHelper
-    { 
-        #region Constants
-        
-        private const string EXTERNAL_NETWORK_ADAPTER_NAME = "External Network Adapter";
-        private const string PRIVATE_NETWORK_ADAPTER_NAME = "Private Network Adapter";
-        private const string MANAGEMENT_NETWORK_ADAPTER_NAME = "Management Network Adapter";
-
-        #endregion
-
+    {
         public static VirtualMachineNetworkAdapter[] Get(PowerShellManager powerShell, string vmName)
         {
             List<VirtualMachineNetworkAdapter> adapters = new List<VirtualMachineNetworkAdapter>();
@@ -26,7 +18,7 @@ namespace WebsitePanel.Providers.Virtualization
             Command cmd = new Command("Get-VMNetworkAdapter");
             if (!string.IsNullOrEmpty(vmName)) cmd.Parameters.Add("VMName", vmName);
 
-            Collection<PSObject> result = powerShell.Execute(cmd, false);
+            Collection<PSObject> result = powerShell.Execute(cmd, true);
             if (result != null && result.Count > 0)
             {
                 foreach (PSObject psAdapter in result)
@@ -60,7 +52,7 @@ namespace WebsitePanel.Providers.Virtualization
             else if (vm.ExternalNetworkEnabled && !String.IsNullOrEmpty(vm.ExternalNicMacAddress)
                 && Get(powerShell,vm.Name,vm.ExternalNicMacAddress) == null)
             {
-                Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                Add(powerShell, vm.Name, vm.ExternalSwitchId, vm.ExternalNicMacAddress, Constants.EXTERNAL_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
 
             // Private NIC
@@ -72,7 +64,7 @@ namespace WebsitePanel.Providers.Virtualization
             else if (vm.PrivateNetworkEnabled && !String.IsNullOrEmpty(vm.PrivateNicMacAddress)
                  && Get(powerShell, vm.Name, vm.PrivateNicMacAddress) == null)
             {
-                Add(powerShell, vm.Name, vm.PrivateSwitchId, vm.PrivateNicMacAddress, PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
+                Add(powerShell, vm.Name, vm.PrivateSwitchId, vm.PrivateNicMacAddress, Constants.PRIVATE_NETWORK_ADAPTER_NAME, vm.LegacyNetworkAdapter);
             }
         }
 
@@ -89,8 +81,9 @@ namespace WebsitePanel.Providers.Virtualization
             else
                 cmd.Parameters.Add("StaticMacAddress", macAddress);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
+
         public static void Delete(PowerShellManager powerShell, string vmName, string macAddress)
         {
             var networkAdapter = Get(powerShell, vmName, macAddress);
@@ -98,12 +91,17 @@ namespace WebsitePanel.Providers.Virtualization
             if (networkAdapter == null)
                 return;
 
+            Delete(powerShell, vmName, networkAdapter);
+        }
+
+        public static void Delete(PowerShellManager powerShell, string vmName, VirtualMachineNetworkAdapter networkAdapter)
+        {
             Command cmd = new Command("Remove-VMNetworkAdapter");
 
             cmd.Parameters.Add("VMName", vmName);
             cmd.Parameters.Add("Name", networkAdapter.Name);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
     }
 }
