@@ -9444,8 +9444,8 @@ BEGIN
 	UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointFoundationSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
 	SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Server'	
 
-	INSERT INTO [dbo].[ServiceItemTypes] (ItemTypeId, GroupId, DisplayName, TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable) 
-		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, TypeOrder, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
+	INSERT INTO [dbo].[ServiceItemTypes] (ItemTypeId, GroupId, DisplayName, TypeName, TypeOrder, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable) 
+		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
 END
 
 GO
