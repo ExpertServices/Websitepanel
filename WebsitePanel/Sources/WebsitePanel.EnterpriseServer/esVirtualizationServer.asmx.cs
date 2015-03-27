@@ -193,7 +193,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return VirtualizationServerController.CreateVirtualMachine(packageId,
                 hostname, osTemplateFile, password, summaryLetterEmail,
-                cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock,
+                generation, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock,
                 startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed,
                 externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses,
                 privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses);

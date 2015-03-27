@@ -66,12 +66,13 @@ namespace WebsitePanel.Providers.Virtualization
         public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter)
         {
             object[] errors;
-            return Execute(cmd, addComputerNameParameter, out errors);
+            return Execute(cmd, addComputerNameParameter, false);
         }
 
-        public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter, out object[] errors)
+        public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter, bool withExceptions)
         {
             HostedSolutionLog.LogStart("Execute");
+
             List<object> errorList = new List<object>();
 
             HostedSolutionLog.DebugCommand(cmd);
@@ -110,14 +111,17 @@ namespace WebsitePanel.Providers.Virtualization
                 }
             }
             pipeLine = null;
-            errors = errorList.ToArray();
+
+            if (withExceptions)
+                ExceptionIfErrors(errorList);
+
             HostedSolutionLog.LogEnd("Execute");
             return results;
         }
 
-        public static void ExceptionIfErrors(object[] errors)
+        private static void ExceptionIfErrors(List<object> errors)
         {
-            if (errors != null && errors.Length > 0)
+            if (errors != null && errors.Count > 0)
                 throw new Exception("Invoke error: " + string.Join("; ", errors.Select(e => e.ToString())));
         }
     }
