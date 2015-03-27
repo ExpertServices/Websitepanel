@@ -134,6 +134,8 @@
     <Compile Include="Packages\PackageSettings.cs" />
     <Compile Include="Packages\PackageStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RDS\RdsServerSetting.cs" />
+    <Compile Include="RDS\RdsServerSettings.cs" />
     <Compile Include="Reports\OverusageReport.custom.cs">
       <SubType>Component</SubType>
     </Compile>

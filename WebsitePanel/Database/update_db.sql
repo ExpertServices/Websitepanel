@@ -9334,3 +9334,118 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 RETURN 
 
 GO
+
+
+-- RDS GPO
+
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSServerSettings')
+CREATE TABLE [dbo].[RDSServerSettings](
+	[RdsServerId] [int] NOT NULL,
+	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[ApplyUsers] [BIT] NOT NULL,
+	[ApplyAdministrators] [BIT] NOT NULL
+ CONSTRAINT [PK_RDSServerSettings] PRIMARY KEY CLUSTERED 
+(
+	[RdsServerId] ASC,
+	[SettingsName] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServerSettings')
+DROP PROCEDURE GetRDSServerSettings
+GO
+CREATE PROCEDURE GetRDSServerSettings
+(
+	@ServerId int,
+	@SettingsName nvarchar(50)
+)
+AS
+	SELECT RDSServerId, PropertyName, PropertyValue, ApplyUsers, ApplyAdministrators
+	FROM RDSServerSettings
+	WHERE RDSServerId = @ServerId AND SettingsName = @SettingsName			
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSServerSettings')
+DROP PROCEDURE UpdateRDSServerSettings
+GO
+CREATE PROCEDURE UpdateRDSServerSettings
+(
+	@ServerId int,
+	@SettingsName nvarchar(50),
+	@Xml ntext
+)
+AS
+
+BEGIN TRAN
+DECLARE @idoc int
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+DELETE FROM RDSServerSettings
+WHERE RDSServerId = @ServerId AND SettingsName = @SettingsName
+
+INSERT INTO RDSServerSettings
+(
+	RDSServerId,
+	SettingsName,
+	ApplyUsers,
+	ApplyAdministrators,
+	PropertyName,
+	PropertyValue	
+)
+SELECT
+	@ServerId,
+	@SettingsName,
+	ApplyUsers,
+	ApplyAdministrators,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue ntext '@value',
+	ApplyUsers BIT '@applyUsers',
+	ApplyAdministrators BIT '@applyAdministrators'
+) as PV
+
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
+RETURN 
+
+GO
+
+
+IF EXISTS (SELECT * FROM ResourceGroups WHERE GroupName = 'SharePoint')
+BEGIN
+	DECLARE @group_id INT
+	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
+	DELETE FROM Providers WHERE GroupID = @group_id
+	DELETE FROM Quotas WHERE GroupID = @group_id
+	DELETE FROM VirtualGroups WHERE GroupID = @group_id
+	DELETE FROM ServiceItemTypes WHERE GroupID = @group_id	
+	DELETE FROM ResourceGroups WHERE GroupID = @group_id
+END
+
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
+BEGIN	
+	DECLARE @group_id AS INT
+	DECLARE @item_type_id INT
+	SELECT TOP 1 @item_type_id = ItemTypeId + 1 FROM [dbo].[ServiceItemTypes] ORDER BY ItemTypeId DESC
+	UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointFoundationSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
+	SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Server'	
+
+	INSERT INTO [dbo].[ServiceItemTypes] (ItemTypeId, GroupId, DisplayName, TypeName, TypeOrder, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable) 
+		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
+END
+
+GO

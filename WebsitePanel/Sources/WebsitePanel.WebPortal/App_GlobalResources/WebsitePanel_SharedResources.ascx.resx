@@ -5703,6 +5703,12 @@
     <value>RDS User logging off error</value>
   </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
-    <value>GEtting RDS User sessions error</value>
+    <value>Getting RDS User sessions error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_EXPERIENCE" xml:space="preserve">
+    <value>Updating RDS User experience error</value>
+  </data>
+  <data name="Success.REMOTE_DESKTOP_SERVICES_USER_EXPERIENCE" xml:space="preserve">
+    <value>RDS User experience has been updated</value>
   </data>
 </root>

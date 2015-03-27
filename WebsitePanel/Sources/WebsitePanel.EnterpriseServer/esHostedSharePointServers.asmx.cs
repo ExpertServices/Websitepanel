@@ -55,13 +55,14 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="sortColumn">Sort column name.</param>
 		/// <param name="startRow">Row index to start from.</param>
 		/// <param name="maximumRows">Maximum number of rows to retrieve.</param>
+        /// <param name="groupName">Resource group name.</param>
 		/// <returns>Site collections in raw format.</returns>
 		[WebMethod]
 		public SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId,
-			string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+			string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, string groupName)
 		{
 			return HostedSharePointServerController.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue,
-				sortColumn, startRow, maximumRows);
+				sortColumn, startRow, maximumRows, groupName);
 		}
 
 		/// <summary>
@@ -71,7 +72,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int[] GetSupportedLanguages(int packageId)
 		{
-			return HostedSharePointServerController.GetSupportedLanguages(packageId);
+			return HostedSharePointServerController.GetSupportedLanguages(packageId);            
 		}
 
 		/// <summary>
@@ -79,11 +80,12 @@ namespace WebsitePanel.EnterpriseServer
 		/// </summary>
 		/// <param name="packageId">Package that owns site collections.</param>
 		/// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
+        /// <param name="groupName">Resource group name.</param>
 		/// <returns>List of found site collections.</returns>
 		[WebMethod]
-		public List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
+		public List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive, string groupName)
 		{
-			return HostedSharePointServerController.GetSiteCollections(packageId, recursive);
+			return HostedSharePointServerController.GetSiteCollections(packageId, recursive, groupName);
 		}
 
         [WebMethod]
@@ -114,7 +116,7 @@ namespace WebsitePanel.EnterpriseServer
 		public SharePointSiteCollection GetSiteCollectionByDomain(int organizationId, string domain)
 		{
 			DomainInfo domainInfo = ServerController.GetDomain(domain);
-			SharePointSiteCollectionListPaged existentSiteCollections = this.GetSiteCollectionsPaged(domainInfo.PackageId, organizationId, "ItemName", String.Format("%{0}", domain), String.Empty, 0, Int32.MaxValue);
+			SharePointSiteCollectionListPaged existentSiteCollections = this.GetSiteCollectionsPaged(domainInfo.PackageId, organizationId, "ItemName", String.Format("%{0}", domain), String.Empty, 0, Int32.MaxValue, null);
 			foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
 			{
 				Uri existentSiteCollectionUri = new Uri(existentSiteCollection.Name);
@@ -131,11 +133,12 @@ namespace WebsitePanel.EnterpriseServer
 		/// Adds SharePoint site collection.
 		/// </summary>
 		/// <param name="item">Site collection description.</param>
+        /// <param name="groupName">Resource group name.</param>
 		/// <returns>Created site collection id within metabase.</returns>
 		[WebMethod]
-		public int AddSiteCollection(SharePointSiteCollection item)
+		public int AddSiteCollection(SharePointSiteCollection item, string groupName)
 		{
-			return HostedSharePointServerController.AddSiteCollection(item);
+			return HostedSharePointServerController.AddSiteCollection(item, groupName);
 		}
 
 		/// <summary>

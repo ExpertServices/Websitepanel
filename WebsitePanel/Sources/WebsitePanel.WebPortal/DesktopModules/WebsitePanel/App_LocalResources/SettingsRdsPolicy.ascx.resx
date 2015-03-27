@@ -117,28 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Tab.RdsApplications" xml:space="preserve">
-    <value>Remote Applications</value>
+  <data name="cbAdministrators.Text" xml:space="preserve">
+    <value>Administrators</value>
   </data>
-  <data name="Tab.RdsServers" xml:space="preserve">
-    <value>RDS Servers</value>
+  <data name="cbUsers.Text" xml:space="preserve">
+    <value>Users</value>
   </data>
-  <data name="Tab.RdsUsers" xml:space="preserve">
-    <value>RDS Users</value>
+  <data name="secDriveSpace.Text" xml:space="preserve">
+    <value>Drive Space Threshold</value>
   </data>
-  <data name="Tab.Settings" xml:space="preserve">
-    <value>Settings</value>
+  <data name="secHideCDrive.Text" xml:space="preserve">
+    <value>Hide C: Drive</value>
   </data>
-  <data name="Tab.UserSessions" xml:space="preserve">
-    <value>User Sessions</value>
+  <data name="secPowershellCommand.Text" xml:space="preserve">
+    <value>Remove "Powershell" Command</value>
   </data>
-  <data name="Tab.LocalAdmins" xml:space="preserve">
-    <value>Local Administrators</value>
+  <data name="secRunCommand.Text" xml:space="preserve">
+    <value>Remove "Run" Command</value>
   </data>
-  <data name="Tab.RdsSetupLetter" xml:space="preserve">
-    <value>Setup Instructions</value>
+  <data name="secScreenSaver.Text" xml:space="preserve">
+    <value>Disable Screen Saver</value>
   </data>
-  <data name="Tab.UserExperience" xml:space="preserve">
-    <value>User Experience</value>
+  <data name="secShutdown.Text" xml:space="preserve">
+    <value>Remove Shutdown and Restart</value>
+  </data>
+  <data name="secTaskManager.Text" xml:space="preserve">
+    <value>Disable Task Manager</value>
+  </data>
+  <data name="secTimeout.Text" xml:space="preserve">
+    <value>Lock Screen Timeout</value>
+  </data>
+  <data name="sekChangeDesktop.Text" xml:space="preserve">
+    <value>Changing Desktop Disabled</value>
   </data>
 </root>

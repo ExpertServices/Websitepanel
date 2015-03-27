@@ -147,6 +147,9 @@
   <data name="lnkVpsPolicy.Text" xml:space="preserve">
     <value>Virtual Private Servers Policy</value>
   </data>
+  <data name="lnkRdsPolicy.Text" xml:space="preserve">
+    <value>Remote Desktop Servers Policy</value>
+  </data>
   <data name="lnkWebPolicy.Text" xml:space="preserve">
     <value>WEB Policy</value>
   </data>

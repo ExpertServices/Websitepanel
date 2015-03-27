@@ -4676,6 +4676,23 @@ namespace WebsitePanel.EnterpriseServer
 
         #region RDS
 
+        public static IDataReader GetRdsServerSettings(int serverId, string settingsName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetRDSServerSettings",                
+                new SqlParameter("@ServerId", serverId),
+                new SqlParameter("@SettingsName", settingsName));
+        }
+
+        public static void UpdateRdsServerSettings(int serverId, string settingsName, string xml)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "UpdateRDSServerSettings",
+                new SqlParameter("@ServerId", serverId),                
+                new SqlParameter("@SettingsName", settingsName),
+                new SqlParameter("@Xml", xml));
+        }
+
         public static int AddRdsCertificate(int serviceId, string content, byte[] hash, string fileName, DateTime? validFrom, DateTime? expiryDate)
         {
             SqlParameter rdsCertificateId = new SqlParameter("@RDSCertificateID", SqlDbType.Int);

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Caching Application Block", "Caching Application Block", "{C8E6F2E4-A5B8-486A-A56E-92D864524682}"
 	ProjectSection(SolutionItems) = preProject
@@ -51,8 +51,6 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WebsitePanel.Providers.Mail
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WebsitePanel.Providers.Mail.Merak", "WebsitePanel.Providers.Mail.Merak\WebsitePanel.Providers.Mail.Merak.vbproj", "{2FA82B71-B32A-47DE-A17B-40DE08D0256D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.SharePoint.Sps20", "WebsitePanel.Providers.SharePoint.Sps20\WebsitePanel.Providers.SharePoint.Sps20.csproj", "{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Mail.AbilityMailServer", "WebsitePanel.Providers.Mail.AbilityMailServer\WebsitePanel.Providers.Mail.AbilityMailServer.csproj", "{54EE4293-6CCB-4859-8B76-90205F7B35A1}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WebsitePanel.Providers.Mail.ArgoMail", "WebsitePanel.Providers.Mail.ArgoMail\WebsitePanel.Providers.Mail.ArgoMail.vbproj", "{FCD88E94-349D-4BB2-A726-6E47A4F01DC2}"
@@ -62,8 +60,6 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WebsitePanel.Providers.Mail.MDaemon", "WebsitePanel.Providers.Mail.MDaemon\WebsitePanel.Providers.Mail.MDaemon.vbproj", "{FE48854E-9332-4E37-A5F2-5DF9DDD740D5}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WebsitePanel.Providers.Mail.hMailServer43", "WebsitePanel.Providers.Mail.hMailServer43\WebsitePanel.Providers.Mail.hMailServer43.vbproj", "{622E452B-E1EF-4252-8039-A28C2EA25DC1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.SharePoint.Sps30", "WebsitePanel.Providers.SharePoint.Sps30\WebsitePanel.Providers.SharePoint.Sps30.csproj", "{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.DNS.Bind", "WebsitePanel.Providers.DNS.Bind\WebsitePanel.Providers.DNS.Bind.csproj", "{3ACCBEAE-5E1E-43E5-971C-223539832DD8}"
 EndProject
@@ -346,16 +342,6 @@ Global
 		{2FA82B71-B32A-47DE-A17B-40DE08D0256D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2FA82B71-B32A-47DE-A17B-40DE08D0256D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2FA82B71-B32A-47DE-A17B-40DE08D0256D}.Release|x86.ActiveCfg = Release|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7980CF32-62ED-4BA1-9CAE-8EE7BD164719}.Release|x86.ActiveCfg = Release|Any CPU
 		{54EE4293-6CCB-4859-8B76-90205F7B35A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54EE4293-6CCB-4859-8B76-90205F7B35A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54EE4293-6CCB-4859-8B76-90205F7B35A1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -406,16 +392,6 @@ Global
 		{622E452B-E1EF-4252-8039-A28C2EA25DC1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{622E452B-E1EF-4252-8039-A28C2EA25DC1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{622E452B-E1EF-4252-8039-A28C2EA25DC1}.Release|x86.ActiveCfg = Release|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{67B126AA-56E5-42F7-AC4F-AEE2A7D786F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{3ACCBEAE-5E1E-43E5-971C-223539832DD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3ACCBEAE-5E1E-43E5-971C-223539832DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ACCBEAE-5E1E-43E5-971C-223539832DD8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

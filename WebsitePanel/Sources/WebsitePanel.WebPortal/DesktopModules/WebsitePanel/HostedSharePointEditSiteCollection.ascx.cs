@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.DNS;
@@ -42,6 +43,11 @@ namespace WebsitePanel.Portal
     public partial class HostedSharePointEditSiteCollection : WebsitePanelModuleBase
     {
         SharePointSiteCollection item = null;
+
+        public static string GroupName
+        {
+            get { return HttpContext.Current.Request["GroupName"]; }
+        }
 
         private int OrganizationId
         {
@@ -224,7 +230,7 @@ namespace WebsitePanel.Portal
         /// <returns> Reserved disk space vallue.</returns>
         private int GetReservedDiskStorageSpace()
         {
-            var existingCollections = ES.Services.HostedSharePointServers.GetSiteCollections(PanelSecurity.PackageId, false);
+            var existingCollections = ES.Services.HostedSharePointServers.GetSiteCollections(PanelSecurity.PackageId, false, GroupName);
 
             return (int)existingCollections.Sum(siteCollection => siteCollection.MaxSiteStorage);
         }
@@ -251,9 +257,20 @@ namespace WebsitePanel.Portal
                 {
                     item = new SharePointSiteCollection();
 
-                    if (!UseSharedSLL(PanelSecurity.PackageId))
+                    string groupName = GroupName;
+
+                    if (ResourceGroups.SharepointFoundationServer.Replace(" ", "").Equals(groupName))
                     {
-                        SharePointSiteCollectionListPaged existentSiteCollections = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(PanelSecurity.PackageId, this.OrganizationId, "ItemName", String.Format("%{0}", this.domain.DomainName), String.Empty, 0, Int32.MaxValue);
+                        groupName = ResourceGroups.SharepointFoundationServer;
+                    }
+                    else if (ResourceGroups.SharepointServer.Replace(" ", "").Equals(groupName))
+                    {
+                        groupName = ResourceGroups.SharepointServer;
+                    }
+
+                    if (!UseSharedSLL(PanelSecurity.PackageId))
+                    {                        
+                        SharePointSiteCollectionListPaged existentSiteCollections = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(PanelSecurity.PackageId, this.OrganizationId, "ItemName", String.Format("%{0}", this.domain.DomainName), String.Empty, 0, Int32.MaxValue, groupName);
                         foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
                         {
                             Uri existentSiteCollectionUri = new Uri(existentSiteCollection.Name);
@@ -284,9 +301,9 @@ namespace WebsitePanel.Portal
 
 
                     item.MaxSiteStorage = maxStorage.QuotaValue;
-                    item.WarningStorage = warningStorage.QuotaValue;
+                    item.WarningStorage = warningStorage.QuotaValue;                    
 
-                    int result = ES.Services.HostedSharePointServers.AddSiteCollection(item);
+                    int result = ES.Services.HostedSharePointServers.AddSiteCollection(item, groupName);
                     if (result < 0)
                     {
                         localMessageBox.ShowResultMessage(result);
@@ -373,19 +390,19 @@ namespace WebsitePanel.Portal
 
         protected void btnBackup_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_backup_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_backup_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName));
         }
 
         protected void btnRestore_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_restore_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_restore_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName));
         }
 
 
 
         private void RedirectToSiteCollectionsList()
         {
-            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_sitecollections", "ItemID=" + PanelRequest.ItemID.ToString()));
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_sitecollections", "ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName));
         }
 
         private bool UseSharedSLL(int packageID)

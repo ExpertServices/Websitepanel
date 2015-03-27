@@ -45,6 +45,7 @@ using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Providers.Web;
 using System.Net.Mail;
 using System.Collections;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -318,6 +319,77 @@ namespace WebsitePanel.EnterpriseServer
         public static int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
         {
             return SendRdsSetupLetterInternal(itemId, accountId, to, cc);
+        }
+
+        public static RdsServerSettings GetRdsServerSettings(int serverId, string settingsName)
+        {
+            return GetRdsServerSettingsInternal(serverId, settingsName);
+        }              
+
+        public static int UpdateRdsServerSettings(int serverId, string settingsName, RdsServerSettings settings)
+        {
+            return UpdateRdsServerSettingsInternal(serverId, settingsName, settings);
+        }
+
+        private static RdsServerSettings GetRdsServerSettingsInternal(int serverId, string settingsName)
+        {
+            IDataReader reader = DataProvider.GetRdsServerSettings(serverId, settingsName);
+
+            var settings = new RdsServerSettings();
+            settings.ServerId = serverId;
+            settings.SettingsName = settingsName;
+
+            while (reader.Read())
+            {
+                settings.Settings.Add(new RdsServerSetting
+                {
+                    PropertyName = (string)reader["PropertyName"],
+                    PropertyValue = (string)reader["PropertyValue"],
+                    ApplyAdministrators = Convert.ToBoolean("ApplyAdministrators"),
+                    ApplyUsers = Convert.ToBoolean("ApplyUsers")
+                });                
+            }
+
+            reader.Close();
+
+            return settings;
+        }  
+
+        private static int UpdateRdsServerSettingsInternal(int serverId, string settingsName, RdsServerSettings settings)
+        {
+            TaskManager.StartTask("REMOTE_DESKTOP_SERVICES", "UPDATE_SETTINGS");
+
+            try
+            {                
+                XmlDocument doc = new XmlDocument();
+                XmlElement nodeProps = doc.CreateElement("properties");
+
+                if (settings != null)
+                {
+                    foreach (var setting in settings.Settings)
+                    {
+                        XmlElement nodeProp = doc.CreateElement("property");
+                        nodeProp.SetAttribute("name", setting.PropertyName);
+                        nodeProp.SetAttribute("value", setting.PropertyValue);
+                        nodeProp.SetAttribute("applyUsers", setting.ApplyUsers ? "1" : "0");
+                        nodeProp.SetAttribute("applyAdministrators", setting.ApplyAdministrators ? "1" : "0");
+                        nodeProps.AppendChild(nodeProp);
+                    }
+                }
+
+                string xml = nodeProps.OuterXml;                
+                DataProvider.UpdateRdsServerSettings(serverId, settingsName, xml);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
         }
 
         private static string GetRdsSetupLetterInternal(int itemId, int? accountId)
