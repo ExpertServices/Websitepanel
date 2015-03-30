@@ -504,7 +504,7 @@ namespace WebsitePanel.Providers.Virtualization
             if (vm.State != VirtualMachineState.Saved && vm.State != VirtualMachineState.Off)
                 throw new Exception("The virtual computer system must be in the powered off or saved state prior to calling Destroy method.");
 
-            // Delete network adapters and network switchesw
+            // Delete network adapters and network switches
             foreach (var networkAdapter in vm.Adapters)
             {
                 NetworkAdapterHelper.Delete(PowerShell, vm.Name, networkAdapter);
@@ -516,7 +516,7 @@ namespace WebsitePanel.Providers.Virtualization
             Command cmdSet = new Command("Remove-VM");
             cmdSet.Parameters.Add("Name", vm.Name);
             cmdSet.Parameters.Add("Force");
-            PowerShell.Execute(cmdSet, false, true);
+            PowerShell.Execute(cmdSet, true, true);
 
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
         }
@@ -782,10 +782,11 @@ namespace WebsitePanel.Providers.Virtualization
                 
                 Command cmd = new Command("Get-VMSwitch");
 
-                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                // Not needed as the PowerShellManager adds the computer name
+                //if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
                 if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                Collection<PSObject> result = PowerShell.Execute(cmd, false, true);
+                Collection<PSObject> result = PowerShell.Execute(cmd, true, true);
 
                 foreach (PSObject current in result)
                 {
