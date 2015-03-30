@@ -23,7 +23,7 @@ namespace WebsitePanel.Providers.Virtualization
 
                 cmd.Parameters.Add("VMName", name);
 
-                Collection<PSObject> result = powerShell.Execute(cmd, false);
+                Collection<PSObject> result = powerShell.Execute(cmd, true);
                 if (result != null && result.Count > 0)
                 {
                     info.NumLockEnabled = true;
@@ -56,7 +56,7 @@ namespace WebsitePanel.Providers.Virtualization
 
                 cmd.Parameters.Add("VMName", name);
 
-                Collection<PSObject> result = powerShell.Execute(cmd, false);
+                Collection<PSObject> result = powerShell.Execute(cmd, true);
                 if (result != null && result.Count > 0)
                 {
                     info.NumLockEnabled = Convert.ToBoolean(result[0].GetProperty("NumLockEnabled"));
@@ -89,7 +89,7 @@ namespace WebsitePanel.Providers.Virtualization
                 else
                     cmd.Parameters.Add("FirstBootDevice", HardDriveHelper.GetPS(powerShell, vm.Name).FirstOrDefault());
 
-                powerShell.Execute(cmd, false);
+                powerShell.Execute(cmd, true);
             }
             // for others win and linux
             else
@@ -102,7 +102,7 @@ namespace WebsitePanel.Providers.Virtualization
                     : new[] { "IDE", "CD", "LegacyNetworkAdapter", "Floppy" };
                 cmd.Parameters.Add("StartupOrder", bootOrder);
 
-                powerShell.Execute(cmd, false);
+                powerShell.Execute(cmd, true);
             }
         }
     }

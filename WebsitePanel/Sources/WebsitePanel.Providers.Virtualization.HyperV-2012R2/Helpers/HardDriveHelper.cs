@@ -47,7 +47,7 @@ namespace WebsitePanel.Providers.Virtualization
 
         //    Command cmd = new Command("Get-VM");
 
-        //    Collection<PSObject> result = powerShell.Execute(cmd, false);
+        //    Collection<PSObject> result = powerShell.Execute(cmd, true);
 
         //    if (result == null || result.Count == 0)
         //        return null;
@@ -63,7 +63,7 @@ namespace WebsitePanel.Providers.Virtualization
             Command cmd = new Command("Get-VMHardDiskDrive");
             cmd.Parameters.Add("VMName", vmname);
 
-            return powerShell.Execute(cmd, false);
+            return powerShell.Execute(cmd, true);
         }
 
         public static void GetVirtualHardDiskDetail(PowerShellManager powerShell, string path, ref VirtualHardDiskInfo disk)
@@ -72,7 +72,7 @@ namespace WebsitePanel.Providers.Virtualization
             {
                 Command cmd = new Command("Get-VHD");
                 cmd.Parameters.Add("Path", path);
-                Collection<PSObject> result = powerShell.Execute(cmd, false);
+                Collection<PSObject> result = powerShell.Execute(cmd, true);
                 if (result != null && result.Count > 0)
                 {
                     disk.DiskFormat = result[0].GetEnum<VirtualHardDiskFormat>("VhdFormat");

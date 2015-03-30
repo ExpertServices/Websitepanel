@@ -34,7 +34,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
-using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
 
 namespace WebsitePanel.Providers.Mail
@@ -183,7 +182,9 @@ namespace WebsitePanel.Providers.Mail
         {
             if (!apiObject.Save())
             {
-                throw new Exception("Cannot save Api Object: " + GetErrorMessage(apiObject.LastErr));
+                var ex = new Exception("Cannot save Api Object: " + GetErrorMessage(apiObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
 
@@ -298,7 +299,7 @@ namespace WebsitePanel.Providers.Mail
             var obj = GetAccountObject();
             if (!obj.Open(accountName))
             {
-                throw new Exception("Cannot open account " + accountName + ": " + GetErrorMessage(obj.LastErr));
+                Log.WriteWarning(string.Format("Cannot open account {0}: {1}", accountName, GetErrorMessage(obj.LastErr)));
             }
 
             return obj;
@@ -308,7 +309,9 @@ namespace WebsitePanel.Providers.Mail
         {
             if (!domain.Save())
             {
-                throw new ArgumentException("Could not save domain:" + GetErrorMessage(domain.LastErr));
+                var ex = new Exception("Could not save domain:" + GetErrorMessage(domain.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
 
@@ -316,10 +319,11 @@ namespace WebsitePanel.Providers.Mail
         {
             if (!account.Save())
             {
-                throw new ArgumentException("Could not save " + accountTypeName + ":" + GetErrorMessage(account.LastErr));
+                var ex = new Exception(string.Format("Could not save {0}: {1}", accountTypeName, GetErrorMessage(account.LastErr)));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
-
 
         protected string GetEmailUser(string email)
         {
@@ -544,7 +548,7 @@ namespace WebsitePanel.Providers.Mail
 
                     var ms = new MemoryStream(statsBuffer);
                     var reader = new StreamReader(ms);
-                    while (reader.Peek() != -1)
+                    while (reader.Peek() > -1)
                     {
                         var line = reader.ReadLine();
                         var fields = line.Split(',');
@@ -665,14 +669,18 @@ namespace WebsitePanel.Providers.Mail
         {
             if (string.IsNullOrWhiteSpace(domain.Name))
             {
-                throw new ArgumentNullException("domain.Name");
+                var ex = new Exception("Cannot create domain with empty domain name", new ArgumentNullException("domain.Name"));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             var domainObject = GetDomainObject();
 
             if (!domainObject.New(domain.Name))
             {
-                throw new ApplicationException("Failed to create domain: " + GetErrorMessage(domainObject.LastErr));
+                var ex = new Exception("Failed to create domain: " + GetErrorMessage(domainObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             SaveDomain(domainObject);
@@ -713,17 +721,22 @@ namespace WebsitePanel.Providers.Mail
 
         public void DeleteDomain(string domainName)
         {
+            if (!DomainExists(domainName))
+            {
+                return;
+            }
+
             var domainObject = GetDomainObject(domainName);
 
-            if (domainObject.Delete())
+            if (!domainObject.Delete())
             {
-                throw new Exception("Could not delete domain");
+                Log.WriteError("Could not delete domain" + GetErrorMessage(domainObject.LastErr), null);
             }
         }
 
         #endregion
 
-        #region Domain alieses
+        #region Domain aliases
 
         public bool DomainAliasExists(string domainName, string aliasName)
         {
@@ -904,7 +917,9 @@ namespace WebsitePanel.Providers.Mail
             var emailParts = new MailAddress(mailbox.Name);
             if (!accountObject.CanCreateMailbox(emailParts.User, emailParts.User, mailbox.Password, emailParts.Host))
             {
-                throw new Exception("Cannot create account: " + GetErrorMessage(accountObject.LastErr));
+                var ex = new Exception("Cannot create account because of password policy in IceWarp server, invalid username, alias or domain. Check if the password policy is different in IceWarp and WSP. Also perhaps your IceWarp diallows username in password?");
+                Log.WriteError(ex);
+                throw ex;
             }
 
             if (accountObject.New(mailbox.Name))
@@ -989,10 +1004,15 @@ namespace WebsitePanel.Providers.Mail
 
         public void DeleteAccount(string mailboxName)
         {
+            if (!AccountExists(mailboxName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(mailboxName);
             if (!accountObject.Delete())
             {
-                throw new Exception("Cannot delete account: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete account: " + GetErrorMessage(accountObject.LastErr), null);
             }
         }
 
@@ -1069,7 +1089,7 @@ namespace WebsitePanel.Providers.Mail
             else
             {
                 var accountOject = GetAccountObject(mailAlias.ForwardTo);
-                var aliases = GetAliasListFromAccountObject(accountOject).ToList();
+                var aliases = ((IEnumerable<string>) GetAliasListFromAccountObject(accountOject)).ToList();
                 aliases.Add(GetEmailUser(mailAlias.Name));
                 accountOject.SetProperty("U_EmailAlias", string.Join(";", aliases));
 
@@ -1171,7 +1191,7 @@ namespace WebsitePanel.Providers.Mail
             }
             else
             {
-                throw new ApplicationException("Failed to create group: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Failed to create group: " + GetErrorMessage(accountObject.LastErr), null);
             }
 
             UpdateGroup(group);
@@ -1190,10 +1210,15 @@ namespace WebsitePanel.Providers.Mail
 
         public void DeleteGroup(string groupName)
         {
+            if (!GroupExists(groupName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(groupName);
             if (!accountObject.Delete())
             {
-                throw new Exception("Cannot delete group: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete group: " + GetErrorMessage(accountObject.LastErr), null);
             }
         }
 
@@ -1351,14 +1376,18 @@ namespace WebsitePanel.Providers.Mail
         {
             if (string.IsNullOrWhiteSpace(maillist.Name))
             {
-                throw new ArgumentNullException("maillist.Name");
+                var ex = new ArgumentNullException("maillist.Name", "Cannot create list with empty name");
+                Log.WriteError(ex);
+                throw ex;
             }
 
             var accountObject = GetAccountObject();
 
             if (!accountObject.New(maillist.Name))
             {
-                throw new ApplicationException("Failed to create mailing list: " + GetErrorMessage(accountObject.LastErr));
+                var ex = new Exception("Failed to create mailing list: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             accountObject.SetProperty("U_Type", IceWarpAccountType.MailingList);
@@ -1401,7 +1430,9 @@ namespace WebsitePanel.Providers.Mail
                 // Create list server account    
                 if (!listServerAccountObject.New("srv" + mailingListName))
                 {
-                    throw new Exception("Cannot create listserver account to associate with mailing list." + GetErrorMessage(listServerAccountObject.LastErr));
+                    var ex = new Exception("Cannot create listserver account to associate with mailing list." + GetErrorMessage(listServerAccountObject.LastErr));
+                    Log.WriteError(ex);
+                    throw ex;
                 }
 
                 listServerAccountObject.SetProperty("U_Type", IceWarpAccountType.ListServer);
@@ -1529,6 +1560,11 @@ namespace WebsitePanel.Providers.Mail
 
         public void DeleteList(string maillistName)
         {
+            if (!ListExists(maillistName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(maillistName);
             var listServerAccountObject = FindMatchingListServerAccount(maillistName, false);
 
@@ -1546,7 +1582,9 @@ namespace WebsitePanel.Providers.Mail
                 {
                     if (!listServerAccountObject.Delete())
                     {
-                        throw new Exception("Deleted mail list, but list server account remains: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        var ex = new Exception("Deleted mail list, but list server account remains: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        Log.WriteError(ex);
+                        throw ex;
                     }
                 }
                 else
@@ -1554,13 +1592,15 @@ namespace WebsitePanel.Providers.Mail
                     listServerAccountObject.SetProperty("L_ListFile_Contents", string.Join("\n", lists.Remove(maillistName)));
                     if (!listServerAccountObject.Save())
                     {
-                        throw new Exception("Deleted mail list, but associated list server account could not be updated: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        var ex = new Exception("Deleted mail list, but associated list server account could not be updated: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        Log.WriteError(ex);
+                        throw ex;
                     }
                 }
             }
             else
             {
-                throw new Exception("Cannot delete mail list: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete mail list: " + GetErrorMessage(accountObject.LastErr), null);
             }
         }
 

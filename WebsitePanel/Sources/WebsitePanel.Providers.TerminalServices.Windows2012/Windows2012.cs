@@ -50,6 +50,8 @@ using System.Collections.ObjectModel;
 using System.DirectoryServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections;
+using System.Xml;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
@@ -79,6 +81,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string LocalAdministratorsGroupName = "Administrators";
         private const string RDSHelpDeskRdRapPolicyName = "RDS-HelpDesk-RDRAP";
         private const string RDSHelpDeskRdCapPolicyName = "RDS-HelpDesk-RDCAP";
+        private const string ScreenSaverGpoKey = @"HKCU\Software\Policies\Microsoft\Windows\Control Panel\Desktop";
+        private const string ScreenSaverValueName = "ScreenSaveActive";
+        private const string ScreenSaverTimeoutGpoKey = @"HKCU\Software\Policies\Microsoft\Windows\Control Panel\Desktop";
+        private const string ScreenSaverTimeoutValueName = "ScreenSaveTimeout";
+        private const string RemoveRestartGpoKey = @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer";
+        private const string RemoveRestartGpoValueName = "NoClose";
+        private const string RemoveRunGpoKey = @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer";
+        private const string RemoveRunGpoValueName = "NoRun";
+        private const string DisableTaskManagerGpoKey = @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System";
+        private const string DisableTaskManagerGpoValueName = "DisableTaskMgr";
+        private const string HideCDriveGpoKey = @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer";
+        private const string HideCDriveGpoValueName = "NoDrives";
 
         #endregion
 
@@ -349,11 +363,14 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 //add session servers to group
                 foreach (var rdsServer in collection.Servers)
                 {
-                    MoveRdsServerToTenantOU(rdsServer.Name, organizationId);
+                    MoveSessionHostToCollectionOU(rdsServer.Name, collection.Name, organizationId);                    
                     AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, helpDeskGroupSamAccountName);
                     AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, localAdminsGroupSamAccountName);
                     AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
                 }
+
+                CreatePolicy(runSpace, organizationId, string.Format("{0}-administrators", collection.Name), new DirectoryEntry(GetGroupPath(organizationId, collection.Name, GetLocalAdminsGroupName(collection.Name))), collection.Name);
+                CreatePolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name)), collection.Name);
             }                   
             finally
             {
@@ -361,7 +378,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return result;
-        }
+        }        
 
         public void EditRdsCollectionSettings(RdsCollection collection)
         {            
@@ -497,6 +514,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 ExecuteShellCommand(runSpace, cmd, false);
 
+                DeleteGpo(runSpace, string.Format("{0}-administrators", collectionName));
+                DeleteGpo(runSpace, string.Format("{0}-users", collectionName));
                 var capPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdCap);
                 var rapPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdRap);
 
@@ -519,11 +538,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 {
                     RemoveGroupFromLocalAdmin(server.FqdName, server.Name, GetLocalAdminsGroupName(collectionName), runSpace);
                     RemoveComputerFromCollectionAdComputerGroup(organizationId, collectionName, server);
+                    MoveRdsServerToTenantOU(server.Name, organizationId);
                 }
 
                 ActiveDirectoryUtils.DeleteADObject(GetComputerGroupPath(organizationId, collectionName));
                 ActiveDirectoryUtils.DeleteADObject(GetUsersGroupPath(organizationId, collectionName));
-                ActiveDirectoryUtils.DeleteADObject(GetGroupPath(organizationId, collectionName, GetLocalAdminsGroupName(collectionName)));                
+                ActiveDirectoryUtils.DeleteADObject(GetGroupPath(organizationId, collectionName, GetLocalAdminsGroupName(collectionName)));
+                ActiveDirectoryUtils.DeleteADObject(GetCollectionOUPath(organizationId, string.Format("{0}-OU", collectionName)));
             }
             catch (Exception e)
             {
@@ -624,6 +645,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 RemoveGroupFromLocalAdmin(server.FqdName, server.Name, GetLocalAdminsGroupName(collectionName), runSpace);
                 RemoveComputerFromCollectionAdComputerGroup(organizationId, collectionName, server);
+                MoveRdsServerToTenantOU(server.Name, organizationId);
             }
             finally
             {
@@ -1092,6 +1114,186 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         
         #endregion
 
+        #region GPO   
+     
+        public void ApplyGPO(string collectionName, RdsServerSettings serverSettings)
+        {
+            string administratorsGpo = string.Format("{0}-administrators", collectionName);
+            string usersGpo = string.Format("{0}-users", collectionName);
+            Runspace runspace = null;            
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                RemoveRegistryValue(runspace, ScreenSaverGpoKey, administratorsGpo);
+                RemoveRegistryValue(runspace, ScreenSaverGpoKey, usersGpo);                
+                RemoveRegistryValue(runspace, RemoveRestartGpoKey, administratorsGpo);
+                RemoveRegistryValue(runspace, RemoveRestartGpoKey, usersGpo);
+                RemoveRegistryValue(runspace, DisableTaskManagerGpoKey, administratorsGpo);
+                RemoveRegistryValue(runspace, DisableTaskManagerGpoKey, usersGpo);                
+
+                var setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.SCREEN_SAVER_DISABLED));
+                SetRegistryValue(setting, runspace, ScreenSaverGpoKey, administratorsGpo, usersGpo, ScreenSaverValueName, "0", "string");                
+
+                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_SHUTDOWN_RESTART));
+                SetRegistryValue(setting, runspace, RemoveRestartGpoKey, administratorsGpo, usersGpo, RemoveRestartGpoValueName, "1", "DWord");                                
+
+                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_RUN_COMMAND));
+                SetRegistryValue(setting, runspace, RemoveRunGpoKey, administratorsGpo, usersGpo, RemoveRunGpoValueName, "1", "DWord");
+
+                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.DISABLE_TASK_MANAGER));
+                SetRegistryValue(setting, runspace, DisableTaskManagerGpoKey, administratorsGpo, usersGpo, DisableTaskManagerGpoValueName, "1", "DWord");
+
+                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.HIDE_C_DRIVE));
+                SetRegistryValue(setting, runspace, HideCDriveGpoKey, administratorsGpo, usersGpo, HideCDriveGpoValueName, "4", "DWord");                
+                
+                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.LOCK_SCREEN_TIMEOUT));
+                double result;
+
+                if (!string.IsNullOrEmpty(setting.PropertyValue) && double.TryParse(setting.PropertyValue, out result))
+                {                    
+                    SetRegistryValue(setting, runspace, ScreenSaverTimeoutGpoKey, administratorsGpo, usersGpo, ScreenSaverTimeoutValueName, setting.PropertyValue, "string");                                    
+                }
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+        }     
+   
+        private void RemoveRegistryValue(Runspace runspace, string key, string gpoName)
+        {
+            Command cmd = new Command("Remove-GPRegistryValue");
+            cmd.Parameters.Add("Name", gpoName);
+            cmd.Parameters.Add("Key", string.Format("\"{0}\"", key));
+
+            Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+        }
+
+        private void SetRegistryValue(RdsServerSetting setting, Runspace runspace, string key, string administratorsGpo, string usersGpo, string valueName, string value, string type)
+        {
+            if (setting.ApplyAdministrators)
+            {
+                SetRegistryValue(runspace, key, administratorsGpo, value, valueName, type);
+            }
+
+            if (setting.ApplyUsers)
+            {
+                SetRegistryValue(runspace, key, usersGpo, value, valueName, type);
+            }
+        }
+
+        private void SetRegistryValue(Runspace runspace, string key, string gpoName, string value, string valueName, string type)
+        {
+            Command cmd = new Command("Set-GPRegistryValue");
+            cmd.Parameters.Add("Name", gpoName);
+            cmd.Parameters.Add("Key", string.Format("\"{0}\"", key));
+            cmd.Parameters.Add("Value", value);
+            cmd.Parameters.Add("ValueName", valueName);
+            cmd.Parameters.Add("Type", type);
+
+            Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+        }
+
+        private string CreatePolicy(Runspace runspace, string organizationId, string gpoName, DirectoryEntry entry, string collectionName)
+        {
+            string gpoId = GetPolicyId(runspace, gpoName);
+
+            if (string.IsNullOrEmpty(gpoId))
+            {
+                gpoId = CreateAndLinkPolicy(runspace, gpoName, organizationId, collectionName);
+                SetPolicyPermissions(runspace, gpoName, entry);
+            }
+
+            return gpoId;
+        }
+
+        private void DeleteGpo(Runspace runspace, string gpoName)
+        {
+            Command cmd = new Command("Remove-GPO");
+            cmd.Parameters.Add("Name", gpoName);
+
+            Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+        }
+
+        private void SetPolicyPermissions(Runspace runspace, string gpoName, DirectoryEntry entry)
+        {
+            var scripts = new List<string>
+            {
+                string.Format("Set-GPPermissions -Name {0} -Replace -PermissionLevel None -TargetName 'Authenticated Users' -TargetType group", gpoName),
+                string.Format("Set-GPPermissions -Name {0} -PermissionLevel gpoapply -TargetName {1} -TargetType group", gpoName, string.Format("'{0}'", ActiveDirectoryUtils.GetADObjectProperty(entry, "sAMAccountName").ToString()))
+            };
+
+            object[] errors = null;
+            ExecuteRemoteShellCommand(runspace, PrimaryDomainController, scripts, out errors);
+        }
+
+        private string CreateAndLinkPolicy(Runspace runspace, string gpoName, string organizationId, string collectionName)
+        {
+            string gpoId = null;
+
+            try
+            {
+                var entry = new DirectoryEntry(GetCollectionOUPath(organizationId, string.Format("{0}-OU", collectionName)));
+                var distinguishedName = string.Format("\"{0}\"", ActiveDirectoryUtils.GetADObjectProperty(entry, "DistinguishedName"));
+
+                Command cmd = new Command("New-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+
+                if (result != null && result.Count > 0)
+                {
+                    PSObject gpo = result[0];
+                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
+
+                }
+
+                cmd = new Command("New-GPLink");
+                cmd.Parameters.Add("Name", gpoName);
+                cmd.Parameters.Add("Target", distinguishedName);
+
+                ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+            }
+            catch (Exception)
+            {
+                gpoId = null;
+                throw;
+            }
+
+            return gpoId;
+        }
+
+        private string GetPolicyId(Runspace runspace, string gpoName)
+        {
+            string gpoId = null;
+
+            try
+            {
+                Command cmd = new Command("Get-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+
+                if (result != null && result.Count > 0)
+                {
+                    PSObject gpo = result[0];
+                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
+                }
+            }
+            catch (Exception)
+            {
+                gpoId = null;
+
+                throw;
+            }
+
+            return gpoId;
+        }
+
+        #endregion
+
         #region RDS Help Desk
 
         private string GetHelpDeskGroupPath(string groupName)
@@ -1463,6 +1665,34 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             } 
         }
 
+        public void MoveSessionHostToCollectionOU(string hostName, string collectionName, string organizationId)
+        {
+            if (!string.IsNullOrEmpty(ComputersRootOU))
+            {
+                CheckOrCreateComputersRoot(GetComputersRootPath());
+            }
+
+            var computerObject = GetComputerObject(hostName);
+            string collectionOUName = string.Format("{0}-OU", collectionName);
+            string collectionOUPath = GetCollectionOUPath(organizationId, collectionOUName);
+
+            if (!ActiveDirectoryUtils.AdObjectExists(collectionOUPath))
+            {
+                ActiveDirectoryUtils.CreateOrganizationalUnit(collectionOUName, GetOrganizationPath(organizationId));
+            }
+
+            if (computerObject != null)
+            {
+                var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(computerObject, "sAMAccountName");
+
+                if (!ActiveDirectoryUtils.IsComputerInGroup(samName, collectionOUName))
+                {
+                    DirectoryEntry group = new DirectoryEntry(collectionOUPath);
+                    computerObject.MoveTo(group);
+                }
+            }
+        }
+
         public void MoveRdsServerToTenantOU(string hostName, string organizationId)
         {
             var tenantComputerGroupPath = GetTenantComputerGroupPath(organizationId);
@@ -1760,6 +1990,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             AppendProtocol(sb);
             AppendDomainController(sb);
             AppendCNPath(sb, groupName);
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
+
+        private string GetCollectionOUPath(string organizationId, string collectionName)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            AppendProtocol(sb);
+            AppendDomainController(sb);
+            AppendOUPath(sb, collectionName);
             AppendOUPath(sb, organizationId);
             AppendOUPath(sb, RootOU);
             AppendDomainPath(sb, RootDomain);

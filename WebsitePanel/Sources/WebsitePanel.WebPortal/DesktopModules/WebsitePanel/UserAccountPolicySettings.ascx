@@ -63,6 +63,10 @@
             <asp:HyperLink ID="lnkVpsPolicy" runat="server" meta:resourcekey="lnkVpsPolicy"
                     Text="Virtual Private Servers Policy" NavigateUrl='<%# GetSettingsLink("VpsPolicy", "SettingsVpsPolicy") %>'></asp:HyperLink>
         </li>
+        <li>
+            <asp:HyperLink ID="lnkRdsPolicy" runat="server" meta:resourcekey="lnkRdsPolicy"
+                    Text="Remote Desktop Servers Policy" NavigateUrl='<%# GetSettingsLink("RdsPolicy", "SettingsRdsPolicy") %>'></asp:HyperLink>
+        </li>
     </ul>
 </div>
 <div class="FormFooter">

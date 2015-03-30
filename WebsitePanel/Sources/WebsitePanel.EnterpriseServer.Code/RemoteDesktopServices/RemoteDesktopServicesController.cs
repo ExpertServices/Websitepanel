@@ -45,6 +45,7 @@ using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Providers.Web;
 using System.Net.Mail;
 using System.Collections;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -318,6 +319,82 @@ namespace WebsitePanel.EnterpriseServer
         public static int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
         {
             return SendRdsSetupLetterInternal(itemId, accountId, to, cc);
+        }
+
+        public static RdsServerSettings GetRdsServerSettings(int serverId, string settingsName)
+        {
+            return GetRdsServerSettingsInternal(serverId, settingsName);
+        }              
+
+        public static int UpdateRdsServerSettings(int serverId, string settingsName, RdsServerSettings settings)
+        {
+            return UpdateRdsServerSettingsInternal(serverId, settingsName, settings);
+        }
+
+        private static RdsServerSettings GetRdsServerSettingsInternal(int serverId, string settingsName)
+        {
+            IDataReader reader = DataProvider.GetRdsServerSettings(serverId, settingsName);
+
+            var settings = new RdsServerSettings();
+            settings.ServerId = serverId;
+            settings.SettingsName = settingsName;
+
+            while (reader.Read())
+            {
+                settings.Settings.Add(new RdsServerSetting
+                {
+                    PropertyName = (string)reader["PropertyName"],
+                    PropertyValue = (string)reader["PropertyValue"],
+                    ApplyAdministrators = Convert.ToBoolean(reader["ApplyAdministrators"]),
+                    ApplyUsers = Convert.ToBoolean(reader["ApplyUsers"])
+                });                
+            }
+
+            reader.Close();
+
+            return settings;
+        }  
+
+        private static int UpdateRdsServerSettingsInternal(int serverId, string settingsName, RdsServerSettings settings)
+        {
+            TaskManager.StartTask("REMOTE_DESKTOP_SERVICES", "UPDATE_SETTINGS");
+
+            try
+            {                
+                var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(serverId));
+                var rds = GetRemoteDesktopServices(GetRdsServiceId(collection.ItemId));
+                rds.ApplyGPO(collection.Name, settings);
+
+                XmlDocument doc = new XmlDocument();
+                XmlElement nodeProps = doc.CreateElement("properties");
+
+                if (settings != null)
+                {
+                    foreach (var setting in settings.Settings)
+                    {
+                        XmlElement nodeProp = doc.CreateElement("property");
+                        nodeProp.SetAttribute("name", setting.PropertyName);
+                        nodeProp.SetAttribute("value", setting.PropertyValue);
+                        nodeProp.SetAttribute("applyUsers", setting.ApplyUsers ? "1" : "0");
+                        nodeProp.SetAttribute("applyAdministrators", setting.ApplyAdministrators ? "1" : "0");
+                        nodeProps.AppendChild(nodeProp);
+                    }
+                }
+
+                string xml = nodeProps.OuterXml;                
+
+                DataProvider.UpdateRdsServerSettings(serverId, settingsName, xml);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
         }
 
         private static string GetRdsSetupLetterInternal(int itemId, int? accountId)
@@ -670,7 +747,8 @@ namespace WebsitePanel.EnterpriseServer
                     AuthenticateUsingNLA = true
                 };                
 
-                rds.CreateCollection(org.OrganizationId, collection);                
+                rds.CreateCollection(org.OrganizationId, collection);
+                rds.ApplyGPO(collection.Name, GetDefaultGpoSettings());
                 collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);                
                 
                 collection.Settings.RdsCollectionId = collection.Id;
@@ -843,6 +921,7 @@ namespace WebsitePanel.EnterpriseServer
                 var servers = ObjectUtils.CreateListFromDataReader<RdsServer>(DataProvider.GetRDSServersByCollectionId(collection.Id)).ToArray();
                 rds.RemoveCollection(org.OrganizationId, collection.Name, servers);
 
+                DataProvider.DeleteRDSServerSettings(collection.Id);
                 DataProvider.DeleteRDSCollection(collection.Id);
             }
             catch (Exception ex)
@@ -1279,7 +1358,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
 
-                RdsServer rdsServer = GetRdsServer(serverId);
+                RdsServer rdsServer = GetRdsServer(serverId);                
                 rds.MoveRdsServerToTenantOU(rdsServer.FqdName, org.OrganizationId);
                 DataProvider.AddRDSServerToOrganization(itemId, serverId);
             }
@@ -1948,6 +2027,78 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return PackageController.EvaluateTemplate(template, items);
+        }
+
+        private static RdsServerSettings GetDefaultGpoSettings()
+        {
+            var defaultSettings = UserController.GetUserSettings(SecurityContext.User.UserId, UserSettings.RDS_POLICY);
+            var settings = new RdsServerSettings();
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.LOCK_SCREEN_TIMEOUT,
+                PropertyValue = defaultSettings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_VALUE],
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.REMOVE_RUN_COMMAND,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_RUN_COMMAND_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_RUN_COMMAND_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.REMOVE_POWERSHELL_COMMAND,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_POWERSHELL_COMMAND_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_POWERSHELL_COMMAND_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.HIDE_C_DRIVE,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.HIDE_C_DRIVE_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.HIDE_C_DRIVE_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.REMOVE_SHUTDOWN_RESTART,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_SHUTDOWN_RESTART_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.REMOVE_SHUTDOWN_RESTART_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.DISABLE_TASK_MANAGER,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.DISABLE_TASK_MANAGER_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.DISABLE_TASK_MANAGER_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.CHANGE_DESKTOP_DISABLED,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.CHANGE_DESKTOP_DISABLED_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.CHANGE_DESKTOP_DISABLED_USERS])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.SCREEN_SAVER_DISABLED,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.SCREEN_SAVER_DISABLED_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.SCREEN_SAVER_DISABLED_USERS])
+            });
+
+            return settings;
         }
     }
 }

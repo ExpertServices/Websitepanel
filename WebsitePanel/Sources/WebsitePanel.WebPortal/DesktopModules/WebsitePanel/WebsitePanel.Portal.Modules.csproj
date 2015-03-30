@@ -195,6 +195,7 @@
     <Compile Include="Code\ProviderControls\IDatabaseEditUserControl.cs" />
     <Compile Include="Code\ProviderControls\IFtpEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IHostingServiceProviderSettings.cs" />
+    <Compile Include="Code\ProviderControls\IVirtualMachineCreateControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditDomainControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditForwardingControl.cs" />
@@ -256,6 +257,20 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
       <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.cs">
+      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.designer.cs">
+      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
       <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
@@ -428,6 +443,13 @@
     <Compile Include="RDS\RDSCollections.ascx.designer.cs">
       <DependentUpon>RDSCollections.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\RDSEditUserExperience.ascx.cs">
+      <DependentUpon>RDSEditUserExperience.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditUserExperience.ascx.designer.cs">
+      <DependentUpon>RDSEditUserExperience.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\RDSLocalAdmins.ascx.cs">
       <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -516,6 +538,13 @@
     </Compile>
     <Compile Include="SettingsDomainLookupLetter.ascx.designer.cs">
       <DependentUpon>SettingsDomainLookupLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsRdsPolicy.ascx.cs">
+      <DependentUpon>SettingsRdsPolicy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsRdsPolicy.ascx.designer.cs">
+      <DependentUpon>SettingsRdsPolicy.ascx</DependentUpon>
     </Compile>
     <Compile Include="SettingsRdsSetupLetter.ascx.cs">
       <DependentUpon>SettingsRdsSetupLetter.ascx</DependentUpon>
@@ -4509,6 +4538,8 @@
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
+    <Content Include="VPS\ProviderControls\HyperV2012R2_Create.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
@@ -4558,6 +4589,13 @@
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsFolderPermissions.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsRdsPolicy.ascx.resx" />
+    <Content Include="VPS\ProviderControls\App_LocalResources\HyperV2012R2_Create.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\HyperV2012R2_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
@@ -4569,6 +4607,7 @@
     <Content Include="RDS\RDSEditCollectionUsers.ascx" />
     <Content Include="RDS\RDSCreateCollection.ascx" />
     <Content Include="RDS\RDSCollections.ascx" />
+    <Content Include="RDS\RDSEditUserExperience.ascx" />
     <Content Include="RDS\RDSLocalAdmins.ascx" />
     <Content Include="RDS\RDSSetupLetter.ascx" />
     <Content Include="RDS\RDSUserSessions.ascx" />
@@ -4596,6 +4635,7 @@
     <Content Include="RDS\App_LocalResources\RDSUserSessions.ascx.resx" />
     <Content Include="RDS\App_LocalResources\RDSLocalAdmins.ascx.resx" />
     <Content Include="RDS\App_LocalResources\RDSSetupLetter.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditUserExperience.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
@@ -4604,6 +4644,7 @@
     <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
     <Content Include="SettingsDomainExpirationLetter.ascx" />
     <Content Include="SettingsDomainLookupLetter.ascx" />
+    <Content Include="SettingsRdsPolicy.ascx" />
     <Content Include="SettingsRdsSetupLetter.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />

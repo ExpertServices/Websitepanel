@@ -138,6 +138,8 @@
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
     <Compile Include="RemoteDesktopServices\RdsServerDriveInfo.cs" />
     <Compile Include="RemoteDesktopServices\RdsServerInfo.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerSetting.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerSettings.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
     <Compile Include="RemoteDesktopServices\RdsUserSession.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />

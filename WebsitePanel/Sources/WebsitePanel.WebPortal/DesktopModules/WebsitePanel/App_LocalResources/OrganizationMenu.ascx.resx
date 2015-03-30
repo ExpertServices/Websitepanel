@@ -133,7 +133,7 @@
     <value>Contacts</value>
   </data>
   <data name="Text.CRMGroup" xml:space="preserve">
-    <value>CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="Text.CRMOrganization" xml:space="preserve">
     <value>CRM Organization</value>
@@ -202,7 +202,7 @@
     <value>Setup</value>
   </data>
   <data name="Text.SharePointFoundationServerGroup" xml:space="preserve">
-    <value>SharePoint Foundation Server</value>
+    <value>SharePoint Foundation</value>
   </data>
   <data name="Text.SharePointServerGroup" xml:space="preserve">
     <value>SharePoint Server</value>

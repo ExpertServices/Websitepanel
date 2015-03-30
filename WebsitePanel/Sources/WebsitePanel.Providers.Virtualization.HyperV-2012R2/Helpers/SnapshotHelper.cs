@@ -66,7 +66,7 @@ namespace WebsitePanel.Providers.Virtualization
             cmd.Parameters.Add("Name", snapshot.Name);
             if (includeChilds) cmd.Parameters.Add("IncludeAllChildSnapshots", true);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
     }
 }

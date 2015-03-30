@@ -39,6 +39,7 @@ using Microsoft.Web.Services3;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.RemoteDesktopServices;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -366,6 +367,18 @@ namespace WebsitePanel.EnterpriseServer
         public int SendRdsSetupLetter(int itemId, int? accountId, string to, string cc)
         {
             return RemoteDesktopServicesController.SendRdsSetupLetter(itemId, accountId, to, cc);
+        }
+
+        [WebMethod]
+        public RdsServerSettings GetRdsServerSettings(int serverId, string settingsName)
+        {
+            return RemoteDesktopServicesController.GetRdsServerSettings(serverId, settingsName);
+        }
+
+        [WebMethod]
+        public int UpdateRdsServerSettings(int serverId, string settingsName, RdsServerSettings settings)
+        {
+            return RemoteDesktopServicesController.UpdateRdsServerSettings(serverId, settingsName, settings);
         }
     }
 }

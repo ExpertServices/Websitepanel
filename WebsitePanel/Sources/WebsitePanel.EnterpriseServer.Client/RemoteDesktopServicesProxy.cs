@@ -18,9 +18,10 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Web.Services.Protocols;
     using System;
     using System.Diagnostics;
-    using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.Providers.RemoteDesktopServices;
     using WebsitePanel.Providers.Common;
+    using WebsitePanel.Providers.HostedSolution;
+    using WebsitePanel.EnterpriseServer.Base.RDS;
     
     
     /// <remarks/>
@@ -131,6 +132,10 @@ namespace WebsitePanel.EnterpriseServer {
         private System.Threading.SendOrPostCallback GetRdsSetupLetterOperationCompleted;
         
         private System.Threading.SendOrPostCallback SendRdsSetupLetterOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetRdsServerSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback UpdateRdsServerSettingsOperationCompleted;
         
         /// <remarks/>
         public esRemoteDesktopServices() {
@@ -289,6 +294,12 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event SendRdsSetupLetterCompletedEventHandler SendRdsSetupLetterCompleted;
+        
+        /// <remarks/>
+        public event GetRdsServerSettingsCompletedEventHandler GetRdsServerSettingsCompleted;
+        
+        /// <remarks/>
+        public event UpdateRdsServerSettingsCompletedEventHandler UpdateRdsServerSettingsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2570,6 +2581,97 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsServerSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RdsServerSettings GetRdsServerSettings(int serverId, string settingsName) {
+            object[] results = this.Invoke("GetRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName});
+            return ((RdsServerSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsServerSettings(int serverId, string settingsName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public RdsServerSettings EndGetRdsServerSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((RdsServerSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsServerSettingsAsync(int serverId, string settingsName) {
+            this.GetRdsServerSettingsAsync(serverId, settingsName, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsServerSettingsAsync(int serverId, string settingsName, object userState) {
+            if ((this.GetRdsServerSettingsOperationCompleted == null)) {
+                this.GetRdsServerSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsServerSettingsOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName}, this.GetRdsServerSettingsOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsServerSettingsOperationCompleted(object arg) {
+            if ((this.GetRdsServerSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsServerSettingsCompleted(this, new GetRdsServerSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/UpdateRdsServerSettings", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int UpdateRdsServerSettings(int serverId, string settingsName, RdsServerSettings settings) {
+            object[] results = this.Invoke("UpdateRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName,
+                        settings});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginUpdateRdsServerSettings(int serverId, string settingsName, RdsServerSettings settings, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("UpdateRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName,
+                        settings}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndUpdateRdsServerSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void UpdateRdsServerSettingsAsync(int serverId, string settingsName, RdsServerSettings settings) {
+            this.UpdateRdsServerSettingsAsync(serverId, settingsName, settings, null);
+        }
+        
+        /// <remarks/>
+        public void UpdateRdsServerSettingsAsync(int serverId, string settingsName, RdsServerSettings settings, object userState) {
+            if ((this.UpdateRdsServerSettingsOperationCompleted == null)) {
+                this.UpdateRdsServerSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateRdsServerSettingsOperationCompleted);
+            }
+            this.InvokeAsync("UpdateRdsServerSettings", new object[] {
+                        serverId,
+                        settingsName,
+                        settings}, this.UpdateRdsServerSettingsOperationCompleted, userState);
+        }
+        
+        private void OnUpdateRdsServerSettingsOperationCompleted(object arg) {
+            if ((this.UpdateRdsServerSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateRdsServerSettingsCompleted(this, new UpdateRdsServerSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -3888,6 +3990,58 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal SendRdsSetupLetterCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsServerSettingsCompletedEventHandler(object sender, GetRdsServerSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsServerSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsServerSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RdsServerSettings Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RdsServerSettings)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void UpdateRdsServerSettingsCompletedEventHandler(object sender, UpdateRdsServerSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class UpdateRdsServerSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal UpdateRdsServerSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

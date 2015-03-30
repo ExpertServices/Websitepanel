@@ -36,7 +36,7 @@ namespace WebsitePanel.Providers.Virtualization
 
             cmd.Parameters.Add("VMName", vmName);
 
-            Collection<PSObject> result = powerShell.Execute(cmd, false);
+            Collection<PSObject> result = powerShell.Execute(cmd, true);
 
             if (result != null && result.Count > 0)
             {
@@ -57,7 +57,7 @@ namespace WebsitePanel.Providers.Virtualization
             cmd.Parameters.Add("ControllerNumber", dvd.ControllerNumber);
             cmd.Parameters.Add("ControllerLocation", dvd.ControllerLocation);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
 
         public static void Update(PowerShellManager powerShell, VirtualMachine vm, bool dvdDriveShouldBeInstalled)
@@ -74,7 +74,7 @@ namespace WebsitePanel.Providers.Virtualization
 
             cmd.Parameters.Add("VMName", vmName);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
 
         public static void Remove(PowerShellManager powerShell, string vmName)
@@ -87,7 +87,7 @@ namespace WebsitePanel.Providers.Virtualization
             cmd.Parameters.Add("ControllerNumber", dvd.ControllerNumber);
             cmd.Parameters.Add("ControllerLocation", dvd.ControllerLocation);
 
-            powerShell.Execute(cmd, false);
+            powerShell.Execute(cmd, true);
         }
     }
 }

@@ -138,4 +138,7 @@
   <data name="Tab.RdsSetupLetter" xml:space="preserve">
     <value>Setup Instructions</value>
   </data>
+  <data name="Tab.UserExperience" xml:space="preserve">
+    <value>User Experience</value>
+  </data>
 </root>
