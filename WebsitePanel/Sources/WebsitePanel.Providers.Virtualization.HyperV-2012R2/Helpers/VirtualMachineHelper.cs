@@ -77,8 +77,8 @@ namespace WebsitePanel.Providers.Virtualization
 
             cmd.Parameters.Add("VMName", vm.Name);
             cmd.Parameters.Add("Count", cpuCores);
-            cmd.Parameters.Add("Maximum", Convert.ToInt64(cpuLimitSettings * 1000));
-            cmd.Parameters.Add("Reserve", Convert.ToInt64(cpuReserveSettings * 1000));
+            cmd.Parameters.Add("Maximum", cpuLimitSettings);
+            cmd.Parameters.Add("Reserve", cpuReserveSettings);
             cmd.Parameters.Add("RelativeWeight", cpuWeightSettings);
 
             powerShell.Execute(cmd, true);
