@@ -47,6 +47,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetEnterpriseFoldersOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetUserRootFoldersOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetEnterpriseFolderOperationCompleted;
         
         private System.Threading.SendOrPostCallback CreateEnterpriseFolderOperationCompleted;
@@ -127,6 +129,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetEnterpriseFoldersCompletedEventHandler GetEnterpriseFoldersCompleted;
+        
+        /// <remarks/>
+        public event GetUserRootFoldersCompletedEventHandler GetUserRootFoldersCompleted;
         
         /// <remarks/>
         public event GetEnterpriseFolderCompletedEventHandler GetEnterpriseFolderCompleted;
@@ -453,6 +458,56 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.GetEnterpriseFoldersCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetEnterpriseFoldersCompleted(this, new GetEnterpriseFoldersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetUserRootFolders", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemFile[] GetUserRootFolders(int itemId, int accountId, string userName, string displayName) {
+            object[] results = this.Invoke("GetUserRootFolders", new object[] {
+                        itemId,
+                        accountId,
+                        userName,
+                        displayName});
+            return ((SystemFile[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetUserRootFolders(int itemId, int accountId, string userName, string displayName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetUserRootFolders", new object[] {
+                        itemId,
+                        accountId,
+                        userName,
+                        displayName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public SystemFile[] EndGetUserRootFolders(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemFile[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetUserRootFoldersAsync(int itemId, int accountId, string userName, string displayName) {
+            this.GetUserRootFoldersAsync(itemId, accountId, userName, displayName, null);
+        }
+        
+        /// <remarks/>
+        public void GetUserRootFoldersAsync(int itemId, int accountId, string userName, string displayName, object userState) {
+            if ((this.GetUserRootFoldersOperationCompleted == null)) {
+                this.GetUserRootFoldersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetUserRootFoldersOperationCompleted);
+            }
+            this.InvokeAsync("GetUserRootFolders", new object[] {
+                        itemId,
+                        accountId,
+                        userName,
+                        displayName}, this.GetUserRootFoldersOperationCompleted, userState);
+        }
+        
+        private void OnGetUserRootFoldersOperationCompleted(object arg) {
+            if ((this.GetUserRootFoldersCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetUserRootFoldersCompleted(this, new GetUserRootFoldersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1920,6 +1975,32 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal GetEnterpriseFoldersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SystemFile[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemFile[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetUserRootFoldersCompletedEventHandler(object sender, GetUserRootFoldersCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetUserRootFoldersCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetUserRootFoldersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

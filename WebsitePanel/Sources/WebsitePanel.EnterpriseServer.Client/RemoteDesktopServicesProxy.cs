@@ -18,10 +18,10 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Web.Services.Protocols;
     using System;
     using System.Diagnostics;
-    using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.Providers.RemoteDesktopServices;
-    using WebsitePanel.EnterpriseServer.Base.RDS;
     using WebsitePanel.Providers.Common;
+    using WebsitePanel.Providers.HostedSolution;
+    using WebsitePanel.EnterpriseServer.Base.RDS;
     
     
     /// <remarks/>

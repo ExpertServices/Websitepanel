@@ -10,7 +10,17 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
     public class RdsServerSettings
     {
         private List<RdsServerSetting> settings = null;
-        
+
+        public const string LOCK_SCREEN_TIMEOUT = "LockScreenTimeout";        
+        public const string REMOVE_RUN_COMMAND = "RemoveRunCommand";        
+        public const string REMOVE_POWERSHELL_COMMAND = "RemovePowershellCommand";        
+        public const string HIDE_C_DRIVE = "HideCDrive";        
+        public const string REMOVE_SHUTDOWN_RESTART = "RemoveShutdownRestart";        
+        public const string DISABLE_TASK_MANAGER = "DisableTaskManager";
+        public const string CHANGE_DESKTOP_DISABLED = "ChangingDesktopDisabled";        
+        public const string SCREEN_SAVER_DISABLED = "ScreenSaverDisabled";        
+        public const string DRIVE_SPACE_THRESHOLD = "DriveSpaceThreshold";
+
         public const string LOCK_SCREEN_TIMEOUT_VALUE = "LockScreenTimeoutValue";
         public const string LOCK_SCREEN_TIMEOUT_ADMINISTRATORS = "LockScreenTimeoutAdministrators";
         public const string LOCK_SCREEN_TIMEOUT_USERS = "LockScreenTimeoutUsers";

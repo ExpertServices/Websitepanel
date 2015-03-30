@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
@@ -80,5 +81,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         void RemoveRdsServerFromTenantOU(string hostName, string organizationId);
         void InstallCertificate(byte[] certificate, string password, List<string> hostNames);
         void MoveSessionHostToRdsOU(string hostName);
+        void ApplyGPO(string collectionName, RdsServerSettings serverSettings);
     }
 }

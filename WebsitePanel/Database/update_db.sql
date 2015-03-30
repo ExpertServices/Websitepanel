@@ -9371,6 +9371,17 @@ AS
 	WHERE RDSServerId = @ServerId AND SettingsName = @SettingsName			
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSServerSettings')
+DROP PROCEDURE DeleteRDSServerSettings
+GO
+CREATE PROCEDURE DeleteRDSServerSettings
+(
+	@ServerId int
+)
+AS
+	DELETE FROM RDSServerSettings WHERE RDSServerId = @ServerId
+GO
+
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSServerSettings')
 DROP PROCEDURE UpdateRDSServerSettings

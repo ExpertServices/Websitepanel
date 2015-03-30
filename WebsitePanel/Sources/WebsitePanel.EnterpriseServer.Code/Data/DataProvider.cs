@@ -4939,6 +4939,16 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void DeleteRDSServerSettings(int serverId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteRDSServerSettings",
+                new SqlParameter("@ServerId", serverId)
+            );
+        }
+
         public static void DeleteRDSCollection(int id)
         {
             SqlHelper.ExecuteNonQuery(

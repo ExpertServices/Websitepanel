@@ -43,6 +43,7 @@ using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 
 namespace WebsitePanel.Server
 {
@@ -659,6 +660,22 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' MoveSessionHostToRdsOU", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ApplyGPO(string collectionName, RdsServerSettings serverSettings)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ApplyGPO", ProviderSettings.ProviderName);
+                RDSProvider.ApplyGPO(collectionName, serverSettings);
+                Log.WriteEnd("'{0}' ApplyGPO", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ApplyGPO", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
