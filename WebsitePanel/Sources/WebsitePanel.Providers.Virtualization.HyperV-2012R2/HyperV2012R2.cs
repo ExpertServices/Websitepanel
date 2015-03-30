@@ -509,8 +509,10 @@ namespace WebsitePanel.Providers.Virtualization
             {
                 NetworkAdapterHelper.Delete(PowerShell, vm.Name, networkAdapter);
 
-                if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
-                    DeleteSwitch(networkAdapter.SwitchName);
+                // If more than 1 VM are assigned to the same switch, deleting the virtual machine also deletes the switch which takes other VM instances off line
+                // There may be a reason for this that I am not aware of?
+                //if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
+                    //DeleteSwitch(networkAdapter.SwitchName);
             }
 
             Command cmdSet = new Command("Remove-VM");
