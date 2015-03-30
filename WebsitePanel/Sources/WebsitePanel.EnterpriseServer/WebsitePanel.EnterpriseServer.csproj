@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Ionic.Zip.Reduced.dll" />
+    <Content Include="bin\IPAddressRange.dll" />
     <Content Include="bin\Microsoft.Web.Services3.dll" />
     <Content Include="bin\WebsitePanel.Common.Utils.dll" />
     <Content Include="bin\WebsitePanel.Common.Utils.pdb" />
@@ -117,6 +118,7 @@
     <Content Include="bin\WebsitePanel.Templates.pdb" />
     <Content Include="bin\WebsitePanel.Whois.dll" />
     <Content Include="bin\WebsitePanel.Whois.pdb" />
+    <Content Include="bin\WhoisClient.dll" />
     <Content Include="esEnterpriseStorage.asmx" />
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
