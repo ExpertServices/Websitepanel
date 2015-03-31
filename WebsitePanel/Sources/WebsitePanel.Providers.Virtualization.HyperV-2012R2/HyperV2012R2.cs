@@ -152,7 +152,10 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.Name = result[0].GetProperty("Name").ToString();
                     vm.State = result[0].GetEnum<VirtualMachineState>("State");
                     vm.CpuUsage = ConvertNullableToInt32(result[0].GetProperty("CpuUsage"));
-                    vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
+                    // This does not truly give the RAM usage, only the memory assigned to the VPS
+                    // Lets handle detection of total memory and usage else where
+                    //vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
+                    vm.RamSize = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryStartup")) / Constants.Size1M);
                     vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
                     vm.Status = result[0].GetProperty("Status").ToString();
                     vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
@@ -191,6 +194,38 @@ namespace WebsitePanel.Providers.Virtualization
 
                         // network adapters
                         vm.Adapters = NetworkAdapterHelper.Get(PowerShell, vm.Name);
+                    }
+                    else
+                    {
+                        // Use the WebsitePanel VMConfig Windows service to get the RAM usage as well as the HDD usage / sizes
+                        List<KvpExchangeDataItem> vmKvps = GetKVPItems(vmId);
+                        foreach (KvpExchangeDataItem vmKvp in vmKvps)
+                        {
+                            // RAM
+                            if (vmKvp.Name == Constants.KVP_RAM_SUMMARY_KEY)
+                            {
+                                string[] ram = vmKvp.Data.Split(':');
+                                int freeRam = Int32.Parse(ram[0]);
+                                int availRam = Int32.Parse(ram[1]);
+
+                                vm.RamUsage = availRam - freeRam;
+                            }
+
+                            // HDD
+                            if (vmKvp.Name == Constants.KVP_HDD_SUMMARY_KEY)
+                            {
+                                string[] disksArray = vmKvp.Data.Split(';');
+                                vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
+                                for (int i = 0; i < disksArray.Length; i++)
+                                {
+                                    string[] disk = disksArray[i].Split(':');
+                                    vm.HddLogicalDisks[i] = new LogicalDisk();
+                                    vm.HddLogicalDisks[i].DriveLetter = disk[0];
+                                    vm.HddLogicalDisks[i].FreeSpace = Int32.Parse(disk[1]);
+                                    vm.HddLogicalDisks[i].Size = Int32.Parse(disk[2]);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -504,19 +539,21 @@ namespace WebsitePanel.Providers.Virtualization
             if (vm.State != VirtualMachineState.Saved && vm.State != VirtualMachineState.Off)
                 throw new Exception("The virtual computer system must be in the powered off or saved state prior to calling Destroy method.");
 
-            // Delete network adapters and network switchesw
+            // Delete network adapters and network switches
             foreach (var networkAdapter in vm.Adapters)
             {
                 NetworkAdapterHelper.Delete(PowerShell, vm.Name, networkAdapter);
 
-                if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
-                    DeleteSwitch(networkAdapter.SwitchName);
+                // If more than 1 VM are assigned to the same switch, deleting the virtual machine also deletes the switch which takes other VM instances off line
+                // There may be a reason for this that I am not aware of?
+                //if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
+                    //DeleteSwitch(networkAdapter.SwitchName);
             }
 
             Command cmdSet = new Command("Remove-VM");
             cmdSet.Parameters.Add("Name", vm.Name);
             cmdSet.Parameters.Add("Force");
-            PowerShell.Execute(cmdSet, false, true);
+            PowerShell.Execute(cmdSet, true, true);
 
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
         }
@@ -782,10 +819,11 @@ namespace WebsitePanel.Providers.Virtualization
                 
                 Command cmd = new Command("Get-VMSwitch");
 
-                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                // Not needed as the PowerShellManager adds the computer name
+                //if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
                 if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                Collection<PSObject> result = PowerShell.Execute(cmd, false, true);
+                Collection<PSObject> result = PowerShell.Execute(cmd, true, true);
 
                 foreach (PSObject current in result)
                 {
