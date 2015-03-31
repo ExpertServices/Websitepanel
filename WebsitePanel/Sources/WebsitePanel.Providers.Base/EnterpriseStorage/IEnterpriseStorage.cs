@@ -39,6 +39,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
     public interface IEnterpriseStorage
     {
         SystemFile[] GetFolders(string organizationId, WebDavSetting[] settings);
+        SystemFile[] GetFoldersWithoutFrsm(string organizationId, WebDavSetting[] settings);
         SystemFile GetFolder(string organizationId, string folderName, WebDavSetting setting);
         void CreateFolder(string organizationId, string folder, WebDavSetting setting);
         SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting);
