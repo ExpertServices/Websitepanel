@@ -93,6 +93,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public SystemFile[] GetUserRootFolders(int itemId, int accountId, string userName, string displayName)
+        {
+            return EnterpriseStorageController.GetUserRootFolders(itemId, accountId, userName, displayName);
+        }
+
+        [WebMethod]
         public SystemFile GetEnterpriseFolder(int itemId, string folderName)
         {
             return EnterpriseStorageController.GetFolder(itemId, folderName);

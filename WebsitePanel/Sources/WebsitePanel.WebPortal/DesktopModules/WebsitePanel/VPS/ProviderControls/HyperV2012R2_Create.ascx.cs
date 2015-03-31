@@ -26,16 +26,26 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System;
+using WebsitePanel.Providers.Virtualization;
 
-namespace WebsitePanel.Providers.Virtualization
+namespace WebsitePanel.Portal.ProviderControls
 {
-    public class MountedDiskInfo
+    public partial class HyperV2012R2_Create : WebsitePanelControlBase, IVirtualMachineCreateControl
     {
-        public int DiskNumber { get; set; }
-        public string DiskAddress { get; set; }
-        public string[] DiskVolumes { get; set; }
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
+
+        public void BindItem(VirtualMachine item)
+        {
+            var generation = item.Generation > 1 ? item.Generation : 1;
+            ddlGeneration.SelectedValue = generation.ToString();
+        }
+
+        public void SaveItem(VirtualMachine item)
+        {
+            item.Generation = Convert.ToInt32(ddlGeneration.SelectedValue);
+        }
     }
 }
