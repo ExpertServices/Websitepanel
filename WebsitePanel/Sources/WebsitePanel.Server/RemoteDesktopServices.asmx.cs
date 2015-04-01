@@ -665,17 +665,33 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void ApplyGPO(string collectionName, RdsServerSettings serverSettings)
+        public void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings)
         {
             try
             {
                 Log.WriteStart("'{0}' ApplyGPO", ProviderSettings.ProviderName);
-                RDSProvider.ApplyGPO(collectionName, serverSettings);
+                RDSProvider.ApplyGPO(organizationId, collectionName, serverSettings);
                 Log.WriteEnd("'{0}' ApplyGPO", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' ApplyGPO", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ShadowSession(string sessionId, bool control)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShadowSession", ProviderSettings.ProviderName);
+                RDSProvider.ShadowSession(sessionId, control);
+                Log.WriteEnd("'{0}' ShadowSession", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShadowSession", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

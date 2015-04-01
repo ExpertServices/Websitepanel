@@ -38,7 +38,13 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
         public const string CHANGE_DESKTOP_DISABLED_USERS = "ChangingDesktopDisabledUsers";
         public const string SCREEN_SAVER_DISABLED_ADMINISTRATORS = "ScreenSaverDisabledAdministrators";
         public const string SCREEN_SAVER_DISABLED_USERS = "ScreenSaverDisabledUsers";
-        public const string DRIVE_SPACE_THRESHOLD_VALUE = "DriveSpaceThresholdValue";        
+        public const string DRIVE_SPACE_THRESHOLD_VALUE = "DriveSpaceThresholdValue";
+        public const string RDS_VIEW_WITHOUT_PERMISSION = "RDSViewWithoutPermission";
+        public const string RDS_VIEW_WITHOUT_PERMISSION_ADMINISTRATORS = "RDSViewWithoutPermissionAdministrators";
+        public const string RDS_VIEW_WITHOUT_PERMISSION_Users = "RDSViewWithoutPermissionUsers";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION = "RDSControlWithoutPermission";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS = "RDSControlWithoutPermissionAdministrators";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION_Users = "RDSControlWithoutPermissionUsers";
 
         public string SettingsName { get; set; }
         public int ServerId { get; set; }

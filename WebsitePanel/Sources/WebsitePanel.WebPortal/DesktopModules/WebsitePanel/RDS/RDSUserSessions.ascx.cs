@@ -44,6 +44,28 @@ namespace WebsitePanel.Portal.RDS
                     ShowErrorMessage("REMOTE_DESKTOP_SERVICES_LOG_OFF_USER", ex);
                 }
             }
+            else if (e.CommandName == "View")
+            {
+                try
+                {
+                    ES.Services.RDS.ShadowSession(PanelRequest.ItemID, e.CommandArgument.ToString(), false);                    
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage("REMOTE_DESKTOP_SERVICES_VIEW_SESSION", ex);
+                }
+            }
+            else if (e.CommandName == "Control")
+            {
+                try
+                {
+                    ES.Services.RDS.ShadowSession(PanelRequest.ItemID, e.CommandArgument.ToString(), true);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage("REMOTE_DESKTOP_SERVICES_CONTROL_SESSION", ex);
+                }
+            }
         }
 
         protected void btnSave_Click(object sender, EventArgs e)

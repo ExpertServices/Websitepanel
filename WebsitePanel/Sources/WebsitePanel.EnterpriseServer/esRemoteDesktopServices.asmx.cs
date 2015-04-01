@@ -380,5 +380,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             return RemoteDesktopServicesController.UpdateRdsServerSettings(serverId, settingsName, settings);
         }
+
+        [WebMethod]
+        public ResultObject ShadowSession(int itemId, string sessionId, bool control)
+        {
+            return RemoteDesktopServicesController.ShadowSession(itemId, sessionId, control);
+        }
     }
 }

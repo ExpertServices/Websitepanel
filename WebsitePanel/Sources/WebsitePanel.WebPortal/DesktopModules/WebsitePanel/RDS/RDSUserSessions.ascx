@@ -40,7 +40,7 @@
                                         OnRowCommand="gvRDSCollections_RowCommand" AllowPaging="True" AllowSorting="True">
                                         <Columns>                                            
                                             <asp:TemplateField meta:resourcekey="gvUserName" HeaderText="gvUserName">
-                                                <ItemStyle Width="30%" Wrap="false"/>
+                                                <ItemStyle Width="25%" Wrap="false"/>
                                                 <ItemTemplate>
                                                     <asp:Image ID="vipImage" runat="server" ImageUrl='<%# GetAccountImage(Convert.ToBoolean(Eval("IsVip"))) %>' ImageAlign="AbsMiddle"/>
                                                     <asp:Literal ID="litUserName" runat="server" Text='<%# Eval("UserName") %>'/>
@@ -48,15 +48,27 @@
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField meta:resourcekey="gvHostServer" HeaderText="gvHostServer">
-                                                <ItemStyle Width="30%" Wrap="false"/>
+                                                <ItemStyle Width="25%" Wrap="false"/>
                                                 <ItemTemplate>
                                                     <asp:Literal ID="litHostServer" runat="server" Text='<%# Eval("HostServer") %>'/>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField meta:resourcekey="gvSessionState" HeaderText="gvSessionState">
-                                                <ItemStyle Width="30%" Wrap="false"/>
+                                                <ItemStyle Width="25%" Wrap="false"/>
                                                 <ItemTemplate>
                                                     <asp:Literal ID="litSessionState" runat="server" Text='<%# Eval("SessionState") %>'/>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField>
+                                                <ItemTemplate>                                            
+                                                    <asp:LinkButton ID="lnkViewSession" runat="server" Text="View" CommandName="View" CommandArgument='<%# Eval("UnifiedSessionId") %>'
+                                                        meta:resourcekey="cmdViewSession"></asp:LinkButton>
+                                                </ItemTemplate>
+                                            </asp:TemplateField>
+                                            <asp:TemplateField>
+                                                <ItemTemplate>                                            
+                                                    <asp:LinkButton ID="lnkControlSession" runat="server" Text="Control" CommandName="Control" CommandArgument='<%# Eval("UnifiedSessionId") %>'
+                                                        meta:resourcekey="cmdControlSession"></asp:LinkButton>
                                                 </ItemTemplate>
                                             </asp:TemplateField>
                                             <asp:TemplateField>

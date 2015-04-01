@@ -104,6 +104,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback ApplyGPOOperationCompleted;
         
+        private System.Threading.SendOrPostCallback ShadowSessionOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -219,6 +221,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event ApplyGPOCompletedEventHandler ApplyGPOCompleted;
+        
+        /// <remarks/>
+        public event ShadowSessionCompletedEventHandler ShadowSessionCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1791,15 +1796,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ApplyGPO", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void ApplyGPO(string collectionName, RdsServerSettings serverSettings) {
+        public void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings) {
             this.Invoke("ApplyGPO", new object[] {
+                        organizationId,
                         collectionName,
                         serverSettings});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginApplyGPO(string collectionName, RdsServerSettings serverSettings, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("ApplyGPO", new object[] {
+                        organizationId,
                         collectionName,
                         serverSettings}, callback, asyncState);
         }
@@ -1810,16 +1817,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void ApplyGPOAsync(string collectionName, RdsServerSettings serverSettings) {
-            this.ApplyGPOAsync(collectionName, serverSettings, null);
+        public void ApplyGPOAsync(string organizationId, string collectionName, RdsServerSettings serverSettings) {
+            this.ApplyGPOAsync(organizationId, collectionName, serverSettings, null);
         }
         
         /// <remarks/>
-        public void ApplyGPOAsync(string collectionName, RdsServerSettings serverSettings, object userState) {
+        public void ApplyGPOAsync(string organizationId, string collectionName, RdsServerSettings serverSettings, object userState) {
             if ((this.ApplyGPOOperationCompleted == null)) {
                 this.ApplyGPOOperationCompleted = new System.Threading.SendOrPostCallback(this.OnApplyGPOOperationCompleted);
             }
             this.InvokeAsync("ApplyGPO", new object[] {
+                        organizationId,
                         collectionName,
                         serverSettings}, this.ApplyGPOOperationCompleted, userState);
         }
@@ -1828,6 +1836,49 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             if ((this.ApplyGPOCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.ApplyGPOCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShadowSession", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ShadowSession(string sessionId, bool control) {
+            this.Invoke("ShadowSession", new object[] {
+                        sessionId,
+                        control});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShadowSession(string sessionId, bool control, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShadowSession", new object[] {
+                        sessionId,
+                        control}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndShadowSession(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void ShadowSessionAsync(string sessionId, bool control) {
+            this.ShadowSessionAsync(sessionId, control, null);
+        }
+        
+        /// <remarks/>
+        public void ShadowSessionAsync(string sessionId, bool control, object userState) {
+            if ((this.ShadowSessionOperationCompleted == null)) {
+                this.ShadowSessionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShadowSessionOperationCompleted);
+            }
+            this.InvokeAsync("ShadowSession", new object[] {
+                        sessionId,
+                        control}, this.ShadowSessionOperationCompleted, userState);
+        }
+        
+        private void OnShadowSessionOperationCompleted(object arg) {
+            if ((this.ShadowSessionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShadowSessionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -2468,4 +2519,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void ApplyGPOCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShadowSessionCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

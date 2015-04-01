@@ -81,6 +81,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         void RemoveRdsServerFromTenantOU(string hostName, string organizationId);
         void InstallCertificate(byte[] certificate, string password, List<string> hostNames);
         void MoveSessionHostToRdsOU(string hostName);
-        void ApplyGPO(string collectionName, RdsServerSettings serverSettings);
+        void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings);
+        void ShadowSession(string sessionId, bool control);
     }
 }

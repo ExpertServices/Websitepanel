@@ -9460,3 +9460,5 @@ BEGIN
 END
 
 GO
+
+UPDATE [dbo].[Quotas] SET GroupID = 45 WHERE QuotaName = 'EnterpriseStorage.DriveMaps'

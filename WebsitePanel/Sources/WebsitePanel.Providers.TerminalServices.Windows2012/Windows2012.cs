@@ -93,6 +93,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string DisableTaskManagerGpoValueName = "DisableTaskMgr";
         private const string HideCDriveGpoKey = @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer";
         private const string HideCDriveGpoValueName = "NoDrives";
+        private const string RDSSessionGpoKey = @"HKCU\Software\Policies\Microsoft\Windows NT\Terminal Services";
+        private const string RDSSessionGpoValueName = "Shadow";
 
         #endregion
 
@@ -371,6 +373,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 CreatePolicy(runSpace, organizationId, string.Format("{0}-administrators", collection.Name), new DirectoryEntry(GetGroupPath(organizationId, collection.Name, GetLocalAdminsGroupName(collection.Name))), collection.Name);
                 CreatePolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name)), collection.Name);
+                CreateHelpDeskPolicy(runSpace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), organizationId, collection.Name);
             }                   
             finally
             {
@@ -516,6 +519,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 DeleteGpo(runSpace, string.Format("{0}-administrators", collectionName));
                 DeleteGpo(runSpace, string.Format("{0}-users", collectionName));
+                DeleteHelpDeskPolicy(runSpace, collectionName);
                 var capPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdCap);
                 var rapPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdRap);
 
@@ -1116,7 +1120,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region GPO   
      
-        public void ApplyGPO(string collectionName, RdsServerSettings serverSettings)
+        public void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings)
         {
             string administratorsGpo = string.Format("{0}-administrators", collectionName);
             string usersGpo = string.Format("{0}-users", collectionName);
@@ -1126,6 +1130,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 runspace = OpenRunspace();
 
+                CreateHelpDeskPolicy(runspace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), organizationId, collectionName);
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, administratorsGpo);
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, usersGpo);                
                 RemoveRegistryValue(runspace, RemoveRestartGpoKey, administratorsGpo);
@@ -1133,34 +1138,73 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 RemoveRegistryValue(runspace, DisableTaskManagerGpoKey, administratorsGpo);
                 RemoveRegistryValue(runspace, DisableTaskManagerGpoKey, usersGpo);                
 
-                var setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.SCREEN_SAVER_DISABLED));
-                SetRegistryValue(setting, runspace, ScreenSaverGpoKey, administratorsGpo, usersGpo, ScreenSaverValueName, "0", "string");                
+                var setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.SCREEN_SAVER_DISABLED));
+                SetRegistryValue(setting, runspace, ScreenSaverGpoKey, administratorsGpo, usersGpo, ScreenSaverValueName, "0", "string");
 
-                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_SHUTDOWN_RESTART));
-                SetRegistryValue(setting, runspace, RemoveRestartGpoKey, administratorsGpo, usersGpo, RemoveRestartGpoValueName, "1", "DWord");                                
+                setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_SHUTDOWN_RESTART));
+                SetRegistryValue(setting, runspace, RemoveRestartGpoKey, administratorsGpo, usersGpo, RemoveRestartGpoValueName, "1", "DWord");
 
-                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_RUN_COMMAND));
+                setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.REMOVE_RUN_COMMAND));
                 SetRegistryValue(setting, runspace, RemoveRunGpoKey, administratorsGpo, usersGpo, RemoveRunGpoValueName, "1", "DWord");
 
-                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.DISABLE_TASK_MANAGER));
+                setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.DISABLE_TASK_MANAGER));
                 SetRegistryValue(setting, runspace, DisableTaskManagerGpoKey, administratorsGpo, usersGpo, DisableTaskManagerGpoValueName, "1", "DWord");
 
-                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.HIDE_C_DRIVE));
-                SetRegistryValue(setting, runspace, HideCDriveGpoKey, administratorsGpo, usersGpo, HideCDriveGpoValueName, "4", "DWord");                
-                
-                setting = serverSettings.Settings.First(s => s.PropertyName.Equals(RdsServerSettings.LOCK_SCREEN_TIMEOUT));
+                setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.HIDE_C_DRIVE));
+                SetRegistryValue(setting, runspace, HideCDriveGpoKey, administratorsGpo, usersGpo, HideCDriveGpoValueName, "4", "DWord");
+
+                setting = serverSettings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.LOCK_SCREEN_TIMEOUT));
                 double result;
 
-                if (!string.IsNullOrEmpty(setting.PropertyValue) && double.TryParse(setting.PropertyValue, out result))
+                if (setting != null && !string.IsNullOrEmpty(setting.PropertyValue) && double.TryParse(setting.PropertyValue, out result))
                 {                    
                     SetRegistryValue(setting, runspace, ScreenSaverTimeoutGpoKey, administratorsGpo, usersGpo, ScreenSaverTimeoutValueName, setting.PropertyValue, "string");                                    
                 }
+
+                SetRdsSessionHostPermissions(runspace, serverSettings, usersGpo, administratorsGpo);
             }
             finally
             {
                 CloseRunspace(runspace);
             }
-        }     
+        }
+
+        private void SetRdsSessionHostPermissions(Runspace runspace, RdsServerSettings settings, string usersGpo, string administratorsGpo)
+        {
+            var viewSetting = settings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION));
+            var controlSetting = settings.Settings.FirstOrDefault(s => s.PropertyName.Equals(RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION));
+
+            if (viewSetting == null || controlSetting == null)
+            {
+                return;
+            }
+
+            if (controlSetting.ApplyUsers)
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, usersGpo, "2", RDSSessionGpoValueName, "DWord");
+            }
+            else if (viewSetting.ApplyUsers)
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, usersGpo, "4", RDSSessionGpoValueName, "DWord");
+            }
+            else
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, usersGpo, "3", RDSSessionGpoValueName, "DWord");
+            }
+
+            if (controlSetting.ApplyAdministrators)
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, administratorsGpo, "2", RDSSessionGpoValueName, "DWord");
+            }
+            else if (viewSetting.ApplyAdministrators)
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, administratorsGpo, "4", RDSSessionGpoValueName, "DWord");
+            }
+            else
+            {
+                SetRegistryValue(runspace, RDSSessionGpoKey, administratorsGpo, "3", RDSSessionGpoValueName, "DWord");
+            }
+        }
    
         private void RemoveRegistryValue(Runspace runspace, string key, string gpoName)
         {
@@ -1173,6 +1217,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         private void SetRegistryValue(RdsServerSetting setting, Runspace runspace, string key, string administratorsGpo, string usersGpo, string valueName, string value, string type)
         {
+            if (setting == null)
+            {
+                return;
+            }
+
             if (setting.ApplyAdministrators)
             {
                 SetRegistryValue(runspace, key, administratorsGpo, value, valueName, type);
@@ -1196,6 +1245,19 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
         }
 
+        private void CreateHelpDeskPolicy(Runspace runspace, DirectoryEntry entry, string organizationId, string collectionName)
+        {
+            string gpoName = string.Format("{0}-HelpDesk", collectionName);
+            string gpoId = GetPolicyId(runspace, gpoName);
+
+            if (string.IsNullOrEmpty(gpoId))
+            {
+                gpoId = CreateAndLinkPolicy(runspace, gpoName, organizationId, collectionName);
+                SetPolicyPermissions(runspace, gpoName, entry);
+                SetRegistryValue(runspace, RDSSessionGpoKey, gpoName, "2", RDSSessionGpoValueName, "DWord");
+            }
+        }
+
         private string CreatePolicy(Runspace runspace, string organizationId, string gpoName, DirectoryEntry entry, string collectionName)
         {
             string gpoId = GetPolicyId(runspace, gpoName);
@@ -1207,6 +1269,12 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return gpoId;
+        }
+
+        private void DeleteHelpDeskPolicy(Runspace runspace, string collectionName)
+        {
+            string gpoName = string.Format("{0}-HelpDesk", collectionName);
+            DeleteGpo(runspace, gpoName);
         }
 
         private void DeleteGpo(Runspace runspace, string gpoName)
@@ -1235,7 +1303,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {
-                var entry = new DirectoryEntry(GetCollectionOUPath(organizationId, string.Format("{0}-OU", collectionName)));
+                var entry = new DirectoryEntry(GetOrganizationPath(organizationId));
                 var distinguishedName = string.Format("\"{0}\"", ActiveDirectoryUtils.GetADObjectProperty(entry, "DistinguishedName"));
 
                 Command cmd = new Command("New-GPO");
@@ -1290,6 +1358,32 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return gpoId;
+        }
+
+        #endregion
+
+        #region Shadow Session
+
+        public void ShadowSession(string sessionId, bool control)
+        {
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var scripts = new List<string>
+                {
+                    string.Format("mstsc /Shadow:{0}{1}", sessionId, control ? " /Control" : "")
+                };
+
+                object[] errors = null;
+                ExecuteShellCommand(runspace, scripts, out errors);
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
         }
 
         #endregion

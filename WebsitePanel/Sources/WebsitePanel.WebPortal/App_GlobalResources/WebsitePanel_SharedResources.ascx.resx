@@ -5702,6 +5702,12 @@
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
     <value>RDS User logging off error</value>
   </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_VIEW_SESSION" xml:space="preserve">
+    <value>View session error</value>
+  </data>
+    <data name="ERROR.REMOTE_DESKTOP_SERVICES_CONTROL_SESSION" xml:space="preserve">
+    <value>Control session error</value>
+  </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
     <value>Getting RDS User sessions error</value>
   </data>

@@ -45,45 +45,97 @@ namespace WebsitePanel.Portal.RDS
         private void BindSettings(RdsServerSettings settings)
         {
             var setting = GetServerSetting(settings, RdsServerSettings.LOCK_SCREEN_TIMEOUT);
-            ddTimeout.SelectedValue = setting.PropertyValue;
-            cbTimeoutAdministrators.Checked = setting.ApplyAdministrators;
-            cbTimeoutUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                ddTimeout.SelectedValue = setting.PropertyValue;
+                cbTimeoutAdministrators.Checked = setting.ApplyAdministrators;
+                cbTimeoutUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.REMOVE_RUN_COMMAND);
-            cbRunCommandAdministrators.Checked = setting.ApplyAdministrators;
-            cbRunCommandUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbRunCommandAdministrators.Checked = setting.ApplyAdministrators;
+                cbRunCommandUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.REMOVE_POWERSHELL_COMMAND);
-            cbPowershellAdministrators.Checked = setting.ApplyAdministrators;
-            cbPowershellUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbPowershellAdministrators.Checked = setting.ApplyAdministrators;
+                cbPowershellUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.HIDE_C_DRIVE);
-            cbHideCDriveAdministrators.Checked = setting.ApplyAdministrators;
-            cbHideCDriveUsers.Checked = setting.ApplyUsers;
 
+            if (setting != null)
+            {
+                cbHideCDriveAdministrators.Checked = setting.ApplyAdministrators;
+                cbHideCDriveUsers.Checked = setting.ApplyUsers;
+            }
+            
             setting = GetServerSetting(settings, RdsServerSettings.REMOVE_SHUTDOWN_RESTART);
-            cbShutdownAdministrators.Checked = setting.ApplyAdministrators;
-            cbShutdownUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbShutdownAdministrators.Checked = setting.ApplyAdministrators;
+                cbShutdownUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.DISABLE_TASK_MANAGER);
-            cbTaskManagerAdministrators.Checked = setting.ApplyAdministrators;
-            cbTaskManagerUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbTaskManagerAdministrators.Checked = setting.ApplyAdministrators;
+                cbTaskManagerUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.CHANGE_DESKTOP_DISABLED);
-            cbDesktopAdministrators.Checked = setting.ApplyAdministrators;
-            cbDesktopUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbDesktopAdministrators.Checked = setting.ApplyAdministrators;
+                cbDesktopUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.SCREEN_SAVER_DISABLED);
-            cbScreenSaverAdministrators.Checked = setting.ApplyAdministrators;
-            cbScreenSaverUsers.Checked = setting.ApplyUsers;
+
+            if (setting != null)
+            {
+                cbScreenSaverAdministrators.Checked = setting.ApplyAdministrators;
+                cbViewSessionUsers.Checked = setting.ApplyUsers;
+            }
+
+            setting = GetServerSetting(settings, RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION);
+
+            if (setting != null)
+            {
+                cbViewSessionAdministrators.Checked = setting.ApplyAdministrators;
+                cbScreenSaverUsers.Checked = setting.ApplyUsers;
+            }
+
+            setting = GetServerSetting(settings, RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION);
+
+            if (setting != null)
+            {
+                cbControlSessionAdministrators.Checked = setting.ApplyAdministrators;
+                cbControlSessionUsers.Checked = setting.ApplyUsers;
+            }
 
             setting = GetServerSetting(settings, RdsServerSettings.DRIVE_SPACE_THRESHOLD);
-            ddTreshold.SelectedValue = setting.PropertyValue;
+
+            if (setting != null)
+            {
+                ddTreshold.SelectedValue = setting.PropertyValue;
+            }
         }
 
         private RdsServerSetting GetServerSetting(RdsServerSettings settings, string propertyName)
         {
-            return settings.Settings.First(s => s.PropertyName.Equals(propertyName));
+            return settings.Settings.FirstOrDefault(s => s.PropertyName.Equals(propertyName));
         }
 
         private RdsServerSettings GetSettings()
@@ -162,6 +214,22 @@ namespace WebsitePanel.Portal.RDS
                 ApplyUsers = true
             });
 
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = cbViewSessionAdministrators.Checked,
+                ApplyUsers = cbViewSessionUsers.Checked
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = cbControlSessionAdministrators.Checked,
+                ApplyUsers = cbControlSessionUsers.Checked
+            });
+
             return settings;
         }
 
@@ -191,6 +259,11 @@ namespace WebsitePanel.Portal.RDS
 
             cbScreenSaverAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.SCREEN_SAVER_DISABLED_ADMINISTRATORS]);
             cbScreenSaverUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.SCREEN_SAVER_DISABLED_USERS]);
+
+            cbViewSessionAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_ADMINISTRATORS]);
+            cbViewSessionUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_Users]);
+            cbControlSessionAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS]);
+            cbControlSessionUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_Users]);
 
             ddTreshold.SelectedValue = settings[RdsServerSettings.DRIVE_SPACE_THRESHOLD_VALUE];
         }

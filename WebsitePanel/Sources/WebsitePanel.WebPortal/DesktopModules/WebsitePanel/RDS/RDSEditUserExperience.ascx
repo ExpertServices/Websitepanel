@@ -162,6 +162,34 @@
                         </table>
                         <br />
                     </asp:Panel>
+                    <wsp:CollapsiblePanel id="secViewSession" runat="server" TargetControlID="viewSessionPanel" meta:resourcekey="secViewSession" Text="View RDS Session without Users's Permission"/>
+                    <asp:Panel ID="viewSessionPanel" runat="server" Height="0" style="overflow:hidden;">
+                        <table>
+                            <tr>
+                                <td>
+                                    <asp:CheckBox runat="server" Text="Users" ID="cbViewSessionUsers" meta:resourcekey="cbUsers" Checked="false" />
+                                </td>
+                                <td>
+                                    <asp:CheckBox runat="server" Text="Administrators" meta:resourcekey="cbAdministrators" ID="cbViewSessionAdministrators" Checked="false" />
+                                </td>           
+                            </tr>        
+                        </table>
+                        <br />
+                    </asp:Panel>
+                    <wsp:CollapsiblePanel id="secControlSession" runat="server" TargetControlID="controlSessionPanel" meta:resourcekey="secControlSession" Text="Control RDS Session without Users's Permission"/>
+                    <asp:Panel ID="controlSessionPanel" runat="server" Height="0" style="overflow:hidden;">
+                        <table>
+                            <tr>
+                                <td>
+                                    <asp:CheckBox runat="server" Text="Users" ID="cbControlSessionUsers" meta:resourcekey="cbUsers" Checked="false" />
+                                </td>
+                                <td>
+                                    <asp:CheckBox runat="server" Text="Administrators" meta:resourcekey="cbAdministrators" ID="cbControlSessionAdministrators" Checked="false" />
+                                </td>           
+                            </tr>
+                        </table>
+                        <br />
+                    </asp:Panel>
                     <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SaveRDSCollection" 
                             OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
