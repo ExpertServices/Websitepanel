@@ -85,13 +85,13 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.Panel timeoutPanel;
         
         /// <summary>
-        /// txtTimeout control.
+        /// ddTimeout control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtTimeout;
+        protected global::System.Web.UI.WebControls.DropDownList ddTimeout;
         
         /// <summary>
         /// cbTimeoutUsers control.
@@ -382,13 +382,85 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.Panel driveSpacePanel;
         
         /// <summary>
-        /// txtThreshold control.
+        /// ddTreshold control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtThreshold;
+        protected global::System.Web.UI.WebControls.DropDownList ddTreshold;
+        
+        /// <summary>
+        /// secViewSession control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secViewSession;
+        
+        /// <summary>
+        /// viewSessionPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel viewSessionPanel;
+        
+        /// <summary>
+        /// cbViewSessionUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbViewSessionUsers;
+        
+        /// <summary>
+        /// cbViewSessionAdministrators control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbViewSessionAdministrators;
+        
+        /// <summary>
+        /// secControlSession control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secControlSession;
+        
+        /// <summary>
+        /// controlSessionPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel controlSessionPanel;
+        
+        /// <summary>
+        /// cbControlSessionUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbControlSessionUsers;
+        
+        /// <summary>
+        /// cbControlSessionAdministrators control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbControlSessionAdministrators;
         
         /// <summary>
         /// buttonPanel control.

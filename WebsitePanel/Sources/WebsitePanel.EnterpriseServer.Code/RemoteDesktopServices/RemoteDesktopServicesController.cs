@@ -331,6 +331,49 @@ namespace WebsitePanel.EnterpriseServer
             return UpdateRdsServerSettingsInternal(serverId, settingsName, settings);
         }
 
+        public static ResultObject ShadowSession(int itemId, string sessionId, bool control)
+        {
+            return ShadowSessionInternal(itemId, sessionId, control);
+        }
+
+        private static ResultObject ShadowSessionInternal(int itemId, string sessionId, bool control)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "SHADOW_RDS_SESSION");
+
+            try
+            {
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("SHADOW_RDS_SESSION", new NullReferenceException("Organization not found"));
+
+                    return result;
+                }
+
+                var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+                rds.ShadowSession(sessionId, control);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("REMOTE_DESKTOP_SERVICES_SHADOW_RDS_SESSION", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
         private static RdsServerSettings GetRdsServerSettingsInternal(int serverId, string settingsName)
         {
             IDataReader reader = DataProvider.GetRdsServerSettings(serverId, settingsName);
@@ -363,7 +406,8 @@ namespace WebsitePanel.EnterpriseServer
             {                
                 var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(serverId));
                 var rds = GetRemoteDesktopServices(GetRdsServiceId(collection.ItemId));
-                rds.ApplyGPO(collection.Name, settings);
+                Organization org = OrganizationController.GetOrganization(collection.ItemId);
+                rds.ApplyGPO(org.OrganizationId, collection.Name, settings);
 
                 XmlDocument doc = new XmlDocument();
                 XmlElement nodeProps = doc.CreateElement("properties");
@@ -748,7 +792,7 @@ namespace WebsitePanel.EnterpriseServer
                 };                
 
                 rds.CreateCollection(org.OrganizationId, collection);
-                rds.ApplyGPO(collection.Name, GetDefaultGpoSettings());
+                rds.ApplyGPO(org.OrganizationId, collection.Name, GetDefaultGpoSettings());
                 collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);                
                 
                 collection.Settings.RdsCollectionId = collection.Id;

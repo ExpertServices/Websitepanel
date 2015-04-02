@@ -39,6 +39,12 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
         public const string SCREEN_SAVER_DISABLED_ADMINISTRATORS = "ScreenSaverDisabledAdministrators";
         public const string SCREEN_SAVER_DISABLED_USERS = "ScreenSaverDisabledUsers";
         public const string DRIVE_SPACE_THRESHOLD_VALUE = "DriveSpaceThresholdValue";
+        public const string RDS_VIEW_WITHOUT_PERMISSION = "RDSViewWithoutPermission";
+        public const string RDS_VIEW_WITHOUT_PERMISSION_ADMINISTRATORS = "RDSViewWithoutPermissionAdministrators";
+        public const string RDS_VIEW_WITHOUT_PERMISSION_Users = "RDSViewWithoutPermissionUsers";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION = "RDSControlWithoutPermission";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS = "RDSControlWithoutPermissionAdministrators";
+        public const string RDS_CONTROL_WITHOUT_PERMISSION_Users = "RDSControlWithoutPermissionUsers";
 
         public string SettingsName { get; set; }
         public int ServerId { get; set; }
@@ -56,6 +62,22 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
             set
             {
                 settings = value;
+            }
+        }
+
+        public static List<KeyValuePair<string, string>> ScreenSaverTimeOuts
+        {
+            get
+            {
+                return new List<KeyValuePair<string, string>> {
+                    new KeyValuePair<string, string>("", "None"),
+                    new KeyValuePair<string, string>("10", "10"),
+                    new KeyValuePair<string, string>("20", "20"),
+                    new KeyValuePair<string, string>("30", "30"),
+                    new KeyValuePair<string, string>("40", "40"),
+                    new KeyValuePair<string, string>("50", "50"),
+                    new KeyValuePair<string, string>("60", "60")
+                };
             }
         }
     }

@@ -586,7 +586,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 var userGroups = OrganizationController.GetSecurityGroupsByMember(itemId, accountId);
 
-                foreach (var folder in es.GetFolders(org.OrganizationId, webDavSettings))
+                foreach (var folder in es.GetFoldersWithoutFrsm(org.OrganizationId, webDavSettings))
                 {
                     var permissions = ConvertToESPermission(itemId,folder.Rules);
 
