@@ -1135,6 +1135,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 runspace = OpenRunspace();
 
+                CreatePolicy(runspace, organizationId, string.Format("{0}-administrators", collectionName), new DirectoryEntry(GetGroupPath(organizationId, collectionName, GetLocalAdminsGroupName(collectionName))), collectionName);
+                CreatePolicy(runspace, organizationId, string.Format("{0}-users", collectionName), new DirectoryEntry(GetUsersGroupPath(organizationId, collectionName)), collectionName);
                 CreateHelpDeskPolicy(runspace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), organizationId, collectionName);
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, administratorsGpo);
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, usersGpo);                
