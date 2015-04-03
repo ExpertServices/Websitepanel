@@ -35,6 +35,7 @@ using System.Net.Mail;
 using System.Text;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
+using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
@@ -1520,38 +1521,130 @@ namespace WebsitePanel.EnterpriseServer
             return expiredUsersDb;
         }
 
-        public static void SendResetUserPasswordEmail(UserInfo owner, OrganizationUser user, string mailTo, string logoUrl)
+        /// <summary>
+        /// Send reset user password email
+        /// </summary>
+        /// <param name="itemId">Organization Id</param>
+        /// <param name="accountId">User Id</param>
+        /// <param name="reason">Reason why reset email is sent.</param>
+        /// <param name="mailTo">Optional, if null accountID user PrimaryEmailAddress will be used</param>
+        public static void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
         {
-            UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_EXPIRATION_LETTER);
+            // load organization
+            Organization org = GetOrganization(itemId);
 
-            if (string.IsNullOrEmpty(logoUrl))
+            if (org == null)
             {
-                logoUrl = settings["LogoUrl"];
+                throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
             }
 
-            string from = settings["From"];
+            UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+            OrganizationUser user = OrganizationController.GetAccount(itemId, accountId);
 
-            string subject = settings["Subject"];
-            string body = owner.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
-            bool isHtml = owner.HtmlMail;
-
-            MailPriority priority = MailPriority.Normal;
-
-            if (!String.IsNullOrEmpty(settings["Priority"]))
+            if (string.IsNullOrEmpty(mailTo))
             {
-                priority = (MailPriority)Enum.Parse(typeof(MailPriority), settings["Priority"], true);
+                mailTo = user.PrimaryEmailAddress;
             }
 
-            Hashtable items = new Hashtable();
+            SendResetUserPasswordEmail(owner, user, mailTo, reason, string.Empty);
+        }
 
-            items["user"] = user;
-            items["logoUrl"] = logoUrl;
-            items["passwordResetLink"] = "reset link";
+        public static void SendResetUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason,  string mailTo, string logoUrl)
+        {
+            UserSettings settings = UserController.GetUserSettings(owner.UserId,
+                UserSettings.USER_PASSWORD_EXPIRATION_LETTER);
 
-            body = PackageController.EvaluateTemplate(body, items);
+            TaskManager.StartTask("ORGANIZATION", "SEND_PASSWORD_RESET_EMAIL", user.ItemId);
 
-            // send mail message
-            //MailHelper.SendMessage(from, mailTo, string.Empty, subject, body, priority, isHtml);
+            try
+            {
+                if (string.IsNullOrEmpty(logoUrl))
+                {
+                    logoUrl = settings["LogoUrl"];
+                }
+
+                string from = settings["From"];
+
+                string subject = settings["Subject"];
+                string body = owner.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
+                bool isHtml = owner.HtmlMail;
+
+                MailPriority priority = MailPriority.Normal;
+
+                if (!String.IsNullOrEmpty(settings["Priority"]))
+                {
+                    priority = (MailPriority) Enum.Parse(typeof (MailPriority), settings["Priority"], true);
+                }
+
+                Hashtable items = new Hashtable();
+
+                items["user"] = user;
+                items["logoUrl"] = logoUrl;
+                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId);
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("Reason : " + reason);
+                TaskManager.Write("MailTo : " + mailTo);
+
+                // send mail message
+                //MailHelper.SendMessage(from, mailTo, string.Empty, subject, body, priority, isHtml);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static AccessToken GetAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            return ObjectUtils.FillObjectFromDataReader<AccessToken>(DataProvider.GetAccessTokenByAccessToken(accessToken, type));
+        }
+
+        public static void DeleteAllExpiredTokens()
+        {
+            DataProvider.DeleteExpiredAccessTokens();
+        }
+
+        private static string GenerateUserPasswordResetLink(int itemId, int accountId)
+        {
+            string passwordResetUrlFormat = "account/password-reset";
+
+            var settings = SystemController.GetSystemSettings(SystemSettings.WEBDAV_PORTAL_SETTINGS);
+
+            if (settings == null)
+            {
+                throw new Exception("Webdav portal system settings are not set");
+            }
+
+            var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
+
+            var token = CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset);
+
+            return webdavPortalUrl.Append(passwordResetUrlFormat)
+                .Append(token.AccessTokenGuid.ToString("n")).ToString();
+        }
+
+        private static AccessToken CreateAccessToken(int itemId, int accountId, AccessTokenTypes type)
+        {
+            var token = new AccessToken
+            {
+                AccessTokenGuid = Guid.NewGuid(),
+                ItemId = itemId,
+                AccountId = accountId,
+                Type = type,
+                ExpirationDate = DateTime.Now.AddHours(12)
+            };
+
+            token.Id = DataProvider.AddAccessToken(token);
+
+            return token;
         }
 
         private static bool EmailAddressExists(string emailAddress)
@@ -2288,7 +2381,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "GET_USER_GENERAL", itemId);
+            //TaskManager.StartTask("ORGANIZATION", "GET_USER_GENERAL", itemId);
 
             OrganizationUser account = null;
             Organization org = null;
@@ -2331,7 +2424,7 @@ namespace WebsitePanel.EnterpriseServer
             catch { }
             finally
             {
-                TaskManager.CompleteTask();
+                //TaskManager.CompleteTask();
             }
 
             return (account);

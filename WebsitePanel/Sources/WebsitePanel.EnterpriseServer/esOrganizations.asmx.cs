@@ -280,6 +280,11 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetPasswordPolicy(itemId);
         }
 
+        [WebMethod]
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
+        {
+            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo);
+        }
 
         #endregion
 

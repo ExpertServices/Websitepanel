@@ -85,24 +85,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtLogoUrl;
         
         /// <summary>
-        /// lblWebDavPortalResetUrl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblWebDavPortalResetUrl;
-        
-        /// <summary>
-        /// txtWebDavPortalResetUrl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtWebDavPortalResetUrl;
-        
-        /// <summary>
         /// lblHtmlBody control.
         /// </summary>
         /// <remarks>

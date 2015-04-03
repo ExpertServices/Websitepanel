@@ -31,6 +31,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.ApplicationBlocks.Data;
 using System.Collections.Generic;
@@ -3188,6 +3189,52 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Organizations
+
+        public static int AddAccessToken(AccessToken token)
+        {
+            return AddAccessToken(token.AccessTokenGuid, token.AccountId, token.ItemId, token.ExpirationDate, token.Type);
+        }
+
+        public static int AddAccessToken(Guid accessToken, int accountId, int itemId, DateTime expirationDate, AccessTokenTypes type)
+        {
+            SqlParameter prmId = new SqlParameter("@TokenID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddAccessToken",
+                prmId,
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@ExpirationDate", expirationDate),
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@TokenType", (int)type)
+            );
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteExpiredAccessTokens()
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExpiredAccessTokenTokens"
+            );
+        }
+
+        public static IDataReader GetAccessTokenByAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@TokenType", type)
+            );
+        }
 
         public static int AddOrganizationDeletedUser(int accountId, int originAT, string storagePath, string folderName, string fileName, DateTime expirationDate)
         {

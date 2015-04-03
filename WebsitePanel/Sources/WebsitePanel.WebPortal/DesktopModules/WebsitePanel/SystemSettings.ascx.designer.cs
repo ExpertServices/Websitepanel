@@ -229,6 +229,42 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.DropDownList ddlRdsController;
         
         /// <summary>
+        /// WebdavPortalSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel WebdavPortalSettings;
+        
+        /// <summary>
+        /// PanelWebdavPortalSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelWebdavPortalSettings;
+        
+        /// <summary>
+        /// lblWebdavPortalUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblWebdavPortalUrl;
+        
+        /// <summary>
+        /// txtWebdavPortalUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtWebdavPortalUrl;
+        
+        /// <summary>
         /// btnSaveSettings control.
         /// </summary>
         /// <remarks>

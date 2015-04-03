@@ -9,8 +9,6 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class UserPasswordExpirationNotificationTask : SchedulerTask
     {
-        private static readonly string TaskId = "SCHEDULE_TASK_DOMAIN_EXPIRATION";
-
         // Input parameters:
         private static readonly string DaysBeforeNotify = "DAYS_BEFORE_EXPIRATION";
 
@@ -27,6 +25,8 @@ namespace WebsitePanel.EnterpriseServer
                 return;
             }
 
+            OrganizationController.DeleteAllExpiredTokens();
+
             var owner = UserController.GetUser(topTask.EffectiveUserId);
 
             var packages = PackageController.GetMyPackages(topTask.EffectiveUserId);
@@ -41,15 +41,15 @@ namespace WebsitePanel.EnterpriseServer
 
                     foreach (var user in usersWithExpiredPasswords)
                     {
+                        user.ItemId = organization.Id;
+
                         if (string.IsNullOrEmpty(user.PrimaryEmailAddress))
                         {
                             TaskManager.WriteWarning(string.Format("Unable to send email to {0} user (organization: {1}), user primary email address is not set.", user.DisplayName, organization.OrganizationId));
                             continue;
                         }
 
-                        TaskManager.Write(string.Format("Email sent to {0} user (organization: {1}).", user.DisplayName, organization.OrganizationId));
-
-                        OrganizationController.SendResetUserPasswordEmail(owner, user, user.PrimaryEmailAddress, string.Empty);
+                        OrganizationController.SendResetUserPasswordEmail(owner, user, "Scheduler Password Expiration Notification", user.PrimaryEmailAddress, string.Empty);
                     }
                 }
             }

@@ -13,7 +13,6 @@ namespace WebsitePanel.Portal
         public void BindSettings(UserSettings settings)
         {
             txtFrom.Text = settings["From"];
-            txtWebDavPortalResetUrl.Text = settings["WebDavPortalResetUrl"];
             txtSubject.Text = settings["Subject"];
             Utils.SelectListItem(ddlPriority, settings["Priority"]);
             txtHtmlBody.Text = settings["HtmlBody"];
@@ -24,7 +23,6 @@ namespace WebsitePanel.Portal
         public void SaveSettings(UserSettings settings)
         {
             settings["From"] = txtFrom.Text;
-            settings["WebDavPortalResetUrl"] = txtWebDavPortalResetUrl.Text;
             settings["Subject"] = txtSubject.Text;
             settings["Priority"] = ddlPriority.SelectedValue;
             settings["HtmlBody"] = txtHtmlBody.Text;

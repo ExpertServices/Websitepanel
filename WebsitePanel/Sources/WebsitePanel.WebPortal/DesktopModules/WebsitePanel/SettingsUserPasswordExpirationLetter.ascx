@@ -26,11 +26,6 @@
         <td class="Normal">
             <asp:TextBox ID="txtLogoUrl" runat="server" Width="500px" CssClass="NormalTextBox"></asp:TextBox></td>
     </tr>
-    <tr>
-        <td class="SubHead"><asp:Label ID="lblWebDavPortalResetUrl" runat="server" meta:resourcekey="lblWebDavPortalResetUrl" Text="CC:"></asp:Label></td>
-        <td class="Normal">
-            <asp:TextBox ID="txtWebDavPortalResetUrl" runat="server" Width="500px" CssClass="NormalTextBox"></asp:TextBox></td>
-    </tr>
 	<tr>
 		<td class="SubHead" colspan="2"><br /><br /><asp:Label ID="lblHtmlBody" runat="server" meta:resourcekey="lblHtmlBody" Text="HTML Body:"></asp:Label></td>
 	</tr>

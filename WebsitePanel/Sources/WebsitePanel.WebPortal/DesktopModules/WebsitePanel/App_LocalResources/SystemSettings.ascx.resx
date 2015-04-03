@@ -168,4 +168,10 @@
   <data name="RdsSettings.Text" xml:space="preserve">
     <value>RDS</value>
   </data>
+  <data name="lblWebdavPortalUrl.Text" xml:space="preserve">
+    <value>Webdav Portal URL</value>
+  </data>
+  <data name="WebdavPortalSettings.Text" xml:space="preserve">
+    <value>Webdav Portal</value>
+  </data>
 </root>

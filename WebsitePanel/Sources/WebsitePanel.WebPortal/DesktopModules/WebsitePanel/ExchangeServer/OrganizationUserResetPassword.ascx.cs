@@ -35,6 +35,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             }
 
+            ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID,PanelRequest.AccountID, txtReason.Text, txtEmailAddress.Text);
+
             Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
                 (PanelRequest.Context == "Mailbox") ? "mailboxes" : "users",
                 "SpaceID=" + PanelSecurity.PackageId));

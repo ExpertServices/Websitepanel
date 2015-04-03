@@ -45,6 +45,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string FILEMANAGER_SETTINGS = "FileManagerSettings";
         public const string PACKAGE_DISPLAY_SETTINGS = "PackageDisplaySettings";
         public const string RDS_SETTINGS = "RdsSettings";
+        public const string WEBDAV_PORTAL_SETTINGS = "WebdavPortalSettings";
 
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";

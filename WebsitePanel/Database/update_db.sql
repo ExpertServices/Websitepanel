@@ -9489,12 +9489,6 @@ GO
 
 -- USER PASSWORD EXPIRATION EMAIL TEMPLATE
 
-
-IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'WebDavPortalResetUrl' )
-BEGIN
-INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'WebDavPortalResetUrl', N'http://webdav.virtuworks.net/')
-END
-GO
 IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'From' )
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'From', N'support@HostingCompany.com')
@@ -9603,3 +9597,91 @@ ELSE
 UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordExpirationLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'TextBody'
 GO
 
+
+-- ORGANIZATION USER PASSWORD RESET TOKENS
+
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'AccessTokens')
+DROP TABLE AccessTokens
+GO
+CREATE TABLE AccessTokens
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccessTokenGuid UNIQUEIDENTIFIER NOT NULL,
+	ExpirationDate DATETIME NOT NULL,
+	AccountID INT NOT NULL ,
+	ItemId INT NOT NULL,
+	TokenType INT NOT NULL
+)
+GO
+
+ALTER TABLE [dbo].[AccessTokens]  WITH CHECK ADD  CONSTRAINT [FK_AccessTokens_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddAccessToken')
+DROP PROCEDURE AddAccessToken
+GO
+CREATE PROCEDURE [dbo].[AddAccessToken]
+(
+	@TokenID INT OUTPUT,
+	@AccessToken UNIQUEIDENTIFIER,
+	@ExpirationDate DATETIME,
+	@AccountID INT,
+	@ItemId INT,
+	@TokenType INT
+)
+AS
+INSERT INTO AccessTokens
+(
+	AccessTokenGuid,
+	ExpirationDate,
+	AccountID  ,
+	ItemId,
+	TokenType
+)
+VALUES
+(
+	@AccessToken  ,
+	@ExpirationDate ,
+	@AccountID,
+	@ItemId,
+	@TokenType
+)
+
+SET @TokenID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExpiredAccessTokenTokens')
+DROP PROCEDURE DeleteExpiredAccessTokenTokens
+GO
+CREATE PROCEDURE [dbo].[DeleteExpiredAccessTokenTokens]
+AS
+DELETE FROM AccessTokens
+WHERE ExpirationDate < getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAccessTokenByAccessToken')
+DROP PROCEDURE GetAccessTokenByAccessToken
+GO
+CREATE PROCEDURE [dbo].[GetAccessTokenByAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@TokenType INT
+)
+AS
+SELECT 
+	ID ,
+	AccessTokenGuid,
+	ExpirationDate,
+	AccountID,
+	ItemId,
+	TokenType
+	FROM AccessTokens 
+	Where AccessTokenGuid = @AccessToken AND ExpirationDate > getdate() AND TokenType = @TokenType
+GO

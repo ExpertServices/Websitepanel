@@ -75,6 +75,7 @@
     <Compile Include="Common\CryptoUtils.cs" />
     <Compile Include="Common\EnterpriseServerIdentity.cs" />
     <Compile Include="Common\EnterpriseServerPrincipal.cs" />
+    <Compile Include="Common\Extensions\UriExtensions.cs" />
     <Compile Include="Common\FileUtils.cs" />
     <Compile Include="Common\Int128.cs" />
     <Compile Include="Common\IPAddress.cs" />
