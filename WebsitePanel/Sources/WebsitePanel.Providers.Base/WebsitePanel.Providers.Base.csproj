@@ -280,6 +280,7 @@
     <Compile Include="ResultObjects\ValueResultObject.cs" />
     <Compile Include="ResultObjects\VirtualMachineResult.cs" />
     <Compile Include="ResultObjects\WebAppGallery.cs" />
+    <Compile Include="SharePoint\IHostedSharePointServerEnt.cs" />
     <Compile Include="SharePoint\IHostedSharePointServer.cs" />
     <Compile Include="SharePoint\ISharePointServer.cs" />
     <Compile Include="SharePoint\SharePointSite.cs" />
