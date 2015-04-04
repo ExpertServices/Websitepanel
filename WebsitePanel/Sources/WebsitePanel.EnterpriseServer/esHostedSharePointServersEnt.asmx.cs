@@ -43,7 +43,7 @@ namespace WebsitePanel.EnterpriseServer
 	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 	[Policy("ServerPolicy")]
 	[ToolboxItem(false)]
-	public class esHostedSharePointServers : WebService
+	public class esHostedSharePointServersEnt : WebService
 	{
 		/// <summary>
 		/// Gets site collections in raw form.
@@ -61,7 +61,7 @@ namespace WebsitePanel.EnterpriseServer
 		public SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId,
 			string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
 		{
-			return HostedSharePointServerController.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue,
+            return HostedSharePointServerEntController.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue,
 				sortColumn, startRow, maximumRows);
 		}
 
@@ -72,7 +72,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int[] GetSupportedLanguages(int packageId)
 		{
-			return HostedSharePointServerController.GetSupportedLanguages(packageId);            
+            return HostedSharePointServerEntController.GetSupportedLanguages(packageId);            
 		}
 
 		/// <summary>
@@ -85,13 +85,13 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
 		{
-			return HostedSharePointServerController.GetSiteCollections(packageId, recursive);
+			return HostedSharePointServerEntController.GetSiteCollections(packageId, recursive);
 		}
 
         [WebMethod]
         public int SetStorageSettings(int itemId, int maxStorage, int warningStorage, bool applyToSiteCollections)
         {
-            return HostedSharePointServerController.SetStorageSettings(itemId, maxStorage, warningStorage, applyToSiteCollections );
+            return HostedSharePointServerEntController.SetStorageSettings(itemId, maxStorage, warningStorage, applyToSiteCollections );
         }
 
 		/// <summary>
@@ -102,7 +102,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public SharePointSiteCollection GetSiteCollection(int itemId)
 		{
-			return HostedSharePointServerController.GetSiteCollection(itemId);
+			return HostedSharePointServerEntController.GetSiteCollection(itemId);
 		}
 
 		/// <summary>
@@ -138,7 +138,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int AddSiteCollection(SharePointSiteCollection item)
 		{
-			return HostedSharePointServerController.AddSiteCollection(item);
+			return HostedSharePointServerEntController.AddSiteCollection(item);
 		}
 
 		/// <summary>
@@ -149,7 +149,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int DeleteSiteCollection(int itemId)
 		{
-			return HostedSharePointServerController.DeleteSiteCollection(itemId);
+			return HostedSharePointServerEntController.DeleteSiteCollection(itemId);
 		}
 
 		/// <summary>
@@ -160,7 +160,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int DeleteSiteCollections(int organizationId)
 		{
-			HostedSharePointServerController.DeleteSiteCollections(organizationId);
+			HostedSharePointServerEntController.DeleteSiteCollections(organizationId);
 			return 0;
 		}
 
@@ -177,7 +177,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public string BackupSiteCollection(int itemId, string fileName, bool zipBackup, bool download, string folderName)
 		{
-			return HostedSharePointServerController.BackupSiteCollection(itemId, fileName, zipBackup, download, folderName);
+			return HostedSharePointServerEntController.BackupSiteCollection(itemId, fileName, zipBackup, download, folderName);
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int RestoreSiteCollection(int itemId, string uploadedFile, string packageFile)
 		{
-			return HostedSharePointServerController.RestoreSiteCollection(itemId, uploadedFile, packageFile);
+			return HostedSharePointServerEntController.RestoreSiteCollection(itemId, uploadedFile, packageFile);
 		}
 
 		/// <summary>
@@ -204,7 +204,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public byte[] GetBackupBinaryChunk(int itemId, string path, int offset, int length)
 		{
-			return HostedSharePointServerController.GetBackupBinaryChunk(itemId, path, offset, length);
+			return HostedSharePointServerEntController.GetBackupBinaryChunk(itemId, path, offset, length);
 		}
 
 		/// <summary>
@@ -218,20 +218,20 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public string AppendBackupBinaryChunk(int itemId, string fileName, string path, byte[] chunk)
 		{
-			return HostedSharePointServerController.AppendBackupBinaryChunk(itemId, fileName, path, chunk);
+			return HostedSharePointServerEntController.AppendBackupBinaryChunk(itemId, fileName, path, chunk);
 		}
 
         [WebMethod]
         public SharePointSiteDiskSpace[] CalculateSharePointSitesDiskSpace(int itemId, out int errorCode)
         {
-            return HostedSharePointServerController.CalculateSharePointSitesDiskSpace(itemId, out  errorCode);
+            return HostedSharePointServerEntController.CalculateSharePointSitesDiskSpace(itemId, out  errorCode);
         }
 
 
         [WebMethod]
         public void UpdateQuota(int itemId, int siteCollectionId, int maxSize, int warningSize)
         {
-            HostedSharePointServerController.UpdateQuota(itemId, siteCollectionId, maxSize, warningSize);
+            HostedSharePointServerEntController.UpdateQuota(itemId, siteCollectionId, maxSize, warningSize);
         }
 	}
 }
