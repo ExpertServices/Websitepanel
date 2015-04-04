@@ -27,26 +27,26 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-
-using WebsitePanel.Providers.Mail;
 using WebsitePanel.Providers.Virtualization;
 
-namespace WebsitePanel.Portal
+namespace WebsitePanel.Portal.ProviderControls
 {
-    /// <summary>
-    /// Summary description for IVirtualMachineCreateControl
-    /// </summary>
-    public interface IVirtualMachineCreateControl
+    public partial class HyperV2012R2_Edit : WebsitePanelControlBase, IVirtualMachineSettingsControl
     {
-        void BindItem(VirtualMachine item);
-        void SaveItem(VirtualMachine item);
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
+
+        public bool IsEditMode { get; set; }
+
+        public void BindItem(VirtualMachine item)
+        {
+            DynamicMemorySetting.BindItem(item);
+        }
+
+        public void SaveItem(VirtualMachine item)
+        {
+            DynamicMemorySetting.SaveItem(item);
+        }
     }
 }

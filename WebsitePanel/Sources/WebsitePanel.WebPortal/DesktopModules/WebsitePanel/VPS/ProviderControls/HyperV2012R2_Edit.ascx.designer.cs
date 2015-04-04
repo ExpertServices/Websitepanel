@@ -10,16 +10,7 @@
 namespace WebsitePanel.Portal.ProviderControls {
     
     
-    public partial class HyperV2012R2_Create {
-        
-        /// <summary>
-        /// GenerationSetting control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.VPS.UserControls.Generation GenerationSetting;
+    public partial class HyperV2012R2_Edit {
         
         /// <summary>
         /// DynamicMemorySetting control.

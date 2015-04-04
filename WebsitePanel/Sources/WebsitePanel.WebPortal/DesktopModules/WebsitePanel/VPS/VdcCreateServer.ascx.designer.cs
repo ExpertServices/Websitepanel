@@ -994,6 +994,24 @@ namespace WebsitePanel.Portal.VPS {
         protected global::System.Web.UI.WebControls.Literal litRam;
         
         /// <summary>
+        /// locGeneration control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locGeneration;
+        
+        /// <summary>
+        /// litGeneration control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litGeneration;
+        
+        /// <summary>
         /// locHdd control.
         /// </summary>
         /// <remarks>

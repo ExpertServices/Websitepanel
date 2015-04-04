@@ -189,6 +189,7 @@
                                         </table>
                                     </asp:Panel>
                                     
+                                    <%-- Additional Custom Settings. Provider Control --%>
                                 	<asp:PlaceHolder ID="createSettingsProviderControl" runat="server"></asp:PlaceHolder>
 
                                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
@@ -450,6 +451,10 @@
                                         <tr>
                                             <td><asp:Localize ID="locRam" runat="server" meta:resourcekey="locRam" Text="RAM, MB:" /></td>
                                             <td><asp:Literal ID="litRam" runat="server"></asp:Literal></td>
+                                        </tr>
+                                        <tr>
+                                            <td><asp:Localize ID="locGeneration" runat="server" meta:resourcekey="locGeneration" Text="Generation:" /></td>
+                                            <td><asp:Literal ID="litGeneration" runat="server"></asp:Literal></td>
                                         </tr>
                                         <tr>
                                             <td><asp:Localize ID="locHdd" runat="server" meta:resourcekey="locHdd" Text="Hard disk size, GB:" /></td>

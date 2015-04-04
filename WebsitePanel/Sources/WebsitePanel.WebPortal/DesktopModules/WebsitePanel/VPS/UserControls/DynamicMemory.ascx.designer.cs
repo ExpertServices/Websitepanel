@@ -7,27 +7,36 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal.VPS.UserControls {
     
     
-    public partial class HyperV2012R2_Create {
+    public partial class DynamicMemory {
         
         /// <summary>
-        /// GenerationSetting control.
+        /// secDymanicMemory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS.UserControls.Generation GenerationSetting;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secDymanicMemory;
         
         /// <summary>
-        /// DynamicMemorySetting control.
+        /// DymanicMemoryPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS.UserControls.DynamicMemory DynamicMemorySetting;
+        protected global::System.Web.UI.WebControls.Panel DymanicMemoryPanel;
+        
+        /// <summary>
+        /// locDymanicMemory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDymanicMemory;
     }
 }

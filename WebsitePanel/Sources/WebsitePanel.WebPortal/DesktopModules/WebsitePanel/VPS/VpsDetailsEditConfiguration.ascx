@@ -80,6 +80,9 @@
                         </table>
                     </asp:Panel>
                     
+                    <%-- Additional Custom Settings. Provider Control --%>
+                    <asp:PlaceHolder ID="editSettingsProviderControl" runat="server"></asp:PlaceHolder>
+                    
                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">
                     </wsp:CollapsiblePanel>

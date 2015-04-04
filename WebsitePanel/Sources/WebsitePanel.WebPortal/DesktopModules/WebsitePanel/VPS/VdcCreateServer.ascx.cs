@@ -61,18 +61,19 @@ namespace WebsitePanel.Portal.VPS
             try
             {
                 LoadProviderControl(PanelSecurity.PackageId, "VPS", createSettingsProviderControl, "Create.ascx");
+                if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.IsEditMode = true;
             }
             catch { /* skip */ }
         }
 
-        private IVirtualMachineCreateControl CreareSettingsProviderControl
+        private IVirtualMachineSettingsControl CreareSettingsProviderControl
         {
             get
             {
                 if (createSettingsProviderControl.Controls.Count == 0)
                     return null;
 
-                return (IVirtualMachineCreateControl)createSettingsProviderControl.Controls[0];
+                return (IVirtualMachineSettingsControl)createSettingsProviderControl.Controls[0];
             }
         }
 
@@ -136,11 +137,7 @@ namespace WebsitePanel.Portal.VPS
             ddlCpu.SelectedIndex = ddlCpu.Items.Count - 1; // select last (maximum) item
 
             // the custom provider control
-            if (CreareSettingsProviderControl != null)
-            {
-                IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)createSettingsProviderControl.Controls[0];
-                ctrl.BindItem(new VirtualMachine());  
-            }
+            if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.BindItem(new VirtualMachine());  
 
             // external network details
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_EXTERNAL_NETWORK_ENABLED))
@@ -266,6 +263,11 @@ namespace WebsitePanel.Portal.VPS
 
         private void BindSummary()
         {
+            VirtualMachine virtualMachine = new VirtualMachine();
+
+            // the custom provider control
+            if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.SaveItem(virtualMachine);
+            
             // general
             litHostname.Text =  PortalAntiXSS.Encode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
             litOperatingSystem.Text = listOperatingSystems.SelectedItem.Text;
@@ -276,6 +278,7 @@ namespace WebsitePanel.Portal.VPS
             // config
             litCpu.Text = PortalAntiXSS.Encode(ddlCpu.SelectedValue);
             litRam.Text = PortalAntiXSS.Encode(txtRam.Text.Trim());
+            litGeneration.Text = CreareSettingsProviderControl != null ? PortalAntiXSS.Encode(virtualMachine.Generation.ToString()) : "1";
             litHdd.Text = PortalAntiXSS.Encode(txtHdd.Text.Trim());
             litSnapshots.Text = PortalAntiXSS.Encode(txtSnapshots.Text.Trim());
             optionDvdInstalled.Value = chkDvdInstalled.Checked;
@@ -319,11 +322,7 @@ namespace WebsitePanel.Portal.VPS
                 VirtualMachine virtualMachine = new VirtualMachine();
 
                 // the custom provider control
-                if (CreareSettingsProviderControl != null)
-                {
-                    IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)createSettingsProviderControl.Controls[0];
-                    ctrl.SaveItem(virtualMachine);
-                }
+                if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.SaveItem(virtualMachine);
 
                 // collect and prepare data
                 string hostname = String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim());

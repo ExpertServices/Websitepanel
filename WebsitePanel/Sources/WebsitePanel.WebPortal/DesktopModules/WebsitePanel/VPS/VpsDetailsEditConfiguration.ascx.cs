@@ -41,9 +41,31 @@ namespace WebsitePanel.Portal.VPS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            LoadCustomProviderControls();
+
             if (!IsPostBack)
             {
                 BindConfiguration();
+            }
+        }
+
+        private void LoadCustomProviderControls()
+        {
+            try
+            {
+                LoadProviderControl(PanelSecurity.PackageId, "VPS", editSettingsProviderControl, "Edit.ascx");
+            }
+            catch { /* skip */ }
+        }
+
+        private IVirtualMachineSettingsControl EditSettingsProviderControl
+        {
+            get
+            {
+                if (editSettingsProviderControl.Controls.Count == 0)
+                    return null;
+
+                return (IVirtualMachineSettingsControl)editSettingsProviderControl.Controls[0];
             }
         }
 
@@ -96,8 +118,8 @@ namespace WebsitePanel.Portal.VPS
                 chkExternalNetworkEnabled.Checked = vm.ExternalNetworkEnabled;
                 chkPrivateNetworkEnabled.Checked = vm.PrivateNetworkEnabled;
 
-                // toggle controls
-
+                // the custom provider control
+                if (EditSettingsProviderControl != null) EditSettingsProviderControl.BindItem(vm);
 
                 // other quotas
                 BindCheckboxOption(chkDvdInstalled, Quotas.VPS_DVD_ENABLED);
@@ -145,6 +167,11 @@ namespace WebsitePanel.Portal.VPS
                 {
                     return;
                 }
+
+                VirtualMachine virtualMachine = new VirtualMachine();
+
+                // the custom provider control
+                if (EditSettingsProviderControl != null) EditSettingsProviderControl.SaveItem(virtualMachine);
 
                 ResultObject res = ES.Services.VPS.UpdateVirtualMachineConfiguration(PanelRequest.ItemID,
                     Utils.ParseInt(ddlCpu.SelectedValue),

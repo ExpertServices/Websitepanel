@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ddlGenerationItem.1" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="ddlGenerationItem.2" xml:space="preserve">
+    <value>Second</value>
+  </data>
+  <data name="locGeneration.Text" xml:space="preserve">
+    <value>Generation:</value>
+  </data>
+  <data name="secGeneration.Text" xml:space="preserve">
+    <value>Generation</value>
+  </data>
 </root>
