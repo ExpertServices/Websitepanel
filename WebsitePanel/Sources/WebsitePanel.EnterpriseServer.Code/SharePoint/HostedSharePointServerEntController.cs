@@ -58,7 +58,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// <param name="startRow">Row index to start from.</param>
         /// <param name="maximumRows">Maximum number of rows to retrieve.</param>
         /// <returns>Site collections that match.</returns>
-        public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, string groupName = null)
+        public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
             if (IsDemoMode)
             {
@@ -122,7 +122,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             // Log operation.
             TaskManager.StartTask("HOSTED_SHAREPOINT_ENTERPRISE", "GET_LANGUAGES");
 
-            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointEnterpriseServer);
             if (serviceId == 0)
             {
                 return new int[] { };
@@ -149,7 +149,6 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// </summary>
         /// <param name="packageId">Package that owns site collections.</param>
         /// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
-        /// <param name="groupName">Resource group name.</param>
         /// <returns>List of found site collections.</returns>
         public static List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
         {
@@ -208,7 +207,6 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// Adds SharePoint site collection.
         /// </summary>
         /// <param name="item">Site collection description.</param>
-        /// <param name="groupName">Resource group name.</param>
         /// <returns>Created site collection id within metabase.</returns>
         public static int AddSiteCollection(SharePointSiteCollection item)
         {

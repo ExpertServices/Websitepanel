@@ -421,13 +421,6 @@ namespace WebsitePanel.Portal
                             }
 
                             break;
-                        case 552:
-                            if (Convert.ToBoolean(quota.QuotaAllocatedValue))
-                            {
-                                return true;
-                            }
-
-                            break;
                     }
                 }
             }

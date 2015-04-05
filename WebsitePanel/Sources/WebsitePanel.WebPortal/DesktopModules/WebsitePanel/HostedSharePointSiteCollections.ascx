@@ -76,8 +76,7 @@ function confirmation()
 						<SelectParameters>
 					        <asp:QueryStringParameter Name="packageId" QueryStringField="SpaceID" DefaultValue="-1" />
 							<asp:QueryStringParameter Name="organizationId" QueryStringField="ItemID" DefaultValue="0" />
-                            <asp:QueryStringParameter Name="groupName" QueryStringField="GroupName" DefaultValue="" />
-							<asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
+                            <asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
 						</SelectParameters>
 					</asp:ObjectDataSource>

@@ -6,10 +6,12 @@
 <%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
+<%@ Register Src="ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
+            <wsp:Menu id="menu" runat="server" SelectedItem="storage_limits" /> 
         </div>
 		<div class="Content">
 			<div class="Center">
