@@ -52,6 +52,7 @@ using WebsitePanel.Server.Utils;
 using Vds = Microsoft.Storage.Vds;
 using System.Configuration;
 ﻿using System.Linq;
+﻿using WebsitePanel.Providers.Virtualization.Extensions;
 
 namespace WebsitePanel.Providers.Virtualization
 {
@@ -151,7 +152,10 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.Name = result[0].GetProperty("Name").ToString();
                     vm.State = result[0].GetEnum<VirtualMachineState>("State");
                     vm.CpuUsage = ConvertNullableToInt32(result[0].GetProperty("CpuUsage"));
-                    vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
+                    // This does not truly give the RAM usage, only the memory assigned to the VPS
+                    // Lets handle detection of total memory and usage else where
+                    //vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
+                    vm.RamSize = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryStartup")) / Constants.Size1M);
                     vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
                     vm.Status = result[0].GetProperty("Status").ToString();
                     vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
@@ -190,6 +194,38 @@ namespace WebsitePanel.Providers.Virtualization
 
                         // network adapters
                         vm.Adapters = NetworkAdapterHelper.Get(PowerShell, vm.Name);
+                    }
+                    else
+                    {
+                        // Use the WebsitePanel VMConfig Windows service to get the RAM usage as well as the HDD usage / sizes
+                        List<KvpExchangeDataItem> vmKvps = GetKVPItems(vmId);
+                        foreach (KvpExchangeDataItem vmKvp in vmKvps)
+                        {
+                            // RAM
+                            if (vmKvp.Name == Constants.KVP_RAM_SUMMARY_KEY)
+                            {
+                                string[] ram = vmKvp.Data.Split(':');
+                                int freeRam = Int32.Parse(ram[0]);
+                                int availRam = Int32.Parse(ram[1]);
+
+                                vm.RamUsage = availRam - freeRam;
+                            }
+
+                            // HDD
+                            if (vmKvp.Name == Constants.KVP_HDD_SUMMARY_KEY)
+                            {
+                                string[] disksArray = vmKvp.Data.Split(';');
+                                vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
+                                for (int i = 0; i < disksArray.Length; i++)
+                                {
+                                    string[] disk = disksArray[i].Split(':');
+                                    vm.HddLogicalDisks[i] = new LogicalDisk();
+                                    vm.HddLogicalDisks[i].DriveLetter = disk[0];
+                                    vm.HddLogicalDisks[i].FreeSpace = Int32.Parse(disk[1]);
+                                    vm.HddLogicalDisks[i].Size = Int32.Parse(disk[2]);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -315,7 +351,7 @@ namespace WebsitePanel.Providers.Virtualization
                 cmdNew.Parameters.Add("Name", vm.Name);
                 cmdNew.Parameters.Add("Generation", vm.Generation > 1 ? vm.Generation : 1);
                 cmdNew.Parameters.Add("VHDPath", vm.VirtualHardDrivePath);
-                PowerShell.Execute(cmdNew, true);
+                PowerShell.Execute(cmdNew, true, true);
 
                 // Set VM
                 Command cmdSet = new Command("Set-VM");
@@ -503,23 +539,21 @@ namespace WebsitePanel.Providers.Virtualization
             if (vm.State != VirtualMachineState.Saved && vm.State != VirtualMachineState.Off)
                 throw new Exception("The virtual computer system must be in the powered off or saved state prior to calling Destroy method.");
 
-            // Delete network adapters and network switchesw
+            // Delete network adapters and network switches
             foreach (var networkAdapter in vm.Adapters)
             {
                 NetworkAdapterHelper.Delete(PowerShell, vm.Name, networkAdapter);
 
-                if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
-                    DeleteSwitch(networkAdapter.SwitchName);
+                // If more than 1 VM are assigned to the same switch, deleting the virtual machine also deletes the switch which takes other VM instances off line
+                // There may be a reason for this that I am not aware of?
+                //if (!string.IsNullOrEmpty(networkAdapter.SwitchName))
+                    //DeleteSwitch(networkAdapter.SwitchName);
             }
-
-            object[] errors;
 
             Command cmdSet = new Command("Remove-VM");
             cmdSet.Parameters.Add("Name", vm.Name);
             cmdSet.Parameters.Add("Force");
-            PowerShell.Execute(cmdSet, false, out errors);
-
-            PowerShellManager.ExceptionIfErrors(errors);
+            PowerShell.Execute(cmdSet, true, true);
 
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
         }
@@ -785,12 +819,11 @@ namespace WebsitePanel.Providers.Virtualization
                 
                 Command cmd = new Command("Get-VMSwitch");
 
-                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                // Not needed as the PowerShellManager adds the computer name
+                //if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
                 if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                object[] errors;
-                Collection<PSObject> result = PowerShell.Execute(cmd, false, out errors);
-                PowerShellManager.ExceptionIfErrors(errors);
+                Collection<PSObject> result = PowerShell.Execute(cmd, true, true);
 
                 foreach (PSObject current in result)
                 {
@@ -861,7 +894,7 @@ namespace WebsitePanel.Providers.Virtualization
                 Command cmd = new Command("Remove-VMSwitch");
                 cmd.Parameters.Add("Name", switchId);
                 cmd.Parameters.Add("Force");
-                PowerShell.Execute(cmd, true);
+                PowerShell.Execute(cmd, true, false);
             }
             catch (Exception ex)
             {
@@ -880,7 +913,7 @@ namespace WebsitePanel.Providers.Virtualization
             path = Path.Combine(FileUtils.EvaluateSystemVariables(path), Constants.LIBRARY_INDEX_FILE_NAME);
 
             // convert to UNC if it is a remote computer
-            path = ConvertToUNC(path);
+            path = VdsHelper.ConvertToUNC(ServerNameSettings, path);
 
             if (!File.Exists(path))
             {
@@ -1182,184 +1215,27 @@ namespace WebsitePanel.Providers.Virtualization
 
         public MountedDiskInfo MountVirtualHardDisk(string vhdPath)
         {
-            //MountedDiskInfo diskInfo = new MountedDiskInfo();
-            //vhdPath = FileUtils.EvaluateSystemVariables(vhdPath);
+            vhdPath = FileUtils.EvaluateSystemVariables(vhdPath);
 
-            //// Mount disk
-            //Command cmd = new Command("Mount-VHD");
+            // Mount disk
+            Command cmd = new Command("Mount-VHD");
 
-            //cmd.Parameters.Add("Path", vhdPath);
-            //cmd.Parameters.Add("PassThru");
+            cmd.Parameters.Add("Path", vhdPath);
+            cmd.Parameters.Add("PassThru");
 
-            //// Get disk address
-            //var result = PowerShell.Execute(cmd, true);
-
-            //try
-            //{
-            //    if (result == null || result.Count == 0)
-            //        throw new Exception("Failed to mount disk");
-
-            //    diskInfo.DiskAddress = result[0].GetString("DiskNumber");
-
-            //    // Get disk volumes
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    // unmount disk
-            //    UnmountVirtualHardDisk(vhdPath);
-
-            //    // throw error
-            //    throw ex;
-            //}
-
-            //return diskInfo; 
-            
-            ManagementObject objImgSvc = GetImageManagementService();
-
-            // get method params
-            ManagementBaseObject inParams = objImgSvc.GetMethodParameters("Mount");
-            inParams["Path"] = FileUtils.EvaluateSystemVariables(vhdPath);
-
-            ManagementBaseObject outParams = (ManagementBaseObject)objImgSvc.InvokeMethod("Mount", inParams, null);
-            JobResult result = CreateJobResultFromWmiMethodResults(outParams);
-
-            // load storage job
-            if (result.ReturnValue != ReturnCode.JobStarted)
-                throw new Exception("Failed to start Mount job with the following error: " + result.ReturnValue); ;
-
-            ManagementObject objJob = wmi.GetWmiObject("msvm_StorageJob", "InstanceID = '{0}'", result.Job.Id);
-
-            if (!JobCompleted(result.Job))
-                throw new Exception("Failed to complete Mount job with the following error: " + result.Job.ErrorDescription);
+            // Get mounted disk 
+            var result = PowerShell.Execute(cmd, true, true);
 
             try
             {
-                List<string> volumes = new List<string>();
+                if (result == null || result.Count == 0)
+                    throw new Exception("Failed to mount disk");
 
-                // load output data
-                ManagementObject objImage = wmi.GetRelatedWmiObject(objJob, "Msvm_MountedStorageImage");
+                var diskNumber = result[0].GetInt("DiskNumber");
 
-                int pathId = Convert.ToInt32(objImage["PathId"]);
-                int portNumber = Convert.ToInt32(objImage["PortNumber"]);
-                int targetId = Convert.ToInt32(objImage["TargetId"]);
-                int lun = Convert.ToInt32(objImage["Lun"]);
-
-                string diskAddress = String.Format("Port{0}Path{1}Target{2}Lun{3}", portNumber, pathId, targetId, lun);
-
-                HostedSolutionLog.LogInfo("Disk address: " + diskAddress);
-
-                // find mounted disk using VDS
-                Vds.Advanced.AdvancedDisk advancedDisk = null;
-                Vds.Pack diskPack = null;
-
-                // first attempt
-                System.Threading.Thread.Sleep(3000);
-                HostedSolutionLog.LogInfo("Trying to find mounted disk - first attempt");
-                FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
-
-                // second attempt
-                if (advancedDisk == null)
-                {
-                    System.Threading.Thread.Sleep(20000);
-                    HostedSolutionLog.LogInfo("Trying to find mounted disk - second attempt");
-                    FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
-                }
-
-                if (advancedDisk == null)
-                    throw new Exception("Could not find mounted disk");
-
-                // check if DiskPart must be used to bring disk online and clear read-only flag
-                bool useDiskPartToClearReadOnly = false;
-                if (ConfigurationManager.AppSettings[Constants.CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG] != null)
-                    useDiskPartToClearReadOnly = Boolean.Parse(ConfigurationManager.AppSettings[Constants.CONFIG_USE_DISKPART_TO_CLEAR_READONLY_FLAG]);
-
-                // determine disk index for DiskPart
-                Wmi cimv2 = new Wmi(ServerNameSettings, Constants.WMI_CIMV2_NAMESPACE);
-                ManagementObject objDisk = cimv2.GetWmiObject("win32_diskdrive",
-                    "Model='Msft Virtual Disk SCSI Disk Device' and ScsiTargetID={0} and ScsiLogicalUnit={1} and scsiPort={2}",
-                    targetId, lun, portNumber);
-
-                if (useDiskPartToClearReadOnly)
-                {
-                    // *** Clear Read-Only and bring disk online with DiskPart ***
-                    HostedSolutionLog.LogInfo("Clearing disk Read-only flag and bringing disk online");
-
-                    if (objDisk != null)
-                    {
-                        // disk found
-                        // run DiskPart
-                        string diskPartResult = RunDiskPart(String.Format(@"select disk {0}
-attributes disk clear readonly
-online disk
-exit", Convert.ToInt32(objDisk["Index"])));
-
-                        HostedSolutionLog.LogInfo("DiskPart Result: " + diskPartResult);
-                    }
-                }
-                else
-                {
-                    // *** Clear Read-Only and bring disk online with VDS ***
-                    // clear Read-Only
-                    if ((advancedDisk.Flags & Vds.DiskFlags.ReadOnly) == Vds.DiskFlags.ReadOnly)
-                    {
-                        HostedSolutionLog.LogInfo("Clearing disk Read-only flag");
-                        advancedDisk.ClearFlags(Vds.DiskFlags.ReadOnly);
-                        while ((advancedDisk.Flags & Vds.DiskFlags.ReadOnly) == Vds.DiskFlags.ReadOnly)
-                        {
-                            System.Threading.Thread.Sleep(100);
-                            advancedDisk.Refresh();
-                        }
-                    }
-
-                    // bring disk ONLINE
-                    if (advancedDisk.Status == Vds.DiskStatus.Offline)
-                    {
-                        HostedSolutionLog.LogInfo("Bringing disk online");
-                        advancedDisk.Online();
-                        while (advancedDisk.Status == Vds.DiskStatus.Offline)
-                        {
-                            System.Threading.Thread.Sleep(100);
-                            advancedDisk.Refresh();
-                        }
-                    }
-                }
-
-                // small pause after getting disk online
-                System.Threading.Thread.Sleep(3000);
-
-                // get disk again
-                FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
-
-                // find volumes using VDS
-                HostedSolutionLog.LogInfo("Querying disk volumes with VDS");
-                foreach (Vds.Volume volume in diskPack.Volumes)
-                {
-                    string letter = volume.DriveLetter.ToString();
-                    if (letter != "")
-                        volumes.Add(letter);
-                }
-
-                // find volumes using WMI
-                if (volumes.Count == 0 && objDisk != null)
-                {
-                    HostedSolutionLog.LogInfo("Querying disk volumes with WMI");
-                    foreach (ManagementObject objPartition in objDisk.GetRelated("Win32_DiskPartition"))
-                    {
-                        foreach (ManagementObject objVolume in objPartition.GetRelated("Win32_LogicalDisk"))
-                        {
-                            volumes.Add(objVolume["Name"].ToString().TrimEnd(':'));
-                        }
-                    }
-                }
-
-                HostedSolutionLog.LogInfo("Volumes found: " + volumes.Count);
-
-                // info object
-                MountedDiskInfo info = new MountedDiskInfo();
-                info.DiskAddress = diskAddress;
-                info.DiskVolumes = volumes.ToArray();
-                return info;
+                var diskInfo = VdsHelper.GetMountedDiskInfo(ServerNameSettings, diskNumber);
+                
+                return diskInfo;
             }
             catch (Exception ex)
             {
@@ -1368,41 +1244,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
                 // throw error
                 throw ex;
-            }
-        }
-
-        private void FindVdsDisk(string diskAddress, out Vds.Advanced.AdvancedDisk advancedDisk, out Vds.Pack diskPack)
-        {
-            advancedDisk = null;
-            diskPack = null;
-
-            Vds.ServiceLoader serviceLoader = new Vds.ServiceLoader();
-            Vds.Service vds = serviceLoader.LoadService(ServerNameSettings);
-            vds.WaitForServiceReady();
-
-            foreach (Vds.Disk disk in vds.UnallocatedDisks)
-            {
-                if (disk.DiskAddress == diskAddress)
-                {
-                    advancedDisk = (Vds.Advanced.AdvancedDisk)disk;
-                    break;
-                }
-            }
-
-            if (advancedDisk == null)
-            {
-                vds.HardwareProvider = false;
-                vds.SoftwareProvider = true;
-
-                foreach (Vds.SoftwareProvider provider in vds.Providers)
-                    foreach (Vds.Pack pack in provider.Packs)
-                        foreach (Vds.Disk disk in pack.Disks)
-                            if (disk.DiskAddress == diskAddress)
-                            {
-                                diskPack = pack;
-                                advancedDisk = (Vds.Advanced.AdvancedDisk)disk;
-                                break;
-                            }
             }
         }
 
@@ -1423,7 +1264,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             cmd.Parameters.Add("Path", FileUtils.EvaluateSystemVariables(vhdPath));
             cmd.Parameters.Add("SizeBytes", sizeGB * Constants.Size1G);
 
-            PowerShell.Execute(cmd, true);
+            PowerShell.Execute(cmd, true, true);
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted); 
         }
 
@@ -1449,7 +1290,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 cmd.Parameters.Add("DestinationPath", destinationPath);
                 cmd.Parameters.Add("VHDType", diskType.ToString());
 
-                PowerShell.Execute(cmd, true);
+                PowerShell.Execute(cmd, true, true);
                 return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
             }
             catch (Exception ex)
@@ -1473,7 +1314,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
             Vds.Advanced.AdvancedDisk advancedDisk = null;
             Vds.Pack diskPack = null;
 
-            FindVdsDisk(diskAddress, out advancedDisk, out diskPack);
+            VdsHelper.FindVdsDisk(ServerNameSettings, diskAddress, out advancedDisk, out diskPack);
 
             if (advancedDisk == null)
                 throw new Exception("Could not find mounted disk");
@@ -1528,36 +1369,11 @@ exit", Convert.ToInt32(objDisk["Index"])));
             diskVolume.EndExtend(extendEvent);
         }
 
-        // obsolete and currently is not used
-        private string RunDiskPart(string script)
-        {
-            // create temp script file name
-            string localPath = Path.Combine(GetTempRemoteFolder(), Guid.NewGuid().ToString("N"));
-
-            // save script to remote temp file
-            string remotePath = ConvertToUNC(localPath);
-            File.AppendAllText(remotePath, script);
-
-            // run diskpart
-            ExecuteRemoteProcess("DiskPart /s " + localPath);
-
-            // delete temp script
-            try
-            {
-                File.Delete(remotePath);
-            }
-            catch
-            {
-                // TODO
-            }
-
-            return "";
-        }
-
+       
         public string ReadRemoteFile(string path)
         {
             // temp file name on "system" drive available through hidden share
-            string tempPath = Path.Combine(GetTempRemoteFolder(), Guid.NewGuid().ToString("N"));
+            string tempPath = Path.Combine(VdsHelper.GetTempRemoteFolder(ServerNameSettings), Guid.NewGuid().ToString("N"));
 
             HostedSolutionLog.LogInfo("Read remote file: " + path);
             HostedSolutionLog.LogInfo("Local file temp path: " + tempPath);
@@ -1567,7 +1383,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
                 return null;
 
             // read content of temp file
-            string remoteTempPath = ConvertToUNC(tempPath);
+            string remoteTempPath = VdsHelper.ConvertToUNC(ServerNameSettings, tempPath);
             HostedSolutionLog.LogInfo("Remote file temp path: " + remoteTempPath);
 
             string content = File.ReadAllText(remoteTempPath);
@@ -1581,10 +1397,10 @@ exit", Convert.ToInt32(objDisk["Index"])));
         public void WriteRemoteFile(string path, string content)
         {
             // temp file name on "system" drive available through hidden share
-            string tempPath = Path.Combine(GetTempRemoteFolder(), Guid.NewGuid().ToString("N"));
+            string tempPath = Path.Combine(VdsHelper.GetTempRemoteFolder(ServerNameSettings), Guid.NewGuid().ToString("N"));
 
             // write to temp file
-            string remoteTempPath = ConvertToUNC(tempPath);
+            string remoteTempPath = VdsHelper.ConvertToUNC(ServerNameSettings, tempPath);
             File.WriteAllText(remoteTempPath, content);
 
             // delete file (WMI)
@@ -1931,14 +1747,6 @@ exit", Convert.ToInt32(objDisk["Index"])));
                    wmi.GetWmiObject("Msvm_VirtualSystemSettingData", "InstanceID = '{0}'", "Microsoft:" + snapshotId);
         }
 
-        private string ConvertToUNC(string path)
-        {
-            if (String.IsNullOrEmpty(ServerNameSettings)
-                || path.StartsWith(@"\\"))
-                return path;
-
-            return String.Format(@"\\{0}\{1}", ServerNameSettings, path.Replace(":", "$"));
-        }
 
         private ConcreteJob CreateJobFromWmiObject(ManagementBaseObject objJob)
         {
@@ -2142,80 +1950,10 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
         public void CreateFolder(string path)
         {
-            ExecuteRemoteProcess(String.Format("cmd.exe /c md \"{0}\"", path));
+            VdsHelper.ExecuteRemoteProcess(ServerNameSettings, String.Format("cmd.exe /c md \"{0}\"", path));
         }
 
-        public void ExecuteRemoteProcess(string command)
-        {
-            Wmi cimv2 = new Wmi(ServerNameSettings, "root\\cimv2");
-            ManagementClass objProcess = cimv2.GetWmiClass("Win32_Process");
 
-            // run process
-            object[] methodArgs = { command, null, null, 0 };
-            objProcess.InvokeMethod("Create", methodArgs);
-
-            // process ID
-            int processId = Convert.ToInt32(methodArgs[3]);
-
-            // wait until finished
-            // Create event query to be notified within 1 second of 
-            // a change in a service
-            WqlEventQuery query =
-                new WqlEventQuery("__InstanceDeletionEvent",
-                new TimeSpan(0, 0, 1),
-                "TargetInstance isa \"Win32_Process\"");
-
-            // Initialize an event watcher and subscribe to events 
-            // that match this query
-            ManagementEventWatcher watcher = new ManagementEventWatcher(cimv2.GetScope(), query);
-            // times out watcher.WaitForNextEvent in 20 seconds
-            watcher.Options.Timeout = new TimeSpan(0, 0, 20);
-
-            // Block until the next event occurs 
-            // Note: this can be done in a loop if waiting for 
-            //        more than one occurrence
-            while (true)
-            {
-                ManagementBaseObject e = null;
-
-                try
-                {
-                    // wait untill next process finish
-                    e = watcher.WaitForNextEvent();
-                }
-                catch
-                {
-                    // nothing has been finished in timeout period
-                    return; // exit
-                }
-
-                // check process id
-                int pid = Convert.ToInt32(((ManagementBaseObject)e["TargetInstance"])["ProcessID"]);
-                if (pid == processId)
-                {
-                    //Cancel the subscription
-                    watcher.Stop();
-
-                    // exit
-                    return;
-                }
-            }
-        }
-
-        public string GetTempRemoteFolder()
-        {
-            Wmi cimv2 = new Wmi(ServerNameSettings, "root\\cimv2");
-            ManagementObject objOS = cimv2.GetWmiObject("win32_OperatingSystem");
-            string sysPath = (string)objOS["SystemDirectory"];
-
-            // remove trailing slash
-            if (sysPath.EndsWith("\\"))
-                sysPath = sysPath.Substring(0, sysPath.Length - 1);
-
-            sysPath = sysPath.Substring(0, sysPath.LastIndexOf("\\") + 1) + "Temp";
-
-            return sysPath;
-        }
         #endregion
 
         #region Hyper-V Cloud

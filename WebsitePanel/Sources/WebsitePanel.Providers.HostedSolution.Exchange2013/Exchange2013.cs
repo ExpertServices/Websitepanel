@@ -4995,12 +4995,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 //general settings
                 Command cmd = new Command("Set-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!folderName.Equals(newFolderName, StringComparison.OrdinalIgnoreCase))
-                {
-                    cmd.Parameters.Add("Name", newFolderName);
-                }
                 cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 ExecuteShellCommand(runSpace, cmd);
+
+                // rename
+                if (!folderName.Equals(newFolderName, StringComparison.OrdinalIgnoreCase))
+                {
+                    cmd = new Command("Set-PublicFolder");
+                    cmd.Parameters.Add("Identity", folder);
+                    cmd.Parameters.Add("Name", newFolderName);
+                    ExecuteShellCommand(runSpace, cmd);
+
+                }
             }
             finally
             {

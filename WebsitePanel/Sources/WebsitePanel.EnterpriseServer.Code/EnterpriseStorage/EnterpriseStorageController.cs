@@ -76,6 +76,11 @@ namespace WebsitePanel.EnterpriseServer
             return GetFoldersInternal(itemId);
         }
 
+        public static SystemFile[] GetUserRootFolders(int itemId, int accountId, string userName, string displayName)
+        {
+            return GetUserRootFoldersInternal(itemId, accountId, userName, displayName);
+        }
+
         public static SystemFile GetFolder(int itemId, string folderName)
         {
             return GetFolderInternal(itemId, folderName);
@@ -547,6 +552,57 @@ namespace WebsitePanel.EnterpriseServer
                     DataProvider.GetEnterpriseFolders(itemId)).ToArray();
 
                 return es.GetFolders(org.OrganizationId, webDavSettings);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        protected static SystemFile[] GetUserRootFoldersInternal(int itemId, int accountId, string userName, string displayName)
+        {
+            try
+            {
+                var rootFolders = new List<SystemFile>();
+
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return new SystemFile[0];
+                }
+
+                int serviceId = GetEnterpriseStorageServiceID(org.PackageId);
+
+                if (serviceId == 0)
+                {
+                    return new SystemFile[0];
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(serviceId);
+
+                var webDavSettings = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolders(itemId)).ToArray();
+
+                var userGroups = OrganizationController.GetSecurityGroupsByMember(itemId, accountId);
+
+                foreach (var folder in es.GetFoldersWithoutFrsm(org.OrganizationId, webDavSettings))
+                {
+                    var permissions = ConvertToESPermission(itemId,folder.Rules);
+
+                    foreach (var permission in permissions)
+                    {
+                        if ((!permission.IsGroup
+                                && (permission.DisplayName == userName || permission.DisplayName == displayName))
+                            || (permission.IsGroup && userGroups.Any(x => x.DisplayName == permission.DisplayName)))
+                        {
+                            rootFolders.Add(folder);
+                            break;
+                        }
+                    }
+                }
+
+                return rootFolders.ToArray();
             }
             catch (Exception ex)
             {

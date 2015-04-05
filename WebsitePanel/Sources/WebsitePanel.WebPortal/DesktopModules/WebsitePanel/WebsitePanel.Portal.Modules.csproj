@@ -169,6 +169,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\HostedSharePointEnterpriseSiteCollectionsHelper.cs" />
     <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
@@ -257,6 +258,62 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
       <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseBackupSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseBackupSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseEditSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseEditSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseSiteCollections.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseSiteCollections.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseRestoreSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseRestoreSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseStorageSettings.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseStorageSettings.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseStorageUsage.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.cs">
+      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.designer.cs">
+      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
       <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
@@ -4524,6 +4581,14 @@
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="HostedSharePointEnterpriseBackupSiteCollection.ascx" />
+    <Content Include="HostedSharePointEnterpriseEditSiteCollection.ascx" />
+    <Content Include="HostedSharePointEnterpriseSiteCollections.ascx" />
+    <Content Include="HostedSharePointEnterpriseRestoreSiteCollection.ascx" />
+    <Content Include="HostedSharePointEnterpriseStorageSettings.ascx" />
+    <Content Include="HostedSharePointEnterpriseStorageUsage.ascx" />
+    <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
+    <Content Include="VPS\ProviderControls\HyperV2012R2_Create.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
@@ -4574,6 +4639,30 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
     <Content Include="App_LocalResources\SettingsRdsPolicy.ascx.resx" />
+    <Content Include="VPS\ProviderControls\App_LocalResources\HyperV2012R2_Create.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\HyperV2012R2_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseSiteCollections.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseBackupSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseEditSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseRestoreSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseStorageSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\HostedSharePointEnterpriseStorageUsage.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
@@ -5862,6 +5951,7 @@
     <Content Include="UserControls\App_LocalResources\ItemButtonPanel.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">

@@ -40,6 +40,8 @@ using System.Text;
 using System.Collections;
 using System.Net.Mail;
 using System.Diagnostics;
+﻿using System.Linq;
+﻿using System.Net;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -252,6 +254,8 @@ namespace WebsitePanel.EnterpriseServer
                 return res;
             }
 
+            int generation = 1;
+
             // CPU cores
             int cpuCores = cntx.Quotas[Quotas.VPS_CPU_NUMBER].QuotaAllocatedValue;
             if (cpuCores == -1) // unlimited is not possible
@@ -305,7 +309,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // create server and return result
             return CreateVirtualMachine(packageId, hostname, osTemplate, password, summaryLetterEmail,
-                cpuCores, ramMB, hddGB, snapshots,
+                generation, cpuCores, ramMB, hddGB, snapshots,
                 dvdInstalled, bootFromCD, numLock,
                 startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed,
                 externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses,
@@ -314,7 +318,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static IntResult CreateVirtualMachine(int packageId,
                 string hostname, string osTemplateFile, string password, string summaryLetterEmail,
-                int cpuCores, int ramMB, int hddGB, int snapshots,
+                int generation, int cpuCores, int ramMB, int hddGB, int snapshots,
                 bool dvdInstalled, bool bootFromCD, bool numLock,
                 bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
                 bool externalNetworkEnabled, int externalAddressesNumber, bool randomExternalAddresses, int[] externalAddresses,
@@ -454,6 +458,7 @@ namespace WebsitePanel.EnterpriseServer
                 vm.CurrentTaskId = Guid.NewGuid().ToString("N"); // generate creation task id
                 vm.ProvisioningStatus = VirtualMachineProvisioningStatus.InProgress;
 
+                vm.Generation = generation;
                 vm.CpuCores = cpuCores;
                 vm.RamSize = ramMB;
                 vm.HddSize = hddGB;
@@ -516,8 +521,9 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 vm.RootFolderPath = EvaluateItemVariables(rootFolderPattern, vm);
-                vm.OperatingSystemTemplatePath = Path.Combine(templatesPath, osTemplateFile + ".vhd");
-                vm.VirtualHardDrivePath = Path.Combine(vm.RootFolderPath, hostname + ".vhd");
+                var correctVhdPath = GetCorrectTemplateFilePath(templatesPath, osTemplateFile);
+                vm.OperatingSystemTemplatePath = correctVhdPath;
+                vm.VirtualHardDrivePath = Path.Combine(vm.RootFolderPath, hostname + Path.GetExtension(correctVhdPath));
 
                 // save meta-item
                 try
@@ -577,6 +583,14 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        private static string GetCorrectTemplateFilePath(string templatesPath, string osTemplateFile)
+        {
+            if (osTemplateFile.Trim().EndsWith(".vhdx"))
+                return Path.Combine(templatesPath, osTemplateFile);
+
+            return Path.Combine(templatesPath, osTemplateFile + ".vhd");
+        }
+
         internal static void CreateVirtualMachineInternal(string taskId, VirtualMachine vm, LibraryItem osTemplate,
                 int externalAddressesNumber, bool randomExternalAddresses, int[] externalAddresses,
                 int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses,
@@ -598,6 +612,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup External network
                 TaskManager.Write("VPS_CREATE_SETUP_EXTERNAL_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -630,6 +645,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup Management network
                 TaskManager.Write("VPS_CREATE_SETUP_MANAGEMENT_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -690,6 +706,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup Private network
                 TaskManager.Write("VPS_CREATE_SETUP_PRIVATE_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -745,6 +762,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("VPS_CREATE_CONVERT_VHD");
                 TaskManager.Write("VPS_CREATE_CONVERT_SOURCE_VHD", vm.OperatingSystemTemplatePath);
                 TaskManager.Write("VPS_CREATE_CONVERT_DEST_VHD", vm.VirtualHardDrivePath);
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
                 try
                 {
                     // convert VHD
@@ -803,6 +821,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (vm.HddSize > hddSizeGB)
                 {
                     TaskManager.Write("VPS_CREATE_EXPAND_VHD");
+                    TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                     // expand VHD
                     try
@@ -944,6 +963,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("VPS_CREATE_CPU_CORES", vm.CpuCores.ToString());
                 TaskManager.Write("VPS_CREATE_RAM_SIZE", vm.RamSize.ToString());
                 TaskManager.Write("VPS_CREATE_CREATE_VM");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
                 // create virtual machine
                 try
                 {
@@ -1017,6 +1037,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Start VPS
                 TaskManager.Write("VPS_CREATE_START_VPS");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -1195,7 +1216,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 // set OS template
                 string templatesPath = settings["OsTemplatesPath"];
-                item.OperatingSystemTemplatePath = Path.Combine(templatesPath, osTemplateFile + ".vhd");
+                var correctVhdPath = GetCorrectTemplateFilePath(templatesPath, osTemplateFile);
+                item.OperatingSystemTemplatePath = correctVhdPath;
                 try
                 {
                     LibraryItem[] osTemplates = GetOperatingSystemTemplatesByServiceId(serviceId);

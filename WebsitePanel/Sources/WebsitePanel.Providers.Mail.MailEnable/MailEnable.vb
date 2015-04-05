@@ -2034,8 +2034,9 @@ Public Class MailEnable
         End If
 
         If [String].IsNullOrEmpty(version) = False Then
-            Dim split As String() = version.Split(New [Char]() {"."c})
-            Return split(0).Equals("1") Or split(0).Equals("2") Or split(0).Equals("3") Or split(0).Equals("4") Or split(0).Equals("5") Or split(0).Equals("6") Or split(0).Equals("7")
+            'all versions of MailEnable will be compatible with this, so we are just checking to see if there is a version number
+            'future versions aim to retain compatibility
+            Return True
         Else
             Return False
         End If

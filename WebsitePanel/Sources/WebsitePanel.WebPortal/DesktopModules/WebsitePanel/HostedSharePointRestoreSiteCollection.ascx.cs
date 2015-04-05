@@ -59,11 +59,6 @@ namespace WebsitePanel.Portal
 			}
 		}
 
-        public static string GroupName
-        {
-            get { return HttpContext.Current.Request["GroupName"]; }
-        }
-
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
@@ -171,7 +166,7 @@ namespace WebsitePanel.Portal
 
 		private void RedirectBack()
 		{
-            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_edit_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName));
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_edit_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
 		}
 		protected void radioUpload_CheckedChanged(object sender, EventArgs e)
 		{

@@ -44,11 +44,7 @@ namespace WebsitePanel.Portal
 {
 	public partial class HostedSharePointSiteCollections :  WebsitePanelModuleBase
 	{
-        public static string GroupName
-        {
-            get { return HttpContext.Current.Request["GroupName"]; }
-        }
-
+ 
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			this.BindStats();
@@ -67,14 +63,14 @@ namespace WebsitePanel.Portal
 
 		protected void btnCreateSiteCollection_Click(object sender, EventArgs e)
 		{
-			Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_edit_sitecollection", "SpaceID=" + PanelSecurity.PackageId.ToString(), "GroupName=" + GroupName));
+			Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_edit_sitecollection", "SpaceID=" + PanelSecurity.PackageId.ToString()));
 		}
 
 		public string GetSiteCollectionEditUrl(string siteCollectionId)
 		{
 			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_edit_sitecollection",
 					"SiteCollectionID=" + siteCollectionId,
-					"ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName);
+					"ItemID=" + PanelRequest.ItemID.ToString());
 		}
 
 		protected void odsSharePointSiteCollectionPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

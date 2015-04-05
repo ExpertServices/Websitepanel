@@ -68,22 +68,62 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebsitePanel.EnterpriseServer.Base">
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Code">
+    <Reference Include="WebsitePanel.EnterpriseServer.Code, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.Providers.Base">
+    <Reference Include="WebsitePanel.Providers.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.Server.Client, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.Server.Client, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.Server.Client.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Ionic.Zip.Reduced.dll" />
+    <Content Include="bin\IPAddressRange.dll" />
+    <Content Include="bin\Microsoft.Web.Services3.dll" />
+    <Content Include="bin\WebsitePanel.Common.Utils.dll" />
+    <Content Include="bin\WebsitePanel.Common.Utils.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Code.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Code.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.2Checkout.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.2Checkout.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.AuthorizeNet.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.AuthorizeNet.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.Enom.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.Enom.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflinePayment.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflinePayment.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflineRegistrar.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflineRegistrar.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalPro.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalPro.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalStandard.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalStandard.pdb" />
+    <Content Include="bin\WebsitePanel.Providers.Base.dll" />
+    <Content Include="bin\WebsitePanel.Providers.Base.pdb" />
+    <Content Include="bin\WebsitePanel.SchedulerService.exe" />
+    <Content Include="bin\WebsitePanel.SchedulerService.pdb" />
+    <Content Include="bin\WebsitePanel.Server.Client.dll" />
+    <Content Include="bin\WebsitePanel.Server.Client.pdb" />
+    <Content Include="bin\WebsitePanel.Templates.dll" />
+    <Content Include="bin\WebsitePanel.Templates.pdb" />
+    <Content Include="bin\WebsitePanel.Whois.dll" />
+    <Content Include="bin\WebsitePanel.Whois.pdb" />
+    <Content Include="bin\WhoisClient.dll" />
     <Content Include="esEnterpriseStorage.asmx" />
+    <Content Include="esHostedSharePointServersEnt.asmx" />
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
@@ -116,9 +156,9 @@
     <Content Include="esUsers.asmx" />
     <Content Include="esWebServers.asmx" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\VersionInfo.cs">
@@ -126,6 +166,10 @@
     </Compile>
     <Compile Include="esEnterpriseStorage.asmx.cs">
       <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="esHostedSharePointServersEnt.asmx.cs">
+      <DependentUpon>esHostedSharePointServersEnt.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="esRemoteDesktopServices.asmx.cs">
@@ -288,6 +332,12 @@
     <Content Include="esWebApplicationGallery.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="SystemEventHandlers.config" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.dll.config" />
+    <Content Include="bin\WebsitePanel.SchedulerService.exe.config" />
+    <None Include="Properties\PublishProfiles\Default Settings %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings %283%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\Enterprise Server.pubxml" />
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>
