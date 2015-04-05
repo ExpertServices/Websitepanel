@@ -58,7 +58,7 @@ namespace WebsitePanel.EnterpriseServer
         /// <param name="groupName">Resource group name.</param>
 		/// <returns>Site collections in raw format.</returns>
 		[WebMethod]
-		public SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId,
+		public SharePointSiteCollectionListPaged Enterprise_GetSiteCollectionsPaged(int packageId, int organizationId,
 			string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
 		{
             return HostedSharePointServerEntController.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue,
@@ -70,7 +70,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// </summary>
 		/// <returns>List of supported languages</returns>
 		[WebMethod]
-		public int[] GetSupportedLanguages(int packageId)
+        public int[] Enterprise_GetSupportedLanguages(int packageId)
 		{
             return HostedSharePointServerEntController.GetSupportedLanguages(packageId);            
 		}
@@ -83,13 +83,13 @@ namespace WebsitePanel.EnterpriseServer
         /// <param name="groupName">Resource group name.</param>
 		/// <returns>List of found site collections.</returns>
 		[WebMethod]
-		public List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
+        public List<SharePointSiteCollection> Enterprise_GetSiteCollections(int packageId, bool recursive)
 		{
 			return HostedSharePointServerEntController.GetSiteCollections(packageId, recursive);
 		}
 
         [WebMethod]
-        public int SetStorageSettings(int itemId, int maxStorage, int warningStorage, bool applyToSiteCollections)
+        public int Enterprise_SetStorageSettings(int itemId, int maxStorage, int warningStorage, bool applyToSiteCollections)
         {
             return HostedSharePointServerEntController.SetStorageSettings(itemId, maxStorage, warningStorage, applyToSiteCollections );
         }
@@ -100,7 +100,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="itemId">Site collection id within metabase.</param>
 		/// <returns>Site collection.</returns>
 		[WebMethod]
-		public SharePointSiteCollection GetSiteCollection(int itemId)
+        public SharePointSiteCollection Enterprise_GetSiteCollection(int itemId)
 		{
 			return HostedSharePointServerEntController.GetSiteCollection(itemId);
 		}
@@ -113,10 +113,10 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="domain">Domain name.</param>
 		/// <returns>SharePoint site collection or null.</returns>
 		[WebMethod]
-		public SharePointSiteCollection GetSiteCollectionByDomain(int organizationId, string domain)
+        public SharePointSiteCollection Enterprise_GetSiteCollectionByDomain(int organizationId, string domain)
 		{
 			DomainInfo domainInfo = ServerController.GetDomain(domain);
-			SharePointSiteCollectionListPaged existentSiteCollections = this.GetSiteCollectionsPaged(domainInfo.PackageId, organizationId, "ItemName", String.Format("%{0}", domain), String.Empty, 0, Int32.MaxValue);
+            SharePointSiteCollectionListPaged existentSiteCollections = this.Enterprise_GetSiteCollectionsPaged(domainInfo.PackageId, organizationId, "ItemName", String.Format("%{0}", domain), String.Empty, 0, Int32.MaxValue);
 			foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
 			{
 				Uri existentSiteCollectionUri = new Uri(existentSiteCollection.Name);
@@ -136,7 +136,7 @@ namespace WebsitePanel.EnterpriseServer
         /// <param name="groupName">Resource group name.</param>
 		/// <returns>Created site collection id within metabase.</returns>
 		[WebMethod]
-		public int AddSiteCollection(SharePointSiteCollection item)
+        public int Enterprise_AddSiteCollection(SharePointSiteCollection item)
 		{
 			return HostedSharePointServerEntController.AddSiteCollection(item);
 		}
@@ -147,7 +147,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="itemId">Site collection id within metabase.</param>
 		/// <returns>?</returns>
 		[WebMethod]
-		public int DeleteSiteCollection(int itemId)
+        public int Enterprise_DeleteSiteCollection(int itemId)
 		{
 			return HostedSharePointServerEntController.DeleteSiteCollection(itemId);
 		}
@@ -158,7 +158,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="organizationId">Site collection id within metabase.</param>
 		/// <returns>?</returns>
 		[WebMethod]
-		public int DeleteSiteCollections(int organizationId)
+        public int Enterprise_DeleteSiteCollections(int organizationId)
 		{
 			HostedSharePointServerEntController.DeleteSiteCollections(organizationId);
 			return 0;
@@ -175,7 +175,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="folderName">Local folder to store downloaded backup.</param>
 		/// <returns>Created backup file name. </returns>
 		[WebMethod]
-		public string BackupSiteCollection(int itemId, string fileName, bool zipBackup, bool download, string folderName)
+        public string Enterprise_BackupSiteCollection(int itemId, string fileName, bool zipBackup, bool download, string folderName)
 		{
 			return HostedSharePointServerEntController.BackupSiteCollection(itemId, fileName, zipBackup, download, folderName);
 		}
@@ -188,7 +188,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="packageFile"></param>
 		/// <returns></returns>
 		[WebMethod]
-		public int RestoreSiteCollection(int itemId, string uploadedFile, string packageFile)
+        public int Enterprise_RestoreSiteCollection(int itemId, string uploadedFile, string packageFile)
 		{
 			return HostedSharePointServerEntController.RestoreSiteCollection(itemId, uploadedFile, packageFile);
 		}
@@ -202,7 +202,7 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="length">Binary data chunk length.</param>
 		/// <returns>Binary data chunk read from file.</returns>
 		[WebMethod]
-		public byte[] GetBackupBinaryChunk(int itemId, string path, int offset, int length)
+        public byte[] Enterprise_GetBackupBinaryChunk(int itemId, string path, int offset, int length)
 		{
 			return HostedSharePointServerEntController.GetBackupBinaryChunk(itemId, path, offset, length);
 		}
@@ -216,20 +216,20 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="chunk">Binary data chunk to append to.</param>
 		/// <returns>Path to file that was appended with chunk.</returns>
 		[WebMethod]
-		public string AppendBackupBinaryChunk(int itemId, string fileName, string path, byte[] chunk)
+        public string Enterprise_AppendBackupBinaryChunk(int itemId, string fileName, string path, byte[] chunk)
 		{
 			return HostedSharePointServerEntController.AppendBackupBinaryChunk(itemId, fileName, path, chunk);
 		}
 
         [WebMethod]
-        public SharePointSiteDiskSpace[] CalculateSharePointSitesDiskSpace(int itemId, out int errorCode)
+        public SharePointSiteDiskSpace[] Enterprise_CalculateSharePointSitesDiskSpace(int itemId, out int errorCode)
         {
             return HostedSharePointServerEntController.CalculateSharePointSitesDiskSpace(itemId, out  errorCode);
         }
 
 
         [WebMethod]
-        public void UpdateQuota(int itemId, int siteCollectionId, int maxSize, int warningSize)
+        public void Enterprise_UpdateQuota(int itemId, int siteCollectionId, int maxSize, int warningSize)
         {
             HostedSharePointServerEntController.UpdateQuota(itemId, siteCollectionId, maxSize, warningSize);
         }
