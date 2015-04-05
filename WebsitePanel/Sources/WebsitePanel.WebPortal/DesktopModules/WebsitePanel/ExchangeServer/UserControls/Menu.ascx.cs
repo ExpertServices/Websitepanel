@@ -253,6 +253,20 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         }
 
+
+        private void PrepareSharePointEnterpriseMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath, string menuItemText)
+        {
+            MenuGroup sharepointGroup =
+                    new MenuGroup(menuItemText, imagePath + "sharepoint24.png");
+            sharepointGroup.MenuItems.Add(CreateMenuItem("SiteCollections", "sharepoint_enterprise_sitecollections"));
+            sharepointGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "sharepoint_enterprise_storage_usage"));
+            sharepointGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "sharepoint_enterprise_storage_settings"));
+
+            groups.Add(sharepointGroup);
+
+
+        }
+
         private void PrepareOCSMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             MenuGroup ocsGroup =
@@ -321,7 +335,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
             {
-                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointEnterpriseServerGroup"));
+                PrepareSharePointEnterpriseMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointEnterpriseServerGroup"));
             }
 
             //CRM Menu
