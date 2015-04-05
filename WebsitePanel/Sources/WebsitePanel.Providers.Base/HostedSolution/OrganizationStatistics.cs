@@ -61,6 +61,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		private int allocatedSharePointSiteCollections;
 		private int createdSharePointSiteCollections;
 
+        private int allocatedSharePointEnterpriseSiteCollections;
+        private int createdSharePointEnterpriseSiteCollections;
+
         private int createdCRMUsers;
         private int allocatedCRMUsers;
 
@@ -287,6 +290,18 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return createdSharePointSiteCollections; }
 			set { createdSharePointSiteCollections = value; }
 		}
+
+        public int AllocatedSharePointEnterpriseSiteCollections
+        {
+            get { return allocatedSharePointEnterpriseSiteCollections; }
+            set { allocatedSharePointEnterpriseSiteCollections = value; }
+        }
+
+        public int CreatedSharePointEnterpriseSiteCollections
+        {
+            get { return createdSharePointEnterpriseSiteCollections; }
+            set { createdSharePointEnterpriseSiteCollections = value; }
+        }
 
         public int CreatedBlackBerryUsers { get; set; }
         public int AllocatedBlackBerryUsers { get; set; }

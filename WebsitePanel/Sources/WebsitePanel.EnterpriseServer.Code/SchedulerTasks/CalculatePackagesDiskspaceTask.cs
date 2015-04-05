@@ -179,6 +179,20 @@ namespace WebsitePanel.EnterpriseServer
                             }
                         }
                     }
+
+                    if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                    {
+                        SharePointSiteDiskSpace[] sharePointSiteDiskSpaces =
+                            HostedSharePointServerEntController.CalculateSharePointSitesDiskSpace(org.Id, out res);
+                        if (res == 0)
+                        {
+                            foreach (SharePointSiteDiskSpace currecnt in sharePointSiteDiskSpaces)
+                            {
+                                size += currecnt.DiskSpace;
+                            }
+                        }
+                    }
+
                     ServiceProviderItemDiskSpace tmp = new ServiceProviderItemDiskSpace();
                     tmp.ItemId = item.Id;
                     tmp.DiskSpace = size;

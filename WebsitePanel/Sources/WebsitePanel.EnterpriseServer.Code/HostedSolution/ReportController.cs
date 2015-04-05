@@ -158,6 +158,18 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
         }
 
+
+        private static HostedSharePointServerEnt GetHostedSharePointServerEnt(int serviceId)
+        {
+            HostedSharePointServerEnt sps = new HostedSharePointServerEnt();
+            ServiceProviderProxy.Init(sps, serviceId);
+            return sps;
+        }
+
+        private static int GetHostedSharePointEntServiceId(int packageId)
+        {
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointEnterpriseServer);
+        }
         
         private static void PopulateBaseItem(BaseStatistics stats, Organization org, string topReseller)
         {
@@ -394,6 +406,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     string.Format("Could not get sharepoint server. PackageId: {0}", org.PackageId), ex);
             }
 
+
             foreach (SharePointSiteCollection siteCollection in siteCollections)
             {
                 try
@@ -418,6 +431,59 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             }
         }
 
+
+        private static void PopulateSharePointEntItem(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
+        {
+            List<SharePointSiteCollection> siteCollections;
+
+            try
+            {
+                siteCollections = HostedSharePointServerEntController.GetSiteCollections(org.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(string.Format("Could not get site collections. OrgId: {0}", org.Id), ex);
+            }
+
+            if (siteCollections == null || siteCollections.Count == 0)
+                return;
+
+
+            HostedSharePointServerEnt srvEnt;
+            try
+            {
+                int serviceId = GetHostedSharePointEntServiceId(org.PackageId);
+                srvEnt = GetHostedSharePointServerEnt(serviceId);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(
+                    string.Format("Could not get sharepoint enterprise server. PackageId: {0}", org.PackageId), ex);
+            }
+
+            foreach (SharePointSiteCollection siteCollection in siteCollections)
+            {
+                try
+                {
+                    SharePointStatistics stats = new SharePointStatistics();
+                    PopulateBaseItem(stats, org, topReseller);
+
+                    stats.SiteCollectionUrl = siteCollection.PhysicalAddress;
+                    stats.SiteCollectionOwner = siteCollection.OwnerName;
+                    stats.SiteCollectionQuota = siteCollection.MaxSiteStorage;
+
+                    stats.SiteCollectionCreated = siteCollection.CreatedDate;
+
+                    stats.SiteCollectionSize = srvEnt.Enterprise_GetSiteCollectionSize(siteCollection.PhysicalAddress);
+
+                    report.SharePointReport.Items.Add(stats);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex);
+                }
+            }
+        }
 
         private static void PopulateExchangeReportItems(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
         {

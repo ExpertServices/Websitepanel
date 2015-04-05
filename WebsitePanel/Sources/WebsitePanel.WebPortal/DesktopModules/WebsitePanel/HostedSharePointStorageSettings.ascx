@@ -6,7 +6,7 @@
 <%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
-
+<%@ Register Src="ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register src="UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
 
 
