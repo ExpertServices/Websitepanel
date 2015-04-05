@@ -791,7 +791,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
         private static int GetHostedSharePointServiceId(int packageId)
         {
-            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointEnterpriseServer);
         }
 
         private static List<SharePointSiteCollection> GetOrganizationSharePointSiteCollections(int orgId)

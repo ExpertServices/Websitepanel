@@ -98,8 +98,8 @@ namespace WebsitePanel.Portal.UserControls
             if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 PrepareSharePointMenuRoot(items, GetLocalizedString("Text.SharePointFoundationServerGroup"), ResourceGroups.SharepointFoundationServer.Replace(" ", ""));
 
-            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointServer))
-                PrepareSharePointMenuRoot(items, GetLocalizedString("Text.SharePointServerGroup"), ResourceGroups.SharepointServer.Replace(" ", ""));
+            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                PrepareSharePointMenuRoot(items, GetLocalizedString("Text.SharePointEnterpriseServerGroup"), ResourceGroups.SharepointEnterpriseServer.Replace(" ", ""));
 
             //CRM Menu
             if (Cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))

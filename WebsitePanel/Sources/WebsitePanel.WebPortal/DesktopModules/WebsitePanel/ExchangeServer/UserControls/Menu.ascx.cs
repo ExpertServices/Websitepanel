@@ -319,9 +319,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointFoundationServerGroup"));
             }
 
-            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointServer))
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
             {
-                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointServerGroup"));
+                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointEnterpriseServerGroup"));
             }
 
             //CRM Menu

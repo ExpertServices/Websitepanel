@@ -1074,7 +1074,14 @@ namespace WebsitePanel.EnterpriseServer
                                     {
                                         SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, o.Id, string.Empty, string.Empty, string.Empty, 0, 0);
                                         stats.CreatedSharePointSiteCollections += sharePointStats.TotalRowCount;
+                                    }
+
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                                    {
+                                        SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, o.Id, string.Empty, string.Empty, string.Empty, 0, 0);
+                                        stats.CreatedSharePointEnterpriseSiteCollections += sharePointStats.TotalRowCount;
                                     }                                    
+
 
                                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                                     {

@@ -3371,14 +3371,11 @@
   <data name="Quota.HostedSolution.DeletedUsersBackupStorageSpace" xml:space="preserve">
     <value>Deleted Users Backup Storage Space per Organization, Mb</value>
   </data>
-  <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
-    <value>Hosted SharePoint</value>
-  </data>
   <data name="ResourceGroup.SharePoint Foundation Server" xml:space="preserve">
     <value>SharePoint Foundation Server</value>
   </data>
-    <data name="ResourceGroup.SharePoint Server" xml:space="preserve">
-    <value>SharePoint Server</value>
+    <data name="ResourceGroup.SharePoint Enterprise Server" xml:space="preserve">
+    <value>SharePoint Enterprise Server</value>
   </data>
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>

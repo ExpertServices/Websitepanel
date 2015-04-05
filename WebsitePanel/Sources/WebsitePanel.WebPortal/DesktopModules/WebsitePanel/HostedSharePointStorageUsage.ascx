@@ -11,7 +11,6 @@
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
-            <wsp:Menu id="menu" runat="server" SelectedItem="storage_limits" /> 
         </div>
 		<div class="Content">
 			<div class="Center">

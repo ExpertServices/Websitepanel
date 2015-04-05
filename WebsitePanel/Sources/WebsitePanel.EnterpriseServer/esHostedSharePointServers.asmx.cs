@@ -55,7 +55,6 @@ namespace WebsitePanel.EnterpriseServer
 		/// <param name="sortColumn">Sort column name.</param>
 		/// <param name="startRow">Row index to start from.</param>
 		/// <param name="maximumRows">Maximum number of rows to retrieve.</param>
-        /// <param name="groupName">Resource group name.</param>
 		/// <returns>Site collections in raw format.</returns>
 		[WebMethod]
 		public SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId,
@@ -80,7 +79,6 @@ namespace WebsitePanel.EnterpriseServer
 		/// </summary>
 		/// <param name="packageId">Package that owns site collections.</param>
 		/// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
-        /// <param name="groupName">Resource group name.</param>
 		/// <returns>List of found site collections.</returns>
 		[WebMethod]
 		public List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
@@ -133,7 +131,6 @@ namespace WebsitePanel.EnterpriseServer
 		/// Adds SharePoint site collection.
 		/// </summary>
 		/// <param name="item">Site collection description.</param>
-        /// <param name="groupName">Resource group name.</param>
 		/// <returns>Created site collection id within metabase.</returns>
 		[WebMethod]
 		public int AddSiteCollection(SharePointSiteCollection item)
