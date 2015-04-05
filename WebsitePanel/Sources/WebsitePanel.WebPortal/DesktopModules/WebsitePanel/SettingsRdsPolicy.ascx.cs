@@ -49,6 +49,9 @@ namespace WebsitePanel.Portal
             cbControlSessionAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS]);
             cbControlSessionUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_Users]);
 
+            cbDisableCmdAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.DISABLE_CMD_ADMINISTRATORS]);
+            cbDisableCmdUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.DISABLE_CMD_USERS]);
+
             ddTreshold.SelectedValue = settings[RdsServerSettings.DRIVE_SPACE_THRESHOLD_VALUE];
         }
 
@@ -72,6 +75,12 @@ namespace WebsitePanel.Portal
             settings[RdsServerSettings.SCREEN_SAVER_DISABLED_ADMINISTRATORS] = cbScreenSaverAdministrators.Checked.ToString();
             settings[RdsServerSettings.SCREEN_SAVER_DISABLED_USERS] = cbScreenSaverUsers.Checked.ToString();
             settings[RdsServerSettings.DRIVE_SPACE_THRESHOLD_VALUE] = ddTreshold.SelectedValue;
+            settings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_ADMINISTRATORS] = cbViewSessionAdministrators.Checked.ToString();
+            settings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_Users] = cbViewSessionUsers.Checked.ToString();
+            settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS] = cbControlSessionAdministrators.Checked.ToString();
+            settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_Users] = cbControlSessionUsers.Checked.ToString();
+            settings[RdsServerSettings.DISABLE_CMD_ADMINISTRATORS] = cbDisableCmdAdministrators.Checked.ToString();
+            settings[RdsServerSettings.DISABLE_CMD_USERS] = cbDisableCmdUsers.Checked.ToString();
         }
     }
 }

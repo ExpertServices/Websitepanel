@@ -45,6 +45,9 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
         public const string RDS_CONTROL_WITHOUT_PERMISSION = "RDSControlWithoutPermission";
         public const string RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS = "RDSControlWithoutPermissionAdministrators";
         public const string RDS_CONTROL_WITHOUT_PERMISSION_Users = "RDSControlWithoutPermissionUsers";
+        public const string DISABLE_CMD = "DisableCMD";
+        public const string DISABLE_CMD_ADMINISTRATORS = "DisableCMDAdministrators";
+        public const string DISABLE_CMD_USERS = "DisableCMDUsers";
 
         public string SettingsName { get; set; }
         public int ServerId { get; set; }
