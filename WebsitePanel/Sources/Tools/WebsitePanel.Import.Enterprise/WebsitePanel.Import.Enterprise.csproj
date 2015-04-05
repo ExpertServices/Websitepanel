@@ -65,9 +65,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebsitePanel.EnterpriseServer">
-      <HintPath>..\..\WebsitePanel.EnterpriseServer\bin\WebsitePanel.EnterpriseServer.dll</HintPath>
-    </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Base">
       <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
@@ -215,6 +212,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WebsitePanel.EnterpriseServer\WebsitePanel.EnterpriseServer.csproj">
+      <Project>{59c7623a-5181-48a5-880a-c9b82b48f589}</Project>
+      <Name>WebsitePanel.EnterpriseServer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
