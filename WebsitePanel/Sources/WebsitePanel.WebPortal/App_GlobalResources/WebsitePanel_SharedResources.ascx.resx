@@ -3395,6 +3395,12 @@
   <data name="Quota.HostedSharePointServer.MaxStorage" xml:space="preserve">
     <value>Max site storage, MB</value>
   </data>
+  <data name="Quota.HostedSharePointEnterprise.Sites" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collections per Organization</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.MaxStorage" xml:space="preserve">
+    <value>Max site storage, MB</value>
+  </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
     <value>Full licenses per organization</value>
   </data>
@@ -5169,6 +5175,9 @@
     <value>Web Publishing profile for this web site has been successfully saved</value>
   </data>
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
   </data>
   <data name="Quota.HostedSharePointServer.UseSharedSSL" xml:space="preserve">

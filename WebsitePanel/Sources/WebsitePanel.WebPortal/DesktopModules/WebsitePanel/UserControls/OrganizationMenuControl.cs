@@ -385,26 +385,11 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareSharePointMenu(MenuItemCollection spItems)
         {                        
-            spItems.Add(CreateSharepointMenuItem("Text.SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
-            spItems.Add(CreateSharepointMenuItem("Text.StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
-            spItems.Add(CreateSharepointMenuItem("Text.StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
+            spItems.Add(CreateMenuItem("Text.SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
+            spItems.Add(CreateMenuItem("Text.StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("Text.StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
 
-        private MenuItem CreateSharepointMenuItem(string text, string key, string img)
-        {
-            MenuItem item = new MenuItem();
-            string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
-            item.Text = GetLocalizedString(text);
-            item.NavigateUrl = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGE_SERVER, "ItemID", ItemID.ToString(),
-                PortalUtils.SPACE_ID_PARAM + "=" + PackageId, DefaultPage.CONTROL_ID_PARAM + "=" + key, "moduleDefId=exchangeserver");
-
-            if (ShowImg)
-            {
-                item.ImageUrl = PortalUtils.GetThemedIcon(img);
-            }
-
-            return item;
-        }
 
         private void PrepareSharePointEnterpriseMenuRoot(MenuItemCollection items, string menuItemText)
         {
@@ -430,26 +415,11 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareSharePointEnterpriseMenu(MenuItemCollection spItems)
         {
-            spItems.Add(CreateSharepointEnterpriseMenuItem("Text.SiteCollections", "sharepoint_enterprise_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
-            spItems.Add(CreateSharepointEnterpriseMenuItem("Text.StorageUsage", "sharepoint_enterprise_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
-            spItems.Add(CreateSharepointEnterpriseMenuItem("Text.StorageLimits", "sharepoint_enterprise_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
+            spItems.Add(CreateMenuItem("Text.SiteCollections", "sharepoint_enterprise_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
+            spItems.Add(CreateMenuItem("Text.StorageUsage", "sharepoint_enterprise_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("Text.StorageLimits", "sharepoint_enterprise_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
 
-        private MenuItem CreateSharepointEnterpriseMenuItem(string text, string key, string img)
-        {
-            MenuItem item = new MenuItem();
-            string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
-            item.Text = GetLocalizedString(text);
-            item.NavigateUrl = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGE_SERVER, "ItemID", ItemID.ToString(),
-                PortalUtils.SPACE_ID_PARAM + "=" + PackageId, DefaultPage.CONTROL_ID_PARAM + "=" + key, "moduleDefId=exchangeserver");
-
-            if (ShowImg)
-            {
-                item.ImageUrl = PortalUtils.GetThemedIcon(img);
-            }
-
-            return item;
-        }
 
         private void PrepareOCSMenuRoot(MenuItemCollection items)
         {
