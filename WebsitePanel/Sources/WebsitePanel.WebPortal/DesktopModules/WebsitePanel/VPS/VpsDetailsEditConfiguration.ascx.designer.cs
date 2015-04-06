@@ -211,15 +211,6 @@ namespace WebsitePanel.Portal.VPS {
         protected global::System.Web.UI.WebControls.Localize locGB;
         
         /// <summary>
-        /// editSettingsProviderControl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder editSettingsProviderControl;
-        
-        /// <summary>
         /// secSnapshots control.
         /// </summary>
         /// <remarks>

@@ -189,6 +189,7 @@
     <Compile Include="Code\Helpers\ServiceItemsHelper.cs" />
     <Compile Include="Code\Helpers\TasksHelper.cs" />
     <Compile Include="Code\Helpers\UsersHelper.cs" />
+    <Compile Include="Code\Helpers\VirtualMachines2012Helper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesHelper.cs" />
     <Compile Include="Code\Helpers\WebAppGalleryHelpers.cs" />
     <Compile Include="Code\ProviderControls\IDatabaseEditDatabaseControl.cs" />
@@ -265,19 +266,242 @@
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="VPS\ProviderControls\HyperV2012R2_Edit.ascx.cs">
-      <DependentUpon>HyperV2012R2_Edit.ascx</DependentUpon>
+    <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.cs">
+      <DependentUpon>Connect.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="VPS\ProviderControls\HyperV2012R2_Edit.ascx.designer.cs">
-      <DependentUpon>HyperV2012R2_Edit.ascx</DependentUpon>
+    <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.designer.cs">
+      <DependentUpon>Connect.aspx</DependentUpon>
     </Compile>
-    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.cs">
-      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
+    <Compile Include="VPS2012\TestVirtualMachineTemplate.aspx.cs">
+      <DependentUpon>TestVirtualMachineTemplate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.designer.cs">
-      <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
+    <Compile Include="VPS2012\TestVirtualMachineTemplate.aspx.designer.cs">
+      <DependentUpon>TestVirtualMachineTemplate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Breadcrumb.ascx.cs">
+      <DependentUpon>Breadcrumb.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Breadcrumb.ascx.designer.cs">
+      <DependentUpon>Breadcrumb.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\DynamicMemory.ascx.cs">
+      <DependentUpon>DynamicMemory.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\DynamicMemory.ascx.designer.cs">
+      <DependentUpon>DynamicMemory.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\FormTitle.ascx.cs">
+      <DependentUpon>FormTitle.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\FormTitle.ascx.designer.cs">
+      <DependentUpon>FormTitle.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Generation.ascx.cs">
+      <DependentUpon>Generation.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Generation.ascx.designer.cs">
+      <DependentUpon>Generation.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Menu.ascx.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Menu.ascx.designer.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\ServerTabs.ascx.cs">
+      <DependentUpon>ServerTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\ServerTabs.ascx.designer.cs">
+      <DependentUpon>ServerTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcAddExternalAddress.ascx.cs">
+      <DependentUpon>VdcAddExternalAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcAddExternalAddress.ascx.designer.cs">
+      <DependentUpon>VdcAddExternalAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcAuditLog.ascx.cs">
+      <DependentUpon>VdcAuditLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcAuditLog.ascx.designer.cs">
+      <DependentUpon>VdcAuditLog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcCreateServer.ascx.cs">
+      <DependentUpon>VdcCreateServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcCreateServer.ascx.designer.cs">
+      <DependentUpon>VdcCreateServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcExternalNetwork.ascx.cs">
+      <DependentUpon>VdcExternalNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcExternalNetwork.ascx.designer.cs">
+      <DependentUpon>VdcExternalNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcHome.ascx.cs">
+      <DependentUpon>VdcHome.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcHome.ascx.designer.cs">
+      <DependentUpon>VdcHome.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcImportServer.ascx.cs">
+      <DependentUpon>VdcImportServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcImportServer.ascx.designer.cs">
+      <DependentUpon>VdcImportServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcManagementNetwork.ascx.cs">
+      <DependentUpon>VdcManagementNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcManagementNetwork.ascx.designer.cs">
+      <DependentUpon>VdcManagementNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcPermissions.ascx.cs">
+      <DependentUpon>VdcPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcPermissions.ascx.designer.cs">
+      <DependentUpon>VdcPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcPrivateNetwork.ascx.cs">
+      <DependentUpon>VdcPrivateNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcPrivateNetwork.ascx.designer.cs">
+      <DependentUpon>VdcPrivateNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VirtualMachineImage.ashx.cs">
+      <DependentUpon>VirtualMachineImage.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VirtualMachineSnapshotImage.ashx.cs">
+      <DependentUpon>VirtualMachineSnapshotImage.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddExternalAddress.ascx.cs">
+      <DependentUpon>VpsDetailsAddExternalAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddExternalAddress.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAddExternalAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddPrivateAddress.ascx.cs">
+      <DependentUpon>VpsDetailsAddPrivateAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddPrivateAddress.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAddPrivateAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAuditLog.ascx.cs">
+      <DependentUpon>VpsDetailsAuditLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAuditLog.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAuditLog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsConfiguration.ascx.cs">
+      <DependentUpon>VpsDetailsConfiguration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsConfiguration.ascx.designer.cs">
+      <DependentUpon>VpsDetailsConfiguration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsDvd.ascx.cs">
+      <DependentUpon>VpsDetailsDvd.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsDvd.ascx.designer.cs">
+      <DependentUpon>VpsDetailsDvd.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsEditConfiguration.ascx.cs">
+      <DependentUpon>VpsDetailsEditConfiguration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsEditConfiguration.ascx.designer.cs">
+      <DependentUpon>VpsDetailsEditConfiguration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsGeneral.ascx.cs">
+      <DependentUpon>VpsDetailsGeneral.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsGeneral.ascx.designer.cs">
+      <DependentUpon>VpsDetailsGeneral.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsHelp.ascx.cs">
+      <DependentUpon>VpsDetailsHelp.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsHelp.ascx.designer.cs">
+      <DependentUpon>VpsDetailsHelp.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsInsertDvd.ascx.cs">
+      <DependentUpon>VpsDetailsInsertDvd.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsInsertDvd.ascx.designer.cs">
+      <DependentUpon>VpsDetailsInsertDvd.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsNetwork.ascx.cs">
+      <DependentUpon>VpsDetailsNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsNetwork.ascx.designer.cs">
+      <DependentUpon>VpsDetailsNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsPermissions.ascx.cs">
+      <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsPermissions.ascx.designer.cs">
+      <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.cs">
+      <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.designer.cs">
+      <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsTools.ascx.cs">
+      <DependentUpon>VpsDetailsTools.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsTools.ascx.designer.cs">
+      <DependentUpon>VpsDetailsTools.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsMoveServer.ascx.cs">
+      <DependentUpon>VpsMoveServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsMoveServer.ascx.designer.cs">
+      <DependentUpon>VpsMoveServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsDeleteServer.ascx.cs">
+      <DependentUpon>VpsToolsDeleteServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsDeleteServer.ascx.designer.cs">
+      <DependentUpon>VpsToolsDeleteServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsReinstallServer.ascx.cs">
+      <DependentUpon>VpsToolsReinstallServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsReinstallServer.ascx.designer.cs">
+      <DependentUpon>VpsToolsReinstallServer.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
       <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
@@ -4069,20 +4293,6 @@
     <Compile Include="VPSForPC\VpsEventsLog.ascx.designer.cs">
       <DependentUpon>VpsEventsLog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="VPS\UserControls\DynamicMemory.ascx.cs">
-      <DependentUpon>DynamicMemory.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="VPS\UserControls\DynamicMemory.ascx.designer.cs">
-      <DependentUpon>DynamicMemory.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="VPS\UserControls\Generation.ascx.cs">
-      <DependentUpon>Generation.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="VPS\UserControls\Generation.ascx.designer.cs">
-      <DependentUpon>Generation.ascx</DependentUpon>
-    </Compile>
     <Compile Include="VPS\VpsMoveServer.ascx.cs">
       <DependentUpon>VpsMoveServer.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4560,8 +4770,40 @@
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
-    <Content Include="VPS\ProviderControls\HyperV2012R2_Edit.ascx" />
-    <Content Include="VPS\ProviderControls\HyperV2012R2_Create.ascx" />
+    <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
+    <Content Include="VPS2012\RemoteDesktop\msrdp.cab" />
+    <Content Include="VPS2012\TestVirtualMachineTemplate.aspx" />
+    <Content Include="VPS2012\UserControls\Breadcrumb.ascx" />
+    <Content Include="VPS2012\UserControls\DynamicMemory.ascx" />
+    <Content Include="VPS2012\UserControls\FormTitle.ascx" />
+    <Content Include="VPS2012\UserControls\Generation.ascx" />
+    <Content Include="VPS2012\UserControls\Menu.ascx" />
+    <Content Include="VPS2012\UserControls\ServerTabs.ascx" />
+    <Content Include="VPS2012\VdcAddExternalAddress.ascx" />
+    <Content Include="VPS2012\VdcAuditLog.ascx" />
+    <Content Include="VPS2012\VdcCreateServer.ascx" />
+    <Content Include="VPS2012\VdcExternalNetwork.ascx" />
+    <Content Include="VPS2012\VdcHome.ascx" />
+    <Content Include="VPS2012\VdcImportServer.ascx" />
+    <Content Include="VPS2012\VdcManagementNetwork.ascx" />
+    <Content Include="VPS2012\VdcPermissions.ascx" />
+    <Content Include="VPS2012\VdcPrivateNetwork.ascx" />
+    <Content Include="VPS2012\VpsDetailsAddExternalAddress.ascx" />
+    <Content Include="VPS2012\VpsDetailsAddPrivateAddress.ascx" />
+    <Content Include="VPS2012\VpsDetailsAuditLog.ascx" />
+    <Content Include="VPS2012\VpsDetailsConfiguration.ascx" />
+    <Content Include="VPS2012\VpsDetailsDvd.ascx" />
+    <Content Include="VPS2012\VpsDetailsEditConfiguration.ascx" />
+    <Content Include="VPS2012\VpsDetailsGeneral.ascx" />
+    <Content Include="VPS2012\VpsDetailsHelp.ascx" />
+    <Content Include="VPS2012\VpsDetailsInsertDvd.ascx" />
+    <Content Include="VPS2012\VpsDetailsNetwork.ascx" />
+    <Content Include="VPS2012\VpsDetailsPermissions.ascx" />
+    <Content Include="VPS2012\VpsDetailsSnapshots.ascx" />
+    <Content Include="VPS2012\VpsDetailsTools.ascx" />
+    <Content Include="VPS2012\VpsMoveServer.ascx" />
+    <Content Include="VPS2012\VpsToolsDeleteServer.ascx" />
+    <Content Include="VPS2012\VpsToolsReinstallServer.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
@@ -4612,9 +4854,6 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
     <Content Include="App_LocalResources\SettingsRdsPolicy.ascx.resx" />
-    <Content Include="VPS\ProviderControls\App_LocalResources\HyperV2012R2_Create.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="ProviderControls\App_LocalResources\HyperV2012R2_Settings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
@@ -4803,8 +5042,6 @@
     <Content Include="UserControls\UserDetails.ascx" />
     <Content Include="UserControls\UserLookup.ascx" />
     <Content Include="UserControls\UsernameControl.ascx" />
-    <Content Include="VPS\UserControls\DynamicMemory.ascx" />
-    <Content Include="VPS\UserControls\Generation.ascx" />
     <Content Include="WebSitesHeliconZooControl.ascx" />
     <Content Include="WebsitesSSL.ascx" />
     <Content Include="LyncPhoneNumbers.ascx" />
@@ -4822,7 +5059,97 @@
     <Content Include="VPS\UserControls\App_LocalResources\DynamicMemory.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="VPS\ProviderControls\App_LocalResources\HyperV2012R2_Edit.ascx.resx">
+    <Content Include="VPS2012\App_LocalResources\VdcAddExternalAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcAuditLog.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcCreateServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcExternalNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcHome.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcImportServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcManagementNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcPermissions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcPrivateNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAddExternalAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAddPrivateAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAuditLog.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsConfiguration.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsDvd.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsEditConfiguration.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsGeneral.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsHelp.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsInsertDvd.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsPermissions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsSnapshots.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsTools.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsMoveServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsToolsDeleteServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsToolsReinstallServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\RemoteDesktop\App_LocalResources\Connect.aspx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Breadcrumb.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\DynamicMemory.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Generation.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Menu.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\ServerTabs.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
@@ -6973,6 +7300,8 @@
     <Content Include="ResizeImage.ashx" />
     <Content Include="VPSForPC\VirtualMachineImage.ashx" />
     <Content Include="VPSForPC\VirtualMachineSnapshotImage.ashx" />
+    <Content Include="VPS2012\VirtualMachineImage.ashx" />
+    <Content Include="VPS2012\VirtualMachineSnapshotImage.ashx" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

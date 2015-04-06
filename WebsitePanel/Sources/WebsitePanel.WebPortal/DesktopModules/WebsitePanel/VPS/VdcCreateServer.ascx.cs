@@ -42,8 +42,6 @@ namespace WebsitePanel.Portal.VPS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            LoadCustomProviderControls();
-
             if (!IsPostBack)
             {
                 BindFormControls();
@@ -55,28 +53,7 @@ namespace WebsitePanel.Portal.VPS
             // toggle
             ToggleControls();
         }
-
-        private void LoadCustomProviderControls()
-        {
-            try
-            {
-                LoadProviderControl(PanelSecurity.PackageId, "VPS", createSettingsProviderControl, "Create.ascx");
-                if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.IsEditMode = true;
-            }
-            catch { /* skip */ }
-        }
-
-        private IVirtualMachineSettingsControl CreareSettingsProviderControl
-        {
-            get
-            {
-                if (createSettingsProviderControl.Controls.Count == 0)
-                    return null;
-
-                return (IVirtualMachineSettingsControl)createSettingsProviderControl.Controls[0];
-            }
-        }
-
+        
         private void ToggleWizardSteps()
         {
             // external network
@@ -135,9 +112,6 @@ namespace WebsitePanel.Portal.VPS
                 ddlCpu.Items.Add(i.ToString());
 
             ddlCpu.SelectedIndex = ddlCpu.Items.Count - 1; // select last (maximum) item
-
-            // the custom provider control
-            if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.BindItem(new VirtualMachine());  
 
             // external network details
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_EXTERNAL_NETWORK_ENABLED))
@@ -263,11 +237,6 @@ namespace WebsitePanel.Portal.VPS
 
         private void BindSummary()
         {
-            VirtualMachine virtualMachine = new VirtualMachine();
-
-            // the custom provider control
-            if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.SaveItem(virtualMachine);
-            
             // general
             litHostname.Text =  PortalAntiXSS.Encode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
             litOperatingSystem.Text = listOperatingSystems.SelectedItem.Text;
@@ -278,7 +247,6 @@ namespace WebsitePanel.Portal.VPS
             // config
             litCpu.Text = PortalAntiXSS.Encode(ddlCpu.SelectedValue);
             litRam.Text = PortalAntiXSS.Encode(txtRam.Text.Trim());
-            litGeneration.Text = CreareSettingsProviderControl != null ? PortalAntiXSS.Encode(virtualMachine.Generation.ToString()) : "1";
             litHdd.Text = PortalAntiXSS.Encode(txtHdd.Text.Trim());
             litSnapshots.Text = PortalAntiXSS.Encode(txtSnapshots.Text.Trim());
             optionDvdInstalled.Value = chkDvdInstalled.Checked;
@@ -319,11 +287,6 @@ namespace WebsitePanel.Portal.VPS
 
             try
             {
-                VirtualMachine virtualMachine = new VirtualMachine();
-
-                // the custom provider control
-                if (CreareSettingsProviderControl != null) CreareSettingsProviderControl.SaveItem(virtualMachine);
-
                 // collect and prepare data
                 string hostname = String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim());
 
@@ -342,7 +305,7 @@ namespace WebsitePanel.Portal.VPS
                 // create virtual machine
                 IntResult res = ES.Services.VPS.CreateVirtualMachine(PanelSecurity.PackageId,
                     hostname, listOperatingSystems.SelectedValue, adminPassword, summaryEmail,
-                    virtualMachine.Generation, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
+                    1, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
                     Utils.ParseInt(txtHdd.Text.Trim()), Utils.ParseInt(txtSnapshots.Text.Trim()),
                     chkDvdInstalled.Checked, chkBootFromCd.Checked, chkNumLock.Checked,
                     chkStartShutdown.Checked, chkPauseResume.Checked, chkReboot.Checked, chkReset.Checked, chkReinstall.Checked,
