@@ -463,6 +463,42 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.CheckBox cbControlSessionAdministrators;
         
         /// <summary>
+        /// secDisableCmd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secDisableCmd;
+        
+        /// <summary>
+        /// disableCmdPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel disableCmdPanel;
+        
+        /// <summary>
+        /// cbDisableCmdUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbDisableCmdUsers;
+        
+        /// <summary>
+        /// cbDisableCmdAdministrators control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox cbDisableCmdAdministrators;
+        
+        /// <summary>
         /// buttonPanel control.
         /// </summary>
         /// <remarks>

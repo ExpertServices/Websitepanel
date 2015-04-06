@@ -59,5 +59,10 @@ namespace WebsitePanel.Portal.RDS
                 return;
             }
         }
+
+        protected void btnExit_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_users", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
+        }
     }
 }

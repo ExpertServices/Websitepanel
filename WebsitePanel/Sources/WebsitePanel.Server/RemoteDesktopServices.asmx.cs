@@ -695,5 +695,21 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void MoveSessionHostsToCollectionOU(List<RdsServer> servers, string collectionName, string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' MoveSessionHostsToCollectionOU", ProviderSettings.ProviderName);
+                RDSProvider.MoveSessionHostsToCollectionOU(servers, collectionName, organizationId);
+                Log.WriteEnd("'{0}' MoveSessionHostsToCollectionOU", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' MoveSessionHostsToCollectionOU", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

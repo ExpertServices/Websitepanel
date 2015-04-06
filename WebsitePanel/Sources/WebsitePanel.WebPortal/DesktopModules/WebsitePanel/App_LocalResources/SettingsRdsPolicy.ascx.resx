@@ -129,6 +129,9 @@
   <data name="secControlSession.Text" xml:space="preserve">
     <value>Control RDS Session without Users's Permission</value>
   </data>
+  <data name="secDisableCmd.Text" xml:space="preserve">
+    <value>Disable Command Prompt</value>
+  </data>
   <data name="secDriveSpace.Text" xml:space="preserve">
     <value>Drive Space Threshold</value>
   </data>

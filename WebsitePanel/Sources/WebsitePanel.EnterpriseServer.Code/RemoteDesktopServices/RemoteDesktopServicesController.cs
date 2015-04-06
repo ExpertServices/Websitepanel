@@ -408,24 +408,7 @@ namespace WebsitePanel.EnterpriseServer
                 var rds = GetRemoteDesktopServices(GetRdsServiceId(collection.ItemId));
                 Organization org = OrganizationController.GetOrganization(collection.ItemId);
                 rds.ApplyGPO(org.OrganizationId, collection.Name, settings);
-
-                XmlDocument doc = new XmlDocument();
-                XmlElement nodeProps = doc.CreateElement("properties");
-
-                if (settings != null)
-                {
-                    foreach (var setting in settings.Settings)
-                    {
-                        XmlElement nodeProp = doc.CreateElement("property");
-                        nodeProp.SetAttribute("name", setting.PropertyName);
-                        nodeProp.SetAttribute("value", setting.PropertyValue);
-                        nodeProp.SetAttribute("applyUsers", setting.ApplyUsers ? "1" : "0");
-                        nodeProp.SetAttribute("applyAdministrators", setting.ApplyAdministrators ? "1" : "0");
-                        nodeProps.AppendChild(nodeProp);
-                    }
-                }
-
-                string xml = nodeProps.OuterXml;                
+                string xml = GetSettingsXml(settings);
 
                 DataProvider.UpdateRdsServerSettings(serverId, settingsName, xml);
 
@@ -792,8 +775,11 @@ namespace WebsitePanel.EnterpriseServer
                 };                
 
                 rds.CreateCollection(org.OrganizationId, collection);
-                rds.ApplyGPO(org.OrganizationId, collection.Name, GetDefaultGpoSettings());
-                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);                
+                var defaultGpoSettings = GetDefaultGpoSettings();                
+                rds.ApplyGPO(org.OrganizationId, collection.Name, defaultGpoSettings);                
+                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);
+                string xml = GetSettingsXml(defaultGpoSettings);
+                DataProvider.UpdateRdsServerSettings(collection.Id, string.Format("Collection-{0}-Settings", collection.Id), xml);
                 
                 collection.Settings.RdsCollectionId = collection.Id;
                 int settingsId = DataProvider.AddRdsCollectionSettings(collection.Settings);
@@ -850,6 +836,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 rds.AddSessionHostServersToCollection(org.OrganizationId, collection.Name, newServers.ToArray());
+                rds.MoveSessionHostsToCollectionOU(collection.Servers.ToArray(), collection.Name, org.OrganizationId);
 
                 foreach (var server in newServers)
                 {                    
@@ -2142,7 +2129,52 @@ namespace WebsitePanel.EnterpriseServer
                 ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.SCREEN_SAVER_DISABLED_USERS])
             });
 
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION_Users])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_Users])
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.DISABLE_CMD,
+                PropertyValue = "",
+                ApplyAdministrators = Convert.ToBoolean(defaultSettings[RdsServerSettings.DISABLE_CMD_ADMINISTRATORS]),
+                ApplyUsers = Convert.ToBoolean(defaultSettings[RdsServerSettings.DISABLE_CMD_USERS])
+            });
+
             return settings;
+        }
+
+        private static string GetSettingsXml(RdsServerSettings settings)
+        {
+            XmlDocument doc = new XmlDocument();
+            XmlElement nodeProps = doc.CreateElement("properties");
+
+            if (settings != null)
+            {
+                foreach (var setting in settings.Settings)
+                {
+                    XmlElement nodeProp = doc.CreateElement("property");
+                    nodeProp.SetAttribute("name", setting.PropertyName);
+                    nodeProp.SetAttribute("value", setting.PropertyValue);
+                    nodeProp.SetAttribute("applyUsers", setting.ApplyUsers ? "1" : "0");
+                    nodeProp.SetAttribute("applyAdministrators", setting.ApplyAdministrators ? "1" : "0");
+                    nodeProps.AppendChild(nodeProp);
+                }
+            }
+
+            return nodeProps.OuterXml;
         }
     }
 }

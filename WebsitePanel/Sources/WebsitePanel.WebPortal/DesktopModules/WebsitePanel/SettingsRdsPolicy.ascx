@@ -167,3 +167,17 @@
     </table>
     <br />
 </asp:Panel>
+<wsp:CollapsiblePanel id="secDisableCmd" runat="server" TargetControlID="disableCmdPanel" meta:resourcekey="secDisableCmd" Text="Disable Command Prompt"/>
+<asp:Panel ID="disableCmdPanel" runat="server" Height="0" style="overflow:hidden;">
+    <table>
+        <tr>
+            <td>
+                <asp:CheckBox runat="server" Text="Users" ID="cbDisableCmdUsers" meta:resourcekey="cbUsers" Checked="false" />
+            </td>
+            <td>
+                <asp:CheckBox runat="server" Text="Administrators" meta:resourcekey="cbAdministrators" ID="cbDisableCmdAdministrators" Checked="false" />
+            </td>           
+        </tr>
+    </table>
+    <br />
+</asp:Panel>

@@ -106,6 +106,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback ShadowSessionOperationCompleted;
         
+        private System.Threading.SendOrPostCallback MoveSessionHostsToCollectionOUOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -224,6 +226,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event ShadowSessionCompletedEventHandler ShadowSessionCompleted;
+        
+        /// <remarks/>
+        public event MoveSessionHostsToCollectionOUCompletedEventHandler MoveSessionHostsToCollectionOUCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1883,6 +1888,52 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/MoveSessionHostsToCollectionOU", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void MoveSessionHostsToCollectionOU(RdsServer[] servers, string collectionName, string organizationId) {
+            this.Invoke("MoveSessionHostsToCollectionOU", new object[] {
+                        servers,
+                        collectionName,
+                        organizationId});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginMoveSessionHostsToCollectionOU(RdsServer[] servers, string collectionName, string organizationId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("MoveSessionHostsToCollectionOU", new object[] {
+                        servers,
+                        collectionName,
+                        organizationId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndMoveSessionHostsToCollectionOU(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void MoveSessionHostsToCollectionOUAsync(RdsServer[] servers, string collectionName, string organizationId) {
+            this.MoveSessionHostsToCollectionOUAsync(servers, collectionName, organizationId, null);
+        }
+        
+        /// <remarks/>
+        public void MoveSessionHostsToCollectionOUAsync(RdsServer[] servers, string collectionName, string organizationId, object userState) {
+            if ((this.MoveSessionHostsToCollectionOUOperationCompleted == null)) {
+                this.MoveSessionHostsToCollectionOUOperationCompleted = new System.Threading.SendOrPostCallback(this.OnMoveSessionHostsToCollectionOUOperationCompleted);
+            }
+            this.InvokeAsync("MoveSessionHostsToCollectionOU", new object[] {
+                        servers,
+                        collectionName,
+                        organizationId}, this.MoveSessionHostsToCollectionOUOperationCompleted, userState);
+        }
+        
+        private void OnMoveSessionHostsToCollectionOUOperationCompleted(object arg) {
+            if ((this.MoveSessionHostsToCollectionOUCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.MoveSessionHostsToCollectionOUCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2523,4 +2574,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void ShadowSessionCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void MoveSessionHostsToCollectionOUCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

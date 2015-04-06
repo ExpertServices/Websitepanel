@@ -138,4 +138,7 @@
   <data name="valRequireEmail.Text" xml:space="preserve">
     <value>* Enter E-Mail</value>
   </data>
+  <data name="btnExit.Text" xml:space="preserve">
+    <value>Back to Users List</value>
+  </data>
 </root>
