@@ -385,9 +385,9 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareSharePointMenu(MenuItemCollection spItems)
         {                        
-            spItems.Add(CreateMenuItem("Text.SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
-            spItems.Add(CreateMenuItem("Text.StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
-            spItems.Add(CreateMenuItem("Text.StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
+            spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
+            spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
 
 
@@ -415,9 +415,9 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareSharePointEnterpriseMenu(MenuItemCollection spItems)
         {
-            spItems.Add(CreateMenuItem("Text.SiteCollections", "sharepoint_enterprise_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
-            spItems.Add(CreateMenuItem("Text.StorageUsage", "sharepoint_enterprise_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
-            spItems.Add(CreateMenuItem("Text.StorageLimits", "sharepoint_enterprise_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
+            spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_enterprise_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
+            spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_enterprise_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_enterprise_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
 
 
