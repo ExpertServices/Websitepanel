@@ -637,6 +637,14 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
         }
 
+        public void MoveSessionHostsToCollectionOU(List<RdsServer> servers, string collectionName, string organizationId)
+        {
+            foreach(var server in servers)
+            {
+                MoveSessionHostToCollectionOU(server.Name, collectionName, organizationId);
+            }
+        }
+
         public void RemoveSessionHostServerFromCollection(string organizationId, string collectionName, RdsServer server)
         {
             Runspace runSpace = null;

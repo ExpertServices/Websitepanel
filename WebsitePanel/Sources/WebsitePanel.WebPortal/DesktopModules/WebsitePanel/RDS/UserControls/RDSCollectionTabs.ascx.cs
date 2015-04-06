@@ -26,8 +26,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
             tabsList.Add(CreateTab("rds_collection_edit_apps", "Tab.RdsApplications"));
             tabsList.Add(CreateTab("rds_collection_edit_users", "Tab.RdsUsers"));
             tabsList.Add(CreateTab("rds_collection_user_sessions", "Tab.UserSessions"));
-            tabsList.Add(CreateTab("rds_collection_local_admins", "Tab.LocalAdmins"));            
-            tabsList.Add(CreateTab("rds_setup_letter", "Tab.RdsSetupLetter"));            
+            tabsList.Add(CreateTab("rds_collection_local_admins", "Tab.LocalAdmins"));                                
             
             int idx = 0;
 

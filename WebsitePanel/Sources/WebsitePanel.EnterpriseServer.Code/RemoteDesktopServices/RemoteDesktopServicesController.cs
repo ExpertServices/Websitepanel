@@ -836,6 +836,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 rds.AddSessionHostServersToCollection(org.OrganizationId, collection.Name, newServers.ToArray());
+                rds.MoveSessionHostsToCollectionOU(collection.Servers.ToArray(), collection.Name, org.OrganizationId);
 
                 foreach (var server in newServers)
                 {                    
