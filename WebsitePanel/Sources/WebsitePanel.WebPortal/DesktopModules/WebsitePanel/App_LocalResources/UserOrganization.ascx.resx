@@ -238,7 +238,7 @@
     <value>Hosted Organization - SharePoint Foundation Server</value>
   </data>
   <data name="Text.SharePointEnterpriseServerGroup" xml:space="preserve">
-    <value>Hosted Organization - SharePoint Enterprise Server</value>
+    <value>Hosted Organization - SharePoint Server</value>
   </data>
   <data name="Text.SiteCollections" xml:space="preserve">
     <value>Sharepoint Sites</value>
