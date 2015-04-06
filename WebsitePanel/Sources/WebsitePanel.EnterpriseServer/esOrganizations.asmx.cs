@@ -48,6 +48,18 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
+        public void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
+        {
+            OrganizationController.UpdateOrganizationPasswordSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationPasswordSettings(itemId);
+        }
+
+        [WebMethod]
         public bool CheckOrgIdExists(string orgId)
         {
             return OrganizationController.OrganizationIdentifierExists(orgId);

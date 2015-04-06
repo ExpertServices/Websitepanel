@@ -3236,6 +3236,23 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void UpdateOrganizationSettings(int itemId, string settingsName, string xml)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "UpdateExchangeOrganizationSettings",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@SettingsName", settingsName),
+                new SqlParameter("@Xml", xml));
+        }
+
+        public static IDataReader GetOrganizationSettings(int itemId, string settingsName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetExchangeOrganizationSettings",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@SettingsName", settingsName));
+        }
+
         public static int AddOrganizationDeletedUser(int accountId, int originAT, string storagePath, string folderName, string fileName, DateTime expirationDate)
         {
             SqlParameter outParam = new SqlParameter("@ID", SqlDbType.Int);

@@ -99,5 +99,6 @@ namespace WebsitePanel.Providers.HostedSolution
         void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
 
         List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration);
+        void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings);
     }
 }

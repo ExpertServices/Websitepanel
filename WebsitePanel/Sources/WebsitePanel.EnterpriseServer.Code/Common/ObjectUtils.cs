@@ -27,11 +27,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Xml;
+using System.Xml.Serialization;
 using WebsitePanel.Providers;
 
 namespace WebsitePanel.EnterpriseServer
@@ -645,6 +647,37 @@ namespace WebsitePanel.EnterpriseServer
             return type.FullName + ", " + type.Assembly.GetName().Name;
         }
 
+        public static TResult Deserialize<TResult>(string inputString)
+        {
+            TResult result;
+
+            var serializer = new XmlSerializer(typeof(TResult));
+
+            using (TextReader reader = new StringReader(inputString))
+            {
+                result = (TResult)serializer.Deserialize(reader);
+            }
+
+            return result;
+        }
+
+        public static string Serialize<TEntity>(TEntity entity)
+        {
+            string result = string.Empty;
+
+            var xmlSerializer = new XmlSerializer(typeof(TEntity));
+
+            using (var stringWriter = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(stringWriter))
+                {
+                    xmlSerializer.Serialize(writer, entity);
+                    result = stringWriter.ToString();
+                }
+            }
+
+            return result;
+        } 
 
         #region Helper Functions
 

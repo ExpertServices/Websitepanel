@@ -59,18 +59,7 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             try
             {
-                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
-                if (passwordPolicy.IsSuccess)
-                {
-                    password.MinimumLength = passwordPolicy.Value.MinLength;
-                    if (passwordPolicy.Value.IsComplexityEnable)
-                    {
-                        password.MinimumNumbers = 1;
-                        password.MinimumSymbols = 1;
-                        password.MinimumUppercase = 1;
-                    }
-                }
+                BindPasswordSettings();
 
                 // get settings
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
@@ -271,6 +260,37 @@ namespace WebsitePanel.Portal.HostedSolution
             }
             else { secServiceLevels.Visible = false; }
 
+        }
+
+        private void BindPasswordSettings()
+        {
+            var grainedPasswordSettigns = ES.Services.Organizations.GetOrganizationPasswordSettings(PanelRequest.ItemID);
+
+            if (grainedPasswordSettigns != null)
+            {
+                password.SetUserPolicy(grainedPasswordSettigns);
+            }
+            else
+            {
+                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
+
+                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
+
+                if (passwordPolicy.IsSuccess)
+                {
+                    password.MinimumLength = passwordPolicy.Value.MinLength;
+                    if (passwordPolicy.Value.IsComplexityEnable)
+                    {
+                        password.MinimumNumbers = 1;
+                        password.MinimumSymbols = 1;
+                        password.MinimumUppercase = 1;
+                    }
+                }
+                else
+                {
+                    messageBox.ShowMessage(passwordPolicy, "CREATE_ORGANIZATION_USER", "HostedOrganization");
+                }
+            }
         }
 
         private bool CheckServiceLevelQuota(QuotaValueInfo quota)

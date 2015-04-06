@@ -261,5 +261,11 @@ namespace WebsitePanel.Server
         {
             return Organization.GetOrganizationUsersWithExpiredPassword(organizationId, daysBeforeExpiration);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings)
+        {
+            Organization.ApplyPasswordSettings(organizationId, passwordSettings);
+        }
     }
 }

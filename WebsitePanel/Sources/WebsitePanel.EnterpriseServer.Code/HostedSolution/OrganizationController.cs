@@ -1647,6 +1647,56 @@ namespace WebsitePanel.EnterpriseServer
             return token;
         }
 
+        public static void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
+        {
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_PASSWORD_SETTINGS");
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    TaskManager.WriteWarning("Organization with itemId '{0}' not found", itemId.ToString());
+                    return;
+                }
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.ApplyPasswordSettings(org.OrganizationId, settings);
+
+                var xml = ObjectUtils.Serialize(settings);
+
+                DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.PasswordSettings, xml);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
+        {
+            return GetOrganizationSettings<OrganizationPasswordSettings>(itemId, OrganizationSettings.PasswordSettings);
+        }
+
+        private static T GetOrganizationSettings<T>(int itemId, string settingsName)
+        {
+            var entity = ObjectUtils.FillObjectFromDataReader<OrganizationSettingsEntity>(DataProvider.GetOrganizationSettings(itemId, settingsName));
+
+            if (entity == null)
+            {
+                return default(T);
+            }
+
+            return ObjectUtils.Deserialize<T>(entity.Xml);
+        }
+
         private static bool EmailAddressExists(string emailAddress)
         {
             return DataProvider.ExchangeAccountEmailAddressExists(emailAddress);

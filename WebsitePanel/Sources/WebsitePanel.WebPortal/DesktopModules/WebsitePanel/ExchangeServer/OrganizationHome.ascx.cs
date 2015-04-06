@@ -175,6 +175,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             lblOrganizationNameValue.Text = org.Name;
             lblOrganizationIDValue.Text = org.OrganizationId;
             lblCreatedValue.Text = org.CreatedDate.Date.ToShortDateString();
+            lnkEditOrganizationSettings.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "organization_settings_password_settings",
+                    "SpaceID=" + PanelSecurity.PackageId);
+
 
             OrganizationStatistics orgStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
             OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);

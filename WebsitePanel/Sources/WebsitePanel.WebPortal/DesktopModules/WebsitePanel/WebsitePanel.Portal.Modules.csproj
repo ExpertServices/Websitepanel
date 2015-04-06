@@ -244,6 +244,13 @@
       <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationUserResetPassword.ascx.cs">
       <DependentUpon>OrganizationUserResetPassword.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -264,6 +271,13 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
       <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
@@ -4557,9 +4571,11 @@
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationUserResetPassword.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
@@ -4622,6 +4638,8 @@
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationUserResetPassword.ascx.resx" />
     <Content Include="App_LocalResources\SettingsUserPasswordExpirationLetter.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\OrganizationSettingsTabs.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsPasswordSettings.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />

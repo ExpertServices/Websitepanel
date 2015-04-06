@@ -9685,3 +9685,64 @@ SELECT
 	FROM AccessTokens 
 	Where AccessTokenGuid = @AccessToken AND ExpirationDate > getdate() AND TokenType = @TokenType
 GO
+
+
+-- ORGANIZATION SETTINGS
+
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeOrganizationSettings')
+DROP TABLE ExchangeOrganizationSettings
+GO
+CREATE TABLE ExchangeOrganizationSettings
+(
+	ItemId INT NOT NULL,
+	SettingsName nvarchar(100)  NOT NULL,
+	Xml nvarchar(max) NOT NULL
+)
+GO
+
+ALTER TABLE [dbo].[ExchangeOrganizationSettings]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSettings_ExchangeOrganizations_ItemId] FOREIGN KEY([ItemId])
+REFERENCES [dbo].[ExchangeOrganizations] ([ItemId])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateExchangeOrganizationSettings')
+DROP PROCEDURE UpdateExchangeOrganizationSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateExchangeOrganizationSettings]
+(
+	@ItemId INT ,
+	@SettingsName nvarchar(100) ,
+	@Xml nvarchar(max)
+)
+AS
+IF NOT EXISTS (SELECT * FROM [dbo].[ExchangeOrganizationSettings] WHERE [ItemId] = @ItemId AND [SettingsName]= @SettingsName )
+BEGIN
+INSERT [dbo].[ExchangeOrganizationSettings] ([ItemId], [SettingsName], [Xml]) VALUES (@ItemId, @SettingsName, @Xml)
+END
+ELSE
+UPDATE [dbo].[ExchangeOrganizationSettings] SET [Xml] = @Xml WHERE [ItemId] = @ItemId AND [SettingsName]= @SettingsName
+GO
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetExchangeOrganizationSettings')
+DROP PROCEDURE GetExchangeOrganizationSettings
+GO
+CREATE PROCEDURE [dbo].[GetExchangeOrganizationSettings]
+(
+	@ItemId INT ,
+	@SettingsName nvarchar(100)
+)
+AS
+SELECT 
+	ItemId,
+	SettingsName,
+	Xml
+
+FROM ExchangeOrganizationSettings 
+Where ItemId = @ItemId AND SettingsName = @SettingsName
+GO

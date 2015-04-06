@@ -5713,4 +5713,7 @@
   <data name="SchedulerTask.SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION" xml:space="preserve">
     <value>User password expiration notification</value>
   </data>
+  <data name="ERROR.ORANIZATIONSETTINGS_NOT_UPDATED" xml:space="preserve">
+    <value>Error during updating settings.</value>
+  </data>
 </root>

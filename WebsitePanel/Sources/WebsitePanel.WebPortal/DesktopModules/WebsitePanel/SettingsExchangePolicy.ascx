@@ -13,7 +13,7 @@
                 
             </td>
             <td>
-                <wsp:PasswordPolicyEditor id="mailboxPasswordPolicy" runat="server" />
+                <wsp:PasswordPolicyEditor id="mailboxPasswordPolicy" runat="server" ShowLockoutSettings="true"/>
             </td>
         </tr>
     </table>

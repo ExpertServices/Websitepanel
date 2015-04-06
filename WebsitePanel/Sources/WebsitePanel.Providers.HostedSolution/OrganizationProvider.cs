@@ -552,6 +552,114 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
+        public void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings settings)
+        {
+            HostedSolutionLog.LogStart("ApplyPasswordPolicy");
+
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var gpoId = CreatePolicyIfNotExist(runspace, organizationId, FormOrganizationSettingsGpoName(organizationId));
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError(ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+                HostedSolutionLog.LogEnd("ApplyPasswordPolicy");
+            }
+        }
+
+        private string FormOrganizationSettingsGpoName(string organizationId)
+        {
+            return string.Format("{0}-settings", organizationId);
+        }
+
+        private string CreatePolicyIfNotExist(Runspace runspace, string organizationId, string gpoName)
+        {
+            string gpoId = GetPolicyId(runspace, gpoName);
+
+            if (string.IsNullOrEmpty(gpoId))
+            {
+                gpoId = CreateAndLinkPolicy(runspace, gpoName, organizationId);
+            }
+
+            return gpoId;
+        }
+
+        private void DeleteGpo(Runspace runspace, string gpoName)
+        {
+            Command cmd = new Command("Remove-GPO");
+            cmd.Parameters.Add("Name", gpoName);
+
+           // Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+        }
+
+        private string CreateAndLinkPolicy(Runspace runspace, string gpoName, string organizationId)
+        {
+            string pathOU = GetOrganizationTargetPath(organizationId);
+
+            //create new gpo 
+            Command cmd = new Command("New-GPO");
+            cmd.Parameters.Add("Name", gpoName);
+
+            Collection<PSObject> result = ExecuteShellCommand(runspace, cmd);
+
+            string gpoId = null;
+
+            if (result != null && result.Count > 0)
+            {
+                PSObject gpo = result[0];
+                //get gpo id
+                gpoId = ((Guid) GetPSObjectProperty(gpo, "Id")).ToString("B");
+
+            }
+
+            //create gpo link
+            cmd = new Command("New-GPLink");
+            cmd.Parameters.Add("Name", gpoName);
+            cmd.Parameters.Add("Target", pathOU);
+
+            ExecuteShellCommand(runspace, cmd);
+
+            return gpoId;
+        }
+
+        private string GetPolicyId(Runspace runspace, string gpoName)
+        {
+            Runspace runSpace = null;
+
+            string gpoId = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Get-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                if (result != null && result.Count > 0)
+                {
+                    PSObject gpo = result[0];
+                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return gpoId;
+        }
+
         public PasswordPolicyResult GetPasswordPolicy()
         {
             return GetPasswordPolicyInternal();
