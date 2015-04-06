@@ -274,7 +274,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
                 siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);
 
-                while (DataProvider.CheckServiceItemExists(serviceId, item.Name, "WebsitePanel. Providers. SharePoint. SharePointSiteCollection,   WebsitePanel. Providers. Base")) 
+                while (DataProvider.CheckServiceItemExists(serviceId, item.Name, "WebsitePanel.Providers.SharePoint.SharePointSiteCollection,   WebsitePanel.Providers.Base")) 
                 {
                     counter++;
                     item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
