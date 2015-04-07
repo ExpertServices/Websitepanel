@@ -205,7 +205,7 @@
     <value>SharePoint Foundation</value>
   </data>
   <data name="Text.SharePointEnterpriseServerGroup" xml:space="preserve">
-    <value>SharePoint Enterprise Server</value>
+    <value>SharePoint Server</value>
   </data>
   <data name="Text.SiteCollections" xml:space="preserve">
     <value>Site Collections</value>
