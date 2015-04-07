@@ -211,6 +211,6 @@
     <value>Deleted Users:</value>
   </data>
   <data name="lblSharepointEnterpriseSites.Text" xml:space="preserve">
-    <value>SharePoint Enterprise Sites:</value>
+    <value>SharePoint Server Sites:</value>
   </data>
 </root>

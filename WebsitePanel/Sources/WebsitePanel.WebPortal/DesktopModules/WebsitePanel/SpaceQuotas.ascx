@@ -75,7 +75,7 @@
         <td class="Normal"><wsp:Quota ID="quotaSharepointSites" runat="server" QuotaName="HostedSharePoint.Sites" DisplayGauge="True" /></td>
     </tr>
     <tr ID="pnlEnterpriseSharepointSites" runat="server">
-        <td class="SubHead" nowrap><asp:Label ID="lblEnterpriseSharepointSites" runat="server" meta:resourcekey="lblEnterpriseSharepointSites" Text="Sharepoint Sites:"></asp:Label></td>
+        <td class="SubHead" nowrap><asp:Label ID="lblEnterpriseSharepointSites" runat="server" meta:resourcekey="lblEnterpriseSharepointSites" Text="Sharepoint Server Sites:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaEnterpriseSharepointSites" runat="server" QuotaName="HostedSharePointEnterprise.Sites" DisplayGauge="True" /></td>
     </tr>    
 
