@@ -193,7 +193,7 @@
                                         </table>
                                     </asp:Panel>
 
-                                    <wsp:DynamicMemoryControl ruVpsnat="server" ID="DynamicMemorySetting" Mode="Edit"/>
+                                    <wsp:DynamicMemoryControl runat="server" ID="DynamicMemorySetting" Mode="Edit"/>
 
                                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">

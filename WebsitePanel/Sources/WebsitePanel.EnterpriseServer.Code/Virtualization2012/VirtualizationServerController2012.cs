@@ -254,8 +254,6 @@ namespace WebsitePanel.EnterpriseServer
                 return res;
             }
 
-            int generation = 1;
-
             // CPU cores
             int cpuCores = cntx.Quotas[Quotas.VPS2012_CPU_NUMBER].QuotaAllocatedValue;
             if (cpuCores == -1) // unlimited is not possible
@@ -309,20 +307,20 @@ namespace WebsitePanel.EnterpriseServer
 
             // create server and return result
             return CreateVirtualMachine(packageId, hostname, osTemplate, password, summaryLetterEmail,
-                generation, cpuCores, ramMB, hddGB, snapshots,
+                cpuCores, ramMB, hddGB, snapshots,
                 dvdInstalled, bootFromCD, numLock,
                 startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed,
                 externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses,
-                privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses);
+                privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses, new VirtualMachine());
         }
 
         public static IntResult CreateVirtualMachine(int packageId,
                 string hostname, string osTemplateFile, string password, string summaryLetterEmail,
-                int generation, int cpuCores, int ramMB, int hddGB, int snapshots,
+                int cpuCores, int ramMB, int hddGB, int snapshots,
                 bool dvdInstalled, bool bootFromCD, bool numLock,
                 bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
                 bool externalNetworkEnabled, int externalAddressesNumber, bool randomExternalAddresses, int[] externalAddresses,
-                bool privateNetworkEnabled, int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses)
+                bool privateNetworkEnabled, int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses, VirtualMachine otherSettings)
         {
             // result object
             IntResult res = new IntResult();
@@ -368,10 +366,20 @@ namespace WebsitePanel.EnterpriseServer
                 List<string> quotaResults = new List<string>();
                 PackageContext cntx = PackageController.GetPackageContext(packageId);
 
+                // dynamic memory
+                var newRam = ramMB;
+                if (otherSettings.DynamicMemory != null && otherSettings.DynamicMemory.Enabled)
+                {
+                    newRam = otherSettings.DynamicMemory.Maximum;
+
+                    if (ramMB > otherSettings.DynamicMemory.Maximum || ramMB < otherSettings.DynamicMemory.Minimum)
+                        quotaResults.Add(VirtualizationErrorCodes.QUOTA_NOT_IN_DYNAMIC_RAM);
+                }
+
                 CheckListsQuota(cntx, quotaResults, Quotas.VPS2012_SERVERS_NUMBER, VirtualizationErrorCodes.QUOTA_EXCEEDED_SERVERS_NUMBER);
 
                 CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, ramMB, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
+                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
                 CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
                 CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
 
@@ -458,7 +466,7 @@ namespace WebsitePanel.EnterpriseServer
                 vm.CurrentTaskId = Guid.NewGuid().ToString("N"); // generate creation task id
                 vm.ProvisioningStatus = VirtualMachineProvisioningStatus.InProgress;
 
-                vm.Generation = generation;
+                vm.Generation = otherSettings.Generation;
                 vm.CpuCores = cpuCores;
                 vm.RamSize = ramMB;
                 vm.HddSize = hddGB;
@@ -471,6 +479,12 @@ namespace WebsitePanel.EnterpriseServer
                 vm.RebootAllowed = rebootAllowed;
                 vm.ResetAllowed = resetAllowed;
                 vm.ReinstallAllowed = reinstallAllowed;
+
+                // dynamic memory
+                if (otherSettings.DynamicMemory != null && otherSettings.DynamicMemory.Enabled)
+                    vm.DynamicMemory = otherSettings.DynamicMemory;
+                else
+                    vm.DynamicMemory = null;
 
                 // networking
                 vm.ExternalNetworkEnabled = externalNetworkEnabled;
@@ -1192,8 +1206,10 @@ namespace WebsitePanel.EnterpriseServer
                 item.Name = vm.Name;
                 item.ProvisioningStatus = VirtualMachineProvisioningStatus.OK;
 
+                item.Generation = vm.Generation;
                 item.CpuCores = vm.CpuCores;
                 item.RamSize = vm.RamSize;
+                item.DynamicMemory = vm.DynamicMemory;
                 item.HddSize = vm.HddSize;
                 item.VirtualHardDrivePath = vm.VirtualHardDrivePath;
                 item.RootFolderPath = Path.GetDirectoryName(vm.VirtualHardDrivePath);
@@ -1947,11 +1963,7 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region VPS – Edit Configuration
-        public static ResultObject UpdateVirtualMachineConfiguration(int itemId, int cpuCores, int ramMB, int hddGB, int snapshots,
-                    bool dvdInstalled, bool bootFromCD, bool numLock,
-                    bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
-                    bool externalNetworkEnabled,
-                    bool privateNetworkEnabled)
+        public static ResultObject UpdateVirtualMachineConfiguration(int itemId, int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock, bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed, bool externalNetworkEnabled, bool privateNetworkEnabled, VirtualMachine otherSettings)
         {
             ResultObject res = new ResultObject();
 
@@ -1978,8 +1990,22 @@ namespace WebsitePanel.EnterpriseServer
             List<string> quotaResults = new List<string>();
             PackageContext cntx = PackageController.GetPackageContext(vm.PackageId);
 
+            var currentRam = vm.RamSize;
+            var newRam = ramMB;
+
+            // dynamic memory
+            if (vm.DynamicMemory != null && vm.DynamicMemory.Enabled)
+                currentRam = vm.DynamicMemory.Maximum;
+            if (otherSettings.DynamicMemory != null && otherSettings.DynamicMemory.Enabled)
+            {
+                newRam = otherSettings.DynamicMemory.Maximum;
+
+                if (ramMB > otherSettings.DynamicMemory.Maximum || ramMB < otherSettings.DynamicMemory.Minimum)
+                    quotaResults.Add(VirtualizationErrorCodes.QUOTA_NOT_IN_DYNAMIC_RAM);
+            }
+
             CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
-            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, vm.RamSize, ramMB, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
+            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, currentRam, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
             CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, vm.HddSize, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
             CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
 
@@ -2058,7 +2084,7 @@ namespace WebsitePanel.EnterpriseServer
                 vm.RamSize = ramMB;
                 vm.HddSize = hddGB;
                 vm.SnapshotsNumber = snapshots;
-
+                
                 vm.BootFromCD = bootFromCD;
                 vm.NumLockEnabled = numLock;
                 vm.DvdDriveInstalled = dvdInstalled;
@@ -2071,6 +2097,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 vm.ExternalNetworkEnabled = externalNetworkEnabled;
                 vm.PrivateNetworkEnabled = privateNetworkEnabled;
+
+                // dynamic memory
+                if (otherSettings.DynamicMemory != null && otherSettings.DynamicMemory.Enabled)
+                    vm.DynamicMemory = otherSettings.DynamicMemory;
+                else
+                    vm.DynamicMemory = null;
 
                 // load service settings
                 StringDictionary settings = ServerController.GetServiceSettings(vm.ServiceId);

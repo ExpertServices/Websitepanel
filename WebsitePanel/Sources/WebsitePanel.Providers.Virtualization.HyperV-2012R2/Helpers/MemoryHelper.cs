@@ -25,8 +25,8 @@ namespace WebsitePanel.Providers.Virtualization
                 info.Enabled = result[0].GetBool("DynamicMemoryEnabled");
                 info.Minimum = Convert.ToInt32(result[0].GetLong("Minimum") / Constants.Size1M);
                 info.Maximum = Convert.ToInt32(result[0].GetLong("Maximum") / Constants.Size1M);
-                info.Buffer = Convert.ToInt32(result[0].GetInt("Buffer") / Constants.Size1M);
-                info.Priority = Convert.ToInt32(result[0].GetInt("Priority") / Constants.Size1M);
+                info.Buffer = Convert.ToInt32(result[0].GetInt("Buffer"));
+                info.Priority = Convert.ToInt32(result[0].GetInt("Priority"));
             }
 
             return info;

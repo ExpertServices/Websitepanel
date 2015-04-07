@@ -23,7 +23,6 @@ namespace WebsitePanel.EnterpriseServer {
     using WebsitePanel.Providers.Virtualization;
     using WebsitePanel.Providers.ResultObjects; 
     
-    
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -1105,65 +1104,6 @@ namespace WebsitePanel.EnterpriseServer {
                     string osTemplateFile, 
                     string password, 
                     string summaryLetterEmail, 
-                    int generation, 
-                    int cpuCores, 
-                    int ramMB, 
-                    int hddGB, 
-                    int snapshots, 
-                    bool dvdInstalled, 
-                    bool bootFromCD, 
-                    bool numLock, 
-                    bool startShutdownAllowed, 
-                    bool pauseResumeAllowed, 
-                    bool rebootAllowed, 
-                    bool resetAllowed, 
-                    bool reinstallAllowed, 
-                    bool externalNetworkEnabled, 
-                    int externalAddressesNumber, 
-                    bool randomExternalAddresses, 
-                    int[] externalAddresses, 
-                    bool privateNetworkEnabled, 
-                    int privateAddressesNumber, 
-                    bool randomPrivateAddresses, 
-                    string[] privateAddresses) {
-            object[] results = this.Invoke("CreateVirtualMachine", new object[] {
-                        packageId,
-                        hostname,
-                        osTemplateFile,
-                        password,
-                        summaryLetterEmail,
-                        generation,
-                        cpuCores,
-                        ramMB,
-                        hddGB,
-                        snapshots,
-                        dvdInstalled,
-                        bootFromCD,
-                        numLock,
-                        startShutdownAllowed,
-                        pauseResumeAllowed,
-                        rebootAllowed,
-                        resetAllowed,
-                        reinstallAllowed,
-                        externalNetworkEnabled,
-                        externalAddressesNumber,
-                        randomExternalAddresses,
-                        externalAddresses,
-                        privateNetworkEnabled,
-                        privateAddressesNumber,
-                        randomPrivateAddresses,
-                        privateAddresses});
-            return ((IntResult)(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginCreateVirtualMachine(
-                    int packageId, 
-                    string hostname, 
-                    string osTemplateFile, 
-                    string password, 
-                    string summaryLetterEmail, 
-                    int generation, 
                     int cpuCores, 
                     int ramMB, 
                     int hddGB, 
@@ -1184,15 +1124,13 @@ namespace WebsitePanel.EnterpriseServer {
                     int privateAddressesNumber, 
                     bool randomPrivateAddresses, 
                     string[] privateAddresses, 
-                    System.AsyncCallback callback, 
-                    object asyncState) {
-            return this.BeginInvoke("CreateVirtualMachine", new object[] {
+                    VirtualMachine otherSettings) {
+            object[] results = this.Invoke("CreateVirtualMachine", new object[] {
                         packageId,
                         hostname,
                         osTemplateFile,
                         password,
                         summaryLetterEmail,
-                        generation,
                         cpuCores,
                         ramMB,
                         hddGB,
@@ -1212,7 +1150,68 @@ namespace WebsitePanel.EnterpriseServer {
                         privateNetworkEnabled,
                         privateAddressesNumber,
                         randomPrivateAddresses,
-                        privateAddresses}, callback, asyncState);
+                        privateAddresses,
+                        otherSettings});
+            return ((IntResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCreateVirtualMachine(
+                    int packageId, 
+                    string hostname, 
+                    string osTemplateFile, 
+                    string password, 
+                    string summaryLetterEmail, 
+                    int cpuCores, 
+                    int ramMB, 
+                    int hddGB, 
+                    int snapshots, 
+                    bool dvdInstalled, 
+                    bool bootFromCD, 
+                    bool numLock, 
+                    bool startShutdownAllowed, 
+                    bool pauseResumeAllowed, 
+                    bool rebootAllowed, 
+                    bool resetAllowed, 
+                    bool reinstallAllowed, 
+                    bool externalNetworkEnabled, 
+                    int externalAddressesNumber, 
+                    bool randomExternalAddresses, 
+                    int[] externalAddresses, 
+                    bool privateNetworkEnabled, 
+                    int privateAddressesNumber, 
+                    bool randomPrivateAddresses, 
+                    string[] privateAddresses, 
+                    VirtualMachine otherSettings, 
+                    System.AsyncCallback callback, 
+                    object asyncState) {
+            return this.BeginInvoke("CreateVirtualMachine", new object[] {
+                        packageId,
+                        hostname,
+                        osTemplateFile,
+                        password,
+                        summaryLetterEmail,
+                        cpuCores,
+                        ramMB,
+                        hddGB,
+                        snapshots,
+                        dvdInstalled,
+                        bootFromCD,
+                        numLock,
+                        startShutdownAllowed,
+                        pauseResumeAllowed,
+                        rebootAllowed,
+                        resetAllowed,
+                        reinstallAllowed,
+                        externalNetworkEnabled,
+                        externalAddressesNumber,
+                        randomExternalAddresses,
+                        externalAddresses,
+                        privateNetworkEnabled,
+                        privateAddressesNumber,
+                        randomPrivateAddresses,
+                        privateAddresses,
+                        otherSettings}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -1228,38 +1227,6 @@ namespace WebsitePanel.EnterpriseServer {
                     string osTemplateFile, 
                     string password, 
                     string summaryLetterEmail, 
-                    int generation, 
-                    int cpuCores, 
-                    int ramMB, 
-                    int hddGB, 
-                    int snapshots, 
-                    bool dvdInstalled, 
-                    bool bootFromCD, 
-                    bool numLock, 
-                    bool startShutdownAllowed, 
-                    bool pauseResumeAllowed, 
-                    bool rebootAllowed, 
-                    bool resetAllowed, 
-                    bool reinstallAllowed, 
-                    bool externalNetworkEnabled, 
-                    int externalAddressesNumber, 
-                    bool randomExternalAddresses, 
-                    int[] externalAddresses, 
-                    bool privateNetworkEnabled, 
-                    int privateAddressesNumber, 
-                    bool randomPrivateAddresses, 
-                    string[] privateAddresses) {
-            this.CreateVirtualMachineAsync(packageId, hostname, osTemplateFile, password, summaryLetterEmail, generation, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock, startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed, externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses, privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses, null);
-        }
-        
-        /// <remarks/>
-        public void CreateVirtualMachineAsync(
-                    int packageId, 
-                    string hostname, 
-                    string osTemplateFile, 
-                    string password, 
-                    string summaryLetterEmail, 
-                    int generation, 
                     int cpuCores, 
                     int ramMB, 
                     int hddGB, 
@@ -1280,6 +1247,38 @@ namespace WebsitePanel.EnterpriseServer {
                     int privateAddressesNumber, 
                     bool randomPrivateAddresses, 
                     string[] privateAddresses, 
+                    VirtualMachine otherSettings) {
+            this.CreateVirtualMachineAsync(packageId, hostname, osTemplateFile, password, summaryLetterEmail, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock, startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed, externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses, privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses, otherSettings, null);
+        }
+        
+        /// <remarks/>
+        public void CreateVirtualMachineAsync(
+                    int packageId, 
+                    string hostname, 
+                    string osTemplateFile, 
+                    string password, 
+                    string summaryLetterEmail, 
+                    int cpuCores, 
+                    int ramMB, 
+                    int hddGB, 
+                    int snapshots, 
+                    bool dvdInstalled, 
+                    bool bootFromCD, 
+                    bool numLock, 
+                    bool startShutdownAllowed, 
+                    bool pauseResumeAllowed, 
+                    bool rebootAllowed, 
+                    bool resetAllowed, 
+                    bool reinstallAllowed, 
+                    bool externalNetworkEnabled, 
+                    int externalAddressesNumber, 
+                    bool randomExternalAddresses, 
+                    int[] externalAddresses, 
+                    bool privateNetworkEnabled, 
+                    int privateAddressesNumber, 
+                    bool randomPrivateAddresses, 
+                    string[] privateAddresses, 
+                    VirtualMachine otherSettings, 
                     object userState) {
             if ((this.CreateVirtualMachineOperationCompleted == null)) {
                 this.CreateVirtualMachineOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateVirtualMachineOperationCompleted);
@@ -1290,7 +1289,6 @@ namespace WebsitePanel.EnterpriseServer {
                         osTemplateFile,
                         password,
                         summaryLetterEmail,
-                        generation,
                         cpuCores,
                         ramMB,
                         hddGB,
@@ -1310,7 +1308,8 @@ namespace WebsitePanel.EnterpriseServer {
                         privateNetworkEnabled,
                         privateAddressesNumber,
                         randomPrivateAddresses,
-                        privateAddresses}, this.CreateVirtualMachineOperationCompleted, userState);
+                        privateAddresses,
+                        otherSettings}, this.CreateVirtualMachineOperationCompleted, userState);
         }
         
         private void OnCreateVirtualMachineOperationCompleted(object arg) {
@@ -1765,7 +1764,23 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/UpdateVirtualMachineConfiguration", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResultObject UpdateVirtualMachineConfiguration(int itemId, int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock, bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed, bool externalNetworkEnabled, bool privateNetworkEnabled) {
+        public ResultObject UpdateVirtualMachineConfiguration(
+                    int itemId, 
+                    int cpuCores, 
+                    int ramMB, 
+                    int hddGB, 
+                    int snapshots, 
+                    bool dvdInstalled, 
+                    bool bootFromCD, 
+                    bool numLock, 
+                    bool startShutdownAllowed, 
+                    bool pauseResumeAllowed, 
+                    bool rebootAllowed, 
+                    bool resetAllowed, 
+                    bool reinstallAllowed, 
+                    bool externalNetworkEnabled, 
+                    bool privateNetworkEnabled, 
+                    VirtualMachine otherSettings) {
             object[] results = this.Invoke("UpdateVirtualMachineConfiguration", new object[] {
                         itemId,
                         cpuCores,
@@ -1781,7 +1796,8 @@ namespace WebsitePanel.EnterpriseServer {
                         resetAllowed,
                         reinstallAllowed,
                         externalNetworkEnabled,
-                        privateNetworkEnabled});
+                        privateNetworkEnabled,
+                        otherSettings});
             return ((ResultObject)(results[0]));
         }
         
@@ -1802,6 +1818,7 @@ namespace WebsitePanel.EnterpriseServer {
                     bool reinstallAllowed, 
                     bool externalNetworkEnabled, 
                     bool privateNetworkEnabled, 
+                    VirtualMachine otherSettings, 
                     System.AsyncCallback callback, 
                     object asyncState) {
             return this.BeginInvoke("UpdateVirtualMachineConfiguration", new object[] {
@@ -1819,18 +1836,14 @@ namespace WebsitePanel.EnterpriseServer {
                         resetAllowed,
                         reinstallAllowed,
                         externalNetworkEnabled,
-                        privateNetworkEnabled}, callback, asyncState);
+                        privateNetworkEnabled,
+                        otherSettings}, callback, asyncState);
         }
         
         /// <remarks/>
         public ResultObject EndUpdateVirtualMachineConfiguration(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
             return ((ResultObject)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void UpdateVirtualMachineConfigurationAsync(int itemId, int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock, bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed, bool externalNetworkEnabled, bool privateNetworkEnabled) {
-            this.UpdateVirtualMachineConfigurationAsync(itemId, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock, startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed, externalNetworkEnabled, privateNetworkEnabled, null);
         }
         
         /// <remarks/>
@@ -1850,6 +1863,28 @@ namespace WebsitePanel.EnterpriseServer {
                     bool reinstallAllowed, 
                     bool externalNetworkEnabled, 
                     bool privateNetworkEnabled, 
+                    VirtualMachine otherSettings) {
+            this.UpdateVirtualMachineConfigurationAsync(itemId, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock, startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed, externalNetworkEnabled, privateNetworkEnabled, otherSettings, null);
+        }
+        
+        /// <remarks/>
+        public void UpdateVirtualMachineConfigurationAsync(
+                    int itemId, 
+                    int cpuCores, 
+                    int ramMB, 
+                    int hddGB, 
+                    int snapshots, 
+                    bool dvdInstalled, 
+                    bool bootFromCD, 
+                    bool numLock, 
+                    bool startShutdownAllowed, 
+                    bool pauseResumeAllowed, 
+                    bool rebootAllowed, 
+                    bool resetAllowed, 
+                    bool reinstallAllowed, 
+                    bool externalNetworkEnabled, 
+                    bool privateNetworkEnabled, 
+                    VirtualMachine otherSettings, 
                     object userState) {
             if ((this.UpdateVirtualMachineConfigurationOperationCompleted == null)) {
                 this.UpdateVirtualMachineConfigurationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateVirtualMachineConfigurationOperationCompleted);
@@ -1869,7 +1904,8 @@ namespace WebsitePanel.EnterpriseServer {
                         resetAllowed,
                         reinstallAllowed,
                         externalNetworkEnabled,
-                        privateNetworkEnabled}, this.UpdateVirtualMachineConfigurationOperationCompleted, userState);
+                        privateNetworkEnabled,
+                        otherSettings}, this.UpdateVirtualMachineConfigurationOperationCompleted, userState);
         }
         
         private void OnUpdateVirtualMachineConfigurationOperationCompleted(object arg) {

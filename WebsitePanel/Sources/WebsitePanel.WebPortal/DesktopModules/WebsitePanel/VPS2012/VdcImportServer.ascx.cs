@@ -33,7 +33,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
 using WebsitePanel.EnterpriseServer;
-using WebsitePanel.Providers.Virtualization;
+﻿using WebsitePanel.Portal.Code.Helpers;
+﻿using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.VPS2012
@@ -125,6 +126,8 @@ namespace WebsitePanel.Portal.VPS2012
                     RamSize.Text = vm.RamSize.ToString();
                     HddSize.Text = vm.HddSize.ToString();
                     VhdPath.Text = vm.VirtualHardDrivePath;
+
+                    this.BindSettingsControls(vm);
 
                     // other settings
                     NumLockEnabled.Value = vm.NumLockEnabled;

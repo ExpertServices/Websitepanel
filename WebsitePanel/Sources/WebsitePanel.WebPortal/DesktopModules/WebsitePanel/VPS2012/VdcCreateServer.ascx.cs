@@ -338,12 +338,13 @@ namespace WebsitePanel.Portal.VPS2012
                 // create virtual machine
                 IntResult res = ES.Services.VPS2012.CreateVirtualMachine(PanelSecurity.PackageId,
                     hostname, listOperatingSystems.SelectedValue, adminPassword, summaryEmail,
-                    virtualMachine.Generation, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
+                    Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
                     Utils.ParseInt(txtHdd.Text.Trim()), Utils.ParseInt(txtSnapshots.Text.Trim()),
                     chkDvdInstalled.Checked, chkBootFromCd.Checked, chkNumLock.Checked,
                     chkStartShutdown.Checked, chkPauseResume.Checked, chkReboot.Checked, chkReset.Checked, chkReinstall.Checked,
                     chkExternalNetworkEnabled.Checked, Utils.ParseInt(txtExternalAddressesNumber.Text.Trim()), radioExternalRandom.Checked, extIps.ToArray(),
-                    chkPrivateNetworkEnabled.Checked, Utils.ParseInt(txtPrivateAddressesNumber.Text.Trim()), radioPrivateRandom.Checked, privIps);
+                    chkPrivateNetworkEnabled.Checked, Utils.ParseInt(txtPrivateAddressesNumber.Text.Trim()), radioPrivateRandom.Checked, privIps,
+                    virtualMachine);
 
                 if (res.IsSuccess)
                 {

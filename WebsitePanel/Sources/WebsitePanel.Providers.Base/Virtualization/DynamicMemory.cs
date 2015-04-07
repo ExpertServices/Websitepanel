@@ -31,16 +31,22 @@
 
 namespace WebsitePanel.Providers.Virtualization
 {
+    [Persistent]
     public class DynamicMemory
     {
+        [Persistent]
         public bool Enabled { get; set; }
 
+        [Persistent]
         public int Minimum { get; set; }
 
+        [Persistent]
         public int Maximum { get; set; }
 
+        [Persistent]
         public int Buffer { get; set; }
 
+        [Persistent]
         public int Priority { get; set; } // Weight
     }
 }

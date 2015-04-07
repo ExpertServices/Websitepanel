@@ -21,7 +21,10 @@ DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
 GO
 DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
 GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE GroupID = 33 AND [GroupName] = 'VPS2012')
+BEGIN
 DELETE FROM HostingPlanResources WHERE GroupID = 33
+END
 GO
 
 
@@ -8218,17 +8221,23 @@ AS
 							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
-		ELSE IF @QuotaID = 558 -- RAM of VPS
-			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+		ELSE IF @QuotaID = 558 BEGIN -- RAM of VPS2012
+			DECLARE @Result1 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
 							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 559 -- HDD of VPS
+			DECLARE @Result2 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'DynamicMemory.Maximum' AND PT.ParentPackageID = @PackageID)
+			SET @Result = CASE WHEN isnull(@Result1,0) > isnull(@Result2,0) THEN @Result1 ELSE @Result2 END
+		END
+		ELSE IF @QuotaID = 559 -- HDD of VPS2012
 			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
 							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 562 -- External IP addresses of VPS
+		ELSE IF @QuotaID = 562 -- External IP addresses of VPS2012
 			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
 							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID

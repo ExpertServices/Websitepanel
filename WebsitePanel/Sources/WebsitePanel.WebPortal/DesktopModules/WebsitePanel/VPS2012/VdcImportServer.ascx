@@ -6,6 +6,8 @@
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/CheckBoxOption.ascx" TagName="CheckBoxOption" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register TagPrefix="wsp" TagName="Generation" Src="UserControls/Generation.ascx" %>
+<%@ Register TagPrefix="wsp" TagName="DynamicMemoryControl" Src="UserControls/DynamicMemoryControl.ascx" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -114,11 +116,12 @@
                         </wsp:CollapsiblePanel>
                         <asp:Panel ID="ConfigurationPanel" runat="server" Height="0" style="overflow:hidden;padding:5px;">
                             <table cellpadding="4">
+                                <wsp:Generation runat="server" ID="GenerationSetting" Mode="Summary"/>
                                 <tr>
-                                    <td class="FormLabel150">
+                                    <td>
                                         <asp:Localize ID="locCPU" runat="server" meta:resourcekey="locCPU" Text="CPU:"></asp:Localize>
                                     </td>
-                                    <td class="NormalBold">
+                                    <td>
                                         <asp:Literal ID="CpuCores" runat="server" Text="0"></asp:Literal>
                                     </td>
                                 </tr>
@@ -126,7 +129,7 @@
                                     <td>
                                         <asp:Localize ID="locRAM" runat="server" meta:resourcekey="locRAM" Text="RAM:"></asp:Localize>
                                     </td>
-                                    <td class="NormalBold">
+                                    <td>
                                         <asp:Literal ID="RamSize" runat="server" Text="0"></asp:Literal>
                                     </td>
                                 </tr>
@@ -134,7 +137,7 @@
                                     <td>
                                         <asp:Localize ID="locHDD" runat="server" meta:resourcekey="locHDD" Text="HDD:"></asp:Localize>
                                     </td>
-                                    <td class="NormalBold">
+                                    <td>
                                         <asp:Literal ID="HddSize" runat="server" Text="0"></asp:Literal>
                                     </td>
                                 </tr>
@@ -142,13 +145,15 @@
                                     <td>
                                         <asp:Localize ID="locVhdPath" runat="server" meta:resourcekey="locVhdPath" Text="VHD location:"></asp:Localize>
                                     </td>
-                                    <td class="NormalBold">
+                                    <td>
                                         <asp:Literal ID="VhdPath" runat="server" Text="0"></asp:Literal>
                                     </td>
                                 </tr>
                             </table>
                         </asp:Panel>
                         
+                        <wsp:DynamicMemoryControl runat="server" ID="DynamicMemorySetting" Mode="Display"/>
+
                         <wsp:CollapsiblePanel id="secBios" runat="server"
                             TargetControlID="BiosPanel" meta:resourcekey="secBios" Text="BIOS">
                         </wsp:CollapsiblePanel>

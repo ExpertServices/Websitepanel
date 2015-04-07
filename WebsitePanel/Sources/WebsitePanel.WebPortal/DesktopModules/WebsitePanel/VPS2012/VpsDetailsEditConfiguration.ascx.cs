@@ -137,6 +137,9 @@ namespace WebsitePanel.Portal.VPS2012
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+                return;
+            
             try
             {
                 // check rights
@@ -165,7 +168,8 @@ namespace WebsitePanel.Portal.VPS2012
                     chkReset.Checked,
                     chkReinstall.Checked,
                     chkExternalNetworkEnabled.Checked,
-                    chkPrivateNetworkEnabled.Checked);
+                    chkPrivateNetworkEnabled.Checked,
+                    virtualMachine);
 
                 if (res.IsSuccess)
                 {

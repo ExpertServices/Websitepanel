@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locMinimum.Text" xml:space="preserve">
-    <value>Minimum RAM:</value>
+    <value>Minimum RAM, Mb:</value>
   </data>
   <data name="MinimumCompareValidator.ErrorMessage" xml:space="preserve">
     <value>Minimum memory must be a whole number</value>
@@ -145,10 +145,10 @@
     <value>Enter the buffer</value>
   </data>
   <data name="locBuffer.Text" xml:space="preserve">
-    <value>Buffer (%):</value>
+    <value>Buffer, %:</value>
   </data>
   <data name="locMaximum.Text" xml:space="preserve">
-    <value>Maximum RAM:</value>
+    <value>Maximum RAM, Mb:</value>
   </data>
   <data name="locPriority.Text" xml:space="preserve">
     <value>Weight (Priority):</value>

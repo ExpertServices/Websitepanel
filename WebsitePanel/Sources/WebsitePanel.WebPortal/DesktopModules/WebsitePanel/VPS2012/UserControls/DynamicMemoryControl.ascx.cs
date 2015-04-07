@@ -82,7 +82,7 @@ namespace WebsitePanel.Portal.VPS2012.UserControls
             if (string.IsNullOrEmpty(text))
                 return 0;
 
-            return Int32.Parse(txtMinimum.Text);
+            return Int32.Parse(text);
         }
     }
 }

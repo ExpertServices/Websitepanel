@@ -186,17 +186,17 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public IntResult CreateVirtualMachine(int packageId,
                 string hostname, string osTemplateFile, string password, string summaryLetterEmail,
-                int generation, int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock,
+                int cpuCores, int ramMB, int hddGB, int snapshots, bool dvdInstalled, bool bootFromCD, bool numLock,
                 bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
                 bool externalNetworkEnabled, int externalAddressesNumber, bool randomExternalAddresses, int[] externalAddresses,
-                bool privateNetworkEnabled, int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses)
+                bool privateNetworkEnabled, int privateAddressesNumber, bool randomPrivateAddresses, string[] privateAddresses, VirtualMachine otherSettings)
         {
             return VirtualizationServerController2012.CreateVirtualMachine(packageId,
                 hostname, osTemplateFile, password, summaryLetterEmail,
-                generation, cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock,
+                cpuCores, ramMB, hddGB, snapshots, dvdInstalled, bootFromCD, numLock,
                 startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed,
                 externalNetworkEnabled, externalAddressesNumber, randomExternalAddresses, externalAddresses,
-                privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses);
+                privateNetworkEnabled, privateAddressesNumber, randomPrivateAddresses, privateAddresses,  otherSettings);
         }
         #endregion
 
@@ -278,14 +278,14 @@ namespace WebsitePanel.EnterpriseServer
                     bool dvdInstalled, bool bootFromCD, bool numLock,
                     bool startShutdownAllowed, bool pauseResumeAllowed, bool rebootAllowed, bool resetAllowed, bool reinstallAllowed,
                     bool externalNetworkEnabled,
-                    bool privateNetworkEnabled)
+                    bool privateNetworkEnabled, VirtualMachine otherSettings)
         {
             return VirtualizationServerController2012.UpdateVirtualMachineConfiguration(
                     itemId, cpuCores, ramMB, hddGB, snapshots,
                     dvdInstalled, bootFromCD, numLock,
                     startShutdownAllowed, pauseResumeAllowed, rebootAllowed, resetAllowed, reinstallAllowed,
-                    externalNetworkEnabled,
-                    privateNetworkEnabled);
+                    externalNetworkEnabled, privateNetworkEnabled,
+                    otherSettings);
         }
         #endregion
 
