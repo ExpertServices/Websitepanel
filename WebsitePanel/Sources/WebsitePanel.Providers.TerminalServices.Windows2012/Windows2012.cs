@@ -1144,14 +1144,14 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {
-                runspace = OpenRunspace();
+                runspace = OpenRunspace();                
                 string collectionComputersPath = GetComputerGroupPath(organizationId, collectionName);
 
                 CreatePolicy(runspace, organizationId, string.Format("{0}-administrators", collectionName),
                     new DirectoryEntry(GetGroupPath(organizationId, collectionName, GetLocalAdminsGroupName(collectionName))), new DirectoryEntry(collectionComputersPath), collectionName);
                 CreatePolicy(runspace, organizationId, string.Format("{0}-users", collectionName),
                     new DirectoryEntry(GetUsersGroupPath(organizationId, collectionName)), new DirectoryEntry(collectionComputersPath), collectionName);
-                CreateHelpDeskPolicy(runspace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collectionName);
+                CreateHelpDeskPolicy(runspace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collectionName);                
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, administratorsGpo);
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, usersGpo);                
                 RemoveRegistryValue(runspace, RemoveRestartGpoKey, administratorsGpo);
@@ -1198,6 +1198,25 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 CloseRunspace(runspace);
             }
+        }
+
+        private void CheckPolicySecurityFiltering(Runspace runspace, string gpoName, DirectoryEntry collectionComputersEntry)
+        {
+            var scripts = new List<string>{
+                string.Format("Get-GPPermissions -Name {0} -TargetName {1} -TargetType group", gpoName, string.Format("'{0}'", ActiveDirectoryUtils.GetADObjectProperty(collectionComputersEntry, "sAMAccountName").ToString()))
+            };
+
+            object[] errors = null;
+            ExecuteRemoteShellCommand(runspace, PrimaryDomainController, scripts, out errors);
+
+            if (errors != null && errors.Any())
+            {
+                scripts = new List<string>{
+                    string.Format("Set-GPPermissions -Name {0} -PermissionLevel gpoapply -TargetName {1} -TargetType group", gpoName, string.Format("'{0}'", ActiveDirectoryUtils.GetADObjectProperty(collectionComputersEntry, "sAMAccountName").ToString()))
+                };
+            }
+
+            ExecuteRemoteShellCommand(runspace, PrimaryDomainController, scripts, out errors);
         }
 
         private void SetPowershellPermissions(Runspace runspace, RdsServerSetting setting, string usersGpo, string administratorsGpo)
@@ -1316,6 +1335,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 SetPolicyPermissions(runspace, gpoName, entry, collectionComputersEntry);
                 SetRegistryValue(runspace, RDSSessionGpoKey, gpoName, "2", RDSSessionGpoValueName, "DWord");
             }
+            else
+            {
+                CheckPolicySecurityFiltering(runspace, gpoName, collectionComputersEntry);
+            }
         }
 
         private string CreatePolicy(Runspace runspace, string organizationId, string gpoName, DirectoryEntry entry, DirectoryEntry collectionComputersEntry, string collectionName)
@@ -1326,6 +1349,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             {
                 gpoId = CreateAndLinkPolicy(runspace, gpoName, organizationId, collectionName);
                 SetPolicyPermissions(runspace, gpoName, entry, collectionComputersEntry);
+            }
+            else
+            {
+                CheckPolicySecurityFiltering(runspace, gpoName, collectionComputersEntry);
             }
 
             return gpoId;
