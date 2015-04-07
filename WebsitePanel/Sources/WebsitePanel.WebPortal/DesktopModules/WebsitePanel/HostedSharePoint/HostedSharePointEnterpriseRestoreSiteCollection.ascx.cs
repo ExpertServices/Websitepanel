@@ -41,7 +41,7 @@ using WebsitePanel.Providers.SharePoint;
 
 namespace WebsitePanel.Portal
 {
-	public partial class HostedSharePointRestoreSiteCollection : WebsitePanelModuleBase
+	public partial class HostedSharePointEnterpriseRestoreSiteCollection : WebsitePanelModuleBase
 	{
 		private int OrganizationId
 		{
@@ -59,11 +59,6 @@ namespace WebsitePanel.Portal
 			}
 		}
 
-        public static string GroupName
-        {
-            get { return HttpContext.Current.Request["GroupName"]; }
-        }
-
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
@@ -76,7 +71,7 @@ namespace WebsitePanel.Portal
 		{
 			try
 			{
-				SharePointSiteCollection siteCollection = ES.Services.HostedSharePointServers.GetSiteCollection(this.SiteCollectionId);
+				SharePointEnterpriseSiteCollection siteCollection = ES.Services.HostedSharePointServersEnt.Enterprise_GetSiteCollection(this.SiteCollectionId);
 				litSiteCollectionName.Text = siteCollection.PhysicalAddress;
 				fileLookup.SelectedFile = String.Empty;
 				fileLookup.PackageId = siteCollection.PackageId;
@@ -126,7 +121,7 @@ namespace WebsitePanel.Portal
 								Array.Resize<byte>(ref buffer, readBytes);
 
 							// write remote backup file
-							string tempPath = ES.Services.HostedSharePointServers.AppendBackupBinaryChunk(this.SiteCollectionId, fileName, path, buffer);
+							string tempPath = ES.Services.HostedSharePointServersEnt.Enterprise_AppendBackupBinaryChunk(this.SiteCollectionId, fileName, path, buffer);
 							if (path == null)
 								path = tempPath;
 
@@ -143,7 +138,7 @@ namespace WebsitePanel.Portal
 					packageFile = fileLookup.SelectedFile;
 				}
 
-				int result = ES.Services.HostedSharePointServers.RestoreSiteCollection(this.SiteCollectionId, uploadedFile, packageFile);
+				int result = ES.Services.HostedSharePointServersEnt.Enterprise_RestoreSiteCollection(this.SiteCollectionId, uploadedFile, packageFile);
 				if (result < 0)
 				{
 					ShowResultMessage(result);
@@ -171,7 +166,7 @@ namespace WebsitePanel.Portal
 
 		private void RedirectBack()
 		{
-            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_edit_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString(), "GroupName=" + GroupName));
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_enterprise_edit_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
 		}
 		protected void radioUpload_CheckedChanged(object sender, EventArgs e)
 		{

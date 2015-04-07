@@ -1,11 +1,12 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HostedSharePointStorageUsage.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointStorageUsage" %>
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HostedSharePointEnterpriseStorageUsage.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointEnterpriseStorageUsage" %>
+<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
     TagPrefix="wsp" %>
-<%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel"
+<%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel"
     TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
+<%@ Register Src="../ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
+<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 
 <div id="ExchangeContainer">
 	<div class="Module">

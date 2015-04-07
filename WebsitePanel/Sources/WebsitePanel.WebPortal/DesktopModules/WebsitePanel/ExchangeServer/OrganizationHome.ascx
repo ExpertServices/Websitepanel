@@ -218,6 +218,25 @@
                         </tr>
                         </asp:Panel>
 
+                        <asp:Panel runat="server" ID="sharePointEnterpriseStatsPanel">
+                        <tr class="OrgStatsRow">
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locSharePointEnterprise" runat="server" meta:resourcekey="locSharePointEnterprise"
+                                    Text="Organization Statistics"></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td class="OrgStatsQuota" nowrap> 
+                                <asp:HyperLink ID="lnkEnterpriseSiteCollections" runat="server" meta:resourcekey="lnkSiteCollections"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="enterpriseSiteCollectionsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        </asp:Panel>
+
+
+
                         <asp:Panel runat="server" ID="ocsStatsPanel">
                         <tr>
                             <td class="OrgStatsGroup" width="100%" colspan="2">

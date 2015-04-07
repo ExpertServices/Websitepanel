@@ -203,6 +203,11 @@ namespace WebsitePanel.Portal
 			get { return GetCachedProxy<esHostedSharePointServers>(); }
 		}
 
+        public esHostedSharePointServersEnt HostedSharePointServersEnt
+        {
+            get { return GetCachedProxy<esHostedSharePointServersEnt>(); }
+        }
+
         public esImport Import
         {
             get { return GetCachedProxy<esImport>(); }

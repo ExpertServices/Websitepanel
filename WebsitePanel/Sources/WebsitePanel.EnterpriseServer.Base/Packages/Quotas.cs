@@ -154,6 +154,9 @@ order by rg.groupOrder
 		public const string HOSTED_SHAREPOINT_SITES = "HostedSharePoint.Sites";  // Hosted SharePoint Sites
         public const string HOSTED_SHAREPOINT_STORAGE_SIZE = "HostedSharePoint.MaxStorage"; // Hosted SharePoint storage size;
         public const string HOSTED_SHAREPOINT_USESHAREDSSL = "HostedSharePoint.UseSharedSSL"; // Hosted SharePoint Use Shared SSL Root
+        public const string HOSTED_SHAREPOINT_ENTERPRISE_SITES = "HostedSharePointEnterprise.Sites";  // Hosted SharePoint Sites
+        public const string HOSTED_SHAREPOINT_ENTERPRISE_STORAGE_SIZE = "HostedSharePointEnterprise.MaxStorage"; // Hosted SharePoint storage size;
+        public const string HOSTED_SHAREPOINT_ENTERPRISE_USESHAREDSSL = "HostedSharePointEnterprise.UseSharedSSL"; // Hosted SharePoint Use Shared SSL Root
         public const string DNS_EDITOR = "DNS.Editor";  // DNS Editor
         public const string DNS_ZONES = "DNS.Zones";  // DNS Editor
         public const string DNS_PRIMARY_ZONES = "DNS.PrimaryZones";  // DNS Editor

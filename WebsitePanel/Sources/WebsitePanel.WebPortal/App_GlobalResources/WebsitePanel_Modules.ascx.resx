@@ -732,6 +732,21 @@
   <data name="ModuleTitle.HostedSharePointRestoreSiteCollection" xml:space="preserve">
     <value>Restore Site Collection</value>
   </data>
+
+
+  <data name="ModuleTitle.HostedSharePointEnterpriseSiteCollection" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collection</value>
+  </data>
+  <data name="ModuleTitle.HostedSharePointEnterpriseSiteCollections" xml:space="preserve">
+    <value>Hosted SharePoint Enterprise Site Collections</value>
+  </data>
+  <data name="ModuleTitle.HostedSharePointEnterpriseBackupSiteCollection" xml:space="preserve">
+    <value>Backup Site Collection</value>
+  </data>
+  <data name="ModuleTitle.HostedSharePointEnterpriseRestoreSiteCollection" xml:space="preserve">
+    <value>Restore Site Collection</value>
+  </data>
+
   <data name="ModuleTitle.WebSiteIPAddresses" xml:space="preserve">
     <value>Web Site IP Addresses</value>
   </data>

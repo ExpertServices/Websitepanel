@@ -237,9 +237,9 @@
   <data name="Text.SharePointFoundationServerGroup" xml:space="preserve">
     <value>Hosted Organization - SharePoint Foundation Server</value>
   </data>
-  <data name="Text.SharePointServerGroup" xml:space="preserve">
+  <data name="Text.SharePointEnterpriseServerGroup" xml:space="preserve">
     <value>Hosted Organization - SharePoint Server</value>
-  </data>  
+  </data>
   <data name="Text.SiteCollections" xml:space="preserve">
     <value>Sharepoint Sites</value>
   </data>
@@ -250,7 +250,7 @@
     <value>Storage Usage</value>
   </data>
   <data name="Text.Users" xml:space="preserve">
-    <value>Users</value>
+    <value>Users (User Organization)</value>
   </data>
   <data name="Text.CreateOrganization" xml:space="preserve">
     <value>Create Organization</value>

@@ -68,16 +68,19 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebsitePanel.EnterpriseServer.Base">
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Code">
+    <Reference Include="WebsitePanel.EnterpriseServer.Code, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.Providers.Base">
+    <Reference Include="WebsitePanel.Providers.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.Server.Client, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.Server.Client, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.Server.Client.dll</HintPath>
     </Reference>
@@ -120,6 +123,7 @@
     <Content Include="bin\WebsitePanel.Whois.pdb" />
     <Content Include="bin\WhoisClient.dll" />
     <Content Include="esEnterpriseStorage.asmx" />
+    <Content Include="esHostedSharePointServersEnt.asmx" />
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
@@ -163,6 +167,10 @@
     </Compile>
     <Compile Include="esEnterpriseStorage.asmx.cs">
       <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="esHostedSharePointServersEnt.asmx.cs">
+      <DependentUpon>esHostedSharePointServersEnt.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="esRemoteDesktopServices.asmx.cs">

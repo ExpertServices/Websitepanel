@@ -47,6 +47,9 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\FilesProxy.cs
 REM %WSDL% %SERVER_URL%/esHostedSharePointServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\HostedSharePointServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\HostedSharePointServersProxy.cs
 
+REM %WSDL% %SERVER_URL%/esHostedSharePointServersEnt.asmx /out:.\WebsitePanel.EnterpriseServer.Client\HostedSharePointServersEntProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\HostedSharePointServersEntProxy.cs
+
 REM %WSDL% %SERVER_URL%/esImport.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ImportProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ImportProxy.cs
 

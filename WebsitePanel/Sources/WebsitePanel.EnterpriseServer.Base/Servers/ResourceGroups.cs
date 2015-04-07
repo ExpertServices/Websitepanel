@@ -45,6 +45,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string Statistics = "Statistics";
         public const string SharePoint = "SharePoint";
         public const string SharepointFoundationServer = "Sharepoint Foundation Server";
+        public const string SharepointEnterpriseServer = "Sharepoint Enterprise Server";
         public const string SharepointServer = "Sharepoint Server";
 		public const string Exchange = "Exchange";
         public const string HostedOrganizations = "Hosted Organizations";

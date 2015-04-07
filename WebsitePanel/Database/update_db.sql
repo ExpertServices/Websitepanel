@@ -9638,8 +9638,49 @@ END
 GO
 
 UPDATE [dbo].[Quotas] SET GroupID = 45 WHERE QuotaName = 'EnterpriseStorage.DriveMaps'
-Go
+GO
 
+
+UPDATE [dbo].[ResourceGroups] SET GroupName = 'Sharepoint Enterprise Server' WHERE GroupName = 'Sharepoint Server'
+GO
+
+UPDATE [dbo].[ResourceGroups] SET GroupController = 'WebsitePanel.EnterpriseServer.HostedSharePointServerEntController' WHERE GroupName = 'Sharepoint Enterprise Server'
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted SharePoint Enterprise 2013')
+BEGIN
+DECLARE @provider_id AS INT
+DECLARE @group_id AS INT
+SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Enterprise Server'
+SELECT TOP 1 @provider_id = ProviderId + 1 From [dbo].[Providers] ORDER BY ProviderID DESC
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery])
+VALUES (@provider_id, @group_id, N'HostedSharePoint2013Ent', N'Hosted SharePoint Enterprise 2013', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013Ent, WebsitePanel.Providers.HostedSolution.SharePoint2013Ent', N'HostedSharePoint30', NULL)
+END
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.Sites' WHERE QuotaId = 550
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.MaxStorage' WHERE QuotaId = 551
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.UseSharedSSL' WHERE QuotaId = 552
+GO
+
+UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointEnterpriseSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
+GO
+
+
+IF EXISTS (SELECT * FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID IN (Select GroupID FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'))
+BEGIN
+	DECLARE @group_id INT
+	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'
+	DELETE FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID = @group_id
+END
+
+GO
+
+		
 ALTER PROCEDURE [dbo].[AddServiceItem]
 (
 	@ActorID int,
@@ -9688,6 +9729,7 @@ BEGIN
 END
 
 
+		
 -- add item
 INSERT INTO ServiceItems
 (

@@ -3371,14 +3371,11 @@
   <data name="Quota.HostedSolution.DeletedUsersBackupStorageSpace" xml:space="preserve">
     <value>Deleted Users Backup Storage Space per Organization, Mb</value>
   </data>
-  <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
-    <value>Hosted SharePoint</value>
-  </data>
   <data name="ResourceGroup.SharePoint Foundation Server" xml:space="preserve">
     <value>SharePoint Foundation Server</value>
   </data>
-    <data name="ResourceGroup.SharePoint Server" xml:space="preserve">
-    <value>SharePoint Server</value>
+    <data name="ResourceGroup.SharePoint Enterprise Server" xml:space="preserve">
+    <value>SharePoint Enterprise Server</value>
   </data>
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>
@@ -3396,6 +3393,12 @@
     <value>SharePoint Site Collections per Organization</value>
   </data>
   <data name="Quota.HostedSharePointServer.MaxStorage" xml:space="preserve">
+    <value>Max site storage, MB</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.Sites" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collections per Organization</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.MaxStorage" xml:space="preserve">
     <value>Max site storage, MB</value>
   </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
@@ -5243,6 +5246,9 @@
     <value>Web Publishing profile for this web site has been successfully saved</value>
   </data>
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
   </data>
   <data name="Quota.HostedSharePointServer.UseSharedSSL" xml:space="preserve">

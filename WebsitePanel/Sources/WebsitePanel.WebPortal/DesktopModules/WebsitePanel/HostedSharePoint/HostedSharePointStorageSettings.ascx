@@ -1,13 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="HostedSharePointStorageSettings.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointStorageSettings" %>
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
+<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
     TagPrefix="wsp" %>
-<%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel"
+<%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel"
     TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
+<%@ Register Src="../ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
-
-<%@ Register src="UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
+<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
+<%@ Register src="../UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
 
 
 

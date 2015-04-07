@@ -122,6 +122,8 @@
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\OrganizationDeletedUser.cs" />
     <Compile Include="HostedSolution\OrganizationDeletedUsersPaged.cs" />
+    <Compile Include="HostedSolution\SharePointEnterpriseStatisticsReport.cs" />
+    <Compile Include="HostedSolution\SharePointEntetpriseStatistics.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="OS\MappedDrivesPaged.cs" />
     <Compile Include="OS\MappedDrive.cs" />
@@ -280,11 +282,15 @@
     <Compile Include="ResultObjects\ValueResultObject.cs" />
     <Compile Include="ResultObjects\VirtualMachineResult.cs" />
     <Compile Include="ResultObjects\WebAppGallery.cs" />
+    <Compile Include="SharePoint\IHostedSharePointServerEnt.cs" />
     <Compile Include="SharePoint\IHostedSharePointServer.cs" />
     <Compile Include="SharePoint\ISharePointServer.cs" />
     <Compile Include="SharePoint\SharePointSite.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteCollection.cs" />
     <Compile Include="SharePoint\SharePointSiteCollection.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteCollectionListPaged.cs" />
     <Compile Include="SharePoint\SharePointSiteCollectionListPaged.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteDiskSpace.cs" />
     <Compile Include="SharePoint\SharePointSiteDiskSpace.cs" />
     <Compile Include="Statistics\IStatisticsServer.cs" />
     <Compile Include="Statistics\StatsServer.cs" />

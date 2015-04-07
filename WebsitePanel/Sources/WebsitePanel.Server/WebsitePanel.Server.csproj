@@ -157,6 +157,8 @@
     <Content Include="bin\Microsoft.Web.Management.dll" />
     <Content Include="bin\Microsoft.Web.PlatformInstaller.dll" />
     <Content Include="bin\Microsoft.Web.Services3.dll" />
+    <Content Include="bin\Sharepoint2013Ent\WebsitePanel.Providers.HostedSolution.SharePoint2013Ent.dll" />
+    <Content Include="bin\Sharepoint2013Ent\WebsitePanel.Providers.HostedSolution.SharePoint2013Ent.pdb" />
     <Content Include="bin\Sharepoint2013\WebsitePanel.Providers.HostedSolution.SharePoint2013.dll" />
     <Content Include="bin\Sharepoint2013\WebsitePanel.Providers.HostedSolution.SharePoint2013.pdb" />
     <Content Include="bin\WebsitePanel.Providers.Base.dll" />
@@ -270,6 +272,7 @@
     <Content Include="BlackBerry.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="EnterpriseStorage.asmx" />
+    <Content Include="HostedSharePointServerEnt.asmx" />
     <Content Include="RemoteDesktopServices.asmx" />
     <Content Include="HeliconZoo.asmx" />
     <Content Include="LyncServer.asmx" />
@@ -317,6 +320,10 @@
     <Compile Include="Code\UsernameAssertion.cs" />
     <Compile Include="EnterpriseStorage.asmx.cs">
       <DependentUpon>EnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HostedSharePointServerEnt.asmx.cs">
+      <DependentUpon>HostedSharePointServerEnt.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="RemoteDesktopServices.asmx.cs">

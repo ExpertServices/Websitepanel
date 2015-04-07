@@ -37,7 +37,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using WebsitePanel.Providers.SharePoint;
 using System.Collections.Generic;
-using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal
 {
@@ -45,28 +44,19 @@ namespace WebsitePanel.Portal
 	{
 		SharePointSiteCollectionListPaged result;
 
-		public int GetSharePointSiteCollectionPagedCount(int packageId, int organizationId, string groupName, string filterColumn, string filterValue)
+		public int GetSharePointSiteCollectionPagedCount(int packageId, int organizationId, string filterColumn, string filterValue)
 		{
 			return result.TotalRowCount;
 		}
 
-		public List<SharePointSiteCollection> GetSharePointSiteCollectionPaged(int packageId, int organizationId, string groupName, string filterColumn, string filterValue, int maximumRows, int startRowIndex, string sortColumn)
+		public List<SharePointSiteCollection> GetSharePointSiteCollectionPaged(int packageId, int organizationId, string filterColumn, string filterValue, int maximumRows, int startRowIndex, string sortColumn)
 		{
 			if (!String.IsNullOrEmpty(filterValue))
 			{
 				filterValue = filterValue + "%";
 			}
 
-            if (ResourceGroups.SharepointFoundationServer.Replace(" ", "").Equals(groupName))
-            {
-                groupName = ResourceGroups.SharepointFoundationServer;
-            }
-            else if (ResourceGroups.SharepointServer.Replace(" ", "").Equals(groupName))
-            {
-                groupName = ResourceGroups.SharepointServer;
-            }
-
-			result = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows, groupName);
+			result = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(packageId, organizationId, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
 
 			return result.SiteCollections;            
 		}

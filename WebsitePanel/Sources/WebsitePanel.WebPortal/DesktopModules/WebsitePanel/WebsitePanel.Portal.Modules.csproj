@@ -169,6 +169,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\HostedSharePointEnterpriseSiteCollectionsHelper.cs" />
     <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
@@ -259,6 +260,48 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
       <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
@@ -1710,46 +1753,46 @@
     <Compile Include="ExchangeServer\UserControls\UserSelector.ascx.designer.cs">
       <DependentUpon>UserSelector.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointBackupSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointBackupSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointBackupSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointBackupSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointEditSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointEditSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointEditSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointEditSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointRestoreSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointRestoreSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointRestoreSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointRestoreSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointSiteCollections.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointSiteCollections.ascx.cs">
       <DependentUpon>HostedSharePointSiteCollections.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointSiteCollections.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointSiteCollections.ascx.designer.cs">
       <DependentUpon>HostedSharePointSiteCollections.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointStorageSettings.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageSettings.ascx.cs">
       <DependentUpon>HostedSharePointStorageSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointStorageSettings.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageSettings.ascx.designer.cs">
       <DependentUpon>HostedSharePointStorageSettings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointStorageUsage.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageUsage.ascx.cs">
       <DependentUpon>HostedSharePointStorageUsage.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointStorageUsage.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageUsage.ascx.designer.cs">
       <DependentUpon>HostedSharePointStorageUsage.ascx</DependentUpon>
     </Compile>
     <Compile Include="HostedSoluitonReportSummaryLetter.ascx.cs">
@@ -4770,6 +4813,12 @@
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
     <Content Include="VPS2012\RemoteDesktop\msrdp.cab" />
@@ -4856,6 +4905,24 @@
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
     <Content Include="App_LocalResources\SettingsRdsPolicy.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\HyperV2012R2_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseSiteCollections.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseBackupSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseEditSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseRestoreSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseStorageSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseStorageUsage.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
@@ -6500,12 +6567,12 @@
     <Content Include="ExchangeServer\OrganizationUsers.ascx" />
     <Content Include="ExchangeServer\UserControls\HoursBox.ascx" />
     <Content Include="ExchangeServer\UserControls\UserSelector.ascx" />
-    <Content Include="HostedSharePointBackupSiteCollection.ascx" />
-    <Content Include="HostedSharePointEditSiteCollection.ascx" />
-    <Content Include="HostedSharePointRestoreSiteCollection.ascx" />
-    <Content Include="HostedSharePointSiteCollections.ascx" />
-    <Content Include="HostedSharePointStorageSettings.ascx" />
-    <Content Include="HostedSharePointStorageUsage.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointSiteCollections.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointStorageSettings.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointStorageUsage.ascx" />
     <Content Include="HostedSoluitonReportSummaryLetter.ascx" />
     <Content Include="OverusageReport.ascx" />
     <Content Include="ProviderControls\CRM_Settings.ascx" />
@@ -6539,7 +6606,7 @@
     <Content Include="ScheduleTaskControls\SendFilesViaFtp.ascx" />
     <Content Include="ScheduleTaskControls\SuspendOverusedSpaces.ascx" />
     <Content Include="ScheduleTaskControls\ZipFiles.ascx" />
-    <Content Include="App_LocalResources\HostedSharePointStorageSettings.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointStorageSettings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\OverusageReport.ascx.resx">
@@ -6547,7 +6614,7 @@
     </Content>
     <Content Include="Reports\HostingSpaceDiskspaceOverusageDetails.rdlc" />
     <Content Include="Reports\OverusageReport.rdlc" />
-    <Content Include="App_LocalResources\HostedSharePointStorageUsage.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointStorageUsage.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="CRM\App_LocalResources\CRMUsers.ascx.resx">
@@ -6973,16 +7040,16 @@
     <Content Include="ProviderControls\App_LocalResources\PowerDNS_Settings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointBackupSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointBackupSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointEditSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEditSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointRestoreSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointRestoreSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointSiteCollections.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointSiteCollections.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationCreateOrganization.ascx.resx">

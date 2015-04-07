@@ -1,13 +1,14 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="HostedSharePointEditSiteCollection.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointEditSiteCollection" %>
-<%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/AllocatePackageIPAddresses.ascx" TagName="SiteUrlBuilder" TagPrefix="wsp" %>	
-<%@ Register Src="ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>	
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-<%@ Register src="UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
-<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="HostedSharePointEnterpriseEditSiteCollection.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointEnterpriseEditSiteCollection" %>
+<%@ Register Src="../ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
+<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/AllocatePackageIPAddresses.ascx" TagName="SiteUrlBuilder" TagPrefix="wsp" %>	
+<%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>	
+<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register src="../UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
+<%@ Register Src="../DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 

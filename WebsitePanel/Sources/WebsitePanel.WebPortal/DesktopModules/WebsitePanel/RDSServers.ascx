@@ -63,10 +63,10 @@
                     </ItemTemplate>                    
                 </asp:TemplateField>
 		        <asp:BoundField DataField="Address" HeaderText="IP Address"><ItemStyle  Width="10%"/></asp:BoundField>
-                <asp:BoundField DataField="ItemName" HeaderText="Organization"><ItemStyle  Width="10%"/></asp:BoundField>
-                <asp:BoundField DataField="Description" HeaderText="Comments"><ItemStyle  Width="20%"/></asp:BoundField>
+                <asp:BoundField DataField="ItemName" HeaderText="Organization"><ItemStyle  Width="20%"/></asp:BoundField>
+                <asp:BoundField DataField="Description" HeaderText="Comments"><ItemStyle  Width="15%"/></asp:BoundField>
                 <asp:TemplateField meta:resourcekey="gvPopupStatus">
-                    <ItemStyle Width="20%" HorizontalAlign="Left" />
+                    <ItemStyle Width="15%" HorizontalAlign="Left" />
                     <ItemTemplate>
                         <asp:Literal ID="litStatus" runat="server" Text='<%# Eval("Status") %>'></asp:Literal>
                         <asp:HiddenField ID="hdnRdsCollectionId" runat="server" Value='<%# Eval("RdsCollectionId") %>' />

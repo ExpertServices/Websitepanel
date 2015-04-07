@@ -314,7 +314,9 @@
     <Content Include="App_Data\SiteSettings.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\ESModule_ControlsHierarchy.config" />
+    <Content Include="App_Data\ESModule_ControlsHierarchy.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="App_Data\SupportedThemes.config" />
     <None Include="App_Data\Countries.config" />
     <None Include="App_Data\CountryStates.config" />

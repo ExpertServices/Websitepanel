@@ -17,14 +17,17 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\DatabaseServerProxy.cs
 REM %WSDL% %SERVER_URL%/DNSServer.asmx /out:.\WebsitePanel.Server.Client\DnsServerProxy.cs /namespace:WebsitePanel.Providers.DNS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\DnsServerProxy.cs
 
-%WSDL% %SERVER_URL%/ExchangeServer.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.Providers.Exchange /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerProxy.cs
+REM %WSDL% %SERVER_URL%/ExchangeServer.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.Providers.Exchange /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/ExchangeServerHostedEdition.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerHostedEditionProxy.cs /namespace:WebsitePanel.Providers.ExchangeHostedEdition /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerHostedEditionProxy.cs
 
 REM %WSDL% %SERVER_URL%/HostedSharePointServer.asmx /out:.\WebsitePanel.Server.Client\HostedSharePointServerProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\HostedSharePointServerProxy.cs
+
+%WSDL% %SERVER_URL%/HostedSharePointServerEnt.asmx /out:.\WebsitePanel.Server.Client\HostedSharePointServerEntProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\HostedSharePointServerEntProxy.cs
 
 REM %WSDL% %SERVER_URL%/OCSEdgeServer.asmx /out:.\WebsitePanel.Server.Client\OCSEdgeServerProxy.cs /namespace:WebsitePanel.Providers.OCS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OCSEdgeServerProxy.cs
@@ -35,8 +38,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OCSServerProxy.cs
 REM %WSDL% %SERVER_URL%/OperatingSystem.asmx /out:.\WebsitePanel.Server.Client\OperatingSystemProxy.cs /namespace:WebsitePanel.Providers.OS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OperatingSystemProxy.cs
 
-%WSDL% %SERVER_URL%/Organizations.asmx /out:.\WebsitePanel.Server.Client\OrganizationProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\OrganizationProxy.cs
+REM %WSDL% %SERVER_URL%/Organizations.asmx /out:.\WebsitePanel.Server.Client\OrganizationProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/ServiceProvider.asmx /out:.\WebsitePanel.Server.Client\ServiceProviderProxy.cs /namespace:WebsitePanel.Providers /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ServiceProviderProxy.cs
