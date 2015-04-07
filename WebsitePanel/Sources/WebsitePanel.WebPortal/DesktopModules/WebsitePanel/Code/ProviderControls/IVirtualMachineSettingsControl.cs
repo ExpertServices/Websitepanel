@@ -26,14 +26,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Collections.Generic;
+using System.Web.UI;
 using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal
 {
+    public enum VirtualMachineSettingsMode
+    {
+        Display,
+        Edit,
+        Summary,
+    }
+
     public interface IVirtualMachineSettingsControl
     {
-        bool IsEditMode { get; set; }
+        VirtualMachineSettingsMode Mode { get; set; }
         void BindItem(VirtualMachine item);
-        void SaveItem(VirtualMachine item);
+        void SaveItem(ref VirtualMachine item);
     }
+
 }

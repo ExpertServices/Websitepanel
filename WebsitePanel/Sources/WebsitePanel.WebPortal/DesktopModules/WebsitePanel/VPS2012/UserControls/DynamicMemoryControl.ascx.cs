@@ -31,26 +31,58 @@ using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.VPS2012.UserControls
 {
-    public partial class Generation : WebsitePanelControlBase, IVirtualMachineSettingsControl
+    public partial class DynamicMemoryControl : WebsitePanelControlBase, IVirtualMachineSettingsControl
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            ToggleControls();
+        }
+
+        private void ToggleControls()
+        {
+            tableDynamicMemory.Visible = chkDynamicMemoryEnabled.Checked;
         }
 
         public VirtualMachineSettingsMode Mode { get; set; }
 
         public void BindItem(VirtualMachine item)
         {
-            var generation = item.Generation > 1 ? item.Generation.ToString	() : "1";
+            if (item.DynamicMemory == null)
+                item.DynamicMemory = new DynamicMemory();
 
-            ddlGeneration.SelectedValue = generation;
-            lblGeneration.Text = litGeneration.Text = GetLocalizedString("ddlGenerationItem." + generation);
+            // set values
+            chkDynamicMemoryEnabled.Checked = optionDymanicMemoryDisplay.Value = optionDymanicMemorySummary.Value = item.DynamicMemory.Enabled;
+            txtMinimum.Text = litMinimumDisplay.Text = litMinimumSummary.Text = item.DynamicMemory.Minimum.ToString();
+            txtMaximum.Text = litMaximumDisplay.Text = litMaximumSummary.Text = item.DynamicMemory.Maximum.ToString();
+            txtBuffer.Text = litBufferDisplay.Text = litBufferSummary.Text = item.DynamicMemory.Buffer.ToString();
+            txtPriority.Text = litPriorityDisplay.Text = litPrioritySummary.Text = item.DynamicMemory.Priority.ToString();
+
+            // set visibilities
+            trMinimumDisplay.Visible = trMaximumDisplay.Visible = trBufferDisplay.Visible = trPriorityDisplay.Visible = item.DynamicMemory.Enabled;
+            trMinimumSummary.Visible = trMaximumSummary.Visible = trBufferSummary.Visible = trPrioritySummary.Visible = item.DynamicMemory.Enabled;
         }
 
         public void SaveItem(ref VirtualMachine item)
         {
-            if (Mode == VirtualMachineSettingsMode.Edit)
-                item.Generation = Convert.ToInt32(ddlGeneration.SelectedValue);
+            if (Mode != VirtualMachineSettingsMode.Edit)
+                return;
+
+            item.DynamicMemory = new DynamicMemory
+            {
+                Enabled = chkDynamicMemoryEnabled.Checked,
+                Minimum = ParseInt(txtMinimum.Text),
+                Maximum = ParseInt(txtMaximum.Text),
+                Buffer = ParseInt(txtBuffer.Text),
+                Priority = ParseInt(txtPriority.Text),
+            };
+        }
+
+        private int ParseInt(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+
+            return Int32.Parse(txtMinimum.Text);
         }
     }
 }

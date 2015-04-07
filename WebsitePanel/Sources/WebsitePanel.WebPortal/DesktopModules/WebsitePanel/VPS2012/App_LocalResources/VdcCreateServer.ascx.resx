@@ -372,4 +372,7 @@
   <data name="locGeneration.Text" xml:space="preserve">
     <value>Generation:</value>
   </data>
+  <data name="locDynamicMemory.Text" xml:space="preserve">
+    <value>Dynamic Memory</value>
+  </data>
 </root>

@@ -49,6 +49,15 @@ namespace WebsitePanel.Portal.VPS2012.UserControls {
         protected global::System.Web.UI.WebControls.DropDownList ddlGeneration;
         
         /// <summary>
+        /// locGenerationDisplay control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locGenerationDisplay;
+        
+        /// <summary>
         /// lblGeneration control.
         /// </summary>
         /// <remarks>
@@ -56,5 +65,23 @@ namespace WebsitePanel.Portal.VPS2012.UserControls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblGeneration;
+        
+        /// <summary>
+        /// locGeneration2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locGeneration2;
+        
+        /// <summary>
+        /// litGeneration control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litGeneration;
     }
 }

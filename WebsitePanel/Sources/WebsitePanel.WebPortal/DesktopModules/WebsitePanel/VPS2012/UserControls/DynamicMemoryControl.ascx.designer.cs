@@ -7,441 +7,360 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.VPS2012 {
+namespace WebsitePanel.Portal.VPS2012.UserControls {
     
     
-    public partial class VpsDetailsEditConfiguration {
+    public partial class DynamicMemoryControl {
         
         /// <summary>
-        /// asyncTasks control.
+        /// secDymanicMemory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secDymanicMemory;
         
         /// <summary>
-        /// breadcrumb control.
+        /// DymanicMemoryPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.Breadcrumb breadcrumb;
+        protected global::System.Web.UI.WebControls.Panel DymanicMemoryPanel;
         
         /// <summary>
-        /// menu control.
+        /// chkDynamicMemoryEnabled control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.Menu menu;
+        protected global::System.Web.UI.WebControls.CheckBox chkDynamicMemoryEnabled;
         
         /// <summary>
-        /// imgIcon control.
+        /// tableDynamicMemory control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgIcon;
+        protected global::System.Web.UI.HtmlControls.HtmlTable tableDynamicMemory;
         
         /// <summary>
-        /// locTitle control.
+        /// locMinimum control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.FormTitle locTitle;
+        protected global::System.Web.UI.WebControls.Localize locMinimum;
         
         /// <summary>
-        /// tabs control.
+        /// txtMinimum control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.ServerTabs tabs;
+        protected global::System.Web.UI.WebControls.TextBox txtMinimum;
         
         /// <summary>
-        /// messageBox control.
+        /// locMaximum control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
+        protected global::System.Web.UI.WebControls.Localize locMaximum;
         
         /// <summary>
-        /// locSubTitle control.
+        /// txtMaximum control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locSubTitle;
+        protected global::System.Web.UI.WebControls.TextBox txtMaximum;
         
         /// <summary>
-        /// validatorsSummary control.
+        /// locBuffer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary validatorsSummary;
+        protected global::System.Web.UI.WebControls.Localize locBuffer;
         
         /// <summary>
-        /// secResources control.
+        /// txtBuffer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secResources;
+        protected global::System.Web.UI.WebControls.TextBox txtBuffer;
         
         /// <summary>
-        /// ResourcesPanel control.
+        /// locPriority control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel ResourcesPanel;
+        protected global::System.Web.UI.WebControls.Localize locPriority;
         
         /// <summary>
-        /// lblCpu control.
+        /// txtPriority control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCpu;
+        protected global::System.Web.UI.WebControls.TextBox txtPriority;
         
         /// <summary>
-        /// ddlCpu control.
+        /// optionDymanicMemoryDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCpu;
+        protected global::WebsitePanel.Portal.UserControls.CheckBoxOption optionDymanicMemoryDisplay;
         
         /// <summary>
-        /// locCores control.
+        /// trMinimumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCores;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trMinimumDisplay;
         
         /// <summary>
-        /// lblRam control.
+        /// locMinimumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRam;
+        protected global::System.Web.UI.WebControls.Localize locMinimumDisplay;
         
         /// <summary>
-        /// txtRam control.
+        /// litMinimumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRam;
+        protected global::System.Web.UI.WebControls.Literal litMinimumDisplay;
         
         /// <summary>
-        /// RequireRamValidator control.
+        /// trMaximumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequireRamValidator;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trMaximumDisplay;
         
         /// <summary>
-        /// locMB control.
+        /// locMaximumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locMB;
+        protected global::System.Web.UI.WebControls.Localize locMaximumDisplay;
         
         /// <summary>
-        /// lblHdd control.
+        /// litMaximumDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblHdd;
+        protected global::System.Web.UI.WebControls.Literal litMaximumDisplay;
         
         /// <summary>
-        /// txtHdd control.
+        /// trBufferDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtHdd;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trBufferDisplay;
         
         /// <summary>
-        /// RequireHddValidator control.
+        /// locBufferDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequireHddValidator;
+        protected global::System.Web.UI.WebControls.Localize locBufferDisplay;
         
         /// <summary>
-        /// locGB control.
+        /// litBufferDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locGB;
+        protected global::System.Web.UI.WebControls.Literal litBufferDisplay;
         
         /// <summary>
-        /// DynamicMemorySetting control.
+        /// trPriorityDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.DynamicMemoryControl DynamicMemorySetting;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trPriorityDisplay;
         
         /// <summary>
-        /// secSnapshots control.
+        /// locPriorityDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secSnapshots;
+        protected global::System.Web.UI.WebControls.Localize locPriorityDisplay;
         
         /// <summary>
-        /// SnapshotsPanel control.
+        /// litPriorityDisplay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SnapshotsPanel;
+        protected global::System.Web.UI.WebControls.Literal litPriorityDisplay;
         
         /// <summary>
-        /// locSnapshots control.
+        /// locDymanicMemorySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locSnapshots;
+        protected global::System.Web.UI.WebControls.Localize locDymanicMemorySummary;
         
         /// <summary>
-        /// txtSnapshots control.
+        /// optionDymanicMemorySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSnapshots;
+        protected global::WebsitePanel.Portal.UserControls.CheckBoxOption optionDymanicMemorySummary;
         
         /// <summary>
-        /// SnapshotsValidator control.
+        /// trMinimumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator SnapshotsValidator;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trMinimumSummary;
         
         /// <summary>
-        /// secDvd control.
+        /// locMinimumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secDvd;
+        protected global::System.Web.UI.WebControls.Localize locMinimumSummary;
         
         /// <summary>
-        /// DvdPanel control.
+        /// litMinimumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DvdPanel;
+        protected global::System.Web.UI.WebControls.Literal litMinimumSummary;
         
         /// <summary>
-        /// chkDvdInstalled control.
+        /// trMaximumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkDvdInstalled;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trMaximumSummary;
         
         /// <summary>
-        /// secBios control.
+        /// locMaximumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secBios;
+        protected global::System.Web.UI.WebControls.Localize locMaximumSummary;
         
         /// <summary>
-        /// BiosPanel control.
+        /// litMaximumSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel BiosPanel;
+        protected global::System.Web.UI.WebControls.Literal litMaximumSummary;
         
         /// <summary>
-        /// chkBootFromCd control.
+        /// trBufferSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkBootFromCd;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trBufferSummary;
         
         /// <summary>
-        /// chkNumLock control.
+        /// locBufferSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkNumLock;
+        protected global::System.Web.UI.WebControls.Localize locBufferSummary;
         
         /// <summary>
-        /// secActions control.
+        /// litBufferSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secActions;
+        protected global::System.Web.UI.WebControls.Literal litBufferSummary;
         
         /// <summary>
-        /// ActionsPanel control.
+        /// trPrioritySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel ActionsPanel;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trPrioritySummary;
         
         /// <summary>
-        /// chkStartShutdown control.
+        /// locPrioritySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkStartShutdown;
+        protected global::System.Web.UI.WebControls.Localize locPrioritySummary;
         
         /// <summary>
-        /// chkReset control.
+        /// litPrioritySummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkReset;
-        
-        /// <summary>
-        /// chkPauseResume control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPauseResume;
-        
-        /// <summary>
-        /// chkReinstall control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkReinstall;
-        
-        /// <summary>
-        /// chkReboot control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkReboot;
-        
-        /// <summary>
-        /// secNetwork control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secNetwork;
-        
-        /// <summary>
-        /// NetworkPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel NetworkPanel;
-        
-        /// <summary>
-        /// chkExternalNetworkEnabled control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkExternalNetworkEnabled;
-        
-        /// <summary>
-        /// chkPrivateNetworkEnabled control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPrivateNetworkEnabled;
-        
-        /// <summary>
-        /// btnUpdate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnUpdate;
-        
-        /// <summary>
-        /// btnCancel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCancel;
+        protected global::System.Web.UI.WebControls.Literal litPrioritySummary;
     }
 }

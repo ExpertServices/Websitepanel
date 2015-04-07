@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.EnterpriseServer;
+﻿using WebsitePanel.Portal.Code.Helpers;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -93,6 +94,8 @@ namespace WebsitePanel.Portal.VPS2012
                 // toggle buttons
                 bool manageAllowed = VirtualMachines2012Helper.IsVirtualMachineManagementAllowed(PanelSecurity.PackageId);
                 btnEdit.Visible = manageAllowed;
+
+                this.BindSettingsControls(vm);
             }
             catch (Exception ex)
             {

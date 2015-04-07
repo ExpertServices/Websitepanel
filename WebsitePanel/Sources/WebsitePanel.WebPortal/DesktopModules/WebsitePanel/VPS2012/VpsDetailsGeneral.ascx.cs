@@ -109,11 +109,16 @@ namespace WebsitePanel.Portal.VPS2012
                 // RAM
                 if (vm.RamSize > 0)
                 {
-                    int ramPercent = Convert.ToInt32((float)vm.RamUsage / (float)vm.RamSize * 100);
-                    ramGauge.Total = vm.RamSize;
+                    var totalRam = vm.RamSize;
+
+                    if (vm.DynamicMemory != null && vm.DynamicMemory.Enabled)
+                        totalRam = vm.DynamicMemory.Maximum;
+
+                    int ramPercent = Convert.ToInt32((float)vm.RamUsage / (float)totalRam * 100);
+                    ramGauge.Total = totalRam;
                     ramGauge.Progress = vm.RamUsage;
                     litRamPercentage.Text = String.Format(GetLocalizedString("MemoryPercentage.Text"), ramPercent);
-                    litRamUsage.Text = String.Format(GetLocalizedString("MemoryUsage.Text"), vm.RamUsage, vm.RamSize);
+                    litRamUsage.Text = String.Format(GetLocalizedString("MemoryUsage.Text"), vm.RamUsage, totalRam);
                 }
 
                 // HDD

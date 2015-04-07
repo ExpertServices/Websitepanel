@@ -28,11 +28,13 @@
 
  using System;
 using System.Collections.Generic;
-using System.Web;
+ using System.Linq;
+ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using WebsitePanel.Providers.Virtualization;
+ using WebsitePanel.Portal.Code.Helpers;
+ using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -71,8 +73,18 @@ namespace WebsitePanel.Portal.VPS2012
             }
         }
 
+
         private void BindFormControls()
         {
+            var virtualMachine = new VirtualMachine
+            {
+                DynamicMemory = new DynamicMemory
+                {
+                    Buffer = 20,
+                    Priority = 50
+                }
+            };
+
             // bind password policy
             password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.VPS_POLICY, "AdministratorPasswordPolicy");
 
@@ -112,11 +124,7 @@ namespace WebsitePanel.Portal.VPS2012
                 ddlCpu.Items.Add(i.ToString());
 
             ddlCpu.SelectedIndex = ddlCpu.Items.Count - 1; // select last (maximum) item
-
-            // the user controls
-            GenerationSetting.BindItem(new VirtualMachine());
-            DynamicMemorySetting.BindItem(new VirtualMachine());  
-
+            
             // external network details
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED))
             {
@@ -174,6 +182,12 @@ namespace WebsitePanel.Portal.VPS2012
                 {
                     int availSize = ramQuota.QuotaAllocatedValue - ramQuota.QuotaUsedValue;
                     txtRam.Text = availSize < 0 ? "" : availSize.ToString();
+
+                    if (availSize > 0)
+                    {
+                        virtualMachine.DynamicMemory.Minimum = availSize/2;
+                        virtualMachine.DynamicMemory.Maximum = availSize;
+                    }
                 }
             }
 
@@ -210,6 +224,9 @@ namespace WebsitePanel.Portal.VPS2012
             BindCheckboxOption(chkReset, Quotas.VPS2012_RESET_ALOWED);
             BindCheckboxOption(chkReboot, Quotas.VPS2012_REBOOT_ALLOWED);
             BindCheckboxOption(chkReinstall, Quotas.VPS2012_REINSTALL_ALLOWED);
+
+            // the settings user controls
+            this.BindSettingsControls(virtualMachine);
         }
 
         private void BindCheckboxOption(CheckBox chk, string quotaName)
@@ -241,11 +258,11 @@ namespace WebsitePanel.Portal.VPS2012
 
         private void BindSummary()
         {
-            //VirtualMachine virtualMachine = new VirtualMachine();
+            var resultVm = new VirtualMachine();
 
-            //// the user controls
-            //GenerationSetting.SaveItem(virtualMachine);
-            //DynamicMemorySetting.BindItem(virtualMachine);  
+            // the user controls
+            this.SaveSettingsControls(ref resultVm);
+            this.BindSettingsControls(resultVm);
             
             // general
             litHostname.Text =  PortalAntiXSS.Encode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
@@ -257,7 +274,6 @@ namespace WebsitePanel.Portal.VPS2012
             // config
             litCpu.Text = PortalAntiXSS.Encode(ddlCpu.SelectedValue);
             litRam.Text = PortalAntiXSS.Encode(txtRam.Text.Trim());
-            //litGeneration.Text = CreareSettingsProviderControl != null ? PortalAntiXSS.Encode(virtualMachine.Generation.ToString()) : "1";
             litHdd.Text = PortalAntiXSS.Encode(txtHdd.Text.Trim());
             litSnapshots.Text = PortalAntiXSS.Encode(txtSnapshots.Text.Trim());
             optionDvdInstalled.Value = chkDvdInstalled.Checked;
@@ -289,6 +305,7 @@ namespace WebsitePanel.Portal.VPS2012
 
             string[] privIps = Utils.ParseDelimitedString(txtPrivateAddressesList.Text, '\n', '\r', ' ', '\t');
             litPrivateAddressesList.Text = PortalAntiXSS.Encode(String.Join(", ", privIps));
+
         }
 
         protected void wizard_FinishButtonClick(object sender, WizardNavigationEventArgs e)
@@ -301,8 +318,7 @@ namespace WebsitePanel.Portal.VPS2012
                 VirtualMachine virtualMachine = new VirtualMachine();
 
                 // the user controls
-                GenerationSetting.BindItem(virtualMachine);
-                DynamicMemorySetting.BindItem(virtualMachine);  
+                this.SaveSettingsControls(ref virtualMachine);
 
                 // collect and prepare data
                 string hostname = String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim());
@@ -354,7 +370,7 @@ namespace WebsitePanel.Portal.VPS2012
             if (wizard.ActiveStepIndex == 0)
                 ViewState["Password"] = password.Password;
 
-            Page.Validate("VpsWizard");
+            Page.Validate("Vps");
 
             if (!Page.IsValid)
                 e.Cancel = true;

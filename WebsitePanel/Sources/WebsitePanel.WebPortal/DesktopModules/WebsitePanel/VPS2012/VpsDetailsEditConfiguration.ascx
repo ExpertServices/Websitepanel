@@ -6,6 +6,7 @@
 <%@ Register Src="UserControls/FormTitle.ascx" TagName="FormTitle" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register TagPrefix="wsp" TagName="DynamicMemoryControl" Src="UserControls/DynamicMemoryControl.ascx" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -35,8 +36,8 @@
 		            </p>
 
                     <asp:ValidationSummary ID="validatorsSummary" runat="server" 
-                        ValidationGroup="VpsEdit" ShowMessageBox="True" ShowSummary="False" />
-
+                        ValidationGroup="Vps" ShowMessageBox="True" ShowSummary="False" />
+                    
                     <wsp:CollapsiblePanel id="secResources" runat="server"
                         TargetControlID="ResourcesPanel" meta:resourcekey="secResources" Text="Resources">
                     </wsp:CollapsiblePanel>
@@ -60,7 +61,7 @@
                                     <asp:TextBox ID="txtRam" runat="server" CssClass="HugeTextBox" Width="70"></asp:TextBox>
                                     <asp:RequiredFieldValidator ID="RequireRamValidator" runat="server" Text="*" Display="Dynamic"
                                         ControlToValidate="txtRam" meta:resourcekey="RequireRamValidator" SetFocusOnError="true"
-                                        ValidationGroup="VpsEdit">*</asp:RequiredFieldValidator>
+                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                 </td>
                                 <td><asp:Localize ID="locMB" runat="server" meta:resourcekey="locMB" Text="MB"/></td>
                             </tr>
@@ -73,15 +74,14 @@
                                     <asp:TextBox ID="txtHdd" runat="server" CssClass="HugeTextBox" Width="70"></asp:TextBox>
                                     <asp:RequiredFieldValidator ID="RequireHddValidator" runat="server" Text="*" Display="Dynamic"
                                         ControlToValidate="txtHdd" meta:resourcekey="RequireHddValidator" SetFocusOnError="true"
-                                        ValidationGroup="VpsEdit">*</asp:RequiredFieldValidator>
+                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                 </td>
                                 <td><asp:Localize ID="locGB" runat="server" meta:resourcekey="locGB" Text="GB"/></td>
                             </tr>
                         </table>
                     </asp:Panel>
                     
-                    <%-- Additional Custom Settings. Provider Control --%>
-                    <asp:PlaceHolder ID="editSettingsProviderControl" runat="server"></asp:PlaceHolder>
+                    <wsp:DynamicMemoryControl runat="server" ID="DynamicMemorySetting" Mode="Edit"/>
                     
                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">
@@ -96,7 +96,7 @@
                                     
                                     <asp:RequiredFieldValidator ID="SnapshotsValidator" runat="server" Text="*" Display="Dynamic"
                                         ControlToValidate="txtSnapshots" meta:resourcekey="SnapshotsValidator" SetFocusOnError="true"
-                                        ValidationGroup="VpsEdit">*</asp:RequiredFieldValidator>
+                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                 </td>
                             </tr>
                         </table>
@@ -186,7 +186,7 @@
                     
                     <p>
                         <asp:Button ID="btnUpdate" runat="server" meta:resourcekey="btnUpdate"
-                            ValidationGroup="VpsEdit" Text="Update" CssClass="Button1" 
+                            ValidationGroup="Vps" Text="Update" CssClass="Button1" 
                             onclick="btnUpdate_Click" />
                         <asp:Button ID="btnCancel" runat="server" meta:resourcekey="btnCancel"
                             CausesValidation="false" Text="Cancel" CssClass="Button1" 

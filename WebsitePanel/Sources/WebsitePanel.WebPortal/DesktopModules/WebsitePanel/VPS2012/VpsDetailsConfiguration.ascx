@@ -8,6 +8,8 @@
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register TagPrefix="wsp" TagName="Generation" Src="UserControls/Generation.ascx" %>
+<%@ Register TagPrefix="wsp" TagName="DynamicMemoryControl" Src="UserControls/DynamicMemoryControl.ascx" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -57,6 +59,7 @@
                         </table>
                     </asp:Panel>
                     
+                    <wsp:Generation runat="server" ID="GenerationSetting" Mode="Display"/>
 
                     <wsp:CollapsiblePanel id="secResources" runat="server"
                         TargetControlID="ResourcesPanel" meta:resourcekey="secResources" Text="Resources">
@@ -91,6 +94,8 @@
                         </table>
                     </asp:Panel>
                     
+                    <wsp:DynamicMemoryControl runat="server" ID="DynamicMemorySetting" Mode="Display"/>
+
                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">
                     </wsp:CollapsiblePanel>

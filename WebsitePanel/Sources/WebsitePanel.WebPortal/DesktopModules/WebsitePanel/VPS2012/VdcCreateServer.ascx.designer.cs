@@ -256,6 +256,15 @@ namespace WebsitePanel.Portal.VPS2012 {
         protected global::System.Web.UI.WebControls.Localize locConfigStepTitle;
         
         /// <summary>
+        /// GenerationSetting control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.Generation GenerationSetting;
+        
+        /// <summary>
         /// secResources control.
         /// </summary>
         /// <remarks>
@@ -371,24 +380,6 @@ namespace WebsitePanel.Portal.VPS2012 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locGB;
-        
-        /// <summary>
-        /// GenerationSetting control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.Generation GenerationSetting;
-        
-        /// <summary>
-        /// DynamicMemorySetting control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.DynamicMemory DynamicMemorySetting;
         
         /// <summary>
         /// secSnapshots control.
@@ -967,6 +958,15 @@ namespace WebsitePanel.Portal.VPS2012 {
         protected global::System.Web.UI.WebControls.Localize locConfig2;
         
         /// <summary>
+        /// GenerationSettingsSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.Generation GenerationSettingsSummary;
+        
+        /// <summary>
         /// locCpu control.
         /// </summary>
         /// <remarks>
@@ -1001,24 +1001,6 @@ namespace WebsitePanel.Portal.VPS2012 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litRam;
-        
-        /// <summary>
-        /// locGeneration control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locGeneration;
-        
-        /// <summary>
-        /// litGeneration control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litGeneration;
         
         /// <summary>
         /// locHdd control.
@@ -1199,6 +1181,24 @@ namespace WebsitePanel.Portal.VPS2012 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.UserControls.CheckBoxOption optionReinstall;
+        
+        /// <summary>
+        /// locDynamicMemory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDynamicMemory;
+        
+        /// <summary>
+        /// DynamicMemoryControlSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.DynamicMemoryControl DynamicMemoryControlSummary;
         
         /// <summary>
         /// locExternalNetwork2 control.

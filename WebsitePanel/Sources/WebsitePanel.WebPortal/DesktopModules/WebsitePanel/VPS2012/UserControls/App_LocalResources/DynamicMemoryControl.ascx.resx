@@ -117,10 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="locDymanicMemory.Text" xml:space="preserve">
-    <value>Dymanic memory:</value>
+  <data name="locMinimum.Text" xml:space="preserve">
+    <value>Minimum RAM:</value>
+  </data>
+  <data name="MinimumCompareValidator.ErrorMessage" xml:space="preserve">
+    <value>Minimum memory must be a whole number</value>
+  </data>
+  <data name="MinimumRequireValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter the minimum memory</value>
+  </data>
+  <data name="optionDymanicMemory.Text" xml:space="preserve">
+    <value>Dymanic memory enabled</value>
   </data>
   <data name="secDymanicMemory.Text" xml:space="preserve">
     <value>Dymanic memory</value>
+  </data>
+  <data name="locDymanicMemorySummary.Text" xml:space="preserve">
+    <value>Dymanic memory enabled:</value>
+  </data>
+  <data name="chkDynamicMemoryEnabled" xml:space="preserve">
+    <value>Dynamic memory enabled</value>
+  </data>
+  <data name="BufferRangeValidator.ErrorMessage" xml:space="preserve">
+    <value>Buffer must be a whole number between 0 and 100</value>
+  </data>
+  <data name="BufferRequireValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter the buffer</value>
+  </data>
+  <data name="locBuffer.Text" xml:space="preserve">
+    <value>Buffer (%):</value>
+  </data>
+  <data name="locMaximum.Text" xml:space="preserve">
+    <value>Maximum RAM:</value>
+  </data>
+  <data name="locPriority.Text" xml:space="preserve">
+    <value>Weight (Priority):</value>
+  </data>
+  <data name="MaximumCompareValidator.ErrorMessage" xml:space="preserve">
+    <value>Maximum memory must be a whole number</value>
+  </data>
+  <data name="MaximumRequireValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter the maximum memory</value>
+  </data>
+  <data name="PriorityRangeValidator.ErrorMessage" xml:space="preserve">
+    <value>Weight (priority) must be a whole number between 0 and 100</value>
+  </data>
+  <data name="PriorityRequireValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter the weight (priority)</value>
   </data>
 </root>

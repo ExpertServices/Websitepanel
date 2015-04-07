@@ -130,6 +130,15 @@ namespace WebsitePanel.Portal.VPS2012 {
         protected global::System.Web.UI.WebControls.LinkButton btnChangePasswordPopup;
         
         /// <summary>
+        /// GenerationSetting control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.Generation GenerationSetting;
+        
+        /// <summary>
         /// secResources control.
         /// </summary>
         /// <remarks>
@@ -200,6 +209,15 @@ namespace WebsitePanel.Portal.VPS2012 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litHdd;
+        
+        /// <summary>
+        /// DynamicMemorySetting control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.DynamicMemoryControl DynamicMemorySetting;
         
         /// <summary>
         /// secSnapshots control.

@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.EnterpriseServer;
+﻿using WebsitePanel.Portal.Code.Helpers;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -41,31 +42,9 @@ namespace WebsitePanel.Portal.VPS2012
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            LoadCustomProviderControls();
-
             if (!IsPostBack)
             {
                 BindConfiguration();
-            }
-        }
-
-        private void LoadCustomProviderControls()
-        {
-            try
-            {
-                LoadProviderControl(PanelSecurity.PackageId, "VPS2012", editSettingsProviderControl, "Edit.ascx");
-            }
-            catch { /* skip */ }
-        }
-
-        private IVirtualMachineSettingsControl EditSettingsProviderControl
-        {
-            get
-            {
-                if (editSettingsProviderControl.Controls.Count == 0)
-                    return null;
-
-                return (IVirtualMachineSettingsControl)editSettingsProviderControl.Controls[0];
             }
         }
 
@@ -118,9 +97,6 @@ namespace WebsitePanel.Portal.VPS2012
                 chkExternalNetworkEnabled.Checked = vm.ExternalNetworkEnabled;
                 chkPrivateNetworkEnabled.Checked = vm.PrivateNetworkEnabled;
 
-                // the custom provider control
-                if (EditSettingsProviderControl != null) EditSettingsProviderControl.BindItem(vm);
-
                 // other quotas
                 BindCheckboxOption(chkDvdInstalled, Quotas.VPS2012_DVD_ENABLED);
                 chkBootFromCd.Enabled = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_BOOT_CD_ALLOWED);
@@ -133,6 +109,8 @@ namespace WebsitePanel.Portal.VPS2012
 
                 BindCheckboxOption(chkExternalNetworkEnabled, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED);
                 BindCheckboxOption(chkPrivateNetworkEnabled, Quotas.VPS2012_PRIVATE_NETWORK_ENABLED);
+
+                this.BindSettingsControls(vm);
             }
             catch (Exception ex)
             {
@@ -171,7 +149,7 @@ namespace WebsitePanel.Portal.VPS2012
                 VirtualMachine virtualMachine = new VirtualMachine();
 
                 // the custom provider control
-                if (EditSettingsProviderControl != null) EditSettingsProviderControl.SaveItem(virtualMachine);
+                this.SaveSettingsControls(ref virtualMachine);
 
                 ResultObject res = ES.Services.VPS2012.UpdateVirtualMachineConfiguration(PanelRequest.ItemID,
                     Utils.ParseInt(ddlCpu.SelectedValue),

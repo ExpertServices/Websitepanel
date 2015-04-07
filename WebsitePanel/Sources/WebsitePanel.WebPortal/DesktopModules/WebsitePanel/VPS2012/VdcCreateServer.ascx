@@ -7,7 +7,7 @@
 <%@ Register Src="../UserControls/CheckBoxOption.ascx" TagName="CheckBoxOption" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="Generation" Src="UserControls/Generation.ascx" %>
-<%@ Register TagPrefix="wsp" TagName="DynamicMemory" Src="UserControls/DynamicMemory.ascx" %>
+<%@ Register TagPrefix="wsp" TagName="DynamicMemoryControl" Src="UserControls/DynamicMemoryControl.ascx" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -33,7 +33,7 @@
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     
                     <asp:ValidationSummary ID="validatorsSummary" runat="server" 
-                        ValidationGroup="VpsWizard" ShowMessageBox="True" ShowSummary="False" />
+                        ValidationGroup="Vps" ShowMessageBox="True" ShowSummary="False" />
                     
                     <asp:Wizard ID="wizard" runat="server"
                         meta:resourcekey="wizard" CellSpacing="5" 
@@ -46,24 +46,24 @@
                         <StepStyle VerticalAlign="Top" />
                         
                         <StartNavigationTemplate>
-                            <asp:Button ID="btnNext" runat="server" CommandName="MoveNext" ValidationGroup="VpsWizard"
+                            <asp:Button ID="btnNext" runat="server" CommandName="MoveNext" ValidationGroup="Vps"
                                     CssClass="Button1" Text="Next" meta:resourcekey="btnNext" />
                         </StartNavigationTemplate>
                         
                         <StepNavigationTemplate>
-                            <asp:Button ID="btnPrevious" runat="server" CommandName="MovePrevious" ValidationGroup="VpsWizard"
+                            <asp:Button ID="btnPrevious" runat="server" CommandName="MovePrevious" ValidationGroup="Vps"
                                     CssClass="Button1" Text="Previous" meta:resourcekey="btnPrevious" />
 
-                            <asp:Button ID="btnNext" runat="server" CommandName="MoveNext" ValidationGroup="VpsWizard"
+                            <asp:Button ID="btnNext" runat="server" CommandName="MoveNext" ValidationGroup="Vps"
                                     CssClass="Button1" Text="Next" meta:resourcekey="btnNext" />
 
                         </StepNavigationTemplate>
                         
                         <FinishNavigationTemplate>
-                            <asp:Button ID="btnPrevious" runat="server" CommandName="MovePrevious" ValidationGroup="VpsWizard"
+                            <asp:Button ID="btnPrevious" runat="server" CommandName="MovePrevious" ValidationGroup="Vps"
                                     CssClass="Button1" Text="Previous" meta:resourcekey="btnPrevious" />
                                     
-                            <asp:Button ID="btnFinish" runat="server" CommandName="MoveComplete" ValidationGroup="VpsWizard"
+                            <asp:Button ID="btnFinish" runat="server" CommandName="MoveComplete" ValidationGroup="Vps"
                                     CssClass="Button1" Text="Finish" meta:resourcekey="btnFinish" />
                         </FinishNavigationTemplate>
                        
@@ -84,10 +84,10 @@
                                                 
                                                 <asp:RequiredFieldValidator ID="HostnameValidator" runat="server" Text="*" Display="Dynamic"
                                                     ControlToValidate="txtHostname" meta:resourcekey="HostnameValidator" SetFocusOnError="true"
-                                                    ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                    ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                 <asp:RegularExpressionValidator id="valCorrectHostname" runat="server" Text="*" meta:resourcekey="valCorrectHostname"
                                                     ValidationExpression="^[a-zA-Z]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?$"
-			                                        ControlToValidate="txtHostname" Display="Dynamic" SetFocusOnError="true" ValidationGroup="VpsWizard">
+			                                        ControlToValidate="txtHostname" Display="Dynamic" SetFocusOnError="true" ValidationGroup="Vps">
 			                                    </asp:RegularExpressionValidator>
                                                 
                                                 <span class="Medium">.</span>
@@ -95,10 +95,10 @@
                                                     
                                                 <asp:RequiredFieldValidator ID="DomainValidator" runat="server" Text="*" Display="Dynamic"
                                                     ControlToValidate="txtDomain" meta:resourcekey="DomainValidator" SetFocusOnError="true"
-                                                    ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                    ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                 <asp:RegularExpressionValidator id="valNewDomainFormat" runat="server" Text="*" meta:resourcekey="valNewDomainFormat"
                                                     ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,6}$"
-			                                        ControlToValidate="txtDomain" Display="Dynamic" SetFocusOnError="true" ValidationGroup="VpsWizard">
+			                                        ControlToValidate="txtDomain" Display="Dynamic" SetFocusOnError="true" ValidationGroup="Vps">
 			                                    </asp:RegularExpressionValidator>
                                             </td>
                                         </tr>
@@ -112,7 +112,7 @@
                                                 </asp:DropDownList>
                                                 <asp:RequiredFieldValidator ID="OperatingSystemValidator" runat="server" Text="*" Display="Dynamic"
                                                     ControlToValidate="listOperatingSystems" meta:resourcekey="OperatingSystemValidator" SetFocusOnError="true"
-                                                    ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                    ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                             </td>
                                         </tr>
                                         <tr><td>&nbsp;</td></tr>
@@ -120,7 +120,7 @@
                                             <td class="FormLabel150" valign="top"><asp:Localize ID="locAdminPassword" runat="server"
                                                 meta:resourcekey="locAdminPassword" Text="Administrator password:"></asp:Localize></td>
                                             <td>
-                                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="VpsWizard" AllowGeneratePassword="true">
+                                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="Vps" AllowGeneratePassword="true">
                                                 </wsp:PasswordControl>
   
                                             </td>
@@ -135,7 +135,7 @@
                                                 <asp:TextBox ID="txtSummaryEmail" runat="server" CssClass="NormalTextBox" AutoPostBack="true"></asp:TextBox>
                                                 <asp:RequiredFieldValidator ID="SummaryEmailValidator" runat="server" Text="*" Display="Dynamic"
                                                     ControlToValidate="txtSummaryEmail" meta:resourcekey="SummaryEmailValidator" SetFocusOnError="true"
-                                                    ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                    ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                             </td>
                                         </tr>
                                     </table>
@@ -148,14 +148,16 @@
                                         meta:resourcekey="locConfigStepTitle" Text="Configuration" /></p>
                                     <br />
                                     
+                                    <wsp:Generation runat="server" ID="GenerationSetting" Mode="Edit"/>
+
                                     <wsp:CollapsiblePanel id="secResources" runat="server"
                                         TargetControlID="ResourcesPanel" meta:resourcekey="secResources" Text="Resources">
                                     </wsp:CollapsiblePanel>
-                                    <asp:Panel ID="ResourcesPanel" runat="server" Height="0" style="overflow:hidden;padding:10px;width:400px;">
+                                    <asp:Panel ID="ResourcesPanel" runat="server" Height="0" style="overflow: hidden; padding: 5px;">
                                         <table cellpadding="3">
                                             <tr>
-                                                <td style="width:60px;"><asp:Label ID="lblCpu" runat="server" AssociatedControlID="ddlCpu"
-                                                        meta:resourcekey="lblCpu" Text="CPU:" CssClass="MediumBold" /></td>
+                                                <td class="FormLabel150"><asp:Label ID="lblCpu" runat="server" 
+                                                        meta:resourcekey="lblCpu" Text="CPU:" /></td>
                                                 <td>
                                                     <asp:DropDownList ID="ddlCpu" runat="server" CssClass="HugeTextBox" Width="70">
                                                     </asp:DropDownList>
@@ -165,35 +167,33 @@
                                         </table>
                                         <table cellpadding="3">
                                             <tr>
-                                                <td style="width:60px;"><asp:Label ID="lblRam" runat="server" AssociatedControlID="txtRam"
-                                                        meta:resourcekey="lblRam" Text="RAM:" CssClass="MediumBold" /></td>
+                                                <td class="FormLabel150"><asp:Label ID="lblRam" runat="server" 
+                                                        meta:resourcekey="lblRam" Text="RAM:"/></td>
                                                 <td>
                                                     <asp:TextBox ID="txtRam" runat="server" CssClass="HugeTextBox" Width="70" Text="0"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="RequireRamValidator" runat="server" Text="*" Display="Dynamic"
                                                         ControlToValidate="txtRam" meta:resourcekey="RequireRamValidator" SetFocusOnError="true"
-                                                        ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                 </td>
                                                 <td><asp:Localize ID="locMB" runat="server" meta:resourcekey="locMB" Text="MB"/></td>
                                             </tr>
                                         </table>
                                         <table cellpadding="3">
                                             <tr>
-                                                <td style="width:60px;"><asp:Label ID="lblHdd" runat="server" AssociatedControlID="txtHdd"
-                                                        meta:resourcekey="lblHdd" Text="HDD:" CssClass="MediumBold" /></td>
+                                                <td class="FormLabel150"><asp:Label ID="lblHdd" runat="server" 
+                                                        meta:resourcekey="lblHdd" Text="HDD:" /></td>
                                                 <td>
                                                     <asp:TextBox ID="txtHdd" runat="server" CssClass="HugeTextBox" Width="70" Text="0"></asp:TextBox>
                                                     <asp:RequiredFieldValidator ID="RequireHddValidator" runat="server" Text="*" Display="Dynamic"
                                                         ControlToValidate="txtHdd" meta:resourcekey="RequireHddValidator" SetFocusOnError="true"
-                                                        ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                 </td>
                                                 <td><asp:Localize ID="locGB" runat="server" meta:resourcekey="locGB" Text="GB"/></td>
                                             </tr>
                                         </table>
                                     </asp:Panel>
-                                
-                                    <wsp:Generation runat="server" ID="GenerationSetting" IsEditMode="True"></wsp:Generation>
 
-                                    <wsp:DynamicMemory runat="server" ID="DynamicMemorySetting" IsEditMode="True"></wsp:DynamicMemory>
+                                    <wsp:DynamicMemoryControl ruVpsnat="server" ID="DynamicMemorySetting" Mode="Edit"/>
 
                                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">
@@ -208,7 +208,7 @@
                                                     
                                                     <asp:RequiredFieldValidator ID="SnapshotsValidator" runat="server" Text="*" Display="Dynamic"
                                                         ControlToValidate="txtSnapshots" meta:resourcekey="SnapshotsValidator" SetFocusOnError="true"
-                                                        ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                 </td>
                                             </tr>
                                         </table>
@@ -313,7 +313,7 @@
                                                 
                                                 <asp:RequiredFieldValidator ID="ExternalAddressesValidator" runat="server" Text="*" Display="Dynamic"
                                                         ControlToValidate="txtExternalAddressesNumber" meta:resourcekey="ExternalAddressesValidator" SetFocusOnError="true"
-                                                        ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                         
                                                 <asp:Literal ID="litMaxExternalAddresses" runat="server"></asp:Literal>
                                             </td>
@@ -368,7 +368,7 @@
                                                 
                                                 <asp:RequiredFieldValidator ID="PrivateAddressesValidator" runat="server" Text="*" Display="Dynamic"
                                                         ControlToValidate="txtPrivateAddressesNumber" meta:resourcekey="PrivateAddressesValidator" SetFocusOnError="true"
-                                                        ValidationGroup="VpsWizard">*</asp:RequiredFieldValidator>
+                                                        ValidationGroup="Vps">*</asp:RequiredFieldValidator>
                                                         
                                                 <asp:Literal ID="litMaxPrivateAddresses" runat="server"></asp:Literal>
                                             </td>
@@ -447,6 +447,9 @@
                                                     meta:resourcekey="locConfigStepTitle" Text="Configuration" />
                                             </td>
                                         </tr>
+
+                                        <wsp:Generation runat="server" ID="GenerationSettingsSummary" Mode="Summary"/>
+
                                         <tr>
                                             <td><asp:Localize ID="locCpu" runat="server" meta:resourcekey="locCpu" Text="CPU cores:" /></td>
                                             <td><asp:Literal ID="litCpu" runat="server"></asp:Literal></td>
@@ -454,10 +457,6 @@
                                         <tr>
                                             <td><asp:Localize ID="locRam" runat="server" meta:resourcekey="locRam" Text="RAM, MB:" /></td>
                                             <td><asp:Literal ID="litRam" runat="server"></asp:Literal></td>
-                                        </tr>
-                                        <tr>
-                                            <td><asp:Localize ID="locGeneration" runat="server" meta:resourcekey="locGeneration" Text="Generation:" /></td>
-                                            <td><asp:Literal ID="litGeneration" runat="server"></asp:Literal></td>
                                         </tr>
                                         <tr>
                                             <td><asp:Localize ID="locHdd" runat="server" meta:resourcekey="locHdd" Text="Hard disk size, GB:" /></td>
@@ -504,6 +503,17 @@
                                                 meta:resourcekey="locReinstallAllowed" Text="Re-install allowed:" /></td>
                                             <td><wsp:CheckBoxOption id="optionReinstall" runat="server" Value="True" /></td>
                                         </tr>
+                                        
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" class="NormalBold">
+                                                <asp:Localize ID="locDynamicMemory" runat="server"
+                                                    meta:resourcekey="locDynamicMemory" Text="Dynamic Memory" />
+                                            </td>
+                                        </tr>
+                                        <wsp:DynamicMemoryControl runat="server" ID="DynamicMemoryControlSummary" Mode="Summary"/>
                                         
                                         <tr>
                                             <td>&nbsp;</td>
