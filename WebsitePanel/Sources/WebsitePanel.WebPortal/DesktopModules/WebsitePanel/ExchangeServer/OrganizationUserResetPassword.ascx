@@ -36,7 +36,7 @@
 					    </table>
 					
 				    <div class="FormFooterClean">
-                        <asp:Button id="btnResetPassoword" runat="server" Text="Reset Password" CssClass="Button1" meta:resourcekey="btnResetPassoword" ValidationGroup="ResetUserPassword" OnClick="btnResetPassoword_Click"></asp:Button>
+                        <asp:Button id="btnResetPassoword" runat="server" Text="Send Password Reset Email" CssClass="Button1" meta:resourcekey="btnResetPassoword" ValidationGroup="ResetUserPassword" OnClick="btnResetPassoword_Click"></asp:Button>
 				    </div>
 				</div>
 			</div>

@@ -46,6 +46,10 @@
             <asp:HyperLink ID="lnkUserPasswordExpirationLetter" runat="server" meta:resourcekey="lnkUserPasswordExpirationLetter"
                 Text="User Password Expiration Letter" NavigateUrl='<%# GetSettingsLink("UserPasswordExpirationLetter", "SettingsUserPasswordExpirationLetter") %>'></asp:HyperLink>
         </li>
+        <li>
+            <asp:HyperLink ID="lnkOrganizationUserPasswordResetLetter" runat="server" meta:resourcekey="lnkOrganizationUserPasswordResetLetter"
+                Text="User Password Expiration Letter" NavigateUrl='<%# GetSettingsLink("UserPasswordResetLetter", "SettingsUserPasswordExpirationLetter") %>'></asp:HyperLink>
+        </li>
     </ul>
 </div>
 <div class="FormFooter">

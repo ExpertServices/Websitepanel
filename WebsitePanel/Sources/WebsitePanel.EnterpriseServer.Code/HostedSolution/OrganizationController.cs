@@ -1538,23 +1538,40 @@ namespace WebsitePanel.EnterpriseServer
                 throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
             }
 
+            Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+
             UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
             OrganizationUser user = OrganizationController.GetAccount(itemId, accountId);
+
+            OrganizationUser settings = orgProxy.GetUserGeneralSettings(user.AccountName, org.OrganizationId);
+
+            user.PasswordExpirationDateTime = settings.PasswordExpirationDateTime;
 
             if (string.IsNullOrEmpty(mailTo))
             {
                 mailTo = user.PrimaryEmailAddress;
             }
 
-            SendResetUserPasswordEmail(owner, user, mailTo, reason, string.Empty);
+            var generalSettings = OrganizationController.GetOrganizationGeneralSettings(itemId);
+
+            var logoUrl = generalSettings != null ? generalSettings.OrganizationLogoUrl : string.Empty;
+
+            SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_RESET_LETTER, "USER_PASSWORD_RESET_LETTER");
         }
 
-        public static void SendResetUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason,  string mailTo, string logoUrl)
+        public static void SendUserExpirationPasswordEmail(UserInfo owner, OrganizationUser user, string reason,
+            string mailTo, string logoUrl)
+        {
+            SendUserPasswordEmail(owner, user, reason, user.PrimaryEmailAddress, logoUrl, UserSettings.USER_PASSWORD_EXPIRATION_LETTER, "USER_PASSWORD_EXPIRATION_LETTER");
+        }
+
+        public static void SendUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason,  string mailTo, string logoUrl, string settingsName, string taskName)
         {
             UserSettings settings = UserController.GetUserSettings(owner.UserId,
-                UserSettings.USER_PASSWORD_EXPIRATION_LETTER);
+                settingsName);
 
-            TaskManager.StartTask("ORGANIZATION", "SEND_PASSWORD_RESET_EMAIL", user.ItemId);
+            TaskManager.StartTask("ORGANIZATION", "SEND_" + taskName, user.ItemId);
 
             try
             {

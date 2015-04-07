@@ -490,6 +490,11 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             var result = new List<OrganizationUser>();
 
+            if (string.IsNullOrEmpty(organizationId))
+            {
+                return result;
+            }
+
             var maxPasswordAgeSpan = GetMaxPasswordAge();
 
             var searchRoot = new DirectoryEntry(GetOrganizationPath(organizationId));
@@ -513,7 +518,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 var expirationDate = pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
 
-                if (pwdLastSetDate > expirationDate.AddDays(-daysBeforeExpiration))
+                if (expirationDate.AddDays(-daysBeforeExpiration) < DateTime.Now)
                 {
                     var user = new OrganizationUser();
 
@@ -866,7 +871,20 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
             retUser.UserMustChangePassword = GetUserMustChangePassword(entry);
 
+            retUser.PasswordExpirationDateTime = GetPasswordExpirationDate(entry);
+
             return retUser;
+        }
+
+        private DateTime GetPasswordExpirationDate(DirectoryEntry entry)
+        {
+            var maxPasswordAgeSpan = GetMaxPasswordAge();
+
+            var pwdLastSetTicks = ConvertADSLargeIntegerToInt64(entry.Properties[ADAttributes.PwdLastSet].Value);
+
+            var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
+
+            return pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
         }
 
         private string GetDomainName(string username)

@@ -307,6 +307,13 @@
     <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
       <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+    </Compile>
     <Compile Include="VPS\ProviderControls\HyperV2012R2_Create.ascx.cs">
       <DependentUpon>HyperV2012R2_Create.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4587,6 +4594,7 @@
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
+    <Content Include="SettingsUserPasswordResetLetter.ascx" />
     <Content Include="VPS\ProviderControls\HyperV2012R2_Create.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
     <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
@@ -4649,6 +4657,7 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\OrganizationSettingsTabs.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsPasswordSettings.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordResetLetter.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
