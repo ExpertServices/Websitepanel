@@ -23,8 +23,8 @@
                         </div>
 				        <div class="FormBody">
 
-				            <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="organization_settings_password_s
-                                ettings" />
+				            <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="organization_settings_password_settings" />
+
                             <wsp:SimpleMessageBox id="messageBox" runat="server" />
                             <asp:UpdatePanel runat="server" ID="PasswordPolicyPanel" UpdateMode="Conditional" ChildrenAsTriggers="true">
 		                        <ContentTemplate> 
@@ -86,6 +86,8 @@
                                                 meta:resourcekey="lblLockedOut" Text="Account Lockout threshold:"></asp:Label>
                                         </td>
                                         <td class="Normal"><asp:TextBox ID="txtLockedOut" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+                                            <asp:RequiredFieldValidator ID="valRequiredLockedOut" runat="server" ControlToValidate="txtLockedOut" meta:resourcekey="valRequiredLockedOut"
+                                                ErrorMessage="*" ValidationGroup="SettingsEditor" Display="Dynamic"></asp:RequiredFieldValidator>
                                             <asp:RegularExpressionValidator ID="valCorrectLockedOut" runat="server" ControlToValidate="txtLockedOut" meta:resourcekey="valCorrectLockedOut"
                                                 Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
                                         </td>
@@ -96,6 +98,8 @@
                                                 meta:resourcekey="lblResetAccountLockout" Text="Reset account lockout counter after (minutes):"></asp:Label>
                                         </td>
                                         <td class="Normal"><asp:TextBox ID="txtResetAccountLockout" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+                                            <asp:RequiredFieldValidator ID="valRequireResetAccountLockout" runat="server" ControlToValidate="txtResetAccountLockout" meta:resourcekey="valRequireResetAccountLockout"
+                                                ErrorMessage="*" ValidationGroup="SettingsEditor" Display="Dynamic"></asp:RequiredFieldValidator>
                                             <asp:RegularExpressionValidator ID="valResetAccountLockout" runat="server" ControlToValidate="txtResetAccountLockout" meta:resourcekey="valResetAccountLockout"
                                                 Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
                                         </td>
@@ -154,7 +158,7 @@
                             </asp:UpdatePanel>
 					
 				            <div class="FormFooterClean">
-                                  <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditPasswordSettings" 
+                                  <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SettingsEditor" 
                             OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
 				            </div>
 				        </div>

@@ -20,7 +20,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void BindTabs()
         {
             List<Tab> tabsList = new List<Tab>();
+            tabsList.Add(CreateTab("organization_settings_general_settings", "Tab.GeneralSettigns"));
             tabsList.Add(CreateTab("organization_settings_password_settings", "Tab.PasswordSettings"));
+
+            
 
             int idx = 0;
 

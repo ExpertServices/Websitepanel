@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Tab.GeneralSettigns" xml:space="preserve">
-    <value>General Settings</value>
+  <data name="colGeneralSettings.Text" xml:space="preserve">
+    <value>General settings</value>
   </data>
-  <data name="Tab.PasswordSettings" xml:space="preserve">
-    <value>Password Settings</value>
+  <data name="lblOrganizationLogoUrl.Text" xml:space="preserve">
+    <value>Organization logo URL:</value>
+  </data>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Edit settings</value>
+  </data>
+  <data name="valRequireOrganizationLogoUrl.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>

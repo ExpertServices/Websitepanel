@@ -1685,6 +1685,40 @@ namespace WebsitePanel.EnterpriseServer
             return GetOrganizationSettings<OrganizationPasswordSettings>(itemId, OrganizationSettings.PasswordSettings);
         }
 
+        public static void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)
+        {
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_GENERAL_SETTINGS");
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    TaskManager.WriteWarning("Organization with itemId '{0}' not found", itemId.ToString());
+                    return;
+                }
+
+                var xml = ObjectUtils.Serialize(settings);
+
+                DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.GeneralSettings, xml);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static OrganizationGeneralSettings GetOrganizationGeneralSettings(int itemId)
+        {
+            return GetOrganizationSettings<OrganizationGeneralSettings>(itemId, OrganizationSettings.GeneralSettings);
+        }
+
         private static T GetOrganizationSettings<T>(int itemId, string settingsName)
         {
             var entity = ObjectUtils.FillObjectFromDataReader<OrganizationSettingsEntity>(DataProvider.GetOrganizationSettings(itemId, settingsName));

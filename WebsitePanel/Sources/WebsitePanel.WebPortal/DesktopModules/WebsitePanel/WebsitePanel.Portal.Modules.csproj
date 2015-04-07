@@ -244,6 +244,13 @@
       <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.cs">
       <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4571,6 +4578,7 @@
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationUserResetPassword.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
@@ -4640,6 +4648,7 @@
     <Content Include="App_LocalResources\SettingsUserPasswordExpirationLetter.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\OrganizationSettingsTabs.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsPasswordSettings.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />

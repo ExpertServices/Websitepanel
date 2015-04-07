@@ -301,6 +301,15 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.TextBox txtLockedOut;
         
         /// <summary>
+        /// valRequiredLockedOut control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequiredLockedOut;
+        
+        /// <summary>
         /// valCorrectLockedOut control.
         /// </summary>
         /// <remarks>
@@ -335,6 +344,15 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtResetAccountLockout;
+        
+        /// <summary>
+        /// valRequireResetAccountLockout control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireResetAccountLockout;
         
         /// <summary>
         /// valResetAccountLockout control.

@@ -36,6 +36,10 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esOrganizations : Microsoft.Web.Services3.WebServicesClientProtocol {
         
+        private System.Threading.SendOrPostCallback UpdateOrganizationGeneralSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetOrganizationGeneralSettingsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback UpdateOrganizationPasswordSettingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetOrganizationPasswordSettingsOperationCompleted;
@@ -148,6 +152,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public esOrganizations() {
             this.Url = "http://localhost:9002/esOrganizations.asmx";
         }
+        
+        /// <remarks/>
+        public event UpdateOrganizationGeneralSettingsCompletedEventHandler UpdateOrganizationGeneralSettingsCompleted;
+        
+        /// <remarks/>
+        public event GetOrganizationGeneralSettingsCompletedEventHandler GetOrganizationGeneralSettingsCompleted;
         
         /// <remarks/>
         public event UpdateOrganizationPasswordSettingsCompletedEventHandler UpdateOrganizationPasswordSettingsCompleted;
@@ -310,6 +320,89 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetSupportServiceLevelCompletedEventHandler GetSupportServiceLevelCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/UpdateOrganizationGeneralSettings", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings) {
+            this.Invoke("UpdateOrganizationGeneralSettings", new object[] {
+                        itemId,
+                        settings});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginUpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("UpdateOrganizationGeneralSettings", new object[] {
+                        itemId,
+                        settings}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndUpdateOrganizationGeneralSettings(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void UpdateOrganizationGeneralSettingsAsync(int itemId, OrganizationGeneralSettings settings) {
+            this.UpdateOrganizationGeneralSettingsAsync(itemId, settings, null);
+        }
+        
+        /// <remarks/>
+        public void UpdateOrganizationGeneralSettingsAsync(int itemId, OrganizationGeneralSettings settings, object userState) {
+            if ((this.UpdateOrganizationGeneralSettingsOperationCompleted == null)) {
+                this.UpdateOrganizationGeneralSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateOrganizationGeneralSettingsOperationCompleted);
+            }
+            this.InvokeAsync("UpdateOrganizationGeneralSettings", new object[] {
+                        itemId,
+                        settings}, this.UpdateOrganizationGeneralSettingsOperationCompleted, userState);
+        }
+        
+        private void OnUpdateOrganizationGeneralSettingsOperationCompleted(object arg) {
+            if ((this.UpdateOrganizationGeneralSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateOrganizationGeneralSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationGeneralSettings", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationGeneralSettings GetOrganizationGeneralSettings(int itemId) {
+            object[] results = this.Invoke("GetOrganizationGeneralSettings", new object[] {
+                        itemId});
+            return ((OrganizationGeneralSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetOrganizationGeneralSettings(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetOrganizationGeneralSettings", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationGeneralSettings EndGetOrganizationGeneralSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationGeneralSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationGeneralSettingsAsync(int itemId) {
+            this.GetOrganizationGeneralSettingsAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationGeneralSettingsAsync(int itemId, object userState) {
+            if ((this.GetOrganizationGeneralSettingsOperationCompleted == null)) {
+                this.GetOrganizationGeneralSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetOrganizationGeneralSettingsOperationCompleted);
+            }
+            this.InvokeAsync("GetOrganizationGeneralSettings", new object[] {
+                        itemId}, this.GetOrganizationGeneralSettingsOperationCompleted, userState);
+        }
+        
+        private void OnGetOrganizationGeneralSettingsOperationCompleted(object arg) {
+            if ((this.GetOrganizationGeneralSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetOrganizationGeneralSettingsCompleted(this, new GetOrganizationGeneralSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/UpdateOrganizationPasswordSettings", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -3026,6 +3119,36 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void UpdateOrganizationGeneralSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetOrganizationGeneralSettingsCompletedEventHandler(object sender, GetOrganizationGeneralSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetOrganizationGeneralSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetOrganizationGeneralSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationGeneralSettings Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationGeneralSettings)(this.results[0]));
+            }
         }
     }
     

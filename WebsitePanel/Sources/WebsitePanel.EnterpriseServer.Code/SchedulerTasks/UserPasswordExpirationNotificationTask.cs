@@ -39,6 +39,8 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     var usersWithExpiredPasswords = OrganizationController.GetOrganizationUsersWithExpiredPassword(organization.Id, daysBeforeNotify);
 
+                    var generalSettings = OrganizationController.GetOrganizationGeneralSettings(organization.Id);
+
                     foreach (var user in usersWithExpiredPasswords)
                     {
                         user.ItemId = organization.Id;
@@ -49,7 +51,7 @@ namespace WebsitePanel.EnterpriseServer
                             continue;
                         }
 
-                        OrganizationController.SendResetUserPasswordEmail(owner, user, "Scheduler Password Expiration Notification", user.PrimaryEmailAddress, string.Empty);
+                        OrganizationController.SendResetUserPasswordEmail(owner, user, "Scheduler Password Expiration Notification", user.PrimaryEmailAddress, generalSettings.OrganizationLogoUrl);
                     }
                 }
             }

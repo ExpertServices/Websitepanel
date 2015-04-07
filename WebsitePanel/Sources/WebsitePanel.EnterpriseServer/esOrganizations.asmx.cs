@@ -48,6 +48,18 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
+        public void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)
+        {
+            OrganizationController.UpdateOrganizationGeneralSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public OrganizationGeneralSettings GetOrganizationGeneralSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationGeneralSettings(itemId);
+        }
+
+        [WebMethod]
         public void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
         {
             OrganizationController.UpdateOrganizationPasswordSettings(itemId, settings);

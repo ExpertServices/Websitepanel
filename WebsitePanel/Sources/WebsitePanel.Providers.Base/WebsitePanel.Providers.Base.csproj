@@ -119,6 +119,7 @@
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
+    <Compile Include="HostedSolution\OrganizationGeneralSettings.cs" />
     <Compile Include="HostedSolution\OrganizationPasswordSettings.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\OrganizationDeletedUser.cs" />

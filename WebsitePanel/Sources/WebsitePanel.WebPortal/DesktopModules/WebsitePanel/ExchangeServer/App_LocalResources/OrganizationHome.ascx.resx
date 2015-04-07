@@ -241,6 +241,6 @@
     <value>Edit</value>
   </data>
   <data name="OrganizationSettings.Text" xml:space="preserve">
-    <value>Organization settings</value>
+    <value>Organization settings:</value>
   </data>
 </root>
