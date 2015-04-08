@@ -254,7 +254,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 sharePointEnterpriseStatsPanel.Visible = true;
 
-                lnkSiteCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_enterprise_sitecollections",
+                lnkEnterpriseSiteCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_enterprise_sitecollections",
                 "SpaceID=" + PanelSecurity.PackageId);
                 enterpriseSiteCollectionsStats.QuotaUsedValue = orgStats.CreatedSharePointEnterpriseSiteCollections;
                 enterpriseSiteCollectionsStats.QuotaValue = orgStats.AllocatedSharePointEnterpriseSiteCollections;
