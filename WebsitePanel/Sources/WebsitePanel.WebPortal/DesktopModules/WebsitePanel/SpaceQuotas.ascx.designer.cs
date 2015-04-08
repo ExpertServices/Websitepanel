@@ -427,31 +427,31 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaSharepointSites;
         
         /// <summary>
-        /// pnlSharepointEnterpriseSites control.
+        /// pnlEnterpriseSharepointSites control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlSharepointEnterpriseSites;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlEnterpriseSharepointSites;
         
         /// <summary>
-        /// Label2 control.
+        /// lblEnterpriseSharepointSites control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label2;
+        protected global::System.Web.UI.WebControls.Label lblEnterpriseSharepointSites;
         
         /// <summary>
-        /// quotaSharepointEnterpriseSites control.
+        /// quotaEnterpriseSharepointSites control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Quota quotaSharepointEnterpriseSites;
+        protected global::WebsitePanel.Portal.Quota quotaEnterpriseSharepointSites;
         
         /// <summary>
         /// pnlWebSites control.

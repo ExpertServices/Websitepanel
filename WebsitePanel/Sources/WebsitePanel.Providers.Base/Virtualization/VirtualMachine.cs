@@ -71,6 +71,10 @@ namespace WebsitePanel.Providers.Virtualization
         [Persistent]
         public int RamSize { get; set; }
         public int RamUsage { get; set; }
+
+        [Persistent]
+        public DynamicMemory DynamicMemory { get; set; }
+
         [Persistent]
         public int HddSize { get; set; }
         public LogicalDisk[] HddLogicalDisks { get; set; }

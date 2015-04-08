@@ -4265,6 +4265,9 @@
   <data name="VPS.VPS_QUOTA_WRONG_RAM" xml:space="preserve">
     <value>RAM size must be a positive number and greater than zero</value>
   </data>
+  <data name="VPS.VPS_QUOTA_NOT_IN_DYNAMIC_RAM" xml:space="preserve">
+    <value>RAM size must be between the minimum and maximum of the dynamic memory</value>
+  </data>
   <data name="VPS.VPS_QUOTA_WRONG_SNAPSHOTS" xml:space="preserve">
     <value>Snapshots must be a positive number and greater than zero</value>
   </data>
@@ -5126,6 +5129,74 @@
   <data name="Quota.VPSForPC.StartShutdownAllowed" xml:space="preserve">
     <value>Allow user to Start, Turn off VPS</value>
   </data>
+
+  <data name="ResourceGroup.VPS2012" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
+  <data name="AuditLogSource.VPS2012" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
+  <data name="Quota.VPS2012.Bandwidth" xml:space="preserve">
+    <value>Monthly bandwidth, GB</value>
+  </data>
+  <data name="Quota.VPS2012.BootCdAllowed" xml:space="preserve">
+    <value>Boot from CD allowed</value>
+  </data>
+  <data name="Quota.VPS2012.BootCdEnabled" xml:space="preserve">
+    <value>Boot from CD</value>
+  </data>
+  <data name="Quota.VPS2012.CpuNumber" xml:space="preserve">
+    <value>Number of CPU cores</value>
+  </data>
+  <data name="Quota.VPS2012.DvdEnabled" xml:space="preserve">
+    <value>DVD drive</value>
+  </data>
+  <data name="Quota.VPS2012.ExternalIPAddressesNumber" xml:space="preserve">
+    <value>Number of External IP addresses</value>
+  </data>
+  <data name="Quota.VPS2012.ExternalNetworkEnabled" xml:space="preserve">
+    <value>External Network</value>
+  </data>
+  <data name="Quota.VPS2012.Hdd" xml:space="preserve">
+    <value>Hard Drive size, GB</value>
+  </data>
+  <data name="Quota.VPS2012.ManagingAllowed" xml:space="preserve">
+    <value>Allow user to create, delete VPS</value>
+  </data>
+  <data name="Quota.VPS2012.NumLockEnabled" xml:space="preserve">
+    <value>"Num Lock" by default</value>
+  </data>
+  <data name="Quota.VPS2012.PauseResumeAllowed" xml:space="preserve">
+    <value>Allow user to Pause, Resume VPS</value>
+  </data>
+  <data name="Quota.VPS2012.PrivateIPAddressesNumber" xml:space="preserve">
+    <value>Number of Private IP addresses per VPS</value>
+  </data>
+  <data name="Quota.VPS2012.PrivateNetworkEnabled" xml:space="preserve">
+    <value>Private Network</value>
+  </data>
+  <data name="Quota.VPS2012.Ram" xml:space="preserve">
+    <value>RAM size, MB</value>
+  </data>
+  <data name="Quota.VPS2012.RebootAllowed" xml:space="preserve">
+    <value>Allow user to Reboot VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ReinstallAllowed" xml:space="preserve">
+    <value>Allow user to Re-install VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ResetAlowed" xml:space="preserve">
+    <value>Allow user to Reset VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ServersNumber" xml:space="preserve">
+    <value>Number of VPS</value>
+  </data>
+  <data name="Quota.VPS2012.SnapshotsNumber" xml:space="preserve">
+    <value>Number of Snaphots</value>
+  </data>
+  <data name="Quota.VPS2012.StartShutdownAllowed" xml:space="preserve">
+    <value>Allow user to Start, Turn off VPS</value>
+  </data>
+  
   <data name="Error.CreateCheckPointError" xml:space="preserve">
     <value>Error creating CheckPoint</value>
   </data>

@@ -143,18 +143,17 @@ namespace WebsitePanel.Providers.Virtualization
             try
             {
                 Command cmd = new Command("Get-VM");
-
                 cmd.Parameters.Add("Id", vmId);
-
                 Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
                 if (result != null && result.Count > 0)
                 {
-                    vm.Name = result[0].GetProperty("Name").ToString();
+                    vm.Name = result[0].GetString("Name");
                     vm.State = result[0].GetEnum<VirtualMachineState>("State");
                     vm.CpuUsage = ConvertNullableToInt32(result[0].GetProperty("CpuUsage"));
                     // This does not truly give the RAM usage, only the memory assigned to the VPS
-                    // Lets handle detection of total memory and usage else where
-                    //vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
+                    // Lets handle detection of total memory and usage else where. SetUsagesFromKVP method have been made for it.
+                    vm.RamUsage = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryAssigned")) / Constants.Size1M);
                     vm.RamSize = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryStartup")) / Constants.Size1M);
                     vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
                     vm.Status = result[0].GetProperty("Status").ToString();
@@ -162,17 +161,12 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.Generation = result[0].GetInt("Generation");
                     vm.ProcessorCount = result[0].GetInt("ProcessorCount");
                     vm.ParentSnapshotId = result[0].GetString("ParentSnapshotId");
-
                     vm.Heartbeat = VirtualMachineHelper.GetVMHeartBeatStatus(PowerShell, vm.Name);
-
                     vm.CreatedDate = DateTime.Now;
 
                     if (extendedInfo)
                     {
                         vm.CpuCores = VirtualMachineHelper.GetVMProcessors(PowerShell, vm.Name);
-
-                        MemoryInfo memoryInfo = VirtualMachineHelper.GetVMMemory(PowerShell, vm.Name);
-                        vm.RamSize = memoryInfo.Startup;
 
                         // BIOS 
                         BiosInfo biosInfo = BiosHelper.Get(PowerShell, vm.Name, vm.Generation);
@@ -195,38 +189,11 @@ namespace WebsitePanel.Providers.Virtualization
                         // network adapters
                         vm.Adapters = NetworkAdapterHelper.Get(PowerShell, vm.Name);
                     }
-                    else
-                    {
-                        // Use the WebsitePanel VMConfig Windows service to get the RAM usage as well as the HDD usage / sizes
-                        List<KvpExchangeDataItem> vmKvps = GetKVPItems(vmId);
-                        foreach (KvpExchangeDataItem vmKvp in vmKvps)
-                        {
-                            // RAM
-                            if (vmKvp.Name == Constants.KVP_RAM_SUMMARY_KEY)
-                            {
-                                string[] ram = vmKvp.Data.Split(':');
-                                int freeRam = Int32.Parse(ram[0]);
-                                int availRam = Int32.Parse(ram[1]);
 
-                                vm.RamUsage = availRam - freeRam;
-                            }
+                    vm.DynamicMemory = MemoryHelper.GetDynamicMemory(PowerShell, vm.Name);
 
-                            // HDD
-                            if (vmKvp.Name == Constants.KVP_HDD_SUMMARY_KEY)
-                            {
-                                string[] disksArray = vmKvp.Data.Split(';');
-                                vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
-                                for (int i = 0; i < disksArray.Length; i++)
-                                {
-                                    string[] disk = disksArray[i].Split(':');
-                                    vm.HddLogicalDisks[i] = new LogicalDisk();
-                                    vm.HddLogicalDisks[i].DriveLetter = disk[0];
-                                    vm.HddLogicalDisks[i].FreeSpace = Int32.Parse(disk[1]);
-                                    vm.HddLogicalDisks[i].Size = Int32.Parse(disk[2]);
-                                }
-                            }
-                        }
-                    }
+                    // If it is possible get usage ram and usage hdd data from KVP
+                    SetUsagesFromKVP(ref vm);
                 }
             }
             catch (Exception ex)
@@ -400,7 +367,7 @@ namespace WebsitePanel.Providers.Virtualization
                 DvdDriveHelper.Update(PowerShell, realVm, vm.DvdDriveInstalled); // Dvd should be before bios because bios sets boot order
                 BiosHelper.Update(PowerShell, realVm, vm.BootFromCD, vm.NumLockEnabled);
                 VirtualMachineHelper.UpdateProcessors(PowerShell, realVm, vm.CpuCores, CpuLimitSettings, CpuReserveSettings, CpuWeightSettings);
-                VirtualMachineHelper.UpdateMemory(PowerShell, realVm, vm.RamSize);
+                MemoryHelper.Update(PowerShell, realVm, vm.RamSize, vm.DynamicMemory);
                 NetworkAdapterHelper.Update(PowerShell, vm);
             }
             catch (Exception ex)
@@ -1834,6 +1801,40 @@ namespace WebsitePanel.Providers.Virtualization
             }
 
             return jobCompleted;
+        }
+        private void SetUsagesFromKVP(ref VirtualMachine vm)
+        {
+            // Use the WebsitePanel VMConfig Windows service to get the RAM usage as well as the HDD usage / sizes
+            List<KvpExchangeDataItem> vmKvps = GetKVPItems(vm.VirtualMachineId);
+            foreach (KvpExchangeDataItem vmKvp in vmKvps)
+            {
+                // RAM
+                if (vmKvp.Name == Constants.KVP_RAM_SUMMARY_KEY)
+                {
+                    string[] ram = vmKvp.Data.Split(':');
+                    int freeRam = Int32.Parse(ram[0]);
+                    int availRam = Int32.Parse(ram[1]);
+
+                    vm.RamUsage = availRam - freeRam;
+                }
+
+                // HDD
+                if (vmKvp.Name == Constants.KVP_HDD_SUMMARY_KEY)
+                {
+                    string[] disksArray = vmKvp.Data.Split(';');
+                    vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
+                    for (int i = 0; i < disksArray.Length; i++)
+                    {
+                        string[] disk = disksArray[i].Split(':');
+                        vm.HddLogicalDisks[i] = new LogicalDisk
+                        {
+                            DriveLetter = disk[0],
+                            FreeSpace = Int32.Parse(disk[1]),
+                            Size = Int32.Parse(disk[2])
+                        };
+                    }
+                }
+            }
         }
         #endregion
 

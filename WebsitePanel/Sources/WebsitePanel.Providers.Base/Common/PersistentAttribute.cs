@@ -30,7 +30,7 @@ using System;
 
 namespace WebsitePanel.Providers
 {
-	[AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
 	public class PersistentAttribute : Attribute
 	{
 		public PersistentAttribute()

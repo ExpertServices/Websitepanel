@@ -177,6 +177,7 @@ namespace WebsitePanel.Portal
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql5)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Statistics)|
                                                                 (resourceGroup.GroupName == ResourceGroups.VPS)|
+                                                                (resourceGroup.GroupName == ResourceGroups.VPS2012)|
                                                                 (resourceGroup.GroupName == ResourceGroups.VPSForPC));
         }
 

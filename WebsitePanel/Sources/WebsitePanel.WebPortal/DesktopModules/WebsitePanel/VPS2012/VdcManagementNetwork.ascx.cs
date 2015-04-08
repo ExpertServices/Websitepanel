@@ -26,27 +26,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-using System.Data;
-using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
 using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
-using WebsitePanel.Providers.Mail;
-using WebsitePanel.Providers.Virtualization;
-
-namespace WebsitePanel.Portal
+namespace WebsitePanel.Portal.VPS2012
 {
-    /// <summary>
-    /// Summary description for IVirtualMachineCreateControl
-    /// </summary>
-    public interface IVirtualMachineCreateControl
+    public partial class VdcManagementNetwork : WebsitePanelModuleBase
     {
-        void BindItem(VirtualMachine item);
-        void SaveItem(VirtualMachine item);
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

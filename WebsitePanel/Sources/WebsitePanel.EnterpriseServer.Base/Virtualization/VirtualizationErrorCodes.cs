@@ -39,6 +39,7 @@
         public const string QUOTA_EXCEEDED_CPU = "VPS_QUOTA_EXCEEDED_CPU";
         public const string QUOTA_EXCEEDED_RAM = "VPS_QUOTA_EXCEEDED_RAM";
         public const string QUOTA_WRONG_RAM = "VPS_QUOTA_WRONG_RAM";
+        public const string QUOTA_NOT_IN_DYNAMIC_RAM = "VPS_QUOTA_NOT_IN_DYNAMIC_RAM";
         public const string QUOTA_EXCEEDED_HDD = "VPS_QUOTA_EXCEEDED_HDD";
         public const string QUOTA_WRONG_HDD = "VPS_QUOTA_WRONG_HDD";
         public const string QUOTA_EXCEEDED_SNAPSHOTS = "VPS_QUOTA_EXCEEDED_SNAPSHOTS";

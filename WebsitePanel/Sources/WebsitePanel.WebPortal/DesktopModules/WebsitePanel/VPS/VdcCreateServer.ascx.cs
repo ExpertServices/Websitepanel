@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,7 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
@@ -42,8 +42,6 @@ namespace WebsitePanel.Portal.VPS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            LoadCustomProviderControl();
-
             if (!IsPostBack)
             {
                 BindFormControls();
@@ -55,27 +53,7 @@ namespace WebsitePanel.Portal.VPS
             // toggle
             ToggleControls();
         }
-
-        private void LoadCustomProviderControl()
-        {
-            try
-            {
-                LoadProviderControl(PanelSecurity.PackageId, "VPS", providerControl, "Create.ascx");
-            }
-            catch { /* skip */ }
-        }
-
-        private IVirtualMachineCreateControl CustomProviderControl
-        {
-            get
-            {
-                if (providerControl.Controls.Count == 0)
-                    return null;
-
-                return (IVirtualMachineCreateControl)providerControl.Controls[0];
-            }
-        }
-
+        
         private void ToggleWizardSteps()
         {
             // external network
@@ -134,13 +112,6 @@ namespace WebsitePanel.Portal.VPS
                 ddlCpu.Items.Add(i.ToString());
 
             ddlCpu.SelectedIndex = ddlCpu.Items.Count - 1; // select last (maximum) item
-
-            // the custom provider control
-            if (CustomProviderControl != null)
-            {
-                IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)providerControl.Controls[0];
-                ctrl.BindItem(new VirtualMachine());  
-            }
 
             // external network details
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_EXTERNAL_NETWORK_ENABLED))
@@ -316,15 +287,6 @@ namespace WebsitePanel.Portal.VPS
 
             try
             {
-                VirtualMachine virtualMachine = new VirtualMachine();
-
-                // the custom provider control
-                if (CustomProviderControl != null)
-                {
-                    IVirtualMachineCreateControl ctrl = (IVirtualMachineCreateControl)providerControl.Controls[0];
-                    ctrl.SaveItem(virtualMachine);
-                }
-
                 // collect and prepare data
                 string hostname = String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim());
 
@@ -343,7 +305,7 @@ namespace WebsitePanel.Portal.VPS
                 // create virtual machine
                 IntResult res = ES.Services.VPS.CreateVirtualMachine(PanelSecurity.PackageId,
                     hostname, listOperatingSystems.SelectedValue, adminPassword, summaryEmail,
-                    virtualMachine.Generation, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
+                    1, Utils.ParseInt(ddlCpu.SelectedValue), Utils.ParseInt(txtRam.Text.Trim()),
                     Utils.ParseInt(txtHdd.Text.Trim()), Utils.ParseInt(txtSnapshots.Text.Trim()),
                     chkDvdInstalled.Checked, chkBootFromCd.Checked, chkNumLock.Checked,
                     chkStartShutdown.Checked, chkPauseResume.Checked, chkReboot.Checked, chkReset.Checked, chkReinstall.Checked,

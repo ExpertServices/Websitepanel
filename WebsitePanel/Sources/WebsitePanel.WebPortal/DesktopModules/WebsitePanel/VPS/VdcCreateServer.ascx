@@ -188,8 +188,6 @@
                                             </tr>
                                         </table>
                                     </asp:Panel>
-                                    
-                                	<asp:PlaceHolder ID="providerControl" runat="server"></asp:PlaceHolder>
 
                                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">

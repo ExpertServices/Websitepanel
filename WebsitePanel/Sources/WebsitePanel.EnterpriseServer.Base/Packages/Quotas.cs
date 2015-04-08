@@ -204,6 +204,26 @@ order by rg.groupOrder
         public const string VPS_REINSTALL_ALLOWED = "VPS.ReinstallAllowed";		// Allow user to Re-install VPS
         public const string VPS_BANDWIDTH = "VPS.Bandwidth";		// Monthly bandwidth, GB
 
+        public const string VPS2012_SERVERS_NUMBER = "VPS2012.ServersNumber";		// Number of VPS
+        public const string VPS2012_MANAGING_ALLOWED = "VPS2012.ManagingAllowed";		// Allow user to create VPS
+        public const string VPS2012_CPU_NUMBER = "VPS2012.CpuNumber";		// Number of CPU cores
+        public const string VPS2012_BOOT_CD_ALLOWED = "VPS2012.BootCdAllowed";		// Boot from CD allowed
+        public const string VPS2012_BOOT_CD_ENABLED = "VPS2012.BootCdEnabled";		// Boot from CD
+        public const string VPS2012_RAM = "VPS2012.Ram";		// RAM size, MB
+        public const string VPS2012_HDD = "VPS2012.Hdd";		// Hard Drive size, GB
+        public const string VPS2012_DVD_ENABLED = "VPS2012.DvdEnabled";		// DVD drive
+        public const string VPS2012_EXTERNAL_NETWORK_ENABLED = "VPS2012.ExternalNetworkEnabled";		// External Network
+        public const string VPS2012_EXTERNAL_IP_ADDRESSES_NUMBER = "VPS2012.ExternalIPAddressesNumber";		// Number of External IP addresses
+        public const string VPS2012_PRIVATE_NETWORK_ENABLED = "VPS2012.PrivateNetworkEnabled";		// Private Network
+        public const string VPS2012_PRIVATE_IP_ADDRESSES_NUMBER = "VPS2012.PrivateIPAddressesNumber";		// Number of Private IP addresses per VPS
+        public const string VPS2012_SNAPSHOTS_NUMBER = "VPS2012.SnapshotsNumber";		// Number of Snaphots
+        public const string VPS2012_START_SHUTDOWN_ALLOWED = "VPS2012.StartShutdownAllowed";		// Allow user to Start, Turn off and Shutdown VPS
+        public const string VPS2012_PAUSE_RESUME_ALLOWED = "VPS2012.PauseResumeAllowed";		// Allow user to Pause, Resume VPS
+        public const string VPS2012_REBOOT_ALLOWED = "VPS2012.RebootAllowed";		// Allow user to Reboot VPS
+        public const string VPS2012_RESET_ALOWED = "VPS2012.ResetAlowed";		// Allow user to Reset VPS
+        public const string VPS2012_REINSTALL_ALLOWED = "VPS2012.ReinstallAllowed";		// Allow user to Re-install VPS
+        public const string VPS2012_BANDWIDTH = "VPS2012.Bandwidth";		// Monthly bandwidth, GB
+
 		public const string VPSForPC_SERVERS_NUMBER = "VPSForPC.ServersNumber";		// Number of VPS
 		public const string VPSForPC_MANAGING_ALLOWED = "VPSForPC.ManagingAllowed";		// Allow user to create VPS
 		public const string VPSForPC_CPU_NUMBER = "VPSForPC.CpuNumber";		// Number of CPU cores

@@ -60,7 +60,7 @@ REM %WSDL% %SERVER_URL%/esOperatingSystems.asmx /out:.\WebsitePanel.EnterpriseSe
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs
 
 REM %WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
-REB %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/esPackages.asmx /out:.\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs
@@ -85,6 +85,9 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\UsersProxy.cs
 
 REM %WSDL% %SERVER_URL%/esVirtualizationServer.asmx /out:.\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy.cs
+
+REM %WSDL% %SERVER_URL%/esVirtualizationServer2012.asmx /out:.\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy2012.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy2012.cs
 
 REM %WSDL% %SERVER_URL%/esWebApplicationGallery.asmx /out:.\WebsitePanel.EnterpriseServer.Client\WebApplicationGalleryProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\WebApplicationGalleryProxy.cs
