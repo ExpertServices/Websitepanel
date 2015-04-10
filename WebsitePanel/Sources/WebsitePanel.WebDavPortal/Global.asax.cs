@@ -15,6 +15,7 @@ using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDavPortal.App_Start;
 using WebsitePanel.WebDavPortal.Controllers;
+using WebsitePanel.WebDavPortal.CustomAttributes;
 using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.HttpHandlers;
 using WebsitePanel.WebDavPortal.Mapping;
@@ -39,6 +40,10 @@ namespace WebsitePanel.WebDavPortal
             Mapper.AssertConfigurationIsValid();
 
             log4net.Config.XmlConfigurator.Configure();
+
+            DataAnnotationsModelValidatorProvider.RegisterAdapter(
+               typeof(PhoneNumberAttribute),
+               typeof(RegularExpressionAttributeAdapter));
         }
 
         protected void Application_Error(object sender, EventArgs e)

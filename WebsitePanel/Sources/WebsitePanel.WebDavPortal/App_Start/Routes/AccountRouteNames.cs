@@ -9,5 +9,8 @@ namespace WebsitePanel.WebDavPortal.UI.Routes
     {
         public const string Logout = "AccountLogout";
         public const string Login = "AccountLogin";
+        public const string UserProfile = "UserProfileRoute";
+
+        public const string PasswordChange = "PasswordChangeRoute";
     }
 }

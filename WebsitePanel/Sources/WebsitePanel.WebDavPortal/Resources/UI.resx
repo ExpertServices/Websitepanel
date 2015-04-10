@@ -120,6 +120,18 @@
   <data name="Actions" xml:space="preserve">
     <value>Actions</value>
   </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="AddressInforamtion" xml:space="preserve">
+    <value>Address Inforamtion</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="BusinessPhone" xml:space="preserve">
+    <value>Business Phone</value>
+  </data>
   <data name="Byte" xml:space="preserve">
     <value>Byte</value>
   </data>
@@ -132,11 +144,26 @@
   <data name="CancelAll" xml:space="preserve">
     <value>Cancel All</value>
   </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="CompanyInformation" xml:space="preserve">
+    <value>Company Information</value>
+  </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="ContactInformation" xml:space="preserve">
+    <value>Contact Information</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country/Region</value>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Create</value>
@@ -153,6 +180,12 @@
   <data name="DialogsContentConfrimFileDeletion" xml:space="preserve">
     <value>Are you sure you want to delete {0} item(s)?</value>
   </data>
+  <data name="DisplayName" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
   <data name="EnterFileName" xml:space="preserve">
     <value>Please enter file name</value>
   </data>
@@ -165,6 +198,12 @@
   <data name="ExcelWorkbook" xml:space="preserve">
     <value>Excel workbook</value>
   </data>
+  <data name="ExternalEmail" xml:space="preserve">
+    <value>External Email</value>
+  </data>
+  <data name="Fax" xml:space="preserve">
+    <value>Fax</value>
+  </data>
   <data name="File" xml:space="preserve">
     <value>File</value>
   </data>
@@ -174,11 +213,26 @@
   <data name="FileUpload" xml:space="preserve">
     <value>File Upload</value>
   </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="GeneralInformation" xml:space="preserve">
+    <value>General Information</value>
+  </data>
   <data name="GigabyteShort" xml:space="preserve">
     <value>Gb</value>
   </data>
+  <data name="Here" xml:space="preserve">
+    <value>Here</value>
+  </data>
+  <data name="HomePhone" xml:space="preserve">
+    <value>Home Phone</value>
+  </data>
   <data name="Info" xml:space="preserve">
     <value>Info</value>
+  </data>
+  <data name="Initials" xml:space="preserve">
+    <value>Initials</value>
   </data>
   <data name="ItemExist" xml:space="preserve">
     <value>File already exist</value>
@@ -186,11 +240,26 @@
   <data name="ItemsWasRemovedFormat" xml:space="preserve">
     <value>{0} items was removed.</value>
   </data>
+  <data name="JobTitle" xml:space="preserve">
+    <value>Job Title</value>
+  </data>
   <data name="KilobyteShort" xml:space="preserve">
     <value>KB</value>
   </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="LoginName" xml:space="preserve">
+    <value>Login name</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log out</value>
+  </data>
   <data name="MegabyteShort" xml:space="preserve">
     <value>MB</value>
+  </data>
+  <data name="MobilePhone" xml:space="preserve">
+    <value>Mobile Phone</value>
   </data>
   <data name="Modified" xml:space="preserve">
     <value>Modified</value>
@@ -198,14 +267,35 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="NewPasswordConfirmation" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
   <data name="NoFilesAreSelected" xml:space="preserve">
     <value>No files are selected.</value>
   </data>
   <data name="NotAFile" xml:space="preserve">
     <value>Not a file.</value>
   </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Old password</value>
+  </data>
   <data name="OrDragAndDropFilesHere" xml:space="preserve">
     <value>or drag and drop files here.</value>
+  </data>
+  <data name="Pager" xml:space="preserve">
+    <value>Pager</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordExpirationFormat" xml:space="preserve">
+    <value>Will expire on {0}. If you want to change password then please click {1}.</value>
   </data>
   <data name="PetabyteShort" xml:space="preserve">
     <value>PB</value>
@@ -216,11 +306,20 @@
   <data name="PowerPointPresentation" xml:space="preserve">
     <value>Powerpoint presentation</value>
   </data>
+  <data name="PrimaryEmail" xml:space="preserve">
+    <value>Primary Email</value>
+  </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing</value>
   </data>
   <data name="ProcessingWithDots" xml:space="preserve">
     <value>Processing...</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save Changes</value>
   </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
@@ -231,11 +330,17 @@
   <data name="SearchResults" xml:space="preserve">
     <value>Search Results</value>
   </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
   <data name="SelectFilesToUpload" xml:space="preserve">
     <value>Select files to upload</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>State/Province</value>
   </data>
   <data name="Table" xml:space="preserve">
     <value>Table</value>
@@ -249,10 +354,19 @@
   <data name="Upload" xml:space="preserve">
     <value>Upload</value>
   </data>
+  <data name="UserProfileSuccessfullyUpdated" xml:space="preserve">
+    <value>User profile successfully updated</value>
+  </data>
+  <data name="WebPage" xml:space="preserve">
+    <value>Web Page</value>
+  </data>
   <data name="WordDocument" xml:space="preserve">
     <value>Word document</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="Zip" xml:space="preserve">
+    <value>Zip/Postal Code</value>
   </data>
 </root>

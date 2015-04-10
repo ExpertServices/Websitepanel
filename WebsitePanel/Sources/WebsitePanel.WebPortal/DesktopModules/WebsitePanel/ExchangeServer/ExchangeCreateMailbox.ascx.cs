@@ -129,24 +129,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
             {
-                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-
-                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
-
-                if (passwordPolicy.IsSuccess)
-                {
-                    password.MinimumLength = passwordPolicy.Value.MinLength;
-                    if (passwordPolicy.Value.IsComplexityEnable)
-                    {
-                        password.MinimumNumbers = 1;
-                        password.MinimumSymbols = 1;
-                        password.MinimumUppercase = 1;
-                    }
-                }
-                else
-                {
-                    messageBox.ShowMessage(passwordPolicy, "CREATE_ORGANIZATION_USER", "HostedOrganization");
-                }
+                messageBox.ShowErrorMessage("UNABLETOLOADPASSWORDSETTINGS");
             }
         }
 

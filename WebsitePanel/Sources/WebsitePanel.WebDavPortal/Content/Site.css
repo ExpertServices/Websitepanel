@@ -231,6 +231,23 @@ tr.selected-file {
 }
 
 
+.navbar-fixed-top  #user-profile {
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.navbar-fixed-top  #user-profile:hover {
+    text-decoration: none;
+}
+
+.user-profile .password-information {
+    padding-top: 7px;
+}
+
+.user-profile .login-name {
+    padding-top: 7px;
+}
+
 .web-dav-folder-progress {
     margin-bottom: 0px;
 }

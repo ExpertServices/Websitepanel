@@ -17,7 +17,7 @@ namespace WebsitePanel.WebDavPortal.Models.Common
         {
             Messages.Add(new Message
             {
-                Type =type,
+                Type = type,
                 Value = value
             });
         }

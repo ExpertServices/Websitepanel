@@ -1,6 +1,6 @@
 ﻿namespace WebsitePanel.WebDavPortal.Constants
 {
-    public class Formtas
+    public class Formats
     {
         public const string DateFormatWithTime = "MM/dd/yyyy hh:mm tt";
     }

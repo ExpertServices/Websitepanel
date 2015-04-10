@@ -13,6 +13,18 @@ namespace WebsitePanel.WebDavPortal
             #region Account
 
             routes.MapRoute(
+                name: AccountRouteNames.UserProfile,
+                url: "account/profile",
+                defaults: new { controller = "Account", action = "UserProfile" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordChange,
+                url: "account/profile/password-change",
+                defaults: new { controller = "Account", action = "PasswordChange" }
+                );
+
+            routes.MapRoute(
                 name: AccountRouteNames.Logout,
                 url: "account/logout",
                 defaults: new { controller = "Account", action = "Logout" }

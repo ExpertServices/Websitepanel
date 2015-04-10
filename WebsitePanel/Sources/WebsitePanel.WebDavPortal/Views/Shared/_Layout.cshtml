@@ -4,6 +4,7 @@
 @using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.Resources
 @using WebsitePanel.WebDavPortal.UI.Routes;
 @model WebsitePanel.WebDavPortal.Models.Common.BaseModel
 
@@ -26,7 +27,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new { pathPart = string.Empty })">
+                <a href="/">
                     <img class="header-logo processing-dialog" src="@Url.Content("~/Content/Images/logo.png")" />
                 </a>
             </div>
@@ -34,8 +35,8 @@
                 @{
                     if (WspContext.User != null)
                     {
-                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
-                        <h4 id="username" class="nav navbar-text navbar-right">@WspContext.User.Login</h4>
+                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="@UI.LogOut"><i class="glyphicon glyphicon-log-out"></i></a>
+                        <a id="user-profile" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.UserProfile)" title="@UI.Profile">@WspContext.User.Login</a>
                     }
                 }
             </div>
@@ -65,9 +66,9 @@
         @Scripts.Render("~/bundles/authScripts")
         
         <script>
-    $(document).ready(function () {
-        StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
-    });
+            $(document).ready(function () {
+                StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+            });
         </script>
     }
 

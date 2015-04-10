@@ -26,14 +26,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
 
         public WspPrincipal LogIn(string login, string password)
         {
-            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-            {
-                return null;
-            }
-
-            var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
-
-            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
+            if (ValidateAuthenticationData(login, password) == false)
             {
                 return null;
             }
@@ -82,6 +75,23 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
         public void LogOut()
         {
             FormsAuthentication.SignOut();
+        }
+
+        public bool ValidateAuthenticationData(string login, string password)
+        {
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
+
+            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -165,13 +165,15 @@
     <Compile Include="Configurations\ActionSelectors\OwaActionSelector.cs" />
     <Compile Include="Configurations\Constraints\OrganizationRouteConstraint.cs" />
     <Compile Include="Configurations\ControllerConfigurations\OwaControllerConfiguration.cs" />
-    <Compile Include="Constants\Formtas.cs" />
+    <Compile Include="Constants\Formats.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="Controllers\Api\OwaController.cs" />
     <Compile Include="CustomAttributes\FormValueRequiredAttribute.cs" />
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
+    <Compile Include="CustomAttributes\PhoneNumberAttribute.cs" />
+    <Compile Include="CustomAttributes\OrganizationPasswordPolicyAttribute.cs" />
     <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />
     <Compile Include="DependencyInjection\PortalDependencies.cs" />
     <Compile Include="DependencyInjection\Providers\HttpSessionStateProvider.cs" />
@@ -188,9 +190,12 @@
     <Compile Include="HttpHandlers\AccessTokenHandler.cs" />
     <Compile Include="HttpHandlers\FileTransferRequestHandler.cs" />
     <Compile Include="Mapping\AutoMapperPortalConfiguration.cs" />
+    <Compile Include="Mapping\Profiles\Account\UserProfileProfile.cs" />
     <Compile Include="Mapping\Profiles\Webdav\ResourceTableItemProfile.cs" />
     <Compile Include="ModelBinders\DataTables\JqueryDataTableModelBinder.cs" />
     <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\Account\PasswordChangeModel.cs" />
+    <Compile Include="Models\Account\UserProfile.cs" />
     <Compile Include="Models\Common\BaseModel.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableBaseEntity.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTablesResponse.cs" />
@@ -198,6 +203,7 @@
     <Compile Include="Models\Common\DataTable\JqueryDataTableOrder.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableRequest.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableSearch.cs" />
+    <Compile Include="Models\Common\EditorTemplates\PasswordEditor.cs" />
     <Compile Include="Models\Common\Enums\MessageType.cs" />
     <Compile Include="Models\Common\Message.cs" />
     <Compile Include="Models\DirectoryIdentity.cs" />
@@ -208,6 +214,11 @@
     <Compile Include="Models\ModelForWebDav.cs" />
     <Compile Include="Models\OfficeOnlineModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Messages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\UI.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -380,6 +391,7 @@
     <Content Include="Scripts\appScripts\messages.js" />
     <Content Include="Scripts\appScripts\recalculateResourseHeight.js" />
     <Content Include="Scripts\appScripts\uploadingData2.js" />
+    <Content Include="Scripts\appScripts\validation\passwordeditor.unobtrusive.js" />
     <Content Include="Scripts\appScripts\wsp-webdav.js" />
     <Content Include="Scripts\appScripts\wsp.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -465,6 +477,10 @@
     <Content Include="Views\FileSystem\_ShowContentBigIcons.cshtml" />
     <Content Include="Views\FileSystem\UploadFiles.cshtml" />
     <Content Include="Views\FileSystem\ShowContentSearchResultTable.cshtml" />
+    <Content Include="Views\Account\UserProfile.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\CountrySelector.cshtml" />
+    <Content Include="Views\Account\PasswordChange.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\PasswordEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />
@@ -481,6 +497,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Messages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\UI.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>UI.Designer.cs</LastGenOutput>

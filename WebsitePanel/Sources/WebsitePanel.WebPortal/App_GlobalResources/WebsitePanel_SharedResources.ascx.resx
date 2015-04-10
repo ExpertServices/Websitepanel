@@ -5716,4 +5716,7 @@
   <data name="ERROR.ORANIZATIONSETTINGS_NOT_UPDATED" xml:space="preserve">
     <value>Error during updating settings.</value>
   </data>
+  <data name="Error.UNABLETOLOADPASSWORDSETTINGS" xml:space="preserve">
+    <value>Unable to load password settings</value>
+  </data>
 </root>

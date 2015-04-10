@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Net.Mail;
 using System.Text;
+using System.Threading.Tasks;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
 using WebsitePanel.EnterpriseServer.Extensions;
@@ -1699,7 +1700,62 @@ namespace WebsitePanel.EnterpriseServer
 
         public static OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
         {
-            return GetOrganizationSettings<OrganizationPasswordSettings>(itemId, OrganizationSettings.PasswordSettings);
+            var passwordSettings = GetOrganizationSettings<OrganizationPasswordSettings>(itemId, OrganizationSettings.PasswordSettings);
+
+            if (passwordSettings == null)
+            {
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
+                }
+
+                var package = PackageController.GetPackage(org.PackageId);
+
+                UserSettings userSettings = UserController.GetUserSettings(package.UserId, UserSettings.EXCHANGE_POLICY);
+
+                if (userSettings != null)
+                {
+                    string policyValue = userSettings["MailboxPasswordPolicy"];
+
+                    if (policyValue != null)
+                    {
+                        string[] parts = policyValue.Split(';');
+
+                        passwordSettings = new OrganizationPasswordSettings
+                        {
+                            MinimumLength = Utils.ParseInt(parts[1], 0),
+                            MaximumLength = Utils.ParseInt(parts[2], 0),
+                            UppercaseLettersCount = Utils.ParseInt(parts[3], 0),
+                            NumbersCount = Utils.ParseInt(parts[4], 0),
+                            SymbolsCount = Utils.ParseInt(parts[5], 0),
+                            AccountLockoutThreshold = Utils.ParseInt(parts[7], 0),
+                            EnforcePasswordHistory = Utils.ParseInt(parts[8], 0),
+                            AccountLockoutDuration = Utils.ParseInt(parts[9], 0),
+                            ResetAccountLockoutCounterAfter = Utils.ParseInt(parts[10], 0),
+                            LockoutSettingsEnabled = Utils.ParseBool(parts[11], false),
+                            PasswordComplexityEnabled = Utils.ParseBool(parts[12], true),
+                        };
+
+
+                        PasswordPolicyResult passwordPolicy = GetPasswordPolicy(itemId);
+
+                        if (passwordPolicy.IsSuccess)
+                        {
+                            passwordSettings.MinimumLength = passwordPolicy.Value.MinLength;
+                            if (passwordPolicy.Value.IsComplexityEnable)
+                            {
+                                passwordSettings.NumbersCount = 1;
+                                passwordSettings.SymbolsCount = 1;
+                                passwordSettings.UppercaseLettersCount = 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return passwordSettings;
         }
 
         public static void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)
@@ -2739,6 +2795,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "SET_USER_PASSWORD", itemId);
+
+            TaskManager.Write("ItemId: {0}", itemId.ToString());
+            TaskManager.Write("AccountId: {0}", accountId.ToString());
 
             try
             {

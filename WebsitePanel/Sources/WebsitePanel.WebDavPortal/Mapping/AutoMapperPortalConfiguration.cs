@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WebsitePanel.WebDavPortal.Mapping.Profiles.Account;
 using WebsitePanel.WebDavPortal.Mapping.Profiles.Webdav;
 
 namespace WebsitePanel.WebDavPortal.Mapping
@@ -10,6 +11,7 @@ namespace WebsitePanel.WebDavPortal.Mapping
             Mapper.Initialize(
                 config =>
                 {
+                    config.AddProfile<UserProfileProfile>();
                     config.AddProfile<ResourceTableItemProfile>();
                 });
         } 
