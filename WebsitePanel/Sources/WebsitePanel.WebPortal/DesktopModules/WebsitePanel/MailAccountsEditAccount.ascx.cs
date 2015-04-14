@@ -153,6 +153,7 @@ namespace WebsitePanel.Portal
 				if (maxMailboxSizeLimit == -1 || maxMailboxSizeLimit == 0)
 				{
 					MaxMailboxSizeLimitValidator.Enabled = false;
+				    CompareValidator1.Enabled = false;
 				}
 				else
 				{

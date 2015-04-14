@@ -43,6 +43,7 @@ namespace WebsitePanel.Portal.ProviderControls
             secForwarding.Visible = (PanelRequest.ItemID > 0);
             OlderMailsPanel.Visible = (PanelRequest.ItemID > 0);
             secOlderMails.Visible = (PanelRequest.ItemID > 0);
+            Utils.SelectListItem(ddlAccountType, "1");  // Set default account type to POP3 & IMAP
         }
 
         public void BindItem(MailAccount item)
@@ -107,7 +108,6 @@ namespace WebsitePanel.Portal.ProviderControls
             item.ForwardingEnabled = !string.IsNullOrWhiteSpace(txtForward.Text);
             item.ForwardingAddresses = Utils.ParseDelimitedString(txtForward.Text, ';', ' ', ',');
             item.DeleteOnForward = cbDeleteOnForward.Checked;
-            item.ChangePassword = cbChangePassword.Checked;
             item.ChangePassword = cbChangePassword.Checked;
             item.IsDomainAdmin = cbDomainAdmin.Checked;
 
