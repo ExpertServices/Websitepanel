@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -46,6 +47,24 @@ namespace WebsitePanel.EnterpriseServer
     public class esOrganizations : WebService
     {
         #region Organizations
+
+        [WebMethod]
+        public void DeletePasswordresetAccessToken(Guid accessToken)
+        {
+            OrganizationController.DeleteAccessToken(accessToken, AccessTokenTypes.PasswrodReset);
+        }
+
+        [WebMethod]
+        public void SetAccessTokenResponse(Guid accessToken, string response)
+        {
+            OrganizationController.SetAccessTokenResponse(accessToken, response);
+        }
+
+        [WebMethod]
+        public AccessToken GetPasswordresetAccessToken(Guid token)
+        {
+            return OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+        }
 
         [WebMethod]
         public void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)

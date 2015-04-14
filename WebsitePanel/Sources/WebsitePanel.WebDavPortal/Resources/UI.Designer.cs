@@ -358,6 +358,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Forgot your password?.
+        /// </summary>
+        public static string ForgotYourPassword {
+            get {
+                return ResourceManager.GetString("ForgotYourPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General Information.
         /// </summary>
         public static string GeneralInformation {
@@ -529,6 +538,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        public static string Next {
+            get {
+                return ResourceManager.GetString("Next", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No files are selected..
         /// </summary>
         public static string NoFilesAreSelected {
@@ -597,6 +615,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string PasswordExpirationFormat {
             get {
                 return ResourceManager.GetString("PasswordExpirationFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password reset.
+        /// </summary>
+        public static string PasswordReset {
+            get {
+                return ResourceManager.GetString("PasswordReset", resourceCulture);
             }
         }
         
@@ -718,11 +745,29 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send email.
+        /// </summary>
+        public static string SendEmail {
+            get {
+                return ResourceManager.GetString("SendEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Size.
         /// </summary>
         public static string Size {
             get {
                 return ResourceManager.GetString("Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sms.
+        /// </summary>
+        public static string Sms {
+            get {
+                return ResourceManager.GetString("Sms", resourceCulture);
             }
         }
         

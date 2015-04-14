@@ -61,11 +61,38 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account was not found.
+        /// </summary>
+        public static string AccountNotFound {
+            get {
+                return ResourceManager.GetString("AccountNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is invalid.
         /// </summary>
         public static string EmailInvalid {
             get {
                 return ResourceManager.GetString("EmailInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password could not be reset. The url you followed is either incorrect, has been used or has expired..
+        /// </summary>
+        public static string IncorrectPasswordResetUrl {
+            get {
+                return ResourceManager.GetString("IncorrectPasswordResetUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect text message (SMS) response..
+        /// </summary>
+        public static string IncorrectSmsResponse {
+            get {
+                return ResourceManager.GetString("IncorrectSmsResponse", resourceCulture);
             }
         }
         
@@ -111,6 +138,33 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string PasswordNumbersCountFormat {
             get {
                 return ResourceManager.GetString("PasswordNumbersCountFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A message was sent to your email address. Please check your email for further instructions..
+        /// </summary>
+        public static string PasswordResetEmailSent {
+            get {
+                return ResourceManager.GetString("PasswordResetEmailSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text message (SMS) was sent to the phone number associated to your account. If you didn&apos;t recieve text message (SMS) click {0} for new text message (SMS)..
+        /// </summary>
+        public static string PasswordResetSmsHintFormat {
+            get {
+                return ResourceManager.GetString("PasswordResetSmsHintFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Webdav portal user request..
+        /// </summary>
+        public static string PasswordResetUserReason {
+            get {
+                return ResourceManager.GetString("PasswordResetUserReason", resourceCulture);
             }
         }
         

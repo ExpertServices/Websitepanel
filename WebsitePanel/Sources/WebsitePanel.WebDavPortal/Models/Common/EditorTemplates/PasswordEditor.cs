@@ -4,7 +4,7 @@ using WebsitePanel.WebDavPortal.CustomAttributes;
 
 namespace WebsitePanel.WebDavPortal.Models.Common.EditorTemplates
 {
-    public class PasswordEditor
+    public class PasswordEditor : BaseModel
     {
 
         [Display(ResourceType = typeof(Resources.UI), Name = "NewPassword")]

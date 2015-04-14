@@ -395,11 +395,28 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("organizationId");
 
             string groupPath = GetGroupPath(organizationId);
+            string psoName = FormOrganizationPSOName(organizationId);
+            Runspace runspace = null;
+
             try
             {
+                runspace = OpenRunspace();
+
+                if (FineGrainedPasswordPolicyExist(runspace, psoName))
+                {
+                    RemoveFineGrainedPasswordPolicy(runspace, psoName);
+                }
+
                 ActiveDirectoryUtils.DeleteADObject(groupPath);
             }
-            catch { /* skip */ }
+            catch
+            {
+                /* skip */
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
 
             string path = GetOrganizationPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(path, true);
@@ -495,45 +512,75 @@ namespace WebsitePanel.Providers.HostedSolution
                 return result;
             }
 
-            var maxPasswordAgeSpan = GetMaxPasswordAge();
+            Runspace runspace = null;
 
-            var searchRoot = new DirectoryEntry(GetOrganizationPath(organizationId));
-
-            var search = new DirectorySearcher(searchRoot)                 
+            try
             {
-                SearchScope = SearchScope.Subtree,
-                Filter = "(objectClass=user)"
-            };
+                runspace = OpenRunspace();
 
-            search.PropertiesToLoad.Add("pwdLastSet");
-            search.PropertiesToLoad.Add("sAMAccountName");
+                var psoName = FormOrganizationPSOName(organizationId);
 
-            SearchResultCollection searchResults = search.FindAll();
+                var maxPasswordAgeSpan = GetMaxPasswordAge(runspace, psoName);
 
-            foreach (SearchResult searchResult in searchResults)
-            {
-                var pwdLastSetTicks = (long)searchResult.Properties["pwdLastSet"][0];
+                var searchRoot = new DirectoryEntry(GetOrganizationPath(organizationId));
 
-                var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
-
-                var expirationDate = pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
-
-                if (expirationDate.AddDays(-daysBeforeExpiration) < DateTime.Now)
+                var search = new DirectorySearcher(searchRoot)
                 {
-                    var user = new OrganizationUser();
+                    SearchScope = SearchScope.Subtree,
+                    Filter = "(objectClass=user)"
+                };
 
-                    user.PasswordExpirationDateTime = expirationDate;
-                    user.SamAccountName = (string)searchResult.Properties["sAMAccountName"][0];
+                search.PropertiesToLoad.Add("pwdLastSet");
+                search.PropertiesToLoad.Add("sAMAccountName");
 
-                    result.Add(user);
+                SearchResultCollection searchResults = search.FindAll();
+
+                foreach (SearchResult searchResult in searchResults)
+                {
+                    var pwdLastSetTicks = (long) searchResult.Properties["pwdLastSet"][0];
+
+                    var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
+
+                    var expirationDate = pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
+
+                    if (expirationDate.AddDays(-daysBeforeExpiration) < DateTime.Now)
+                    {
+                        var user = new OrganizationUser();
+
+                        user.PasswordExpirationDateTime = expirationDate;
+                        user.SamAccountName = (string) searchResult.Properties["sAMAccountName"][0];
+
+                        result.Add(user);
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
             }
 
             return result;
         }
 
-        internal TimeSpan GetMaxPasswordAge()
+        internal TimeSpan GetMaxPasswordAge(Runspace runspace, string psoName)
         {
+            if (FineGrainedPasswordPolicyExist(runspace, psoName))
+            {
+                var psoObject = GetFineGrainedPasswordPolicy(runspace, psoName);
+
+                var span = GetPSObjectProperty(psoObject, "MaxPasswordAge") as TimeSpan?;
+
+                if (span != null)
+                {
+                    return span.Value;
+                }
+            }
+
+
             using (Domain d = Domain.GetCurrentDomain())
             {
                 using (DirectoryEntry domain = d.GetDirectoryEntry())
@@ -563,11 +610,26 @@ namespace WebsitePanel.Providers.HostedSolution
 
             Runspace runspace = null;
 
+            var psoName = FormOrganizationPSOName(organizationId);
+
             try
             {
                 runspace = OpenRunspace();
 
-                var gpoId = CreatePolicyIfNotExist(runspace, organizationId, FormOrganizationSettingsGpoName(organizationId));
+                if (!FineGrainedPasswordPolicyExist(runspace, psoName))
+                {
+                    CreateFineGrainedPasswordPolicy(runspace, organizationId, psoName, settings);
+
+                    string groupPath = GetGroupPath(organizationId);
+
+                    SetFineGrainedPasswordPolicySubject(runspace, groupPath, psoName);
+                }
+                else
+                {
+                    UpdateFineGrainedPasswordPolicy(runspace, psoName, settings);
+
+                    RemoveFineGrainedPasswordPolicy(runspace, psoName);
+                }
             }
             catch (Exception ex)
             {
@@ -581,88 +643,108 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
-        private string FormOrganizationSettingsGpoName(string organizationId)
+        private string FormOrganizationPSOName(string organizationId)
         {
-            return string.Format("{0}-settings", organizationId);
+            return string.Format("{0}-PSO", organizationId);
         }
 
-        private string CreatePolicyIfNotExist(Runspace runspace, string organizationId, string gpoName)
+        private bool FineGrainedPasswordPolicyExist(Runspace runspace, string psoName)
         {
-            string gpoId = GetPolicyId(runspace, gpoName);
-
-            if (string.IsNullOrEmpty(gpoId))
+            try
             {
-                gpoId = CreateAndLinkPolicy(runspace, gpoName, organizationId);
+                var cmd = new Command("Get-ADFineGrainedPasswordPolicy");
+                cmd.Parameters.Add("Identity", psoName);
+
+                var result = ExecuteShellCommand(runspace, cmd);
+            }
+            catch (Exception e)
+            {
+                return false;
             }
 
-            return gpoId;
+            return true;
         }
 
-        private void DeleteGpo(Runspace runspace, string gpoName)
+        private PSObject GetFineGrainedPasswordPolicy(Runspace runspace, string psoName)
         {
-            Command cmd = new Command("Remove-GPO");
-            cmd.Parameters.Add("Name", gpoName);
+            var cmd = new Command("Get-ADFineGrainedPasswordPolicy");
+            cmd.Parameters.Add("Identity", psoName);
 
-           // Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+            return ExecuteShellCommand(runspace, cmd).FirstOrDefault();
         }
 
-        private string CreateAndLinkPolicy(Runspace runspace, string gpoName, string organizationId)
+        private void CreateFineGrainedPasswordPolicy(Runspace runspace, string organizationId, string psoName, OrganizationPasswordSettings settings)
         {
-            string pathOU = GetOrganizationTargetPath(organizationId);
-
-            //create new gpo 
-            Command cmd = new Command("New-GPO");
-            cmd.Parameters.Add("Name", gpoName);
-
-            Collection<PSObject> result = ExecuteShellCommand(runspace, cmd);
-
-            string gpoId = null;
-
-            if (result != null && result.Count > 0)
+            var cmd = new Command("New-ADFineGrainedPasswordPolicy");
+            cmd.Parameters.Add("Name", psoName);
+            cmd.Parameters.Add("Description", string.Format("The {0} Password Policy", organizationId));
+            cmd.Parameters.Add("Precedence", 50);
+            cmd.Parameters.Add("MinPasswordLength", settings.MinimumLength);
+            cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
+            cmd.Parameters.Add("ComplexityEnabled", false);
+            cmd.Parameters.Add("ReversibleEncryptionEnabled", false); 
+            
+            if (settings.LockoutSettingsEnabled)
             {
-                PSObject gpo = result[0];
-                //get gpo id
-                gpoId = ((Guid) GetPSObjectProperty(gpo, "Id")).ToString("B");
-
+                cmd.Parameters.Add("LockoutDuration", new TimeSpan(0, settings.AccountLockoutDuration, 0));
+                cmd.Parameters.Add("LockoutThreshold", settings.AccountLockoutThreshold);
+                cmd.Parameters.Add("LockoutObservationWindow", settings.ResetAccountLockoutCounterAfter);
             }
 
-            //create gpo link
-            cmd = new Command("New-GPLink");
-            cmd.Parameters.Add("Name", gpoName);
-            cmd.Parameters.Add("Target", pathOU);
+            ExecuteShellCommand(runspace, cmd);
+        }
+
+        private void SetFineGrainedPasswordPolicySubject(Runspace runspace, string subjectPath, string psoName)
+        {
+            var entry = new DirectoryEntry(subjectPath);
+
+            var cmd = new Command("Add-ADFineGrainedPasswordPolicySubject");
+            cmd.Parameters.Add("Identity", psoName);
+            cmd.Parameters.Add("Subjects", entry.Properties[ADAttributes.SAMAccountName].Value.ToString());
 
             ExecuteShellCommand(runspace, cmd);
 
-            return gpoId;
+            cmd = new Command("Set-ADGroup");
+            cmd.Parameters.Add("Identity", entry.Properties[ADAttributes.SAMAccountName].Value.ToString());
+            cmd.Parameters.Add("GroupScope", "Global");
+
+            ExecuteShellCommand(runspace, cmd);
         }
 
-        private string GetPolicyId(Runspace runspace, string gpoName)
+        private void UpdateFineGrainedPasswordPolicy(Runspace runspace, string psoName, OrganizationPasswordSettings settings)
         {
-            Runspace runSpace = null;
+            var cmd = new Command("Set-ADFineGrainedPasswordPolicy");
+            cmd.Parameters.Add("Identity", psoName);
+            cmd.Parameters.Add("MinPasswordLength", settings.MinimumLength);
+            cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
+            cmd.Parameters.Add("ComplexityEnabled", false);
+            cmd.Parameters.Add("ReversibleEncryptionEnabled", false);
 
-            string gpoId = null;
-
-            try
+            if (settings.LockoutSettingsEnabled)
             {
-                runSpace = OpenRunspace();
-
-                Command cmd = new Command("Get-GPO");
-                cmd.Parameters.Add("Name", gpoName);
-
-                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-
-                if (result != null && result.Count > 0)
-                {
-                    PSObject gpo = result[0];
-                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
-                }
+                cmd.Parameters.Add("LockoutDuration", new TimeSpan(0, settings.AccountLockoutDuration, 0));
+                cmd.Parameters.Add("LockoutThreshold", settings.AccountLockoutThreshold);
+                cmd.Parameters.Add("LockoutObservationWindow", settings.ResetAccountLockoutCounterAfter);
             }
-            finally
+            else
             {
-                CloseRunspace(runSpace);
+                cmd.Parameters.Add("LockoutDuration", new TimeSpan(0));
+                cmd.Parameters.Add("LockoutThreshold", 0);
+                cmd.Parameters.Add("LockoutObservationWindow", 0);
             }
 
-            return gpoId;
+            var result = ExecuteShellCommand(runspace, cmd);
+
+
+            var s = GetFineGrainedPasswordPolicy(runspace, psoName);
+        }
+
+        private void RemoveFineGrainedPasswordPolicy(Runspace runspace, string psoName)
+        {
+            var cmd = new Command("Remove-ADFineGrainedPasswordPolicy");
+            cmd.Parameters.Add("Identity", psoName);
+
+            ExecuteShellCommand(runspace, cmd);
         }
 
         public PasswordPolicyResult GetPasswordPolicy()
@@ -782,7 +864,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             string path = GetUserPath(organizationId, loginName);
 
-            OrganizationUser retUser = GetUser(path);
+            OrganizationUser retUser = GetUser(organizationId, path);
 
             HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
             return retUser;
@@ -835,7 +917,7 @@ namespace WebsitePanel.Providers.HostedSolution
             user.Properties[ADAttributes.PwdLastSet].Value = userMustChangePassword ? 0 : -1;
         }
 
-        private OrganizationUser GetUser(string path)
+        private OrganizationUser GetUser(string organizationId, string path)
         {
             OrganizationUser retUser = new OrganizationUser();
 
@@ -871,20 +953,34 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
             retUser.UserMustChangePassword = GetUserMustChangePassword(entry);
 
-            retUser.PasswordExpirationDateTime = GetPasswordExpirationDate(entry);
+            var psoName = FormOrganizationPSOName(organizationId);
+
+            retUser.PasswordExpirationDateTime = GetPasswordExpirationDate(psoName, entry);
 
             return retUser;
         }
 
-        private DateTime GetPasswordExpirationDate(DirectoryEntry entry)
+        private DateTime GetPasswordExpirationDate(string psoName, DirectoryEntry entry)
         {
-            var maxPasswordAgeSpan = GetMaxPasswordAge();
+            Runspace runspace = null;
 
-            var pwdLastSetTicks = ConvertADSLargeIntegerToInt64(entry.Properties[ADAttributes.PwdLastSet].Value);
+            try
+            {
+                runspace = OpenRunspace();
 
-            var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
+                var maxPasswordAgeSpan = GetMaxPasswordAge(runspace, psoName);
 
-            return pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
+                var pwdLastSetTicks = ConvertADSLargeIntegerToInt64(entry.Properties[ADAttributes.PwdLastSet].Value);
+
+                var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
+
+                return pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
         }
 
         private string GetDomainName(string username)
@@ -1253,7 +1349,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", organizationEntry))
             {
-                OrganizationUser tmpUser = GetUser(userPath);
+                OrganizationUser tmpUser = GetUser(organizationId, userPath);
 
                 members.Add(new ExchangeAccount
                 {

@@ -45,7 +45,7 @@
     </tr>
     <tr id="RowAccountLockoutDuration" runat="server">
         <td class="Normal" style="width:150px;"><asp:Label ID="lblAccountLockoutDuration" runat="server"
-            meta:resourcekey="lblAccountLockoutDuration" Text="Account Lockout Duration:"></asp:Label></td>
+            meta:resourcekey="lblAccountLockoutDuration" Text="Account Lockout Duration (minutes):"></asp:Label></td>
         <td class="Normal">
             <asp:TextBox ID="txtAccountLockoutDuration" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
             <asp:RequiredFieldValidator ID="valRequireAccountLockoutDuration" runat="server" ControlToValidate="txtAccountLockoutDuration" meta:resourcekey="valRequireAccountLockoutDuration"

@@ -216,6 +216,9 @@
   <data name="FirstName" xml:space="preserve">
     <value>First Name</value>
   </data>
+  <data name="ForgotYourPassword" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
   <data name="GeneralInformation" xml:space="preserve">
     <value>General Information</value>
   </data>
@@ -273,6 +276,9 @@
   <data name="NewPasswordConfirmation" xml:space="preserve">
     <value>Confirm password</value>
   </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
   <data name="NoFilesAreSelected" xml:space="preserve">
     <value>No files are selected.</value>
   </data>
@@ -296,6 +302,9 @@
   </data>
   <data name="PasswordExpirationFormat" xml:space="preserve">
     <value>Will expire on {0}. If you want to change password then please click {1}.</value>
+  </data>
+  <data name="PasswordReset" xml:space="preserve">
+    <value>Password reset</value>
   </data>
   <data name="PetabyteShort" xml:space="preserve">
     <value>PB</value>
@@ -336,8 +345,14 @@
   <data name="SelectFilesToUpload" xml:space="preserve">
     <value>Select files to upload</value>
   </data>
+  <data name="SendEmail" xml:space="preserve">
+    <value>Send email</value>
+  </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
+  </data>
+  <data name="Sms" xml:space="preserve">
+    <value>Sms</value>
   </data>
   <data name="State" xml:space="preserve">
     <value>State/Province</value>

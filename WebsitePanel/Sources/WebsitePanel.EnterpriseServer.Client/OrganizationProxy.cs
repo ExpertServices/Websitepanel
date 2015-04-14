@@ -18,6 +18,7 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
+
 namespace WebsitePanel.EnterpriseServer.HostedSolution {
     using System.Xml.Serialization;
     using System.Web.Services;
@@ -35,6 +36,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     [System.Web.Services.WebServiceBindingAttribute(Name="esOrganizationsSoap", Namespace="http://tempuri.org/")]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esOrganizations : Microsoft.Web.Services3.WebServicesClientProtocol {
+        
+        private System.Threading.SendOrPostCallback DeletePasswordresetAccessTokenOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetAccessTokenResponseOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetPasswordresetAccessTokenOperationCompleted;
         
         private System.Threading.SendOrPostCallback UpdateOrganizationGeneralSettingsOperationCompleted;
         
@@ -152,6 +159,15 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public esOrganizations() {
             this.Url = "http://localhost:9002/esOrganizations.asmx";
         }
+        
+        /// <remarks/>
+        public event DeletePasswordresetAccessTokenCompletedEventHandler DeletePasswordresetAccessTokenCompleted;
+        
+        /// <remarks/>
+        public event SetAccessTokenResponseCompletedEventHandler SetAccessTokenResponseCompleted;
+        
+        /// <remarks/>
+        public event GetPasswordresetAccessTokenCompletedEventHandler GetPasswordresetAccessTokenCompleted;
         
         /// <remarks/>
         public event UpdateOrganizationGeneralSettingsCompletedEventHandler UpdateOrganizationGeneralSettingsCompleted;
@@ -320,6 +336,128 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetSupportServiceLevelCompletedEventHandler GetSupportServiceLevelCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeletePasswordresetAccessToken", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DeletePasswordresetAccessToken(System.Guid accessToken) {
+            this.Invoke("DeletePasswordresetAccessToken", new object[] {
+                        accessToken});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginDeletePasswordresetAccessToken(System.Guid accessToken, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("DeletePasswordresetAccessToken", new object[] {
+                        accessToken}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndDeletePasswordresetAccessToken(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void DeletePasswordresetAccessTokenAsync(System.Guid accessToken) {
+            this.DeletePasswordresetAccessTokenAsync(accessToken, null);
+        }
+        
+        /// <remarks/>
+        public void DeletePasswordresetAccessTokenAsync(System.Guid accessToken, object userState) {
+            if ((this.DeletePasswordresetAccessTokenOperationCompleted == null)) {
+                this.DeletePasswordresetAccessTokenOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeletePasswordresetAccessTokenOperationCompleted);
+            }
+            this.InvokeAsync("DeletePasswordresetAccessToken", new object[] {
+                        accessToken}, this.DeletePasswordresetAccessTokenOperationCompleted, userState);
+        }
+        
+        private void OnDeletePasswordresetAccessTokenOperationCompleted(object arg) {
+            if ((this.DeletePasswordresetAccessTokenCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeletePasswordresetAccessTokenCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetAccessTokenResponse", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetAccessTokenResponse(System.Guid accessToken, string response) {
+            this.Invoke("SetAccessTokenResponse", new object[] {
+                        accessToken,
+                        response});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetAccessTokenResponse(System.Guid accessToken, string response, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetAccessTokenResponse", new object[] {
+                        accessToken,
+                        response}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetAccessTokenResponse(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetAccessTokenResponseAsync(System.Guid accessToken, string response) {
+            this.SetAccessTokenResponseAsync(accessToken, response, null);
+        }
+        
+        /// <remarks/>
+        public void SetAccessTokenResponseAsync(System.Guid accessToken, string response, object userState) {
+            if ((this.SetAccessTokenResponseOperationCompleted == null)) {
+                this.SetAccessTokenResponseOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetAccessTokenResponseOperationCompleted);
+            }
+            this.InvokeAsync("SetAccessTokenResponse", new object[] {
+                        accessToken,
+                        response}, this.SetAccessTokenResponseOperationCompleted, userState);
+        }
+        
+        private void OnSetAccessTokenResponseOperationCompleted(object arg) {
+            if ((this.SetAccessTokenResponseCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetAccessTokenResponseCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetPasswordresetAccessToken", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public AccessToken GetPasswordresetAccessToken(System.Guid token) {
+            object[] results = this.Invoke("GetPasswordresetAccessToken", new object[] {
+                        token});
+            return ((AccessToken)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetPasswordresetAccessToken(System.Guid token, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetPasswordresetAccessToken", new object[] {
+                        token}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public AccessToken EndGetPasswordresetAccessToken(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((AccessToken)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetPasswordresetAccessTokenAsync(System.Guid token) {
+            this.GetPasswordresetAccessTokenAsync(token, null);
+        }
+        
+        /// <remarks/>
+        public void GetPasswordresetAccessTokenAsync(System.Guid token, object userState) {
+            if ((this.GetPasswordresetAccessTokenOperationCompleted == null)) {
+                this.GetPasswordresetAccessTokenOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPasswordresetAccessTokenOperationCompleted);
+            }
+            this.InvokeAsync("GetPasswordresetAccessToken", new object[] {
+                        token}, this.GetPasswordresetAccessTokenOperationCompleted, userState);
+        }
+        
+        private void OnGetPasswordresetAccessTokenOperationCompleted(object arg) {
+            if ((this.GetPasswordresetAccessTokenCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetPasswordresetAccessTokenCompleted(this, new GetPasswordresetAccessTokenCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/UpdateOrganizationGeneralSettings", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -3119,6 +3257,40 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeletePasswordresetAccessTokenCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetAccessTokenResponseCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetPasswordresetAccessTokenCompletedEventHandler(object sender, GetPasswordresetAccessTokenCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPasswordresetAccessTokenCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPasswordresetAccessTokenCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public AccessToken Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((AccessToken)(this.results[0]));
+            }
         }
     }
     

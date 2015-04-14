@@ -65,6 +65,16 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
             }
         }
 
+        public string PasswordResetSmsKey
+        {
+            get
+            {
+                SessionKeysElement sessionKey =
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.PassswordResetSmsKey);
+                return sessionKey != null ? sessionKey.Value : null;
+            }
+        }
+
         public string ResourseRenderCount
         {
             get

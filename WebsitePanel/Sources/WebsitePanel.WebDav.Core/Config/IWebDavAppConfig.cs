@@ -8,6 +8,7 @@ namespace WebsitePanel.WebDav.Core.Config
         string ApplicationName { get; }
         ElementsRendering ElementsRendering { get; }
         WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; }
+        TwilioParameters TwilioParameters { get; }
         SessionKeysCollection SessionKeys { get; }
         FileIconsDictionary FileIcons { get; }
         HttpErrorsCollection HttpErrors { get; }

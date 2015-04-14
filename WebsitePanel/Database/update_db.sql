@@ -9726,7 +9726,8 @@ CREATE TABLE AccessTokens
 	ExpirationDate DATETIME NOT NULL,
 	AccountID INT NOT NULL ,
 	ItemId INT NOT NULL,
-	TokenType INT NOT NULL
+	TokenType INT NOT NULL,
+	SmsResponse varchar(100)
 )
 GO
 
@@ -9771,6 +9772,33 @@ RETURN
 GO
 
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SetAccessTokenSmsResponse')
+DROP PROCEDURE SetAccessTokenSmsResponse
+GO
+CREATE PROCEDURE [dbo].[SetAccessTokenSmsResponse]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@SmsResponse varchar(100)
+)
+AS
+UPDATE [dbo].[AccessTokens] SET [SmsResponse] = @SmsResponse WHERE [AccessTokenGuid] = @AccessToken
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAccessToken')
+DROP PROCEDURE DeleteAccessToken
+GO
+CREATE PROCEDURE [dbo].[DeleteAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@TokenType INT
+)
+AS
+DELETE FROM AccessTokens
+WHERE AccessTokenGuid = @AccessToken AND TokenType = @TokenType
+GO
+
+
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExpiredAccessTokenTokens')
 DROP PROCEDURE DeleteExpiredAccessTokenTokens
 GO
@@ -9796,7 +9824,8 @@ SELECT
 	ExpirationDate,
 	AccountID,
 	ItemId,
-	TokenType
+	TokenType,
+	SmsResponse
 	FROM AccessTokens 
 	Where AccessTokenGuid = @AccessToken AND ExpirationDate > getdate() AND TokenType = @TokenType
 GO

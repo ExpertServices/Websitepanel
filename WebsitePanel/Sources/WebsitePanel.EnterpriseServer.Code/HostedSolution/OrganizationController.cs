@@ -1625,6 +1625,11 @@ namespace WebsitePanel.EnterpriseServer
             return ObjectUtils.FillObjectFromDataReader<AccessToken>(DataProvider.GetAccessTokenByAccessToken(accessToken, type));
         }
 
+        public static void DeleteAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            DataProvider.DeleteAccessToken(accessToken, type);
+        }
+
         public static void DeleteAllExpiredTokens()
         {
             DataProvider.DeleteExpiredAccessTokens();
@@ -1632,7 +1637,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string GenerateUserPasswordResetLink(int itemId, int accountId)
         {
-            string passwordResetUrlFormat = "account/password-reset";
+            string passwordResetUrlFormat = "account/password-reset/step-2";
 
             var settings = SystemController.GetSystemSettings(SystemSettings.WEBDAV_PORTAL_SETTINGS);
 
@@ -1656,13 +1661,18 @@ namespace WebsitePanel.EnterpriseServer
                 AccessTokenGuid = Guid.NewGuid(),
                 ItemId = itemId,
                 AccountId = accountId,
-                Type = type,
+                TokenType = type,
                 ExpirationDate = DateTime.Now.AddHours(12)
             };
 
             token.Id = DataProvider.AddAccessToken(token);
 
             return token;
+        }
+
+        public static void SetAccessTokenResponse(Guid accessToken, string response)
+        {
+            DataProvider.SetAccessTokenResponseMessage(accessToken, response);
         }
 
         public static void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)

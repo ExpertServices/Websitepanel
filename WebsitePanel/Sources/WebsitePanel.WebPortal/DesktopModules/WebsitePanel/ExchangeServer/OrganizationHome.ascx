@@ -14,7 +14,7 @@
                 <div class="FormBody">
                     <table>
                         <tr class="OrgStatsRow">
-                            <td align="right">
+                            <td>
                                 <asp:Label runat="server" ID="lblOrganizationName" meta:resourcekey="lblOrganizationName" />
                             </td>
                             <td>

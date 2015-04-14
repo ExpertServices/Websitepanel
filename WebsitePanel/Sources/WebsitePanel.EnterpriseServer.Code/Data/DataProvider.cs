@@ -3192,7 +3192,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddAccessToken(AccessToken token)
         {
-            return AddAccessToken(token.AccessTokenGuid, token.AccountId, token.ItemId, token.ExpirationDate, token.Type);
+            return AddAccessToken(token.AccessTokenGuid, token.AccountId, token.ItemId, token.ExpirationDate, token.TokenType);
         }
 
         public static int AddAccessToken(Guid accessToken, int accountId, int itemId, DateTime expirationDate, AccessTokenTypes type)
@@ -3216,6 +3216,17 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(prmId.Value);
         }
 
+        public static void SetAccessTokenResponseMessage(Guid accessToken, string response)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetAccessTokenSmsResponse",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@SmsResponse", response)
+            );
+        }
+
         public static void DeleteExpiredAccessTokens()
         {
             SqlHelper.ExecuteNonQuery(
@@ -3231,6 +3242,17 @@ namespace WebsitePanel.EnterpriseServer
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "GetAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@TokenType", type)
+            );
+        }
+
+        public static void DeleteAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteAccessToken",
                 new SqlParameter("@AccessToken", accessToken),
                 new SqlParameter("@TokenType", type)
             );

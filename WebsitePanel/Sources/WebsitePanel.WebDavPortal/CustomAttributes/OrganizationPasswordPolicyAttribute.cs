@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.WebDav.Core;
+using WebsitePanel.WebDav.Core.Config;
 
 namespace WebsitePanel.WebDavPortal.CustomAttributes
 {
@@ -15,14 +17,25 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
 
         public OrganizationPasswordPolicyAttribute()
         {
-            Settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(WspContext.User.ItemId);
+            int itemId = -1;
+
+            if (WspContext.User != null)
+            {
+                itemId = WspContext.User.ItemId;
+            }
+            else if (HttpContext.Current != null && HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] != null)
+            {
+                itemId = (int) HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId];
+            }
+
+
+            Settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(itemId);
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value != null && WspContext.User != null)
+            if (value != null)
             {
-
                 var resultMessages = new List<string>();
 
                 if (Settings != null)

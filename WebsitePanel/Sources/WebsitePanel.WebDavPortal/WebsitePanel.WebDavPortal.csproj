@@ -195,6 +195,8 @@
     <Compile Include="ModelBinders\DataTables\JqueryDataTableModelBinder.cs" />
     <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\Account\PasswordChangeModel.cs" />
+    <Compile Include="Models\Account\PasswordResetEmailModel.cs" />
+    <Compile Include="Models\Account\PasswordResetSmsModel.cs" />
     <Compile Include="Models\Account\UserProfile.cs" />
     <Compile Include="Models\Common\BaseModel.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableBaseEntity.cs" />
@@ -481,6 +483,10 @@
     <Content Include="Views\Shared\EditorTemplates\CountrySelector.cshtml" />
     <Content Include="Views\Account\PasswordChange.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\PasswordEditor.cshtml" />
+    <Content Include="Views\Account\PasswordResetEmail.cshtml" />
+    <Content Include="Views\Account\PasswordResetEmailSent.cshtml" />
+    <Content Include="Views\Account\PasswordResetSms.cshtml" />
+    <Content Include="Views\Account\PasswordResetFinalStep.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

@@ -21,6 +21,7 @@ namespace WebsitePanel.WebDav.Core.Config
             OwaSupportedBrowsers = new OwaSupportedBrowsersCollection();
             FilesToIgnore = new FilesToIgnoreCollection();
             FileOpener = new OpenerCollection();
+            TwilioParameters = new TwilioParameters();
         }
 
         public static WebDavAppConfigManager Instance
@@ -55,6 +56,7 @@ namespace WebsitePanel.WebDav.Core.Config
 
         public ElementsRendering ElementsRendering { get; private set; }
         public WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; private set; }
+        public TwilioParameters TwilioParameters { get; private set; }
         public SessionKeysCollection SessionKeys { get; private set; }
         public FileIconsDictionary FileIcons { get; private set; }
         public HttpErrorsCollection HttpErrors { get; private set; }
