@@ -40,6 +40,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
             principal.ItemId = exchangeAccount.ItemId;
             principal.OrganizationId = organization.OrganizationId;
             principal.DisplayName = exchangeAccount.DisplayName;
+            principal.AccountName = exchangeAccount.AccountName;
             principal.EncryptedPassword = _cryptography.Encrypt(password);
 
             if (HttpContext.Current != null)

@@ -294,13 +294,10 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             foreach (var folder in WSP.Services.EnterpriseStorage.GetEnterpriseFolders(WspContext.User.ItemId))
             {
-                var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(WspContext.User.ItemId, folder.Name);
-
-                foreach (var permission in permissions)
+                foreach (var rule in folder.Rules)
                 {
-                    if ((!permission.IsGroup 
-                            && (permission.DisplayName == user.UserName || permission.DisplayName == user.DisplayName))
-                        || (permission.IsGroup && userGroups.Any(x => x.DisplayName == permission.DisplayName)))
+                    if ((rule.Users.Any(x=> string.Compare(x, user.AccountName, StringComparison.InvariantCultureIgnoreCase) == 0))
+                        || (userGroups.Any(x => rule.Roles.Any(r => string.Compare(r, x.AccountName, StringComparison.InvariantCultureIgnoreCase) == 0))))
                     {
                         rootFolders.Add(folder);
                         break;
