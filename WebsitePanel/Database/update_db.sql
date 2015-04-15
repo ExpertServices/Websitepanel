@@ -9529,7 +9529,7 @@ Hello #user.FirstName#,
 </ad:if>
 
 <p>
-Your password will expire at #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
+Your password expiration date is #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
 </p>
 
 <a href="#passwordResetLink#">#passwordResetLink#</a>
@@ -9581,7 +9581,7 @@ Set @UserPasswordExpirationLetterTextBody = N'==================================
 Hello #user.FirstName#,
 </ad:if>
 
-Your password will expire at #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
+Your password expiration date is #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
 
 #passwordResetLink#
 
@@ -9612,7 +9612,7 @@ DECLARE @UserPasswordResetLetterHtmlBody nvarchar(2500)
 
 Set @UserPasswordResetLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Password expiration notification</title>
+    <title>Password reset notification</title>
     <style type="text/css">
 		.Summary { background-color: ##ffffff; padding: 5px; }
 		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }

@@ -70,6 +70,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} is already in use.
+        /// </summary>
+        public static string AlreadyInUse {
+            get {
+                return ResourceManager.GetString("AlreadyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is invalid.
         /// </summary>
         public static string EmailInvalid {
@@ -151,7 +160,7 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Text message (SMS) was sent to the phone number associated to your account. If you didn&apos;t recieve text message (SMS) click {0} for new text message (SMS)..
+        ///   Looks up a localized string similar to Please enter the verification code we sent to your phone. If you didn&apos;t receive a code, you can {0}..
         /// </summary>
         public static string PasswordResetSmsHintFormat {
             get {
@@ -165,6 +174,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string PasswordResetUserReason {
             get {
                 return ResourceManager.GetString("PasswordResetUserReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password have been successfully changed.
+        /// </summary>
+        public static string PasswordSuccessfullyChanged {
+            get {
+                return ResourceManager.GetString("PasswordSuccessfullyChanged", resourceCulture);
             }
         }
         
@@ -201,6 +219,24 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Required {
             get {
                 return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text message (SMS) was not sent to your mobile phone. Invalid phone number..
+        /// </summary>
+        public static string SmsWasNotSent {
+            get {
+                return ResourceManager.GetString("SmsWasNotSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text message (SMS) was sent to your mobile phone..
+        /// </summary>
+        public static string SmsWasSent {
+            get {
+                return ResourceManager.GetString("SmsWasSent", resourceCulture);
             }
         }
         

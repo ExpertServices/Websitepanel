@@ -2,11 +2,17 @@
 @using Ninject
 @using WebsitePanel.WebDav.Core
 @using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDavPortal.Controllers
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.Models.Common
 @using WebsitePanel.WebDavPortal.Resources
 @using WebsitePanel.WebDavPortal.UI.Routes;
-@model WebsitePanel.WebDavPortal.Models.Common.BaseModel
+    
+
+@{
+    var messages = TempData[BaseController.MessagesKey] as List<Message> ?? new List<Message>();
+}
 
 <!DOCTYPE html>
 <html>
@@ -73,14 +79,12 @@
         </script>
     }
 
-    @if (Model != null)
-    {
-        <script>
-            $(document).ready(function () {
-                wsp.messages.showMessages(@Html.Raw(Json.Encode(Model.Messages)));
-            });
-        </script>
-    }
+
+    <script>
+        $(document).ready(function () {
+            wsp.messages.showMessages(@Html.Raw(Json.Encode(messages)));
+        });
+    </script>
     
      @RenderSection("scripts", required: false)
 </body>

@@ -1675,6 +1675,21 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.SetAccessTokenResponseMessage(accessToken, response);
         }
 
+        public static bool CheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName = null)
+        {
+            // load organization
+            Organization org = GetOrganization(itemId);
+
+            if (org == null)
+            {
+                throw new Exception(string.Format("Organization with id '{0}' not found", itemId));
+            }
+
+            Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+            return orgProxy.CheckPhoneNumberIsInUse(phoneNumber, userSamAccountName);
+        }
+
         public static void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
         {
             TaskManager.StartTask("ORGANIZATION", "UPDATE_PASSWORD_SETTINGS");

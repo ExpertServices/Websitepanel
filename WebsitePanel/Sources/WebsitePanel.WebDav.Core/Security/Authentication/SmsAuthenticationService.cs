@@ -31,9 +31,9 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
         {
             var response = GenerateResponse();
 
-            _smsService.SendMessage(WebDavAppConfigManager.Instance.TwilioParameters.PhoneFrom, phoneTo, response);
+            var result = _smsService.SendMessage(WebDavAppConfigManager.Instance.TwilioParameters.PhoneFrom, phoneTo, response);
 
-            return response;
+            return result ? response : string.Empty;
         }
 
         public string GenerateResponse()

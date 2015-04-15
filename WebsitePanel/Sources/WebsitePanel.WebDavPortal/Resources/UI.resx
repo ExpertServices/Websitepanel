@@ -384,4 +384,10 @@
   <data name="Zip" xml:space="preserve">
     <value>Zip/Postal Code</value>
   </data>
+  <data name="PasswordResetEmailInfo" xml:space="preserve">
+    <value>Enter your email address to reset your password. You may need to check your spam folder.</value>
+  </data>
+  <data name="TryAgain" xml:space="preserve">
+    <value>Try again</value>
+  </data>
 </root>

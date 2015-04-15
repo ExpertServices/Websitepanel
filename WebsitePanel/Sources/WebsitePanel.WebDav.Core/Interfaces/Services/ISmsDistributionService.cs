@@ -2,8 +2,8 @@
 {
     public interface ISmsDistributionService
     {
-        void SendMessage(string phoneFrom, string phone, string message);
+        bool SendMessage(string phoneFrom, string phone, string message);
 
-        void SendMessage(string phone, string message); 
+        bool SendMessage(string phone, string message); 
     }
 }

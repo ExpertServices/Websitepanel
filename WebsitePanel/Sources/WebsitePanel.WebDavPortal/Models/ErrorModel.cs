@@ -3,7 +3,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class ErrorModel : BaseModel
+    public class ErrorModel
     {
         public int HttpStatusCode { get; set; }
         public string Message { get; set; }

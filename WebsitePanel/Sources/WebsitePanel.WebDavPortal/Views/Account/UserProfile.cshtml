@@ -15,6 +15,14 @@
         @Html.HiddenFor(x => x.PasswordExpirationDateTime)
         @Html.HiddenFor(x => x.PrimaryEmailAddress)
         @Html.AntiForgeryToken()
+        
+        if (ViewData.ModelState.Any(x => x.Value.Errors.Any()))
+        {
+            <div class="alert alert-danger">
+                <a class="close" data-dismiss="alert">&times;</a>
+                @Html.ValidationSummary(false)
+            </div>
+        }
 
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
@@ -102,6 +110,7 @@
                             <label for="@Html.IdFor(x => x.BusinessPhone)" class="col-sm-2 control-label">@UI.BusinessPhone</label>
                             <div class="col-sm-10">
                                 @Html.TextBoxFor(x => x.BusinessPhone, new { @class = "form-control", placeholder = UI.BusinessPhone })
+                                @Html.ValidationMessageFor(x => x.BusinessPhone)
                             </div>
                         </div>
 
@@ -109,6 +118,7 @@
                             <label for="@Html.IdFor(x => x.Fax)" class="col-sm-2 control-label">@UI.Fax</label>
                             <div class="col-sm-10">
                                 @Html.TextBoxFor(x => x.Fax, new { @class = "form-control", placeholder = UI.Fax })
+                                @Html.ValidationMessageFor(x => x.Fax)
                             </div>
                         </div>
 
@@ -116,6 +126,7 @@
                             <label for="@Html.IdFor(x => x.HomePhone)" class="col-sm-2 control-label">@UI.HomePhone</label>
                             <div class="col-sm-10">
                                 @Html.TextBoxFor(x => x.HomePhone, new { @class = "form-control", placeholder = UI.HomePhone })
+                                @Html.ValidationMessageFor(x => x.HomePhone)
                             </div>
                         </div>
 
@@ -123,6 +134,7 @@
                             <label for="@Html.IdFor(x => x.MobilePhone)" class="col-sm-2 control-label">@UI.MobilePhone</label>
                             <div class="col-sm-10">
                                 @Html.TextBoxFor(x => x.MobilePhone, new { @class = "form-control", placeholder = UI.MobilePhone })
+                                @Html.ValidationMessageFor(x=>x.MobilePhone)
                             </div>
                         </div>
 
@@ -130,6 +142,7 @@
                             <label for="@Html.IdFor(x => x.Pager)" class="col-sm-2 control-label">@UI.Pager</label>
                             <div class="col-sm-10">
                                 @Html.TextBoxFor(x => x.Pager, new { @class = "form-control", placeholder = UI.Pager })
+                                @Html.ValidationMessageFor(x => x.Pager)
                             </div>
                         </div>
 

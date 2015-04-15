@@ -167,6 +167,7 @@
     <Compile Include="Configurations\ControllerConfigurations\OwaControllerConfiguration.cs" />
     <Compile Include="Constants\Formats.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
     <Compile Include="Controllers\Api\OwaController.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
     <Compile Include="CustomAttributes\PhoneNumberAttribute.cs" />
     <Compile Include="CustomAttributes\OrganizationPasswordPolicyAttribute.cs" />
+    <Compile Include="CustomAttributes\UniqueAdPhoneNumberAttribute.cs" />
     <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />
     <Compile Include="DependencyInjection\PortalDependencies.cs" />
     <Compile Include="DependencyInjection\Providers\HttpSessionStateProvider.cs" />
@@ -198,7 +200,7 @@
     <Compile Include="Models\Account\PasswordResetEmailModel.cs" />
     <Compile Include="Models\Account\PasswordResetSmsModel.cs" />
     <Compile Include="Models\Account\UserProfile.cs" />
-    <Compile Include="Models\Common\BaseModel.cs" />
+    <Compile Include="Models\Common\AjaxModel.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableBaseEntity.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTablesResponse.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableColumn.cs" />
@@ -490,6 +492,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />
+    <Folder Include="Views\Base\" />
     <Folder Include="Views\Owa\" />
   </ItemGroup>
   <ItemGroup>

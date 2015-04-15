@@ -4,7 +4,7 @@ using WebsitePanel.WebDavPortal.Resources;
 
 namespace WebsitePanel.WebDavPortal.Models.Account
 {
-    public class PasswordResetEmailModel : BaseModel
+    public class PasswordResetEmailModel 
     {
         [Required]
         [Display(ResourceType = typeof(Resources.UI), Name = "Email")]

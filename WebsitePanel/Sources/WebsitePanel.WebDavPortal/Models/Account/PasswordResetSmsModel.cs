@@ -3,7 +3,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models.Account
 {
-    public class PasswordResetSmsModel : BaseModel
+    public class PasswordResetSmsModel
     {
         [Required]
         public string Sms { get; set; }

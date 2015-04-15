@@ -100,5 +100,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration);
         void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings);
+
+        bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null);
     }
 }

@@ -267,5 +267,11 @@ namespace WebsitePanel.Server
         {
             Organization.ApplyPasswordSettings(organizationId, passwordSettings);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null)
+        {
+           return Organization.CheckPhoneNumberIsInUse(phoneNumber, userSamAccountName);
+        }
     }
 }

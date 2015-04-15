@@ -6,7 +6,7 @@ namespace WebsitePanel.WebDav.Core.Services
 {
     public class TwillioSmsDistributionService : ISmsDistributionService
     {
-        private TwilioRestClient _twilioRestClient { get; set; }
+        private readonly TwilioRestClient _twilioRestClient;
 
         public TwillioSmsDistributionService()
         {
@@ -14,14 +14,18 @@ namespace WebsitePanel.WebDav.Core.Services
         }
 
 
-        public void SendMessage(string phoneFrom, string phone, string message)
+        public bool SendMessage(string phoneFrom, string phone, string message)
         {
-            _twilioRestClient.SendSmsMessage(phoneFrom, phone, message);
+            var result = _twilioRestClient.SendSmsMessage(phoneFrom, phone, message);
+
+            return string.IsNullOrEmpty(result.Status) == false;
         }
 
-        public void SendMessage(string phone, string message)
+        public bool SendMessage(string phone, string message)
         {
-            _twilioRestClient.SendSmsMessage(WebDavAppConfigManager.Instance.TwilioParameters.PhoneFrom, phone, message);
+            var result = _twilioRestClient.SendSmsMessage(WebDavAppConfigManager.Instance.TwilioParameters.PhoneFrom, phone, message);
+
+            return string.IsNullOrEmpty(result.Status) == false;
         }
     }
 }

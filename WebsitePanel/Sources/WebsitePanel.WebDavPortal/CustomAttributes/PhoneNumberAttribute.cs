@@ -6,7 +6,7 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
 {
     public class PhoneNumberAttribute : RegularExpressionAttribute, IClientValidatable
     {
-        public const string PhonePattern = @"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$";
+        public const string PhonePattern = @"^\+?\d+$";
 
         public PhoneNumberAttribute()
             : base(PhonePattern)

@@ -59,8 +59,7 @@ namespace WebsitePanel.WebDavPortal.Mapping.Profiles.Account
                 .ForMember(ti => ti.Country, x => x.MapFrom(hi => hi.Country))
                 .ForMember(ti => ti.Notes, x => x.MapFrom(hi => hi.Notes))
                 .ForMember(ti => ti.PasswordExpirationDateTime, x => x.MapFrom(hi => hi.PasswordExpirationDateTime))
-                .ForMember(ti => ti.ExternalEmail, x => x.MapFrom(hi => hi.ExternalEmail))
-                .ForMember(ti => ti.Messages, x => x.Ignore());
+                .ForMember(ti => ti.ExternalEmail, x => x.MapFrom(hi => hi.ExternalEmail));
         }
     }
 }

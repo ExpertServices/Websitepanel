@@ -22,7 +22,7 @@ using WebsitePanel.WebDav.Core;
 namespace WebsitePanel.WebDavPortal.Controllers
 {
     [LdapAuthorization]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly ICryptography _cryptography;
         private readonly IAuthenticationService _authenticationService;
@@ -94,9 +94,19 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             int result = UpdateUserProfile(WspContext.User.ItemId, WspContext.User.AccountId, model);
 
-            model.AddMessage(MessageType.Success, Resources.UI.UserProfileSuccessfullyUpdated);
+            AddMessage(MessageType.Success, Resources.UI.UserProfileSuccessfullyUpdated);
 
             return View(model);
+        }
+
+        public JsonResult PhoneNumberIsAvailible()
+        {
+            var value = Request.QueryString.AllKeys.Any() ? Request.QueryString.Get(0) :string.Empty;
+
+            var result = !WspContext.Services.Organizations.CheckPhoneNumberIsInUse(WspContext.User.ItemId,
+                    value, WspContext.User.Login);
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -118,7 +128,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (_authenticationService.ValidateAuthenticationData(WspContext.User.Login, model.OldPassword) == false)
             {
-                model.AddMessage(MessageType.Error, Resources.Messages.OldPasswordIsNotCorrect);
+                AddMessage(MessageType.Error, Resources.Messages.OldPasswordIsNotCorrect);
 
                 return View(model);
             }
@@ -126,6 +136,12 @@ namespace WebsitePanel.WebDavPortal.Controllers
             WspContext.Services.Organizations.SetUserPassword(
                     WspContext.User.ItemId, WspContext.User.AccountId,
                     model.PasswordEditor.NewPassword);
+
+            var user = _authenticationService.LogIn(WspContext.User.Login, model.PasswordEditor.NewPassword);
+
+            _authenticationService.CreateAuthenticationTicket(user);
+
+            AddMessage(MessageType.Success, Resources.Messages.PasswordSuccessfullyChanged);
 
             return RedirectToRoute(AccountRouteNames.UserProfile);
         }
@@ -152,7 +168,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (exchangeAccount == null)
             {
-                model.AddMessage(MessageType.Error, Resources.Messages.AccountNotFound);
+                AddMessage(MessageType.Error, Resources.Messages.AccountNotFound);
 
                 return View(model);
             }
@@ -175,7 +191,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (model.IsTokenExist == false)
             {
-                model.AddMessage(MessageType.Error, Resources.Messages.IncorrectPasswordResetUrl);
+                AddMessage(MessageType.Error, Resources.Messages.IncorrectPasswordResetUrl);
 
                 return View(model);
             }
@@ -184,8 +200,14 @@ namespace WebsitePanel.WebDavPortal.Controllers
             {
                 var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId, accessToken.AccountId);
 
-                var response = _smsAuthService.SendRequestMessage(user.MobilePhone);
-                WspContext.Services.Organizations.SetAccessTokenResponse(accessToken.AccessTokenGuid, response);
+                if (SendPasswordResetSms(accessToken.AccessTokenGuid, user.MobilePhone))
+                {
+                    AddMessage(MessageType.Success, Resources.Messages.SmsWasSent);
+                }
+                else
+                {
+                    AddMessage(MessageType.Error, Resources.Messages.SmsWasNotSent);
+                }
             }
 
             return View(model);
@@ -210,7 +232,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return RedirectToRoute(AccountRouteNames.PasswordResetFinalStep);
             }
 
-            model.AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
+            AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
 
             return View(model);
         }
@@ -245,7 +267,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (_smsAuthService.VerifyResponse(token, smsResponse) == false)
             {
-                model.AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
+                AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
 
                 return RedirectToRoute(AccountRouteNames.PasswordResetSms);
             }
@@ -257,6 +279,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
                     model.NewPassword);
 
             WspContext.Services.Organizations.DeletePasswordresetAccessToken(token);
+
+            AddMessage(MessageType.Success, Resources.Messages.PasswordSuccessfullyChanged);
 
             return RedirectToRoute(AccountRouteNames.Login);
         }
@@ -275,13 +299,33 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId,
                 accessToken.AccountId);
 
-            var response = _smsAuthService.SendRequestMessage(user.MobilePhone);
-            WspContext.Services.Organizations.SetAccessTokenResponse(accessToken.AccessTokenGuid, response);
+
+            if (SendPasswordResetSms(accessToken.AccessTokenGuid, user.MobilePhone))
+            {
+                AddMessage(MessageType.Success, Resources.Messages.SmsWasSent);
+            }
+            else
+            {
+                AddMessage(MessageType.Error, Resources.Messages.SmsWasNotSent);
+            }
 
             return RedirectToRoute(AccountRouteNames.PasswordResetSms);
         }
 
         #region Helpers
+
+        private bool SendPasswordResetSms(Guid token, string mobilePhone)
+        {
+            var response = _smsAuthService.SendRequestMessage(mobilePhone);
+
+            if (string.IsNullOrEmpty(response))
+            {
+                return false;
+            }
+            WspContext.Services.Organizations.SetAccessTokenResponse(token, response);
+
+            return true;
+        }
 
         private UserProfile GetUserProfileModel(int itemId, int accountId)
         {

@@ -42,7 +42,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 {
     [ValidateInput(false)]
     [LdapAuthorization]
-    public class FileSystemController : Controller
+    public class FileSystemController : BaseController
     {
         private readonly ICryptography _cryptography;
         private readonly IWebDavManager _webdavManager;
@@ -276,7 +276,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (filePathes == null)
             {
-                model.AddMessage(MessageType.Error, Resources.UI.NoFilesAreSelected);
+                AddMessage(MessageType.Error, Resources.UI.NoFilesAreSelected);
 
                 return Json(model);
             }

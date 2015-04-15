@@ -18,7 +18,6 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
-
 namespace WebsitePanel.EnterpriseServer.HostedSolution {
     using System.Xml.Serialization;
     using System.Web.Services;
@@ -36,6 +35,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     [System.Web.Services.WebServiceBindingAttribute(Name="esOrganizationsSoap", Namespace="http://tempuri.org/")]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esOrganizations : Microsoft.Web.Services3.WebServicesClientProtocol {
+        
+        private System.Threading.SendOrPostCallback CheckPhoneNumberIsInUseOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeletePasswordresetAccessTokenOperationCompleted;
         
@@ -159,6 +160,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public esOrganizations() {
             this.Url = "http://localhost:9002/esOrganizations.asmx";
         }
+        
+        /// <remarks/>
+        public event CheckPhoneNumberIsInUseCompletedEventHandler CheckPhoneNumberIsInUseCompleted;
         
         /// <remarks/>
         public event DeletePasswordresetAccessTokenCompletedEventHandler DeletePasswordresetAccessTokenCompleted;
@@ -336,6 +340,53 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetSupportServiceLevelCompletedEventHandler GetSupportServiceLevelCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckPhoneNumberIsInUse", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName) {
+            object[] results = this.Invoke("CheckPhoneNumberIsInUse", new object[] {
+                        itemId,
+                        phoneNumber,
+                        userSamAccountName});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckPhoneNumberIsInUse", new object[] {
+                        itemId,
+                        phoneNumber,
+                        userSamAccountName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckPhoneNumberIsInUse(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckPhoneNumberIsInUseAsync(int itemId, string phoneNumber, string userSamAccountName) {
+            this.CheckPhoneNumberIsInUseAsync(itemId, phoneNumber, userSamAccountName, null);
+        }
+        
+        /// <remarks/>
+        public void CheckPhoneNumberIsInUseAsync(int itemId, string phoneNumber, string userSamAccountName, object userState) {
+            if ((this.CheckPhoneNumberIsInUseOperationCompleted == null)) {
+                this.CheckPhoneNumberIsInUseOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckPhoneNumberIsInUseOperationCompleted);
+            }
+            this.InvokeAsync("CheckPhoneNumberIsInUse", new object[] {
+                        itemId,
+                        phoneNumber,
+                        userSamAccountName}, this.CheckPhoneNumberIsInUseOperationCompleted, userState);
+        }
+        
+        private void OnCheckPhoneNumberIsInUseOperationCompleted(object arg) {
+            if ((this.CheckPhoneNumberIsInUseCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckPhoneNumberIsInUseCompleted(this, new CheckPhoneNumberIsInUseCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeletePasswordresetAccessToken", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -3257,6 +3308,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckPhoneNumberIsInUseCompletedEventHandler(object sender, CheckPhoneNumberIsInUseCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckPhoneNumberIsInUseCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckPhoneNumberIsInUseCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
         }
     }
     

@@ -49,6 +49,12 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
+        public bool CheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName = null)
+        {
+            return OrganizationController.CheckPhoneNumberIsInUse(itemId, phoneNumber, userSamAccountName);
+        }
+
+        [WebMethod]
         public void DeletePasswordresetAccessToken(Guid accessToken)
         {
             OrganizationController.DeleteAccessToken(accessToken, AccessTokenTypes.PasswrodReset);

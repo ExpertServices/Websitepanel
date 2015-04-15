@@ -2,7 +2,7 @@
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class OfficeOnlineModel : BaseModel
+    public class OfficeOnlineModel 
     {
         public string Url { get; set; }
         public string FileName { get; set; }

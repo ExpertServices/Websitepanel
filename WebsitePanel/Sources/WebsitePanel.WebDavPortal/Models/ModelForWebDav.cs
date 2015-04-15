@@ -6,7 +6,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class ModelForWebDav : BaseModel
+    public class ModelForWebDav 
     {
         public IEnumerable<IHierarchyItem> Items { get; set; }
         public string UrlSuffix { get; set; }

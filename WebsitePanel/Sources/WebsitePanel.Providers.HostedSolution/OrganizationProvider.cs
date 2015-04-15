@@ -604,6 +604,58 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
+        public bool CheckPhoneNumberIsInUse(string phoneNumber, string userPrincipalName = null)
+        {
+            if (string.IsNullOrEmpty(phoneNumber))
+            {
+                return false;
+            }
+
+            phoneNumber = phoneNumber.Replace("+", "");
+
+            var userExcludeQuery = string.IsNullOrEmpty(userPrincipalName) ? string.Empty : string.Format("(!(UserPrincipalName={0}))", userPrincipalName);
+
+            string query = string.Format("(&" +
+                                             "(objectClass=user)" +
+                                             "(|" +
+                                                "(|(facsimileTelephoneNumber=+{0})(facsimileTelephoneNumber={0}))" +
+                                                "(|(homePhone=+{0})(homePhone={0}))" +
+                                                "(|(mobile=+{0})(mobile={0}))" +
+                                                "(|(pager=+{0})(pager={0}))" +
+                                                "(|(telephoneNumber=+{0})(telephoneNumber={0}))" +
+                                             ")" +
+                                             "{1}" +
+                                         ")", phoneNumber, userExcludeQuery);
+
+            using (Domain d = Domain.GetCurrentDomain())
+            {
+                using (DirectoryEntry domain = d.GetDirectoryEntry())
+                {
+
+                    var search = new DirectorySearcher(domain)
+                    {
+                        SearchScope = SearchScope.Subtree,
+                        Filter = query
+                    };
+
+                    search.PropertiesToLoad.Add(ADAttributes.Fax);
+                    search.PropertiesToLoad.Add(ADAttributes.HomePhone);
+                    search.PropertiesToLoad.Add(ADAttributes.MobilePhone);
+                    search.PropertiesToLoad.Add(ADAttributes.Pager);
+                    search.PropertiesToLoad.Add(ADAttributes.BusinessPhone);
+
+                    SearchResult result = search.FindOne();
+
+                    if (result != null)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+        }
+
         public void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings settings)
         {
             HostedSolutionLog.LogStart("ApplyPasswordPolicy");
@@ -627,8 +679,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 else
                 {
                     UpdateFineGrainedPasswordPolicy(runspace, psoName, settings);
-
-                    RemoveFineGrainedPasswordPolicy(runspace, psoName);
                 }
             }
             catch (Exception ex)
@@ -688,7 +738,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 cmd.Parameters.Add("LockoutDuration", new TimeSpan(0, settings.AccountLockoutDuration, 0));
                 cmd.Parameters.Add("LockoutThreshold", settings.AccountLockoutThreshold);
-                cmd.Parameters.Add("LockoutObservationWindow", settings.ResetAccountLockoutCounterAfter);
+                cmd.Parameters.Add("LockoutObservationWindow", new TimeSpan(0, settings.ResetAccountLockoutCounterAfter, 0));
             }
 
             ExecuteShellCommand(runspace, cmd);
@@ -724,7 +774,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 cmd.Parameters.Add("LockoutDuration", new TimeSpan(0, settings.AccountLockoutDuration, 0));
                 cmd.Parameters.Add("LockoutThreshold", settings.AccountLockoutThreshold);
-                cmd.Parameters.Add("LockoutObservationWindow", settings.ResetAccountLockoutCounterAfter);
+                cmd.Parameters.Add("LockoutObservationWindow", new TimeSpan(0, settings.ResetAccountLockoutCounterAfter, 0));
             }
             else
             {
@@ -733,10 +783,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("LockoutObservationWindow", 0);
             }
 
-            var result = ExecuteShellCommand(runspace, cmd);
-
-
-            var s = GetFineGrainedPasswordPolicy(runspace, psoName);
+            ExecuteShellCommand(runspace, cmd);
         }
 
         private void RemoveFineGrainedPasswordPolicy(Runspace runspace, string psoName)

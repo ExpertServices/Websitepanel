@@ -628,6 +628,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter your email address to reset your password. You may need to check your spam folder..
+        /// </summary>
+        public static string PasswordResetEmailInfo {
+            get {
+                return ResourceManager.GetString("PasswordResetEmailInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PB.
         /// </summary>
         public static string PetabyteShort {
@@ -795,6 +804,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string TerabyteShort {
             get {
                 return ResourceManager.GetString("TerabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Try again.
+        /// </summary>
+        public static string TryAgain {
+            get {
+                return ResourceManager.GetString("TryAgain", resourceCulture);
             }
         }
         

@@ -6,7 +6,7 @@
 
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 
-<div id="breadcrumb_wrapper" class="container prevent-deselect">
+<div id="breadcrumb_wrapper" class="container row prevent-deselect">
     @if (Model != null)
     {
         string header = WspContext.User.OrganizationId;
@@ -48,7 +48,7 @@
 </div>
 @if (string.IsNullOrEmpty(Model.SearchValue))
 {
-    <div class="container file-actions-menu prevent-deselect">
+    <div class="container file-actions-menu row prevent-deselect">
         @if (Model.Permissions.HasFlag(WebDavPermissions.Write))
         {
             <div class="file-deletion navbar-left">

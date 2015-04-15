@@ -13,6 +13,12 @@ namespace WebsitePanel.WebDavPortal
             #region Account
 
             routes.MapRoute(
+               name: AccountRouteNames.PhoneNumberIsAvailible,
+               url: "account/profile/phone-number-availible",
+               defaults: new { controller = "Account", action = "PhoneNumberIsAvailible" }
+               );
+
+            routes.MapRoute(
                 name: AccountRouteNames.UserProfile,
                 url: "account/profile",
                 defaults: new { controller = "Account", action = "UserProfile" }

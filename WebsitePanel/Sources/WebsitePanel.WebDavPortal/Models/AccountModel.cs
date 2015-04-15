@@ -5,7 +5,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class AccountModel : BaseModel
+    public class AccountModel
     {
         [Required]
         [Display(Name = @"Login")]
