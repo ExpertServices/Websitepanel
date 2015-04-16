@@ -2389,7 +2389,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, int mailboxPlanId, string subscriberNumber)
         {
             SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2407,7 +2407,6 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@SamAccountName", samAccountName),
-                new SqlParameter("@AccountPassword", accountPassword),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
             );
@@ -2592,7 +2591,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber,
+            string mailboxManagerActions, string samAccountName, int mailboxPlanId, int archivePlanId, string subscriberNumber,
             bool EnableArchiving)
         {
             SqlHelper.ExecuteNonQuery(
@@ -2606,7 +2605,6 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
                 new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
-                new SqlParameter("@Password", string.IsNullOrEmpty(accountPassword) ? (object)DBNull.Value : (object)accountPassword),
                 new SqlParameter("@SamAccountName", samAccountName),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId),

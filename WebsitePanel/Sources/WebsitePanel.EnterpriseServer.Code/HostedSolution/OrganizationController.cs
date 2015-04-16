@@ -1635,7 +1635,7 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteExpiredAccessTokens();
         }
 
-        private static string GenerateUserPasswordResetLink(int itemId, int accountId)
+        public static string GenerateUserPasswordResetLink(int itemId, int accountId)
         {
             string passwordResetUrlFormat = "account/password-reset/step-2";
 
@@ -1838,7 +1838,7 @@ namespace WebsitePanel.EnterpriseServer
         private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string sAMAccountName, string accountPassword, string subscriberNumber)
         {
             return DataProvider.AddExchangeAccount(itemId, (int)ExchangeAccountType.User, accountName, displayName, email, false, string.Empty,
-                                            sAMAccountName, CryptoUtils.Encrypt(accountPassword), 0, subscriberNumber.Trim());
+                                            sAMAccountName, 0, subscriberNumber.Trim());
 
         }
 
@@ -2526,9 +2526,6 @@ namespace WebsitePanel.EnterpriseServer
             if (account == null)
                 return null;
 
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
             return account;
         }
 
@@ -2690,10 +2687,6 @@ namespace WebsitePanel.EnterpriseServer
                 account.IsVIP = isVIP;
 
                 //account.
-                if (!String.IsNullOrEmpty(password))
-                    account.AccountPassword = CryptoUtils.Encrypt(password);
-                else
-                    account.AccountPassword = null;
 
                 UpdateAccount(account);
                 UpdateAccountServiceLevelSettings(account);
@@ -2847,10 +2840,6 @@ namespace WebsitePanel.EnterpriseServer
                                             password);
 
                 //account.
-                if (!String.IsNullOrEmpty(password))
-                    account.AccountPassword = CryptoUtils.Encrypt(password);
-                else
-                    account.AccountPassword = null;
 
                 UpdateAccount(account);
 
@@ -2875,7 +2864,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()),
                 account.EnableArchiving);
         }
@@ -3112,7 +3101,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return DataProvider.AddExchangeAccount(itemId, (int)accountType,
                 accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
+                mailboxManagerActions.ToString(), samAccountName, mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
         #region Additional Default Groups

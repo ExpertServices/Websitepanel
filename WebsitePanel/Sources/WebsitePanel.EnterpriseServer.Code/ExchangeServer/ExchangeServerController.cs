@@ -1211,9 +1211,6 @@ namespace WebsitePanel.EnterpriseServer
             if (account == null)
                 return null;
 
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
             return account;
         }
 
@@ -1224,9 +1221,6 @@ namespace WebsitePanel.EnterpriseServer
 
             if (account == null)
                 return null;
-
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
 
             return account;
         }
@@ -1268,9 +1262,6 @@ namespace WebsitePanel.EnterpriseServer
             if (account == null)
                 return null;
 
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
             return account;
         }
 
@@ -1280,14 +1271,14 @@ namespace WebsitePanel.EnterpriseServer
         {
             return DataProvider.AddExchangeAccount(itemId, (int)accountType,
                 accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
+                mailboxManagerActions.ToString(), samAccountName, mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
         private static void UpdateAccount(ExchangeAccount account)
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()),
                 account.EnableArchiving);
         }
@@ -1674,7 +1665,6 @@ namespace WebsitePanel.EnterpriseServer
                 mailEnabledPublicFolder,
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword),
                 mailboxPlanId, archivePlanId,
                 (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()), EnableArchiving);
         }
@@ -1952,7 +1942,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 account.AccountType = ExchangeAccountType.User;
                 account.MailEnabledPublicFolder = false;
-                account.AccountPassword = null;
                 UpdateAccount(account);
                 DataProvider.DeleteUserEmailAddresses(account.AccountId, account.PrimaryEmailAddress);
 
@@ -2338,7 +2327,6 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -2562,7 +2550,6 @@ namespace WebsitePanel.EnterpriseServer
                 else account.MailboxManagerActions &= ~action;
 
                 // update account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -2626,6 +2613,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // add account
             items["Account"] = account;
+            items["PswResetUrl"] = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId);
             items["AccountDomain"] = account.PrimaryEmailAddress.Substring(account.PrimaryEmailAddress.IndexOf("@") + 1);
             items["DefaultDomain"] = org.DefaultDomain;
 
@@ -3895,7 +3883,6 @@ namespace WebsitePanel.EnterpriseServer
                 // update account
                 account.DisplayName = displayName;
                 account.PrimaryEmailAddress = emailAddress;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4218,7 +4205,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update account
                 account.DisplayName = displayName;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4434,7 +4420,6 @@ namespace WebsitePanel.EnterpriseServer
                     addressLists.ToArray());
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4997,7 +4982,6 @@ namespace WebsitePanel.EnterpriseServer
                 account.AccountName = accountName;
                 account.MailEnabledPublicFolder = true;
                 account.PrimaryEmailAddress = email;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 // register e-mail
@@ -5049,7 +5033,6 @@ namespace WebsitePanel.EnterpriseServer
                 // update and save account
                 account.MailEnabledPublicFolder = false;
                 account.PrimaryEmailAddress = "";
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
 
@@ -5168,7 +5151,6 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // rename original folder
                     account.DisplayName = newFullName;
-                    account.AccountPassword = null;
                     UpdateAccount(account);
 
                     // rename nested folders
@@ -5383,7 +5365,6 @@ namespace WebsitePanel.EnterpriseServer
                     emailAddress);
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;

@@ -3809,6 +3809,7 @@ ALTER TABLE [dbo].[ExchangeAccounts] ADD
 END
 GO
 
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccount] 
 (
 	@ItemID int,
@@ -3825,7 +3826,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3844,7 +3844,7 @@ RETURN
 GO
 
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
 (
 	@ItemID int,
@@ -3861,7 +3861,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3883,7 +3882,7 @@ GO
 
 
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
 (
 	@ItemID int,
@@ -3903,7 +3902,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3935,7 +3933,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3963,7 +3960,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -4095,7 +4091,7 @@ RETURN
 
 GO
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[UpdateExchangeAccount] 
 (
 	@AccountID int,
@@ -4106,7 +4102,6 @@ ALTER PROCEDURE [dbo].[UpdateExchangeAccount]
 	@SamAccountName nvarchar(100),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
-	@Password varchar(200),
 	@MailboxPlanId int,
 	@ArchivingMailboxPlanId int,
 	@SubscriberNumber varchar(32),
@@ -4143,14 +4138,6 @@ IF (@@ERROR <> 0 )
 		RETURN -1
 	END
 
-UPDATE ExchangeAccounts SET 
-	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
-
-IF (@@ERROR <> 0 )
-	BEGIN
-		ROLLBACK TRANSACTION
-		RETURN -1
-	END
 COMMIT TRAN
 RETURN
 
@@ -5043,6 +5030,7 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 RETURN
 GO
 
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccount] 
 (
 	@ItemID int,
@@ -5059,7 +5047,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -6070,7 +6057,7 @@ WHERE Id = @Id
 GO
 
 
-
+-- Password column removed
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionUsersByRDSCollectionId')
 DROP PROCEDURE GetRDSCollectionUsersByRDSCollectionId
 GO
@@ -6089,7 +6076,6 @@ SELECT
 	  [MailEnabledPublicFolder],
 	  [MailboxManagerActions],
 	  [SamAccountName],
-	  [AccountPassword],
 	  [CreatedDate],
 	  [MailboxPlanId],
 	  [SubscriberNumber],
@@ -8699,7 +8685,7 @@ RETURN
 GO
 
 
-
+-- Password column removed
 IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
 DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
 GO
@@ -8718,7 +8704,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -9889,4 +9874,128 @@ SELECT
 
 FROM ExchangeOrganizationSettings 
 Where ItemId = @ItemId AND SettingsName = @SettingsName
+GO
+
+
+-- Exchange Account password column removed
+
+if exists(select * from sys.columns 
+            where Name = N'AccountPassword' and Object_ID = Object_ID(N'ExchangeAccounts'))
+begin
+  ALTER TABLE [ExchangeAccounts] DROP COLUMN [AccountPassword]
+end
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddExchangeAccount')
+DROP PROCEDURE AddExchangeAccount
+GO
+CREATE PROCEDURE [dbo].[AddExchangeAccount] 
+(
+	@AccountID int OUTPUT,
+	@ItemID int,
+	@AccountType int,
+	@AccountName nvarchar(300),
+	@DisplayName nvarchar(300),
+	@PrimaryEmailAddress nvarchar(300),
+	@MailEnabledPublicFolder bit,
+	@MailboxManagerActions varchar(200),
+	@SamAccountName nvarchar(100),
+	@MailboxPlanId int,
+	@SubscriberNumber nvarchar(32)
+)
+AS
+
+INSERT INTO ExchangeAccounts
+(
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	MailboxPlanId,
+	SubscriberNumber,
+	UserPrincipalName
+)
+VALUES
+(
+	@ItemID,
+	@AccountType,
+	@AccountName,
+	@DisplayName,
+	@PrimaryEmailAddress,
+	@MailEnabledPublicFolder,
+	@MailboxManagerActions,
+	@SamAccountName,
+	@MailboxPlanId,
+	@SubscriberNumber,
+	@PrimaryEmailAddress
+)
+
+SET @AccountID = SCOPE_IDENTITY()
+
+RETURN
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SearchExchangeAccount')
+DROP PROCEDURE SearchExchangeAccount
+GO
+CREATE PROCEDURE [dbo].[SearchExchangeAccount]
+(
+      @ActorID int,
+      @AccountType int,
+      @PrimaryEmailAddress nvarchar(300)
+)
+AS
+
+DECLARE @PackageID int
+DECLARE @ItemID int
+DECLARE @AccountID int
+
+SELECT
+      @AccountID = AccountID,
+      @ItemID = ItemID
+FROM ExchangeAccounts
+WHERE PrimaryEmailAddress = @PrimaryEmailAddress
+AND AccountType = @AccountType
+
+
+-- check space rights
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	AccountID,
+	ItemID,
+	@PackageID AS PackageID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	SubscriberNumber,
+	UserPrincipalName
+FROM ExchangeAccounts
+WHERE AccountID = @AccountID
+
+RETURN 
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
 GO

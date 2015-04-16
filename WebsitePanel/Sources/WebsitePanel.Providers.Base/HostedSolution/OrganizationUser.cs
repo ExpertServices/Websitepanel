@@ -268,11 +268,11 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        public string AccountPassword
-        {
-            get { return accountPassword; }
-            set { accountPassword = value; }
-        }
+        //public string AccountPassword
+        //{
+        //    get { return accountPassword; }
+        //    set { accountPassword = value; }
+        //}
 
         public string ExternalEmail { get; set; }
 
