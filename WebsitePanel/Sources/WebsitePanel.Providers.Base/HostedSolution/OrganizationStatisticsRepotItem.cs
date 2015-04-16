@@ -60,6 +60,19 @@
             set;
         }
 
+        public int TotalSharePointEnterpriseSiteCollections
+        {
+            get;
+            set;
+        }
+
+        public long TotalSharePointEnterpriseSiteCollectionsSize
+        {
+            get;
+            set;
+        }
+
+
         public int TotalCRMUsers
         {
             get;

@@ -444,6 +444,12 @@
   <data name="PageTitle.SpaceVPS" xml:space="preserve">
     <value>{user} - {space} - Virtual Private Servers</value>
   </data>
+  <data name="PageName.SpaceVPS2012" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
+  <data name="PageTitle.SpaceVPS2012" xml:space="preserve">
+    <value>{user} - {space} - Virtual Private Servers 2012</value>
+  </data>
   <data name="PageName.SpaceWebIPAddresses" xml:space="preserve">
     <value>IP Addresses</value>
   </data>

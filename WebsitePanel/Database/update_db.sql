@@ -21,7 +21,10 @@ DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
 GO
 DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
 GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE GroupID = 33 AND [GroupName] = 'VPS2012')
+BEGIN
 DELETE FROM HostingPlanResources WHERE GroupID = 33
+END
 GO
 
 
@@ -8204,6 +8207,27 @@ AS
 							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 558 BEGIN -- RAM of VPS2012
+			DECLARE @Result1 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
+			DECLARE @Result2 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'DynamicMemory.Maximum' AND PT.ParentPackageID = @PackageID)
+			SET @Result = CASE WHEN isnull(@Result1,0) > isnull(@Result2,0) THEN @Result1 ELSE @Result2 END
+		END
+		ELSE IF @QuotaID = 559 -- HDD of VPS2012
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 562 -- External IP addresses of VPS2012
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 100 -- Dedicated Web IP addresses
 			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
 							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
@@ -8846,15 +8870,167 @@ RETURN
 GO
 
 -- Hyper-V 2012 R2 Provider
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'VPS2012')
+BEGIN
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (33, N'VPS2012', 19, NULL, 1)
+
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (41, 33, N'VirtualMachine', N'WebsitePanel.Providers.Virtualization.VirtualMachine, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (42, 33, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (553, 33, 1, N'VPS2012.ServersNumber', N'Number of VPS', 2, 0, 41, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (554, 33, 2, N'VPS2012.ManagingAllowed', N'Allow user to create VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (555, 33, 3, N'VPS2012.CpuNumber', N'Number of CPU cores', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (556, 33, 7, N'VPS2012.BootCdAllowed', N'Boot from CD allowed', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (557, 33, 8, N'VPS2012.BootCdEnabled', N'Boot from CD', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (558, 33, 4, N'VPS2012.Ram', N'RAM size, MB', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (559, 33, 5, N'VPS2012.Hdd', N'Hard Drive size, GB', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (560, 33, 6, N'VPS2012.DvdEnabled', N'DVD drive', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (561, 33, 10, N'VPS2012.ExternalNetworkEnabled', N'External Network', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (562, 33, 11, N'VPS2012.ExternalIPAddressesNumber', N'Number of External IP addresses', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (563, 33, 13, N'VPS2012.PrivateNetworkEnabled', N'Private Network', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (564, 33, 14, N'VPS2012.PrivateIPAddressesNumber', N'Number of Private IP addresses per VPS', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (565, 33, 9, N'VPS2012.SnapshotsNumber', N'Number of Snaphots', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (566, 33, 15, N'VPS2012.StartShutdownAllowed', N'Allow user to Start, Turn off and Shutdown VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (567, 33, 16, N'VPS2012.PauseResumeAllowed', N'Allow user to Pause, Resume VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (568, 33, 17, N'VPS2012.RebootAllowed', N'Allow user to Reboot VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (569, 33, 18, N'VPS2012.ResetAlowed', N'Allow user to Reset VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (570, 33, 19, N'VPS2012.ReinstallAllowed', N'Allow user to Re-install VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (571, 33, 12, N'VPS2012.Bandwidth', N'Monthly bandwidth, GB', 2, 0, NULL, NULL)
+
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV2012R2', 1)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 33, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV2012R2', 1)
 END
 ELSE
 BEGIN
-UPDATE [dbo].[Providers] SET [EditorControl] = N'HyperV2012R2' WHERE [ProviderName] = 'HyperV2012R2'
+UPDATE [dbo].[Providers] SET [EditorControl] = N'HyperV2012R2', [GroupID] = 33 WHERE [ProviderName] = 'HyperV2012R2'
 END
 GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetVirtualMachinesPaged2012')
+DROP PROCEDURE GetVirtualMachinesPaged2012
+GO
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPaged2012]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.ItemTypeID = 41 -- VPS2012
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+'
+
+--print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+RETURN 
+GO
+
 
 --ES OWA Editing
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
@@ -9446,10 +9622,167 @@ END
 
 GO
 
+UPDATE [dbo].[Quotas] SET GroupID = 45 WHERE QuotaName = 'EnterpriseStorage.DriveMaps'
+GO
 
 
+UPDATE [dbo].[ResourceGroups] SET GroupName = 'Sharepoint Enterprise Server' WHERE GroupName = 'Sharepoint Server'
+GO
+
+UPDATE [dbo].[ResourceGroups] SET GroupController = 'WebsitePanel.EnterpriseServer.HostedSharePointServerEntController' WHERE GroupName = 'Sharepoint Enterprise Server'
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted SharePoint Enterprise 2013')
+BEGIN
+DECLARE @provider_id AS INT
+DECLARE @group_id AS INT
+SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Enterprise Server'
+SELECT TOP 1 @provider_id = ProviderId + 1 From [dbo].[Providers] ORDER BY ProviderID DESC
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery])
+VALUES (@provider_id, @group_id, N'HostedSharePoint2013Ent', N'Hosted SharePoint Enterprise 2013', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013Ent, WebsitePanel.Providers.HostedSolution.SharePoint2013Ent', N'HostedSharePoint30', NULL)
+END
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.Sites' WHERE QuotaId = 550
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.MaxStorage' WHERE QuotaId = 551
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.UseSharedSSL' WHERE QuotaId = 552
+GO
+
+UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointEnterpriseSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
+GO
 
 
+IF EXISTS (SELECT * FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID IN (Select GroupID FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'))
+BEGIN
+	DECLARE @group_id INT
+	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'
+	DELETE FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID = @group_id
+END
+
+GO
+
+		
+ALTER PROCEDURE [dbo].[AddServiceItem]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServiceID int,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200),
+	@ItemID int OUTPUT,
+	@XmlProperties ntext,
+	@CreatedDate datetime
+)
+AS
+BEGIN TRAN
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- get GroupID
+DECLARE @GroupID int
+SELECT
+	@GroupID = PROV.GroupID
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+WHERE S.ServiceID = @ServiceID
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+
+-- Fix to allow plans assigned to serveradmin
+IF (@ItemTypeName = 'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base')
+BEGIN
+	IF NOT EXISTS (SELECT * FROM ServiceItems WHERE PackageID = 1)
+	BEGIN
+		INSERT INTO ServiceItems (PackageID, ItemTypeID,ServiceID,ItemName,CreatedDate)
+		VALUES(1, @ItemTypeID, @ServiceID, 'System',  @CreatedDate)
+		
+		DECLARE @TempItemID int
+		
+		SET @TempItemID = SCOPE_IDENTITY()
+		INSERT INTO ExchangeOrganizations (ItemID, OrganizationID)
+		VALUES(@TempItemID, 'System')
+	END
+END
+
+
+		
+-- add item
+INSERT INTO ServiceItems
+(
+	PackageID,
+	ServiceID,
+	ItemName,
+	ItemTypeID,
+	CreatedDate
+)
+VALUES
+(
+	@PackageID,
+	@ServiceID,
+	@ItemName,
+	@ItemTypeID,
+	@CreatedDate
+)
+
+SET @ItemID = SCOPE_IDENTITY()
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+CREATE TABLE #TempTable(
+	ItemID int,
+	PropertyName nvarchar(50),
+	PropertyValue  nvarchar(3000))
+
+INSERT INTO #TempTable (ItemID, PropertyName, PropertyValue)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
+
+-- Move data from temp table to real table
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT 
+	ItemID, 
+	PropertyName, 
+	PropertyValue
+FROM #TempTable
+
+DROP TABLE #TempTable
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN 
+GO
+
+UPDATE [dbo].[ServiceItemTypes] SET TypeName ='WebsitePanel.Providers.SharePoint.SharePointEnterpriseSiteCollection, WebsitePanel.Providers.Base' WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
+GO
 
 -- USER PASSWORD EXPIRATION NOTIFICATION tasks
 

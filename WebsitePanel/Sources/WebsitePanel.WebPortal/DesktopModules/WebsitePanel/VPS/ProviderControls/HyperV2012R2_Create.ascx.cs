@@ -27,25 +27,51 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.UI;
 using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
-    public partial class HyperV2012R2_Create : WebsitePanelControlBase, IVirtualMachineCreateControl
+    public partial class HyperV2012R2_Create : WebsitePanelControlBase, IVirtualMachineSettingsControl
     {
+        private bool _isEditMode;
+
         protected void Page_Load(object sender, EventArgs e)
         {
         }
 
+        public bool IsEditMode
+        {
+            get { return _isEditMode; }
+            set
+            {
+                _isEditMode = value;
+                SettingContols.ForEach(s=>s.IsEditMode = _isEditMode);
+            }
+        }
+
         public void BindItem(VirtualMachine item)
         {
-            var generation = item.Generation > 1 ? item.Generation : 1;
-            ddlGeneration.SelectedValue = generation.ToString();
+            SettingContols.ForEach(s => s.BindItem(item));
         }
 
         public void SaveItem(VirtualMachine item)
         {
-            item.Generation = Convert.ToInt32(ddlGeneration.SelectedValue);
+            SettingContols.ForEach(s => s.SaveItem(item));
+        }
+
+        private List<IVirtualMachineSettingsControl> SettingContols
+        {
+            get
+            {
+                return Controls
+                    .Cast<Control>()
+                    .Where(c => c is IVirtualMachineSettingsControl)
+                    .Cast<IVirtualMachineSettingsControl>()
+                    .ToList();
+            }
         }
     }
 }

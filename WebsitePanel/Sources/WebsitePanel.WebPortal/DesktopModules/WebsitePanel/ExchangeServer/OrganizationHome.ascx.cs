@@ -252,6 +252,21 @@ namespace WebsitePanel.Portal.ExchangeServer
             else
                 sharePointStatsPanel.Visible = false;
 
+            //Show SharePoint statistics
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+            {
+                sharePointEnterpriseStatsPanel.Visible = true;
+
+                lnkEnterpriseSiteCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_enterprise_sitecollections",
+                "SpaceID=" + PanelSecurity.PackageId);
+                enterpriseSiteCollectionsStats.QuotaUsedValue = orgStats.CreatedSharePointEnterpriseSiteCollections;
+                enterpriseSiteCollectionsStats.QuotaValue = orgStats.AllocatedSharePointEnterpriseSiteCollections;
+                if (orgStats.AllocatedSharePointEnterpriseSiteCollections != -1) enterpriseSiteCollectionsStats.QuotaAvailable = tenantStats.AllocatedSharePointEnterpriseSiteCollections - tenantStats.CreatedSharePointEnterpriseSiteCollections;
+            }
+            else
+                sharePointEnterpriseStatsPanel.Visible = false;
+
+
             if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
             {
                 ocsStatsPanel.Visible = true;

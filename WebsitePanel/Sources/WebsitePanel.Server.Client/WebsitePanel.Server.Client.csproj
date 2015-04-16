@@ -82,6 +82,7 @@
     <Compile Include="ExchangeServerProxy.cs" />
     <Compile Include="FtpServerProxy.cs" />
     <Compile Include="HeliconZooProxy.cs" />
+    <Compile Include="HostedSharePointServerEntProxy.cs" />
     <Compile Include="HostedSharePointServerProxy.cs" />
     <Compile Include="LyncServerProxy.cs" />
     <Compile Include="OCSEdgeServerProxy.cs" />

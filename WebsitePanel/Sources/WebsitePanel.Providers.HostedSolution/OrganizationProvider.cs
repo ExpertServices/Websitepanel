@@ -2133,7 +2133,7 @@ namespace WebsitePanel.Providers.HostedSolution
             uidAttr.Value = Guid.NewGuid().ToString("B");
             bypassErrorsAttr.Value = (1).ToString();
 
-            actionPropAttr.Value = "R";
+            actionPropAttr.Value = "C";
             thisDrivePropAttr.Value = "NOCHANGE";
             allDrivesPropAttr.Value = "NOCHANGE";
             userNamePropAttr.Value = string.Empty;

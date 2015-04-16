@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.EnterpriseServer\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.EnterpriseServer\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -165,6 +165,7 @@
     <Compile Include="Scheduling\SchedulerController.cs" />
     <Compile Include="Scheduling\SchedulerJob.cs" />
     <Compile Include="Servers\ServerController.cs" />
+    <Compile Include="SharePoint\HostedSharePointServerEntController.cs" />
     <Compile Include="SharePoint\HostedSharePointServerController.cs" />
     <Compile Include="SharePoint\SharePointServerController.cs" />
     <Compile Include="StatisticsServers\StatisticsServerController.cs" />
@@ -175,6 +176,8 @@
     <Compile Include="Tasks\TaskManager.cs" />
     <Compile Include="Users\UserAsyncWorker.cs" />
     <Compile Include="Users\UserController.cs" />
+    <Compile Include="Virtualization2012\CreateServerAsyncWorker2012.cs" />
+    <Compile Include="Virtualization2012\VirtualizationServerController2012.cs" />
     <Compile Include="VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
     <Compile Include="VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
     <Compile Include="VirtualizationForPrivateCloud\VirtualizationServerControllerForPrivateCloud.cs" />

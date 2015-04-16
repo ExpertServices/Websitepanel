@@ -612,6 +612,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup External network
                 TaskManager.Write("VPS_CREATE_SETUP_EXTERNAL_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -644,6 +645,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup Management network
                 TaskManager.Write("VPS_CREATE_SETUP_MANAGEMENT_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -704,6 +706,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Setup Private network
                 TaskManager.Write("VPS_CREATE_SETUP_PRIVATE_NETWORK");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {
@@ -759,6 +762,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("VPS_CREATE_CONVERT_VHD");
                 TaskManager.Write("VPS_CREATE_CONVERT_SOURCE_VHD", vm.OperatingSystemTemplatePath);
                 TaskManager.Write("VPS_CREATE_CONVERT_DEST_VHD", vm.VirtualHardDrivePath);
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
                 try
                 {
                     // convert VHD
@@ -817,6 +821,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (vm.HddSize > hddSizeGB)
                 {
                     TaskManager.Write("VPS_CREATE_EXPAND_VHD");
+                    TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                     // expand VHD
                     try
@@ -958,6 +963,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("VPS_CREATE_CPU_CORES", vm.CpuCores.ToString());
                 TaskManager.Write("VPS_CREATE_RAM_SIZE", vm.RamSize.ToString());
                 TaskManager.Write("VPS_CREATE_CREATE_VM");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
                 // create virtual machine
                 try
                 {
@@ -1031,6 +1037,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 #region Start VPS
                 TaskManager.Write("VPS_CREATE_START_VPS");
+                TaskManager.IndicatorCurrent = -1; // Some providers (for example HyperV2012R2) could not provide progress 
 
                 try
                 {

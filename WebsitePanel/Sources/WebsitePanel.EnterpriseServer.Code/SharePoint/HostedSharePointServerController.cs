@@ -58,18 +58,18 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// <param name="startRow">Row index to start from.</param>
         /// <param name="maximumRows">Maximum number of rows to retrieve.</param>
         /// <returns>Site collections that match.</returns>
-        public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, string groupName = null)
+        public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
             if (IsDemoMode)
             {
                 SharePointSiteCollectionListPaged demoResult = new SharePointSiteCollectionListPaged();
-                demoResult.SiteCollections = GetSiteCollections(1, false, null);
+                demoResult.SiteCollections = GetSiteCollections(1, false);
                 demoResult.TotalRowCount = demoResult.SiteCollections.Count;
                 return demoResult;
             }
 
             SharePointSiteCollectionListPaged paged = new SharePointSiteCollectionListPaged();
-            DataSet result = PackageController.GetRawPackageItemsPaged(packageId, groupName, typeof(SharePointSiteCollection),
+            DataSet result = PackageController.GetRawPackageItemsPaged(packageId,  ResourceGroups.SharepointFoundationServer, typeof(SharePointSiteCollection),
                 true, filterColumn, filterValue, sortColumn, startRow, Int32.MaxValue);
             List<SharePointSiteCollection> items = PackageController.CreateServiceItemsList(result, 1).ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
 
@@ -149,9 +149,8 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// </summary>
         /// <param name="packageId">Package that owns site collections.</param>
         /// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
-        /// <param name="groupName">Resource group name.</param>
         /// <returns>List of found site collections.</returns>
-        public static List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive, string groupName)
+        public static List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
         {
             if (IsDemoMode)
             {
@@ -184,7 +183,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
 
-            List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(packageId, groupName, typeof(SharePointSiteCollection), recursive);
+            List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(packageId, typeof(SharePointSiteCollection), recursive);
             return items.ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
         }
 
@@ -197,7 +196,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         {
             if (IsDemoMode)
             {
-                return GetSiteCollections(1, false, null)[itemId - 1];
+                return GetSiteCollections(1, false)[itemId - 1];
             }
 
             SharePointSiteCollection item = PackageController.GetPackageItem(itemId) as SharePointSiteCollection;
@@ -208,9 +207,8 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
         /// Adds SharePoint site collection.
         /// </summary>
         /// <param name="item">Site collection description.</param>
-        /// <param name="groupName">Resource group name.</param>
         /// <returns>Created site collection id within metabase.</returns>
-        public static int AddSiteCollection(SharePointSiteCollection item, string groupName)
+        public static int AddSiteCollection(SharePointSiteCollection item)
         {
 
             // Check account.
@@ -238,7 +236,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Check if stats resource is available
-            int serviceId = PackageController.GetPackageServiceId(item.PackageId, groupName);
+            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.SharepointFoundationServer);
 
             if (serviceId == 0)
             {
@@ -276,7 +274,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
                 siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);                
 
-                while (CheckServiceItemExists(item.Name, item.PackageId))
+                while  ( DataProvider. CheckServiceItemExists( serviceId,   item. Name,   "WebsitePanel.Providers.SharePoint.SharePointSiteCollection,   WebsitePanel.Providers.Base"))  
                 {
                     counter++;
                     item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
@@ -306,7 +304,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
 
             // Check package item with given name already exists.
-            if (PackageController.GetPackageItemByName(item.PackageId, groupName, item.Name, typeof(SharePointSiteCollection)) != null)
+            if (PackageController.GetPackageItemByName(item.PackageId,  item.Name, typeof(SharePointSiteCollection)) != null)
             {
                 return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_EXISTS;
             }
@@ -1016,16 +1014,5 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
         }
 
-        private static bool CheckServiceItemExists(string name, int packageId)
-        {
-            bool exists = PackageController.GetPackageItemByName(packageId, ResourceGroups.SharepointFoundationServer, name, typeof(SharePointSiteCollection)) != null;
-
-            if (!exists)
-            {
-                exists = PackageController.GetPackageItemByName(packageId, ResourceGroups.SharepointServer, name, typeof(SharePointSiteCollection)) != null;
-            }
-
-            return exists;
-        }
-    }
+     }
 }

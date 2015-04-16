@@ -544,6 +544,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer siteCollectionsStats;
         
         /// <summary>
+        /// sharePointEnterpriseStatsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel sharePointEnterpriseStatsPanel;
+        
+        /// <summary>
+        /// locSharePointEnterprise control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locSharePointEnterprise;
+        
+        /// <summary>
+        /// lnkEnterpriseSiteCollections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkEnterpriseSiteCollections;
+        
+        /// <summary>
+        /// enterpriseSiteCollectionsStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer enterpriseSiteCollectionsStats;
+        
+        /// <summary>
         /// ocsStatsPanel control.
         /// </summary>
         /// <remarks>

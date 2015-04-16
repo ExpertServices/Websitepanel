@@ -150,4 +150,16 @@
   <data name="btnRefresh.Text" xml:space="preserve">
     <value>Refresh</value>
   </data>
+  <data name="cmdControlSession.Text" xml:space="preserve">
+    <value>Control</value>
+  </data>
+  <data name="cmdControlSession.ToolTip" xml:space="preserve">
+    <value>Control Session</value>
+  </data>
+  <data name="cmdViewSession.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="cmdViewSession.ToolTip" xml:space="preserve">
+    <value>View Session</value>
+  </data>
 </root>

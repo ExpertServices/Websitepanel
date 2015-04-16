@@ -57,6 +57,7 @@
     <Compile Include="Extensions\PSObjectExtension.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\BiosHelper.cs" />
+    <Compile Include="Helpers\MemoryHelper.cs" />
     <Compile Include="Helpers\VdsHelper.cs" />
     <Compile Include="Helpers\HardDriveHelper.cs" />
     <Compile Include="Helpers\NetworkAdapterHelper.cs" />

@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Text;
-using System.Threading.Tasks;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Providers.Virtualization
@@ -65,7 +63,6 @@ namespace WebsitePanel.Providers.Virtualization
 
         public Collection<PSObject> Execute(Command cmd, bool addComputerNameParameter)
         {
-            object[] errors;
             return Execute(cmd, addComputerNameParameter, false);
         }
 

@@ -36,6 +36,10 @@ namespace WebsitePanel.Providers.Virtualization
         {
             return obj.Members[name].Value == null ? "" : obj.Members[name].Value.ToString();
         }
+        public static bool GetBool(this PSObject obj, string name)
+        {
+            return Convert.ToBoolean(obj.Members[name].Value);
+        }
         
         #endregion
 

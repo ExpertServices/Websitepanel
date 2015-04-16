@@ -488,6 +488,7 @@ namespace WebsitePanel.EnterpriseServer
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS2012, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                                 }
                             }
@@ -711,6 +712,11 @@ namespace WebsitePanel.EnterpriseServer
                 if (Utils.ParseBool(vpsSettings["AutoAssignExternalIP"], true))
                     ServerController.AllocateMaximumPackageIPAddresses(packageId, ResourceGroups.VPS, IPAddressPool.VpsExternalNetwork);
 
+                // allocate "VPS" IP addresses
+                int vps2012ServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.VPS2012);
+                StringDictionary vps2012Settings = ServerController.GetServiceSettings(vps2012ServiceId);
+                if (Utils.ParseBool(vps2012Settings["AutoAssignExternalIP"], true))
+                    ServerController.AllocateMaximumPackageIPAddresses(packageId, ResourceGroups.VPS2012, IPAddressPool.VpsExternalNetwork);
 
                 // allocate "VPSForPC" IP addresses
                 int vpsfcpServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.VPSForPC);
@@ -1674,6 +1680,18 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // load Exchange service settings
                     int vpsServiceId = GetPackageServiceId(packageId, ResourceGroups.VPS);
+                    if (vpsServiceId > 0)
+                    {
+                        StringDictionary vpsSettings = ServerController.GetServiceSettings(vpsServiceId);
+                        settings["HostnamePattern"] = vpsSettings["HostnamePattern"];
+                    }
+                }
+
+                // VPS2012
+                else if (String.Compare(PackageSettings.VIRTUAL_PRIVATE_SERVERS_2012, settingsName, true) == 0)
+                {
+                    // load Exchange service settings
+                    int vpsServiceId = GetPackageServiceId(packageId, ResourceGroups.VPS2012);
                     if (vpsServiceId > 0)
                     {
                         StringDictionary vpsSettings = ServerController.GetServiceSettings(vpsServiceId);

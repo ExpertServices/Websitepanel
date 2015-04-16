@@ -18,7 +18,7 @@
                 </div>
 				<div class="FormBody">                    
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
-                    <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="rds_setup_letter" />
+                    <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="rds_collection_edit_users" />
 
                     <wsp:CollapsiblePanel id="secEmail" runat="server" IsCollapsed="true"
                         TargetControlID="EmailPanel" meta:resourcekey="secEmail" Text="Send via E-Mail">
@@ -41,13 +41,13 @@
                                 </td>
                                 <td class="Normal">
                                     <asp:TextBox ID="txtCC" runat="server" CssClass="NormalTextBox" Width="300px"></asp:TextBox></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>
-                                    <asp:Button ID="btnSend" runat="server" CssClass="Button2" meta:resourcekey="btnSend" Text="Send" OnClick="btnSend_Click" ValidationGroup="SendEmail" /></td>
-                            </tr>
+                            </tr>                            
                         </table>
+                        <div class="FormFooterClean">
+                        <asp:Button id="btnExit" runat="server" Text="Back to Users List" CssClass="Button1" meta:resourcekey="btnExit" 
+                                        OnClick="btnExit_Click" OnClientClick="ShowProgressDialog('Loading ...');"/>
+                        <asp:Button ID="btnSend" runat="server" CssClass="Button2" meta:resourcekey="btnSend" Text="Send" OnClick="btnSend_Click" ValidationGroup="SendEmail" />
+			        </div>
                     </asp:Panel>
 					
                     <div class="PreviewArea">

@@ -15,6 +15,12 @@ namespace WebsitePanel.Portal.RDS
         {
             if (!IsPostBack)
             {
+                var timeouts = RdsServerSettings.ScreenSaverTimeOuts;
+                ddTimeout.DataSource = timeouts;
+                ddTimeout.DataTextField = "Value";
+                ddTimeout.DataValueField = "Key";
+                ddTimeout.DataBind();
+
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
                 litCollectionName.Text = collection.DisplayName;
                 BindSettings();
@@ -27,8 +33,8 @@ namespace WebsitePanel.Portal.RDS
 
             if (serverSettings == null || !serverSettings.Settings.Any())
             {
-                var defaultSettings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.RDS_POLICY);
-                BindDefaultSettings(defaultSettings);
+                ddTimeout.SelectedValue = "";
+                ddTreshold.SelectedValue = "";
             }
             else
             {
@@ -39,45 +45,47 @@ namespace WebsitePanel.Portal.RDS
         private void BindSettings(RdsServerSettings settings)
         {
             var setting = GetServerSetting(settings, RdsServerSettings.LOCK_SCREEN_TIMEOUT);
-            txtTimeout.Text = setting.PropertyValue;
-            cbTimeoutAdministrators.Checked = setting.ApplyAdministrators;
-            cbTimeoutUsers.Checked = setting.ApplyUsers;
 
-            setting = GetServerSetting(settings, RdsServerSettings.REMOVE_RUN_COMMAND);
-            cbRunCommandAdministrators.Checked = setting.ApplyAdministrators;
-            cbRunCommandUsers.Checked = setting.ApplyUsers;
+            if (setting != null)
+            {
+                ddTimeout.SelectedValue = setting.PropertyValue;
+                cbTimeoutAdministrators.Checked = setting.ApplyAdministrators;
+                cbTimeoutUsers.Checked = setting.ApplyUsers;
+            }
 
-            setting = GetServerSetting(settings, RdsServerSettings.REMOVE_POWERSHELL_COMMAND);
-            cbPowershellAdministrators.Checked = setting.ApplyAdministrators;
-            cbPowershellUsers.Checked = setting.ApplyUsers;
-
-            setting = GetServerSetting(settings, RdsServerSettings.HIDE_C_DRIVE);
-            cbHideCDriveAdministrators.Checked = setting.ApplyAdministrators;
-            cbHideCDriveUsers.Checked = setting.ApplyUsers;
-
-            setting = GetServerSetting(settings, RdsServerSettings.REMOVE_SHUTDOWN_RESTART);
-            cbShutdownAdministrators.Checked = setting.ApplyAdministrators;
-            cbShutdownUsers.Checked = setting.ApplyUsers;
-
-            setting = GetServerSetting(settings, RdsServerSettings.DISABLE_TASK_MANAGER);
-            cbTaskManagerAdministrators.Checked = setting.ApplyAdministrators;
-            cbTaskManagerUsers.Checked = setting.ApplyUsers;
-
-            setting = GetServerSetting(settings, RdsServerSettings.CHANGE_DESKTOP_DISABLED);
-            cbDesktopAdministrators.Checked = setting.ApplyAdministrators;
-            cbDesktopUsers.Checked = setting.ApplyUsers;
-
-            setting = GetServerSetting(settings, RdsServerSettings.SCREEN_SAVER_DISABLED);
-            cbScreenSaverAdministrators.Checked = setting.ApplyAdministrators;
-            cbScreenSaverUsers.Checked = setting.ApplyUsers;
+            SetCheckboxes(settings, RdsServerSettings.REMOVE_RUN_COMMAND, cbRunCommandAdministrators, cbRunCommandUsers);
+            SetCheckboxes(settings, RdsServerSettings.REMOVE_POWERSHELL_COMMAND, cbPowershellAdministrators, cbPowershellUsers);
+            SetCheckboxes(settings, RdsServerSettings.HIDE_C_DRIVE, cbHideCDriveAdministrators, cbHideCDriveUsers);
+            SetCheckboxes(settings, RdsServerSettings.REMOVE_SHUTDOWN_RESTART, cbShutdownAdministrators, cbShutdownUsers);
+            SetCheckboxes(settings, RdsServerSettings.DISABLE_TASK_MANAGER, cbTaskManagerAdministrators, cbTaskManagerUsers);
+            SetCheckboxes(settings, RdsServerSettings.CHANGE_DESKTOP_DISABLED, cbDesktopAdministrators, cbDesktopUsers);
+            SetCheckboxes(settings, RdsServerSettings.SCREEN_SAVER_DISABLED, cbScreenSaverAdministrators, cbScreenSaverUsers);
+            SetCheckboxes(settings, RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION, cbViewSessionAdministrators, cbViewSessionUsers);
+            SetCheckboxes(settings, RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION, cbControlSessionAdministrators, cbControlSessionUsers);
+            SetCheckboxes(settings, RdsServerSettings.DISABLE_CMD, cbDisableCmdAdministrators, cbDisableCmdUsers);
 
             setting = GetServerSetting(settings, RdsServerSettings.DRIVE_SPACE_THRESHOLD);
-            txtThreshold.Text = setting.PropertyValue;
+
+            if (setting != null)
+            {
+                ddTreshold.SelectedValue = setting.PropertyValue;
+            }
+        }
+
+        private void SetCheckboxes(RdsServerSettings settings, string settingName, CheckBox cbAdministrators, CheckBox cbUsers)
+        {
+            var setting = GetServerSetting(settings, settingName);
+
+            if (setting != null)
+            {
+                cbAdministrators.Checked = setting.ApplyAdministrators;
+                cbUsers.Checked = setting.ApplyUsers;
+            }
         }
 
         private RdsServerSetting GetServerSetting(RdsServerSettings settings, string propertyName)
         {
-            return settings.Settings.First(s => s.PropertyName.Equals(propertyName));
+            return settings.Settings.FirstOrDefault(s => s.PropertyName.Equals(propertyName));
         }
 
         private RdsServerSettings GetSettings()
@@ -87,7 +95,7 @@ namespace WebsitePanel.Portal.RDS
             settings.Settings.Add(new RdsServerSetting
             {
                 PropertyName = RdsServerSettings.LOCK_SCREEN_TIMEOUT,
-                PropertyValue = txtTimeout.Text,
+                PropertyValue = ddTimeout.SelectedValue,
                 ApplyAdministrators = cbTimeoutAdministrators.Checked,
                 ApplyUsers = cbTimeoutUsers.Checked
             });
@@ -151,43 +159,37 @@ namespace WebsitePanel.Portal.RDS
             settings.Settings.Add(new RdsServerSetting
             {
                 PropertyName = RdsServerSettings.DRIVE_SPACE_THRESHOLD,
-                PropertyValue = txtThreshold.Text,
+                PropertyValue = ddTreshold.SelectedValue,
                 ApplyAdministrators = true,
                 ApplyUsers = true
             });
 
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_VIEW_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = cbViewSessionAdministrators.Checked,
+                ApplyUsers = cbViewSessionUsers.Checked
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION,
+                PropertyValue = "",
+                ApplyAdministrators = cbControlSessionAdministrators.Checked,
+                ApplyUsers = cbControlSessionUsers.Checked
+            });
+
+            settings.Settings.Add(new RdsServerSetting
+            {
+                PropertyName = RdsServerSettings.DISABLE_CMD,
+                PropertyValue = "",
+                ApplyAdministrators = cbDisableCmdAdministrators.Checked,
+                ApplyUsers = cbDisableCmdUsers.Checked
+            });
+
             return settings;
-        }
-
-        private void BindDefaultSettings(UserSettings settings)
-        {
-            txtTimeout.Text = settings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_VALUE];
-            cbTimeoutAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_ADMINISTRATORS]);
-            cbTimeoutUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.LOCK_SCREEN_TIMEOUT_USERS]);
-
-            cbRunCommandAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_RUN_COMMAND_ADMINISTRATORS]);
-            cbRunCommandUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_RUN_COMMAND_USERS]);
-
-            cbPowershellAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_POWERSHELL_COMMAND_ADMINISTRATORS]);
-            cbPowershellUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_POWERSHELL_COMMAND_USERS]);
-
-            cbHideCDriveAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.HIDE_C_DRIVE_ADMINISTRATORS]);
-            cbHideCDriveUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.HIDE_C_DRIVE_USERS]);
-
-            cbShutdownAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_SHUTDOWN_RESTART_ADMINISTRATORS]);
-            cbShutdownUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.REMOVE_SHUTDOWN_RESTART_USERS]);
-
-            cbTaskManagerAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.DISABLE_TASK_MANAGER_ADMINISTRATORS]);
-            cbTaskManagerUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.DISABLE_TASK_MANAGER_USERS]);
-
-            cbDesktopAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.CHANGE_DESKTOP_DISABLED_ADMINISTRATORS]);
-            cbDesktopUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.CHANGE_DESKTOP_DISABLED_USERS]);
-
-            cbScreenSaverAdministrators.Checked = Convert.ToBoolean(settings[RdsServerSettings.SCREEN_SAVER_DISABLED_ADMINISTRATORS]);
-            cbScreenSaverUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.SCREEN_SAVER_DISABLED_USERS]);
-
-            txtThreshold.Text = settings[RdsServerSettings.DRIVE_SPACE_THRESHOLD_VALUE];
-        }
+        }        
 
         private bool SaveServerSettings()
         {

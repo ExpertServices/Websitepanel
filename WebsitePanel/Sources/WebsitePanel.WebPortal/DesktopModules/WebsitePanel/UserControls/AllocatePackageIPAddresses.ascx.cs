@@ -90,7 +90,13 @@ namespace WebsitePanel.Portal.UserControls
             }
 
             int quotaAllowed = -1;
-            string quotaName = (String.Compare(ResourceGroup, ResourceGroups.VPS, true) == 0) ? Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER : Quotas.WEB_IP_ADDRESSES;
+            string quotaName = Quotas.WEB_IP_ADDRESSES;
+
+            if (String.Compare(ResourceGroup, ResourceGroups.VPS, StringComparison.OrdinalIgnoreCase) == 0)
+                quotaName = Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER;
+            else if (String.Compare(ResourceGroup, ResourceGroups.VPS2012, StringComparison.OrdinalIgnoreCase) == 0)
+                quotaName = Quotas.VPS2012_EXTERNAL_IP_ADDRESSES_NUMBER;
+
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(quotaName))
             {

@@ -20,5 +20,8 @@ namespace WebsitePanel.Providers.Virtualization
 
         public const Int64 Size1G = 0x40000000;
         public const Int64 Size1M = 0x100000;
+
+        public const string KVP_RAM_SUMMARY_KEY = "VM-RAM-Summary";
+        public const string KVP_HDD_SUMMARY_KEY = "VM-HDD-Summary";
     }
 }

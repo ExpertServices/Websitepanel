@@ -20,8 +20,8 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Diagnostics;
     using WebsitePanel.Providers.RemoteDesktopServices;
     using WebsitePanel.Providers.Common;
-    using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.EnterpriseServer.Base.RDS;
+    using WebsitePanel.Providers.HostedSolution;
     
     
     /// <remarks/>
@@ -136,6 +136,8 @@ namespace WebsitePanel.EnterpriseServer {
         private System.Threading.SendOrPostCallback GetRdsServerSettingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback UpdateRdsServerSettingsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ShadowSessionOperationCompleted;
         
         /// <remarks/>
         public esRemoteDesktopServices() {
@@ -300,6 +302,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event UpdateRdsServerSettingsCompletedEventHandler UpdateRdsServerSettingsCompleted;
+        
+        /// <remarks/>
+        public event ShadowSessionCompletedEventHandler ShadowSessionCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2672,6 +2677,53 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ShadowSession", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject ShadowSession(int itemId, string sessionId, bool control) {
+            object[] results = this.Invoke("ShadowSession", new object[] {
+                        itemId,
+                        sessionId,
+                        control});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShadowSession(int itemId, string sessionId, bool control, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShadowSession", new object[] {
+                        itemId,
+                        sessionId,
+                        control}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndShadowSession(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ShadowSessionAsync(int itemId, string sessionId, bool control) {
+            this.ShadowSessionAsync(itemId, sessionId, control, null);
+        }
+        
+        /// <remarks/>
+        public void ShadowSessionAsync(int itemId, string sessionId, bool control, object userState) {
+            if ((this.ShadowSessionOperationCompleted == null)) {
+                this.ShadowSessionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShadowSessionOperationCompleted);
+            }
+            this.InvokeAsync("ShadowSession", new object[] {
+                        itemId,
+                        sessionId,
+                        control}, this.ShadowSessionOperationCompleted, userState);
+        }
+        
+        private void OnShadowSessionOperationCompleted(object arg) {
+            if ((this.ShadowSessionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShadowSessionCompleted(this, new ShadowSessionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -4051,6 +4103,32 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShadowSessionCompletedEventHandler(object sender, ShadowSessionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ShadowSessionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ShadowSessionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
             }
         }
     }

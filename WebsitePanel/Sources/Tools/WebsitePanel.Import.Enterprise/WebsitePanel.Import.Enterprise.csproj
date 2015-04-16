@@ -65,21 +65,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebsitePanel.EnterpriseServer">
-      <HintPath>..\..\WebsitePanel.EnterpriseServer\bin\WebsitePanel.EnterpriseServer.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Base">
-      <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Client">
-      <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Code">
-      <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.Providers.Base">
-      <HintPath>..\..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\VersionInfo.cs">
@@ -215,6 +200,28 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WebsitePanel.EnterpriseServer.Base\WebsitePanel.EnterpriseServer.Base.csproj">
+      <Project>{c09ce910-f16b-48a1-b2cc-c99b8c1cf775}</Project>
+      <Name>WebsitePanel.EnterpriseServer.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WebsitePanel.EnterpriseServer.Client\WebsitePanel.EnterpriseServer.Client.csproj">
+      <Project>{4b344644-a570-477e-adcc-f2b267d6c038}</Project>
+      <Name>WebsitePanel.EnterpriseServer.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WebsitePanel.EnterpriseServer.Code\WebsitePanel.EnterpriseServer.Code.csproj">
+      <Project>{60e39314-659c-4fad-ab91-d0d08e223578}</Project>
+      <Name>WebsitePanel.EnterpriseServer.Code</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WebsitePanel.EnterpriseServer\WebsitePanel.EnterpriseServer.csproj">
+      <Project>{59c7623a-5181-48a5-880a-c9b82b48f589}</Project>
+      <Name>WebsitePanel.EnterpriseServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
+      <Project>{684c932a-6c75-46ac-a327-f3689d89eb42}</Project>
+      <Name>WebsitePanel.Providers.Base</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

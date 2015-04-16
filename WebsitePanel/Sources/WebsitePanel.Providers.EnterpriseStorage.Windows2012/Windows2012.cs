@@ -122,6 +122,49 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             return (SystemFile[]) items.ToArray(typeof (SystemFile));
         }
 
+        public SystemFile[] GetFoldersWithoutFrsm(string organizationId, WebDavSetting[] settings)
+        {
+            ArrayList items = new ArrayList();
+
+            var webDavSettings = GetWebDavSettings(settings);
+
+            foreach (var setting in webDavSettings)
+            {
+                string rootPath = string.Format("{0}:\\{1}\\{2}", setting.LocationDrive, setting.HomeFolder,
+                    organizationId);
+
+                if (Directory.Exists(rootPath))
+                {
+                    DirectoryInfo root = new DirectoryInfo(rootPath);
+                    IWebDav webdav = new Web.WebDav(setting);
+
+                    // get directories
+                    DirectoryInfo[] dirs = root.GetDirectories();
+
+                    foreach (DirectoryInfo dir in dirs)
+                    {
+                        SystemFile folder = new SystemFile();
+
+                        folder.Name = dir.Name;
+                        folder.FullName = dir.FullName;
+                        folder.IsDirectory = true;
+
+                        if (folder.Size == -1)
+                        {
+                            folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
+                        }
+
+                        folder.Url = string.Format("https://{0}/{1}/{2}", setting.Domain, organizationId, dir.Name);
+                        folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
+
+                        items.Add(folder);
+                    }
+                }
+            }
+
+            return (SystemFile[])items.ToArray(typeof(SystemFile));
+        }
+
         public SystemFile GetFolder(string organizationId, string folderName, WebDavSetting setting)
         {
             var webDavSetting = GetWebDavSetting(setting);

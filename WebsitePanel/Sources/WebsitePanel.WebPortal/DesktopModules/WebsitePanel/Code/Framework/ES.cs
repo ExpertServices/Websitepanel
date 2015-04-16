@@ -68,6 +68,11 @@ namespace WebsitePanel.Portal
             get { return GetCachedProxy<esVirtualizationServer>(); }
         }
 
+        public esVirtualizationServer2012 VPS2012
+        {
+            get { return GetCachedProxy<esVirtualizationServer2012>(); }
+        }
+
         public esVirtualizationServerForPrivateCloud VPSPC
         {
             get { return GetCachedProxy<esVirtualizationServerForPrivateCloud>(); }
@@ -197,6 +202,11 @@ namespace WebsitePanel.Portal
 		{
 			get { return GetCachedProxy<esHostedSharePointServers>(); }
 		}
+
+        public esHostedSharePointServersEnt HostedSharePointServersEnt
+        {
+            get { return GetCachedProxy<esHostedSharePointServersEnt>(); }
+        }
 
         public esImport Import
         {

@@ -3540,6 +3540,21 @@ namespace WebsitePanel.EnterpriseServer
                                         new SqlParameter("@Recursive", recursive));
             return reader;
         }
+        public static IDataReader GetVirtualMachinesPaged2012(int actorId, int packageId, string filterColumn, string filterValue,
+            string sortColumn, int startRow, int maximumRows, bool recursive)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                     "GetVirtualMachinesPaged2012",
+                                        new SqlParameter("@ActorID", actorId),
+                                        new SqlParameter("@PackageID", packageId),
+                                        new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
+                                        new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
+                                        new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
+                                        new SqlParameter("@StartRow", startRow),
+                                        new SqlParameter("@MaximumRows", maximumRows),
+                                        new SqlParameter("@Recursive", recursive));
+            return reader;
+        }
         #endregion
 
         public static IDataReader GetVirtualMachinesForPCPaged(int actorId, int packageId, string filterColumn, string filterValue,

@@ -383,6 +383,13 @@ namespace WebsitePanel.EnterpriseServer
                 if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE] != null)
                     org.WarningSharePointStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE].QuotaAllocatedValue;
 
+                if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_STORAGE_SIZE] != null)
+                    org.MaxSharePointEnterpriseStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_STORAGE_SIZE].QuotaAllocatedValue;
+
+
+                if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_STORAGE_SIZE] != null)
+                    org.WarningSharePointEnterpriseStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_STORAGE_SIZE].QuotaAllocatedValue;
+
 
                 //add organization to package items                
                 itemId = AddOrganizationToPackageItems(org, serviceId, packageId, organizationName, organizationId, domainName);
@@ -670,6 +677,16 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
+                try
+                {
+                    HostedSharePointServerEntController.DeleteSiteCollections(itemId);
+                }
+                catch (Exception ex)
+                {
+                    successful = false;
+                    TaskManager.WriteError(ex);
+                }
+
                 if (org.IsOCSOrganization)
                 {
                     DeleteOCSUsers(itemId, ref successful);
@@ -939,7 +956,9 @@ namespace WebsitePanel.EnterpriseServer
                 stats.CreatedUsers = 5;
                 stats.AllocatedUsers = 10;
                 stats.CreatedSharePointSiteCollections = 1;
+                stats.CreatedSharePointEnterpriseSiteCollections = 1;
                 stats.AllocatedSharePointSiteCollections = 5;
+                stats.AllocatedSharePointEnterpriseSiteCollections = 5;
                 return stats;
             }
             #endregion
@@ -970,6 +989,13 @@ namespace WebsitePanel.EnterpriseServer
                         SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, org.Id, string.Empty, string.Empty, string.Empty, 0, 0);
                         stats.CreatedSharePointSiteCollections = sharePointStats.TotalRowCount;
                     }
+
+                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                    {
+                        SharePointEnterpriseSiteCollectionListPaged sharePointStats = HostedSharePointServerEntController.GetSiteCollectionsPaged(org.PackageId, org.Id, string.Empty, string.Empty, string.Empty, 0, 0);
+                        stats.CreatedSharePointEnterpriseSiteCollections = sharePointStats.TotalRowCount;
+                    }
+
 
                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                     {
@@ -1050,7 +1076,14 @@ namespace WebsitePanel.EnterpriseServer
                                     {
                                         SharePointSiteCollectionListPaged sharePointStats = HostedSharePointServerController.GetSiteCollectionsPaged(org.PackageId, o.Id, string.Empty, string.Empty, string.Empty, 0, 0);
                                         stats.CreatedSharePointSiteCollections += sharePointStats.TotalRowCount;
+                                    }
+
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                                    {
+                                        SharePointEnterpriseSiteCollectionListPaged sharePointStats = HostedSharePointServerEntController.GetSiteCollectionsPaged(org.PackageId, o.Id, string.Empty, string.Empty, string.Empty, 0, 0);
+                                        stats.CreatedSharePointEnterpriseSiteCollections += sharePointStats.TotalRowCount;
                                     }                                    
+
 
                                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                                     {
@@ -1117,6 +1150,11 @@ namespace WebsitePanel.EnterpriseServer
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 {
                     stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].QuotaAllocatedValue;
+                }
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                {
+                    stats.AllocatedSharePointEnterpriseSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_SITES].QuotaAllocatedValue;
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))

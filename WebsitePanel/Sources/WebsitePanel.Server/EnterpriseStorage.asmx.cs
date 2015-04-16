@@ -76,6 +76,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public SystemFile[] GetFoldersWithoutFrsm(string organizationId, WebDavSetting[] settings)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFolders", ProviderSettings.ProviderName);
+                SystemFile[] result = EnterpriseStorageProvider.GetFoldersWithoutFrsm(organizationId, settings);
+                Log.WriteEnd("'{0}' GetFolders", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFolders", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public SystemFile GetFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try

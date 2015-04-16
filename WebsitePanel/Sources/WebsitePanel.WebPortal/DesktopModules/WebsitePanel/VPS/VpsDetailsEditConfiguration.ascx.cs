@@ -96,9 +96,6 @@ namespace WebsitePanel.Portal.VPS
                 chkExternalNetworkEnabled.Checked = vm.ExternalNetworkEnabled;
                 chkPrivateNetworkEnabled.Checked = vm.PrivateNetworkEnabled;
 
-                // toggle controls
-
-
                 // other quotas
                 BindCheckboxOption(chkDvdInstalled, Quotas.VPS_DVD_ENABLED);
                 chkBootFromCd.Enabled = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_BOOT_CD_ALLOWED);

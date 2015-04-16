@@ -3120,1435 +3120,1435 @@ namespace WebsitePanel.EnterpriseServer {
         }
     }
     
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachinesCompletedEventHandler(object sender, GetVirtualMachinesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachinesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachinesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachineMetaItemsPaged Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachineMetaItemsPaged)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachinesByServiceIdCompletedEventHandler(object sender, GetVirtualMachinesByServiceIdCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachinesByServiceIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachinesByServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachine[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachine[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineItemCompletedEventHandler(object sender, GetVirtualMachineItemCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineItemCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineItemCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachine Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachine)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void EvaluateVirtualMachineTemplateCompletedEventHandler(object sender, EvaluateVirtualMachineTemplateCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class EvaluateVirtualMachineTemplateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal EvaluateVirtualMachineTemplateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetExternalNetworkDetailsCompletedEventHandler(object sender, GetExternalNetworkDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetExternalNetworkDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetExternalNetworkDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public NetworkAdapterDetails Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((NetworkAdapterDetails)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetPackagePrivateIPAddressesPagedCompletedEventHandler(object sender, GetPackagePrivateIPAddressesPagedCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPackagePrivateIPAddressesPagedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPackagePrivateIPAddressesPagedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PrivateIPAddressesPaged Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PrivateIPAddressesPaged)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetPackagePrivateIPAddressesCompletedEventHandler(object sender, GetPackagePrivateIPAddressesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPackagePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPackagePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public PrivateIPAddress[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((PrivateIPAddress[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetPrivateNetworkDetailsCompletedEventHandler(object sender, GetPrivateNetworkDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPrivateNetworkDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPrivateNetworkDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public NetworkAdapterDetails Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((NetworkAdapterDetails)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetSpaceUserPermissionsCompletedEventHandler(object sender, GetSpaceUserPermissionsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSpaceUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSpaceUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachinePermission[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachinePermission[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void UpdateSpaceUserPermissionsCompletedEventHandler(object sender, UpdateSpaceUserPermissionsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class UpdateSpaceUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal UpdateSpaceUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetSpaceAuditLogCompletedEventHandler(object sender, GetSpaceAuditLogCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSpaceAuditLogCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSpaceAuditLogCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LogRecord[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LogRecord[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineAuditLogCompletedEventHandler(object sender, GetVirtualMachineAuditLogCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineAuditLogCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineAuditLogCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LogRecord[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LogRecord[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetOperatingSystemTemplatesCompletedEventHandler(object sender, GetOperatingSystemTemplatesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetOperatingSystemTemplatesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetOperatingSystemTemplatesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LibraryItem[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LibraryItem[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetOperatingSystemTemplatesByServiceIdCompletedEventHandler(object sender, GetOperatingSystemTemplatesByServiceIdCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetOperatingSystemTemplatesByServiceIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetOperatingSystemTemplatesByServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LibraryItem[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LibraryItem[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetMaximumCpuCoresNumberCompletedEventHandler(object sender, GetMaximumCpuCoresNumberCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetMaximumCpuCoresNumberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetMaximumCpuCoresNumberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetDefaultExportPathCompletedEventHandler(object sender, GetDefaultExportPathCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDefaultExportPathCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDefaultExportPathCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void CreateDefaultVirtualMachineCompletedEventHandler(object sender, CreateDefaultVirtualMachineCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateDefaultVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateDefaultVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public IntResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((IntResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void CreateVirtualMachineCompletedEventHandler(object sender, CreateVirtualMachineCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public IntResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((IntResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void ImportVirtualMachineCompletedEventHandler(object sender, ImportVirtualMachineCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ImportVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ImportVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public IntResult Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((IntResult)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineThumbnailCompletedEventHandler(object sender, GetVirtualMachineThumbnailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineThumbnailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineThumbnailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public byte[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((byte[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineGeneralDetailsCompletedEventHandler(object sender, GetVirtualMachineGeneralDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineGeneralDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineGeneralDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachine Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachine)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineExtendedInfoCompletedEventHandler(object sender, GetVirtualMachineExtendedInfoCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineExtendedInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineExtendedInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachine Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachine)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void CancelVirtualMachineJobCompletedEventHandler(object sender, CancelVirtualMachineJobCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CancelVirtualMachineJobCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CancelVirtualMachineJobCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void UpdateVirtualMachineHostNameCompletedEventHandler(object sender, UpdateVirtualMachineHostNameCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class UpdateVirtualMachineHostNameCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal UpdateVirtualMachineHostNameCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void ChangeVirtualMachineStateCompletedEventHandler(object sender, ChangeVirtualMachineStateCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ChangeVirtualMachineStateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ChangeVirtualMachineStateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineJobsCompletedEventHandler(object sender, GetVirtualMachineJobsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineJobsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineJobsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ConcreteJob[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ConcreteJob[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void ChangeAdministratorPasswordCompletedEventHandler(object sender, ChangeAdministratorPasswordCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ChangeAdministratorPasswordCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ChangeAdministratorPasswordCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void UpdateVirtualMachineConfigurationCompletedEventHandler(object sender, UpdateVirtualMachineConfigurationCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class UpdateVirtualMachineConfigurationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal UpdateVirtualMachineConfigurationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetInsertedDvdDiskCompletedEventHandler(object sender, GetInsertedDvdDiskCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetInsertedDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetInsertedDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LibraryItem Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LibraryItem)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetLibraryDisksCompletedEventHandler(object sender, GetLibraryDisksCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetLibraryDisksCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetLibraryDisksCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public LibraryItem[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((LibraryItem[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void InsertDvdDiskCompletedEventHandler(object sender, InsertDvdDiskCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class InsertDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal InsertDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void EjectDvdDiskCompletedEventHandler(object sender, EjectDvdDiskCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class EjectDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal EjectDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineSnapshotsCompletedEventHandler(object sender, GetVirtualMachineSnapshotsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineSnapshotsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineSnapshotsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachineSnapshot[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachineSnapshot[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetSnapshotCompletedEventHandler(object sender, GetSnapshotCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachineSnapshot Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachineSnapshot)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void CreateSnapshotCompletedEventHandler(object sender, CreateSnapshotCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CreateSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CreateSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void ApplySnapshotCompletedEventHandler(object sender, ApplySnapshotCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ApplySnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ApplySnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void RenameSnapshotCompletedEventHandler(object sender, RenameSnapshotCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class RenameSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal RenameSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DeleteSnapshotCompletedEventHandler(object sender, DeleteSnapshotCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DeleteSnapshotSubtreeCompletedEventHandler(object sender, DeleteSnapshotSubtreeCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteSnapshotSubtreeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteSnapshotSubtreeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetSnapshotThumbnailCompletedEventHandler(object sender, GetSnapshotThumbnailCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSnapshotThumbnailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSnapshotThumbnailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public byte[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((byte[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetExternalNetworkAdapterDetailsCompletedEventHandler(object sender, GetExternalNetworkAdapterDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetExternalNetworkAdapterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetExternalNetworkAdapterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public NetworkAdapterDetails Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((NetworkAdapterDetails)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void AddVirtualMachineExternalIPAddressesCompletedEventHandler(object sender, AddVirtualMachineExternalIPAddressesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class AddVirtualMachineExternalIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal AddVirtualMachineExternalIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void SetVirtualMachinePrimaryExternalIPAddressCompletedEventHandler(object sender, SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DeleteVirtualMachineExternalIPAddressesCompletedEventHandler(object sender, DeleteVirtualMachineExternalIPAddressesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteVirtualMachineExternalIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteVirtualMachineExternalIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetPrivateNetworkAdapterDetailsCompletedEventHandler(object sender, GetPrivateNetworkAdapterDetailsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPrivateNetworkAdapterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetPrivateNetworkAdapterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public NetworkAdapterDetails Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((NetworkAdapterDetails)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void AddVirtualMachinePrivateIPAddressesCompletedEventHandler(object sender, AddVirtualMachinePrivateIPAddressesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class AddVirtualMachinePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal AddVirtualMachinePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void SetVirtualMachinePrimaryPrivateIPAddressCompletedEventHandler(object sender, SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DeleteVirtualMachinePrivateIPAddressesCompletedEventHandler(object sender, DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachinePermissionsCompletedEventHandler(object sender, GetVirtualMachinePermissionsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachinePermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachinePermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualMachinePermission[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualMachinePermission[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void UpdateVirtualMachineUserPermissionsCompletedEventHandler(object sender, UpdateVirtualMachineUserPermissionsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class UpdateVirtualMachineUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal UpdateVirtualMachineUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetExternalSwitchesCompletedEventHandler(object sender, GetExternalSwitchesCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetExternalSwitchesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetExternalSwitchesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public VirtualSwitch[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((VirtualSwitch[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DeleteVirtualMachineCompletedEventHandler(object sender, DeleteVirtualMachineCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void ReinstallVirtualMachineCompletedEventHandler(object sender, ReinstallVirtualMachineCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ReinstallVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal ReinstallVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetVirtualMachineSummaryTextCompletedEventHandler(object sender, GetVirtualMachineSummaryTextCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetVirtualMachineSummaryTextCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetVirtualMachineSummaryTextCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void SendVirtualMachineSummaryLetterCompletedEventHandler(object sender, SendVirtualMachineSummaryLetterCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SendVirtualMachineSummaryLetterCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SendVirtualMachineSummaryLetterCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public ResultObject Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((ResultObject)(this.results[0]));
-            }
-        }
-    }
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachinesCompletedEventHandler(object sender, GetVirtualMachinesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachinesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachinesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachineMetaItemsPaged Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachineMetaItemsPaged)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachinesByServiceIdCompletedEventHandler(object sender, GetVirtualMachinesByServiceIdCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachinesByServiceIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachinesByServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachine[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachine[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineItemCompletedEventHandler(object sender, GetVirtualMachineItemCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineItemCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineItemCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachine Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachine)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void EvaluateVirtualMachineTemplateCompletedEventHandler(object sender, EvaluateVirtualMachineTemplateCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class EvaluateVirtualMachineTemplateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal EvaluateVirtualMachineTemplateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public string Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((string)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetExternalNetworkDetailsCompletedEventHandler(object sender, GetExternalNetworkDetailsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetExternalNetworkDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetExternalNetworkDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public NetworkAdapterDetails Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((NetworkAdapterDetails)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetPackagePrivateIPAddressesPagedCompletedEventHandler(object sender, GetPackagePrivateIPAddressesPagedCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetPackagePrivateIPAddressesPagedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetPackagePrivateIPAddressesPagedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public PrivateIPAddressesPaged Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((PrivateIPAddressesPaged)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetPackagePrivateIPAddressesCompletedEventHandler(object sender, GetPackagePrivateIPAddressesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetPackagePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetPackagePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public PrivateIPAddress[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((PrivateIPAddress[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetPrivateNetworkDetailsCompletedEventHandler(object sender, GetPrivateNetworkDetailsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetPrivateNetworkDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetPrivateNetworkDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public NetworkAdapterDetails Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((NetworkAdapterDetails)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetSpaceUserPermissionsCompletedEventHandler(object sender, GetSpaceUserPermissionsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetSpaceUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetSpaceUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachinePermission[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachinePermission[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void UpdateSpaceUserPermissionsCompletedEventHandler(object sender, UpdateSpaceUserPermissionsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class UpdateSpaceUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal UpdateSpaceUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public int Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((int)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetSpaceAuditLogCompletedEventHandler(object sender, GetSpaceAuditLogCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetSpaceAuditLogCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetSpaceAuditLogCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LogRecord[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LogRecord[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineAuditLogCompletedEventHandler(object sender, GetVirtualMachineAuditLogCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineAuditLogCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineAuditLogCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LogRecord[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LogRecord[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetOperatingSystemTemplatesCompletedEventHandler(object sender, GetOperatingSystemTemplatesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetOperatingSystemTemplatesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetOperatingSystemTemplatesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LibraryItem[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LibraryItem[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetOperatingSystemTemplatesByServiceIdCompletedEventHandler(object sender, GetOperatingSystemTemplatesByServiceIdCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetOperatingSystemTemplatesByServiceIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetOperatingSystemTemplatesByServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LibraryItem[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LibraryItem[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetMaximumCpuCoresNumberCompletedEventHandler(object sender, GetMaximumCpuCoresNumberCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetMaximumCpuCoresNumberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetMaximumCpuCoresNumberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public int Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((int)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetDefaultExportPathCompletedEventHandler(object sender, GetDefaultExportPathCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetDefaultExportPathCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetDefaultExportPathCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public string Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((string)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void CreateDefaultVirtualMachineCompletedEventHandler(object sender, CreateDefaultVirtualMachineCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class CreateDefaultVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal CreateDefaultVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public IntResult Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((IntResult)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void CreateVirtualMachineCompletedEventHandler(object sender, CreateVirtualMachineCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class CreateVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal CreateVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public IntResult Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((IntResult)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void ImportVirtualMachineCompletedEventHandler(object sender, ImportVirtualMachineCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class ImportVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal ImportVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public IntResult Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((IntResult)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineThumbnailCompletedEventHandler(object sender, GetVirtualMachineThumbnailCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineThumbnailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineThumbnailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public byte[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((byte[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineGeneralDetailsCompletedEventHandler(object sender, GetVirtualMachineGeneralDetailsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineGeneralDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineGeneralDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachine Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachine)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineExtendedInfoCompletedEventHandler(object sender, GetVirtualMachineExtendedInfoCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineExtendedInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineExtendedInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachine Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachine)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void CancelVirtualMachineJobCompletedEventHandler(object sender, CancelVirtualMachineJobCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class CancelVirtualMachineJobCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal CancelVirtualMachineJobCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public int Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((int)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void UpdateVirtualMachineHostNameCompletedEventHandler(object sender, UpdateVirtualMachineHostNameCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class UpdateVirtualMachineHostNameCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal UpdateVirtualMachineHostNameCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void ChangeVirtualMachineStateCompletedEventHandler(object sender, ChangeVirtualMachineStateCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class ChangeVirtualMachineStateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal ChangeVirtualMachineStateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineJobsCompletedEventHandler(object sender, GetVirtualMachineJobsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineJobsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineJobsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ConcreteJob[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ConcreteJob[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void ChangeAdministratorPasswordCompletedEventHandler(object sender, ChangeAdministratorPasswordCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class ChangeAdministratorPasswordCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal ChangeAdministratorPasswordCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void UpdateVirtualMachineConfigurationCompletedEventHandler(object sender, UpdateVirtualMachineConfigurationCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class UpdateVirtualMachineConfigurationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal UpdateVirtualMachineConfigurationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetInsertedDvdDiskCompletedEventHandler(object sender, GetInsertedDvdDiskCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetInsertedDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetInsertedDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LibraryItem Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LibraryItem)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetLibraryDisksCompletedEventHandler(object sender, GetLibraryDisksCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetLibraryDisksCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetLibraryDisksCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public LibraryItem[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((LibraryItem[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void InsertDvdDiskCompletedEventHandler(object sender, InsertDvdDiskCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class InsertDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal InsertDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void EjectDvdDiskCompletedEventHandler(object sender, EjectDvdDiskCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class EjectDvdDiskCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal EjectDvdDiskCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineSnapshotsCompletedEventHandler(object sender, GetVirtualMachineSnapshotsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineSnapshotsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineSnapshotsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachineSnapshot[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachineSnapshot[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetSnapshotCompletedEventHandler(object sender, GetSnapshotCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachineSnapshot Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachineSnapshot)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void CreateSnapshotCompletedEventHandler(object sender, CreateSnapshotCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class CreateSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal CreateSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void ApplySnapshotCompletedEventHandler(object sender, ApplySnapshotCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class ApplySnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal ApplySnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void RenameSnapshotCompletedEventHandler(object sender, RenameSnapshotCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class RenameSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal RenameSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void DeleteSnapshotCompletedEventHandler(object sender, DeleteSnapshotCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class DeleteSnapshotCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal DeleteSnapshotCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void DeleteSnapshotSubtreeCompletedEventHandler(object sender, DeleteSnapshotSubtreeCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class DeleteSnapshotSubtreeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal DeleteSnapshotSubtreeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetSnapshotThumbnailCompletedEventHandler(object sender, GetSnapshotThumbnailCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetSnapshotThumbnailCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetSnapshotThumbnailCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public byte[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((byte[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetExternalNetworkAdapterDetailsCompletedEventHandler(object sender, GetExternalNetworkAdapterDetailsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetExternalNetworkAdapterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetExternalNetworkAdapterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public NetworkAdapterDetails Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((NetworkAdapterDetails)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void AddVirtualMachineExternalIPAddressesCompletedEventHandler(object sender, AddVirtualMachineExternalIPAddressesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class AddVirtualMachineExternalIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal AddVirtualMachineExternalIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void SetVirtualMachinePrimaryExternalIPAddressCompletedEventHandler(object sender, SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal SetVirtualMachinePrimaryExternalIPAddressCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void DeleteVirtualMachineExternalIPAddressesCompletedEventHandler(object sender, DeleteVirtualMachineExternalIPAddressesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class DeleteVirtualMachineExternalIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal DeleteVirtualMachineExternalIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetPrivateNetworkAdapterDetailsCompletedEventHandler(object sender, GetPrivateNetworkAdapterDetailsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetPrivateNetworkAdapterDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetPrivateNetworkAdapterDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public NetworkAdapterDetails Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((NetworkAdapterDetails)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void AddVirtualMachinePrivateIPAddressesCompletedEventHandler(object sender, AddVirtualMachinePrivateIPAddressesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class AddVirtualMachinePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal AddVirtualMachinePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void SetVirtualMachinePrimaryPrivateIPAddressCompletedEventHandler(object sender, SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal SetVirtualMachinePrimaryPrivateIPAddressCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void DeleteVirtualMachinePrivateIPAddressesCompletedEventHandler(object sender, DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal DeleteVirtualMachinePrivateIPAddressesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachinePermissionsCompletedEventHandler(object sender, GetVirtualMachinePermissionsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachinePermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachinePermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualMachinePermission[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualMachinePermission[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void UpdateVirtualMachineUserPermissionsCompletedEventHandler(object sender, UpdateVirtualMachineUserPermissionsCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class UpdateVirtualMachineUserPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal UpdateVirtualMachineUserPermissionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public int Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((int)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetExternalSwitchesCompletedEventHandler(object sender, GetExternalSwitchesCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetExternalSwitchesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetExternalSwitchesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public VirtualSwitch[] Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((VirtualSwitch[])(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void DeleteVirtualMachineCompletedEventHandler(object sender, DeleteVirtualMachineCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class DeleteVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal DeleteVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void ReinstallVirtualMachineCompletedEventHandler(object sender, ReinstallVirtualMachineCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class ReinstallVirtualMachineCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal ReinstallVirtualMachineCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public int Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((int)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void GetVirtualMachineSummaryTextCompletedEventHandler(object sender, GetVirtualMachineSummaryTextCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class GetVirtualMachineSummaryTextCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal GetVirtualMachineSummaryTextCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public string Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((string)(this.results[0]));
+    //        }
+    //    }
+    //}
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //public delegate void SendVirtualMachineSummaryLetterCompletedEventHandler(object sender, SendVirtualMachineSummaryLetterCompletedEventArgs e);
+    
+    ///// <remarks/>
+    //[System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    //[System.Diagnostics.DebuggerStepThroughAttribute()]
+    //[System.ComponentModel.DesignerCategoryAttribute("code")]
+    //public partial class SendVirtualMachineSummaryLetterCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+    //    private object[] results;
+        
+    //    internal SendVirtualMachineSummaryLetterCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+    //            base(exception, cancelled, userState) {
+    //        this.results = results;
+    //    }
+        
+    //    /// <remarks/>
+    //    public ResultObject Result {
+    //        get {
+    //            this.RaiseExceptionIfNecessary();
+    //            return ((ResultObject)(this.results[0]));
+    //        }
+    //    }
+    //}
 
     //Hyper-V Cloud
     /// <remarks/>

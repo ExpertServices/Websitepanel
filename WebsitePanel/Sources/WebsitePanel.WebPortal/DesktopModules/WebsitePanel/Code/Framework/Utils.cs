@@ -337,7 +337,7 @@ namespace WebsitePanel.Portal
             {
                 if (((CheckBox)gvr.FindControl(checkboxName)).Checked)
                 {
-                    string userId = gridView.DataKeys[gvr.DataItemIndex].Value.ToString();
+                    string userId = gridView.DataKeys[gvr.DataItemIndex % gridView.PageSize].Value.ToString();
                     userIds.Add((T)Convert.ChangeType(userId, typeof(T)));
                 }
             }

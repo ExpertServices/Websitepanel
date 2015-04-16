@@ -123,6 +123,15 @@
   <data name="cbUsers.Text" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="secChangeDesktop.Text" xml:space="preserve">
+    <value>Changing Desktop Disabled</value>
+  </data>
+  <data name="secControlSession.Text" xml:space="preserve">
+    <value>Control RDS Session without Users's Permission</value>
+  </data>
+  <data name="secDisableCmd.Text" xml:space="preserve">
+    <value>Disable Command Prompt</value>
+  </data>
   <data name="secDriveSpace.Text" xml:space="preserve">
     <value>Drive Space Threshold</value>
   </data>
@@ -145,9 +154,9 @@
     <value>Disable Task Manager</value>
   </data>
   <data name="secTimeout.Text" xml:space="preserve">
-    <value>Lock Screen Timeout</value>
+    <value>Lock Screen Timeout (sec.)</value>
   </data>
-  <data name="sekChangeDesktop.Text" xml:space="preserve">
-    <value>Changing Desktop Disabled</value>
+  <data name="secViewSession.Text" xml:space="preserve">
+    <value>View RDS Session without Users's Permission</value>
   </data>
 </root>

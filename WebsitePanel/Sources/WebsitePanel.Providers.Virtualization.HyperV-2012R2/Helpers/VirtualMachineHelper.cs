@@ -34,7 +34,6 @@ namespace WebsitePanel.Providers.Virtualization
 
         public static int GetVMProcessors(PowerShellManager powerShell, string name)
         {
-
             int procs = 0;
 
             Command cmd = new Command("Get-VMProcessor");
@@ -50,46 +49,15 @@ namespace WebsitePanel.Providers.Virtualization
             return procs;
         }
 
-        public static MemoryInfo GetVMMemory(PowerShellManager powerShell, string name)
-        {
-            MemoryInfo info = new MemoryInfo();
-
-            Command cmd = new Command("Get-VMMemory");
-
-            cmd.Parameters.Add("VMName", name);
-
-            Collection<PSObject> result = powerShell.Execute(cmd, true);
-            if (result != null && result.Count > 0)
-            {
-                info.DynamicMemoryEnabled = Convert.ToBoolean(result[0].GetProperty("DynamicMemoryEnabled"));
-                info.Startup = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Startup")) / Constants.Size1M);
-                info.Minimum = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Minimum")) / Constants.Size1M);
-                info.Maximum = Convert.ToInt32(Convert.ToInt64(result[0].GetProperty("Maximum")) / Constants.Size1M);
-                info.Buffer = Convert.ToInt32(result[0].GetProperty("Buffer"));
-                info.Priority = Convert.ToInt32(result[0].GetProperty("Priority"));
-            }
-            return info;
-        }
-
         public static void UpdateProcessors(PowerShellManager powerShell, VirtualMachine vm, int cpuCores, int cpuLimitSettings, int cpuReserveSettings, int cpuWeightSettings)
         {
             Command cmd = new Command("Set-VMProcessor");
 
             cmd.Parameters.Add("VMName", vm.Name);
             cmd.Parameters.Add("Count", cpuCores);
-            cmd.Parameters.Add("Maximum", Convert.ToInt64(cpuLimitSettings * 1000));
-            cmd.Parameters.Add("Reserve", Convert.ToInt64(cpuReserveSettings * 1000));
+            cmd.Parameters.Add("Maximum", cpuLimitSettings);
+            cmd.Parameters.Add("Reserve", cpuReserveSettings);
             cmd.Parameters.Add("RelativeWeight", cpuWeightSettings);
-
-            powerShell.Execute(cmd, true);
-        }
-
-        public static void UpdateMemory(PowerShellManager powerShell, VirtualMachine vm, long ramMB)
-        {
-            Command cmd = new Command("Set-VMMemory");
-
-            cmd.Parameters.Add("VMName", vm.Name);
-            cmd.Parameters.Add("StartupBytes", ramMB * Constants.Size1M);
 
             powerShell.Execute(cmd, true);
         }
