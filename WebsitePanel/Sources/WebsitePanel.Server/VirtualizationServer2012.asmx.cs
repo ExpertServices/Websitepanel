@@ -875,6 +875,7 @@ namespace WebsitePanel.Server
 
         #region Replication
 
+        [WebMethod, SoapHeader("settings")]
         public List<CertificateInfo> GetCertificates(string remoteServer)
         {
             try
@@ -891,6 +892,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void SetReplicaServer(string remoteServer, string thumbprint, string storagePath)
         {
             try
@@ -906,6 +908,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void UnsetReplicaServer(string remoteServer)
         {
             try
@@ -921,6 +924,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication)
         {
             try
@@ -936,6 +940,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void SetVmReplication(string vmId, string replicaServer, VmReplication replication)
         {
             try
@@ -951,6 +956,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void TestReplicationServer(string vmId, string replicaServer, string localThumbprint)
         {
             try
@@ -966,6 +972,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void StartInitialReplication(string vmId)
         {
             try
@@ -981,6 +988,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public VmReplication GetReplication(string vmId)
         {
             try
@@ -997,6 +1005,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public bool DisableVmReplication(string vmId, string replicaServer)
         {
             try
@@ -1013,6 +1022,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public ReplicationDetailInfo GetReplicationInfo(string vmId)
         {
             try
@@ -1029,6 +1039,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void PauseReplication(string vmId)
         {
             try
@@ -1044,6 +1055,7 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
         public void ResumeReplication(string vmId)
         {
             try
