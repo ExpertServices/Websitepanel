@@ -27,9 +27,9 @@ namespace WebsitePanel.Providers.Virtualization2012 {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="VirtualizationServerSoap", Namespace="http://smbsaas/websitepanel/server/")]
+    [System.Web.Services.WebServiceBindingAttribute(Name="VirtualizationServer2012Soap", Namespace="http://smbsaas/websitepanel/server/")]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
-    public partial class VirtualizationServer : Microsoft.Web.Services3.WebServicesClientProtocol {
+    public partial class VirtualizationServer2012 : Microsoft.Web.Services3.WebServicesClientProtocol {
         
         public ServiceProviderSettingsSoapHeader ServiceProviderSettingsSoapHeaderValue;
         
@@ -128,7 +128,7 @@ namespace WebsitePanel.Providers.Virtualization2012 {
         private System.Threading.SendOrPostCallback GetProcessorCoresNumberOperationCompleted;
         
         /// <remarks/>
-        public VirtualizationServer() {
+        public VirtualizationServer2012() {
             this.Url = "http://172.31.0.5:9090/VirtualizationServer2012.asmx";
         }
         
