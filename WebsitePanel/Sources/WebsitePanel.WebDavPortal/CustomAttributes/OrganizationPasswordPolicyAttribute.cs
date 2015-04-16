@@ -13,23 +13,18 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class OrganizationPasswordPolicyAttribute : ValidationAttribute, IClientValidatable
     {
-        public OrganizationPasswordSettings Settings { get; private set; }
+        public int ItemId { get; private set; }
 
         public OrganizationPasswordPolicyAttribute()
         {
-            int itemId = -1;
-
             if (WspContext.User != null)
             {
-                itemId = WspContext.User.ItemId;
+                ItemId = WspContext.User.ItemId;
             }
             else if (HttpContext.Current != null && HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] != null)
             {
-                itemId = (int) HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId];
+                ItemId = (int)HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId];
             }
-
-
-            Settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(itemId);
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -38,44 +33,46 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
             {
                 var resultMessages = new List<string>();
 
-                if (Settings != null)
+                var settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(ItemId);
+
+                if (settings != null)
                 {
                     var valueString = value.ToString();
 
-                    if (valueString.Length < Settings.MinimumLength)
+                    if (valueString.Length < settings.MinimumLength)
                     {
                         resultMessages.Add(string.Format(Resources.Messages.PasswordMinLengthFormat,
-                            Settings.MinimumLength));
+                            settings.MinimumLength));
                     }
 
-                    if (valueString.Length > Settings.MaximumLength)
+                    if (valueString.Length > settings.MaximumLength)
                     {
                         resultMessages.Add(string.Format(Resources.Messages.PasswordMaxLengthFormat,
-                            Settings.MaximumLength));
+                            settings.MaximumLength));
                     }
 
-                    if (Settings.PasswordComplexityEnabled)
+                    if (settings.PasswordComplexityEnabled)
                     {
                         var symbolsCount = valueString.Count(Char.IsSymbol);
                         var numbersCount = valueString.Count(Char.IsDigit);
                         var upperLetterCount = valueString.Count(Char.IsUpper);
 
-                        if (upperLetterCount < Settings.UppercaseLettersCount)
+                        if (upperLetterCount < settings.UppercaseLettersCount)
                         {
                             resultMessages.Add(string.Format(Resources.Messages.PasswordUppercaseCountFormat,
-                                Settings.UppercaseLettersCount));
+                                settings.UppercaseLettersCount));
                         }
 
-                        if (numbersCount < Settings.NumbersCount)
+                        if (numbersCount < settings.NumbersCount)
                         {
                             resultMessages.Add(string.Format(Resources.Messages.PasswordNumbersCountFormat,
-                                Settings.NumbersCount));
+                                settings.NumbersCount));
                         }
 
-                        if (symbolsCount < Settings.SymbolsCount)
+                        if (symbolsCount < settings.SymbolsCount)
                         {
                             resultMessages.Add(string.Format(Resources.Messages.PasswordSymbolsCountFormat,
-                                Settings.SymbolsCount));
+                                settings.SymbolsCount));
                         }
                     }
 
@@ -89,44 +86,46 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
 
         public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata, ControllerContext context)
         {
+            var settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(ItemId);
+
             var rule = new ModelClientValidationRule();
 
-            rule.ErrorMessage = string.Format(Resources.Messages.PasswordMinLengthFormat, Settings.MinimumLength);
-            rule.ValidationParameters.Add("count", Settings.MinimumLength);
+            rule.ErrorMessage = string.Format(Resources.Messages.PasswordMinLengthFormat, settings.MinimumLength);
+            rule.ValidationParameters.Add("count", settings.MinimumLength);
             rule.ValidationType = "minimumlength";
 
             yield return rule;
 
             rule = new ModelClientValidationRule();
 
-            rule.ErrorMessage = string.Format(Resources.Messages.PasswordMaxLengthFormat, Settings.MaximumLength);
-            rule.ValidationParameters.Add("count", Settings.MaximumLength);
+            rule.ErrorMessage = string.Format(Resources.Messages.PasswordMaxLengthFormat, settings.MaximumLength);
+            rule.ValidationParameters.Add("count", settings.MaximumLength);
             rule.ValidationType = "maximumlength";
 
             yield return rule;
 
-            if (Settings.PasswordComplexityEnabled)
+            if (settings.PasswordComplexityEnabled)
             {
                 rule = new ModelClientValidationRule();
 
-                rule.ErrorMessage = string.Format(Resources.Messages.PasswordUppercaseCountFormat, Settings.UppercaseLettersCount);
-                rule.ValidationParameters.Add("count", Settings.UppercaseLettersCount);
+                rule.ErrorMessage = string.Format(Resources.Messages.PasswordUppercaseCountFormat, settings.UppercaseLettersCount);
+                rule.ValidationParameters.Add("count", settings.UppercaseLettersCount);
                 rule.ValidationType = "uppercasecount";
 
                 yield return rule;
 
                 rule = new ModelClientValidationRule();
 
-                rule.ErrorMessage = string.Format(Resources.Messages.PasswordNumbersCountFormat, Settings.NumbersCount);
-                rule.ValidationParameters.Add("count", Settings.NumbersCount);
+                rule.ErrorMessage = string.Format(Resources.Messages.PasswordNumbersCountFormat, settings.NumbersCount);
+                rule.ValidationParameters.Add("count", settings.NumbersCount);
                 rule.ValidationType = "numberscount";
 
                 yield return rule;
 
                 rule = new ModelClientValidationRule();
 
-                rule.ErrorMessage = string.Format(Resources.Messages.PasswordSymbolsCountFormat, Settings.SymbolsCount);
-                rule.ValidationParameters.Add("count", Settings.SymbolsCount);
+                rule.ErrorMessage = string.Format(Resources.Messages.PasswordSymbolsCountFormat, settings.SymbolsCount);
+                rule.ValidationParameters.Add("count", settings.SymbolsCount);
                 rule.ValidationType = "symbolscount";
 
                 yield return rule;

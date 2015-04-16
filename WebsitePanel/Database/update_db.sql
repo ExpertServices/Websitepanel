@@ -10152,21 +10152,20 @@ GO
 -- ORGANIZATION SETTINGS
 
 
-IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeOrganizationSettings')
-DROP TABLE ExchangeOrganizationSettings
-GO
-CREATE TABLE ExchangeOrganizationSettings
-(
-	ItemId INT NOT NULL,
-	SettingsName nvarchar(100)  NOT NULL,
-	Xml nvarchar(max) NOT NULL
-)
-GO
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeOrganizationSettings')
+BEGIN
+	CREATE TABLE ExchangeOrganizationSettings
+	(
+		ItemId INT NOT NULL,
+		SettingsName nvarchar(100)  NOT NULL,
+		Xml nvarchar(max) NOT NULL
+	);
 
-ALTER TABLE [dbo].[ExchangeOrganizationSettings]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSettings_ExchangeOrganizations_ItemId] FOREIGN KEY([ItemId])
-REFERENCES [dbo].[ExchangeOrganizations] ([ItemId])
-ON DELETE CASCADE
-GO
+	ALTER TABLE [dbo].[ExchangeOrganizationSettings]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSettings_ExchangeOrganizations_ItemId] FOREIGN KEY([ItemId])
+	REFERENCES [dbo].[ExchangeOrganizations] ([ItemId])
+	ON DELETE CASCADE;
+END
+
 
 
 

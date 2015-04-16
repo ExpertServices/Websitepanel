@@ -113,7 +113,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
         public ActionResult PasswordChange()
         {
             var model = new PasswordChangeModel();
-            model.PasswordEditor.Settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(WspContext.User.ItemId);
 
             return View(model);
         }

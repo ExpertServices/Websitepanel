@@ -363,8 +363,6 @@
     <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
       <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
     </Compile>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.designer.cs">
       <DependentUpon>Connect.aspx</DependentUpon>
     </Compile>

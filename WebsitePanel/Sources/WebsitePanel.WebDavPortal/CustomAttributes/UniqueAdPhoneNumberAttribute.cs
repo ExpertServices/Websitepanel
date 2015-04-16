@@ -16,25 +16,9 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            Type type = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .FirstOrDefault(validationtype => validationtype.Name == string.Format("{0}controller", this.RouteData["controller"].ToString()));
+            var valueString = value as string;
 
-            object response = null;
-
-            if (type != null)
-            {
-                MethodInfo method = type.GetMethods()
-                    .FirstOrDefault(callingMethod => callingMethod.Name.ToLower() == (string.Format("{0}", this.RouteData["action"]).ToString().ToLower()));
-
-                if (method != null)
-                {
-                    object instance = Activator.CreateInstance(type);
-                    response = method.Invoke(instance, new [] { value });
-                }
-            }
-
-            if (response is bool)
+            if (!string.IsNullOrEmpty(valueString) && WspContext.User != null)
             {
                 var attributes =
                     validationContext.ObjectType.GetProperty(validationContext.MemberName)
@@ -45,11 +29,13 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
                     : validationContext.DisplayName;
 
 
-                return (bool)response ? ValidationResult.Success :
+                var result = !WspContext.Services.Organizations.CheckPhoneNumberIsInUse(WspContext.User.ItemId, valueString, WspContext.User.Login);
+
+                return result ? ValidationResult.Success :
                        new ValidationResult(string.Format(Resources.Messages.AlreadyInUse, displayName));
             }
 
-            return ValidationResult.Success; 
+            return ValidationResult.Success;
         }
 
         public UniqueAdPhoneNumberAttribute(string routeName) : base(routeName) { }

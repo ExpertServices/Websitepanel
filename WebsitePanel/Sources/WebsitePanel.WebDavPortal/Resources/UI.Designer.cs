@@ -466,6 +466,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login name.
         /// </summary>
         public static string LoginName {
@@ -628,7 +637,7 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter your email address to reset your password. You may need to check your spam folder..
+        ///   Looks up a localized string similar to Enter your login and password reset email will be sent to your email address. You may need to check your spam folder..
         /// </summary>
         public static string PasswordResetEmailInfo {
             get {
