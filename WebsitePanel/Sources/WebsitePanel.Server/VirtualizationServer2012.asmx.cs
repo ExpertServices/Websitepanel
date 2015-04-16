@@ -925,6 +925,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public bool IsReplicaServer(string remoteServer)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' IsReplicaServer", ProviderSettings.ProviderName);
+                var result = VirtualizationProvider.IsReplicaServer(remoteServer);
+                Log.WriteEnd("'{0}' IsReplicaServer", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' IsReplicaServer", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication)
         {
             try
