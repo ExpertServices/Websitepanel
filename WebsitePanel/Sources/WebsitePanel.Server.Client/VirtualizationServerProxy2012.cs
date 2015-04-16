@@ -133,6 +133,8 @@ namespace WebsitePanel.Providers.Virtualization2012 {
         
         private System.Threading.SendOrPostCallback UnsetReplicaServerOperationCompleted;
         
+        private System.Threading.SendOrPostCallback IsReplicaServerOperationCompleted;
+        
         private System.Threading.SendOrPostCallback EnableVmReplicationOperationCompleted;
         
         private System.Threading.SendOrPostCallback SetVmReplicationOperationCompleted;
@@ -305,6 +307,9 @@ namespace WebsitePanel.Providers.Virtualization2012 {
         
         /// <remarks/>
         public event UnsetReplicaServerCompletedEventHandler UnsetReplicaServerCompleted;
+        
+        /// <remarks/>
+        public event IsReplicaServerCompletedEventHandler IsReplicaServerCompleted;
         
         /// <remarks/>
         public event EnableVmReplicationCompletedEventHandler EnableVmReplicationCompleted;
@@ -2481,6 +2486,48 @@ namespace WebsitePanel.Providers.Virtualization2012 {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/IsReplicaServer", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool IsReplicaServer(string remoteServer) {
+            object[] results = this.Invoke("IsReplicaServer", new object[] {
+                        remoteServer});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginIsReplicaServer(string remoteServer, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("IsReplicaServer", new object[] {
+                        remoteServer}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndIsReplicaServer(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void IsReplicaServerAsync(string remoteServer) {
+            this.IsReplicaServerAsync(remoteServer, null);
+        }
+        
+        /// <remarks/>
+        public void IsReplicaServerAsync(string remoteServer, object userState) {
+            if ((this.IsReplicaServerOperationCompleted == null)) {
+                this.IsReplicaServerOperationCompleted = new System.Threading.SendOrPostCallback(this.OnIsReplicaServerOperationCompleted);
+            }
+            this.InvokeAsync("IsReplicaServer", new object[] {
+                        remoteServer}, this.IsReplicaServerOperationCompleted, userState);
+        }
+        
+        private void OnIsReplicaServerOperationCompleted(object arg) {
+            if ((this.IsReplicaServerCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.IsReplicaServerCompleted(this, new IsReplicaServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/EnableVmReplication", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication) {
             this.Invoke("EnableVmReplication", new object[] {
@@ -4061,6 +4108,32 @@ namespace WebsitePanel.Providers.Virtualization2012 {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void UnsetReplicaServerCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void IsReplicaServerCompletedEventHandler(object sender, IsReplicaServerCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class IsReplicaServerCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal IsReplicaServerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]

@@ -99,9 +99,11 @@ namespace WebsitePanel.Providers.Virtualization
         // Configuration
         int GetProcessorCoresNumber();
 
+        // Replication 
         List<CertificateInfo> GetCertificates(string remoteServer);
         void SetReplicaServer(string remoteServer, string thumbprint, string storagePath);
         void UnsetReplicaServer(string remoteServer);
+        bool IsReplicaServer(string remoteServer);
         void EnableVmReplication(string vmId, string replicaServer, VmReplication replication);
         void SetVmReplication(string vmId, string replicaServer, VmReplication replication);
         void TestReplicationServer(string vmId, string replicaServer, string localThumbprint);

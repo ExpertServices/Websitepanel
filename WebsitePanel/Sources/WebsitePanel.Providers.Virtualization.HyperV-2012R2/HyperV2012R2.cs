@@ -1962,13 +1962,13 @@ namespace WebsitePanel.Providers.Virtualization
         public List<CertificateInfo> GetCertificates(string remoteServer)
         {
             // we cant get certificates from remote server
-            if (string.IsNullOrEmpty(remoteServer))
+            if (!string.IsNullOrEmpty(remoteServer))
                 return null;
 
             Command cmd = new Command("Get-ChildItem");
             cmd.Parameters.Add("Path", @"cert:\LocalMachine\My");
 
-            Collection<PSObject> result = PowerShell.Execute(cmd, true);
+            Collection<PSObject> result = PowerShell.Execute(cmd, false);
 
             return result
                 .Select(
@@ -1985,9 +1985,7 @@ namespace WebsitePanel.Providers.Virtualization
         {
             // we cant enable firewall rules on remote server
             if (!string.IsNullOrEmpty(remoteServer)) 
-            {
                 ReplicaHelper.SetFirewallRule(PowerShell, true);
-            }
 
             ReplicaHelper.SetReplicaServer(PowerShell, true, remoteServer, thumbprint, storagePath);
         }
@@ -1995,6 +1993,20 @@ namespace WebsitePanel.Providers.Virtualization
         public void UnsetReplicaServer(string remoteServer)
         {
             ReplicaHelper.SetReplicaServer(PowerShell, false, remoteServer, null, null);
+        }
+
+        public bool IsReplicaServer(string remoteServer)
+        {
+            Command cmd = new Command("Get-VMReplicationServer");
+
+            if (!string.IsNullOrEmpty(remoteServer))
+            {
+                cmd.Parameters.Add("ComputerName", remoteServer);
+            }
+
+            Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
+            return result != null && result.Count > 0;
         }
 
         public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication)
