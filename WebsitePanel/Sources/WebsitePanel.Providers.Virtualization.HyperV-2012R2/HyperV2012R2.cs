@@ -1984,8 +1984,11 @@ namespace WebsitePanel.Providers.Virtualization
         public void SetReplicaServer(string remoteServer, string thumbprint, string storagePath)
         {
             // we cant enable firewall rules on remote server
-            if (!string.IsNullOrEmpty(remoteServer)) 
+            if (string.IsNullOrEmpty(remoteServer)) 
                 ReplicaHelper.SetFirewallRule(PowerShell, true);
+
+            if (GetReplicaServer(remoteServer) != null)
+                UnsetReplicaServer(remoteServer);
 
             ReplicaHelper.SetReplicaServer(PowerShell, true, remoteServer, thumbprint, storagePath);
         }
@@ -1995,8 +1998,9 @@ namespace WebsitePanel.Providers.Virtualization
             ReplicaHelper.SetReplicaServer(PowerShell, false, remoteServer, null, null);
         }
 
-        public bool IsReplicaServer(string remoteServer)
+        public ReplicationServerInfo GetReplicaServer(string remoteServer)
         {
+            ReplicationServerInfo replicaServer = null;
             Command cmd = new Command("Get-VMReplicationServer");
 
             if (!string.IsNullOrEmpty(remoteServer))
@@ -2004,9 +2008,16 @@ namespace WebsitePanel.Providers.Virtualization
                 cmd.Parameters.Add("ComputerName", remoteServer);
             }
 
-            Collection<PSObject> result = PowerShell.Execute(cmd, true);
+            Collection<PSObject> result = PowerShell.Execute(cmd, false);
 
-            return result != null && result.Count > 0;
+            if (result != null && result.Count > 0)
+            {
+                replicaServer = new ReplicationServerInfo();
+                replicaServer.Enabled = result[0].GetBool("RepEnabled");
+                replicaServer.ComputerName = result[0].GetString("ComputerName");
+            }
+
+            return replicaServer;
         }
 
         public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication)
