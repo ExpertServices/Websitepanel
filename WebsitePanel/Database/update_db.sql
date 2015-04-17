@@ -10029,6 +10029,354 @@ UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterTextBo
 GO
 
 
+-- Exchange setup EMAIL TEMPLATE
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'From', N'orders@virtuworks.com')
+END
+GO
+
+DECLARE @ExchangeMailboxSetupLetterHtmlBody nvarchar(max)
+
+Set @ExchangeMailboxSetupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Account Summary Information</title>
+    <style type="text/css">
+        body {font-family: ''Segoe UI Light'',''Open Sans'',Arial!important;color:black;}
+        p {color:black;}
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.SummaryHeader { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.5em; color: ##1F4978; border-bottom: dotted 3px ##efefef; font-weight:normal; }
+        .Summary H2 { font-size: 1.2em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; color:black;}
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+        .Label { color:##1F4978; }
+        .menu-bar a {padding: 15px 0;display: inline-block;}
+    </style>
+</head>
+<body>
+<table border="0" cellspacing="0" cellpadding="0" width="100%"><!-- was 800 -->
+<tbody>
+<tr>
+<td style="padding: 10px 20px 10px 20px; background-color: ##e1e1e1;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="text-align: left; padding: 0px 0px 2px 0px;"><a href="http://www.virtuworks.com"><img src="https://controlpanel.virtuworks.net/vw-email-logo.gif" border="0" alt="VirtuWorks: Run Your Business In The Cloud" /></a></td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="padding-bottom: 10px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="background-color: ##2e8bcc; padding: 3px;">
+<table class="menu-bar" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com">Visit VirtuWorks.com</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="https://portal.virtuworks.net/whmcs/clientarea.php">Account Management</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="https://controlpanel.virtuworks.net">Control Panel</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com/support">Support</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com/company/contact-us.aspx">Contact Us</a></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="background-color: ##ffffff;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%"><!-- was 759 -->
+<tbody>
+<tr>
+<td style="vertical-align: top; padding: 10px 10px 0px 10px;" width="100%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: ''Segoe UI Light'',''Open Sans'',Arial; padding: 0px 10px 0px 0px;">
+<!-- Begin Content -->
+
+<div class="Summary">
+    <ad:if test="#Email#">
+    <p>
+    Hello #Account.DisplayName#,
+    </p>
+    <p>
+    Thanks for choosing VirtuWorks as your Exchange hosting provider.
+    </p>
+    </ad:if>
+    <ad:if test="#not(PMM)#">
+    <h1>User Accounts</h1>
+    <p>
+    The following user accounts have been created for you.
+    </p>
+    <table>
+        <tr>
+            <td class="Label">Username:</td>
+            <td>#Account.UserPrincipalName#</td>
+        </tr>
+        <tr>
+            <td class="Label">E-mail:</td>
+            <td>#Account.PrimaryEmailAddress#</td>
+        </tr>
+        <tr>
+            <td class="Label">Password Reset Url:</td>
+            <td><a href="#PswResetUrl#">Click here</a></td>
+        </tr>
+    </table>
+    </ad:if>
+    <h1>DNS</h1>
+    <p>
+    In order for us to accept mail for your domain, you will need to point your MX records to:
+    </p>
+    <table>
+        <ad:foreach collection="#SmtpServers#" var="SmtpServer" index="i">
+            <tr>
+                <td class="Label">#SmtpServer#</td>
+            </tr>
+        </ad:foreach>
+    </table>
+   <h1>
+    Webmail (OWA, Outlook Web Access)</h1>
+    <p>
+    <a href="https://mail.virtuworks.net/owa" target="_blank">https://mail.virtuworks.net/owa</a>
+    </p>
+    <h1>
+    Outlook (Windows Clients)</h1>
+    <p>
+    To configure Outlook 2013 to work with the VirtuWorks servers, please reference:
+    </p>
+    <p>
+    <a href="http://www.virtuworks.com/how-to-configure-my-outlook-2010-client-to-work-with-my-velum-hosted-exchange-account/" target="_blank">http://www.virtuworks.com/how-to-configure-my-outlook-2010-client-to-work-with-my-velum-hosted-exchange-account/</a>
+    </p>
+    <p>
+    If you need to download and install the Outlook client:</p>
+
+        
+        <table>
+            <tr><td colspan="2" class="Label"><font size="3">Outlook 2013 Client</font></td></tr>
+            <tr>
+                <td class="Label">
+                    Download URL:</td>
+                <td><a href="http://www.virtuworks.net/saas-downloads/Outlook-2013-32bit.zip">Outlook 2013 - 32bit</a></td>
+            </tr>
+<tr>
+                <td class="Label"></td>
+                <td><a href="http://www.virtuworks.net/saas-downloads/Outlook-2013-64bit.zip">Outlook 2013 - 64bit</a></td>
+            </tr>
+            <tr>
+                <td class="Label">
+                    KEY:</td>
+                <td>HPN4P-JKC89-VCCWD-24CD2-9P8H7</td>
+            </tr>
+        </table>
+ 
+       <h1>
+    ActiveSync, iPhone, iPad</h1>
+    <table>
+        <tr>
+            <td class="Label">Server:</td>
+            <td>#ActiveSyncServer#</td>
+        </tr>
+        <tr>
+            <td class="Label">Domain:</td>
+            <td>#SamDomain#</td>
+        </tr>
+        <tr>
+            <td class="Label">SSL:</td>
+            <td>must be checked</td>
+        </tr>
+        <tr>
+            <td class="Label">Your username:</td>
+            <td>#SamUsername#</td>
+        </tr>
+    </table>
+ 
+    <h1>Password Changes</h1>
+    <p>
+    Passwords can be changed at any time using Webmail or the <a href="https://controlpanel.virtuworks.net" target="_blank">Control Panel</a>.</p>
+    <h1>Control Panel</h1>
+    <p>
+    If you need to change the details of your account, you can easily do this using <a href="https://controlpanel.virtuworks.net" target="_blank">Control Panel</a>.</p>
+    <h1>Support</h1>
+    <p>
+    You have 2 options, email <a href="mailto:help@virtuworks.com">help@virtuworks.com</a> or use the web interface at <a href="http://www.virtuworks.com/support">http://www.virtuworks.com/support</a></p>
+    
+</div>
+<!-- End Content -->
+<br></td>
+</tr>
+</tbody>
+</table>
+</td>
+
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td style="background-color: ##ffffff; border-top: 1px solid ##999999;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="vertical-align: top; padding: 0px 20px 15px 20px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: Arial, Helvetica, sans-serif; text-align: left; font-size: 9px; color: ##717073; padding: 20px 0px 0px 0px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; vertical-align: top;" width="33%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com">Visit VirtuWorks.com </a><br />Learn more about the services VirtuWorks can provide to improve your business.</td>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; padding: 0px 10px 0px 10px; vertical-align: top;" width="34%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/privacy-policy">Privacy Policy</a><br />VirtuWorks follows strict guidelines in protecting your privacy. Learn about our <a style="font-weight: bold; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/privacy-policy">Privacy Policy</a>.</td>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; vertical-align: top;" width="33%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/contact/">Contact Us</a><br />Questions? For more information, <a style="font-weight: bold; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/contact/">contact us</a>.</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'HtmlBody', @ExchangeMailboxSetupLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @ExchangeMailboxSetupLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'Subject', N'Virtuworks Hosted Exchange Mailbox Setup')
+END
+GO
+
+
+DECLARE @ExchangeMailboxSetupLetterTextBody nvarchar(2500)
+
+Set @ExchangeMailboxSetupLetterTextBody = N'<ad:if test="#Email#">
+Hello #Account.DisplayName#,
+
+Thanks for choosing VirtuWorks as your Exchange hosting provider.
+</ad:if>
+<ad:if test="#not(PMM)#">
+User Accounts
+
+The following user accounts have been created for you.
+
+Username: #Account.UserPrincipalName#
+E-mail: #Account.PrimaryEmailAddress#
+Password Reset Url: #PswResetUrl#
+</ad:if>
+
+=================================
+DNS
+=================================
+
+In order for us to accept mail for your domain, you will need to point your MX records to:
+
+<ad:foreach collection="#SmtpServers#" var="SmtpServer" index="i">#SmtpServer#</ad:foreach>
+
+=================================
+Webmail (OWA, Outlook Web Access)
+=================================
+
+https://mail.virtuworks.net/owa
+
+=================================
+Outlook (Windows Clients)
+=================================
+
+To configure Outlook 2010 to work with VirtuWorks servers, please reference:
+
+https://portal.virtuworks.net/whmcs/knowledgebase.php?action=displayarticle&id=2
+
+If you need to download and install the Outlook 2010 client:
+
+Outlook 2010 Download URL:
+32 Bit - http://www.virtuworks.net/downloads/Outlook2010-32bit.zip
+64 Bit - http://www.virtuworks.net/downloads/Outlook2010-64bit.zip
+KEY: HXGFV-DY3HM-4W2BQ-3R7KQ-K8P49
+
+=================================
+ActiveSync, iPhone, iPad
+=================================
+
+Server: #ActiveSyncServer#
+Domain: #SamDomain#
+SSL: must be checked
+Your username: #SamUsername#
+
+=================================
+Password Changes
+=================================
+
+Passwords can be changed at any time using Webmail or the Control Panel (https://controlpanel.virtuworks.net).
+
+
+=================================
+Control Panel
+=================================
+
+If you need to change the details of your account, you can easily do this using the Control Panel (https://controlpanel.virtuworks.net).
+
+
+=================================
+Support
+=================================
+
+You have 2 options, email help@virtuworks.com or use the web interface at http://www.virtuworks.com/contact/'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'TextBody', @ExchangeMailboxSetupLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @ExchangeMailboxSetupLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'TextBody'
+GO
+
 
 
 -- ORGANIZATION USER PASSWORD RESET TOKENS

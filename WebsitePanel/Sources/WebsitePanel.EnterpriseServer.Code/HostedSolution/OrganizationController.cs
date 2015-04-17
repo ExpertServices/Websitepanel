@@ -1646,7 +1646,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("MailTo : " + mailTo);
 
                 // send mail message
-                //MailHelper.SendMessage(from, mailTo, string.Empty, subject, body, priority, isHtml);
+                MailHelper.SendMessage(from, mailTo, null, subject, body, priority, isHtml);
             }
             catch (Exception ex)
             {
