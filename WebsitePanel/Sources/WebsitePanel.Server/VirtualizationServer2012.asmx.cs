@@ -925,12 +925,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public bool IsReplicaServer(string remoteServer)
+        public ReplicationServerInfo GetReplicaServer(string remoteServer)
         {
             try
             {
                 Log.WriteStart("'{0}' IsReplicaServer", ProviderSettings.ProviderName);
-                var result = VirtualizationProvider.IsReplicaServer(remoteServer);
+                var result = VirtualizationProvider.GetReplicaServer(remoteServer);
                 Log.WriteEnd("'{0}' IsReplicaServer", ProviderSettings.ProviderName);
                 return result;
             }
