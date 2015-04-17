@@ -330,6 +330,7 @@
     <Compile Include="Virtualization\Replication\CertificateInfo.cs" />
     <Compile Include="Virtualization\Replication\ReplicaFrequency.cs" />
     <Compile Include="Virtualization\Replication\ReplicationHealth.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationServerInfo.cs" />
     <Compile Include="Virtualization\Replication\VmReplicationMode.cs" />
     <Compile Include="Virtualization\Replication\ReplicaMode.cs" />
     <Compile Include="Virtualization\Replication\ReplicationState.cs" />
