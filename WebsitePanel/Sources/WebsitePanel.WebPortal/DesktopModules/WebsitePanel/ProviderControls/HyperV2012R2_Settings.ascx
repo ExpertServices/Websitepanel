@@ -152,18 +152,40 @@
         <asp:Localize ID="locReplication" runat="server" meta:resourcekey="locReplication" Text="Replication"></asp:Localize>
     </legend>
     <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
-	  <table cellpadding="2" cellspacing="0" style="margin: 10px;">
-	    <tr>
-		    <td colspan="2">
-		        <asp:RadioButtonList ID="ReplicationModeList" runat="server" AutoPostBack="true" 
-                    onselectedindexchanged="radioServer_SelectedIndexChanged">
-                    <asp:ListItem Value="Disable" meta:resourcekey="ReplicationModeDisabled" Selected="True">No Hyper-v Replication</asp:ListItem>
-                    <asp:ListItem Value="Enable" meta:resourcekey="ReplicationModeEnabled">Enable Hyper-V Replication</asp:ListItem>
-                    <asp:ListItem Value="IsReplicaServer" meta:resourcekey="ReplicationModeIsReplicaServer">This is a Replica Server</asp:ListItem>
-                </asp:RadioButtonList>
-		    </td>
-	    </tr>
-        <tr id="IsReplicaServerRow" runat="server">
+        <table cellpadding="2" cellspacing="0" style="margin: 10px;">
+            <tr>
+                <td colspan="2">
+                    <asp:RadioButtonList ID="ReplicationModeList" runat="server" AutoPostBack="true"
+                        OnSelectedIndexChanged="radioServer_SelectedIndexChanged">
+                        <asp:ListItem Value="Disable" meta:resourcekey="ReplicationModeDisabled" Selected="True">No Hyper-v Replication</asp:ListItem>
+                        <asp:ListItem Value="Enable" meta:resourcekey="ReplicationModeEnabled">Enable Hyper-V Replication</asp:ListItem>
+                        <asp:ListItem Value="IsReplicaServer" meta:resourcekey="ReplicationModeIsReplicaServer">This is a Replica Server</asp:ListItem>
+                    </asp:RadioButtonList>
+                </td>
+            </tr>
+            <tr id="EnableReplicaRow" runat="server">
+                <td class="SubHead" style="padding-left: 20px;" colspan="2">
+                    <table cellpadding="2" cellspacing="0" style="margin: 10px;">
+                        <tr>
+                            <td style="width: 180px">
+                                <asp:Localize ID="locReplicaServer" runat="server" meta:resourcekey="locReplicaServer" Text="Replication Server:"></asp:Localize>
+                            </td>
+                            <td>
+                                <asp:DropDownList ID="ddlReplicaServer" runat="server" Width="300px"></asp:DropDownList>
+
+                                <asp:RequiredFieldValidator ID="ReplicaServerValidator" runat="server" ControlToValidate="ddlReplicaServer"
+                                    Text="*" meta:resourcekey="ReplicaServerValidator" Display="Dynamic" SetFocusOnError="true" />
+                            </td>
+                        </tr>
+                        <tr id="EnableReplicaErrorTr" runat="server" visible="False">
+                            <td colspan="2">
+                                <asp:Label ID="locEnableReplicaError" runat="server" meta:resourcekey="locEnableReplicaError" ForeColor="Red"></asp:Label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="IsReplicaServerRow" runat="server">
             <td class="SubHead" style="padding-left: 20px;" colspan="2">
                 <table cellpadding="2" cellspacing="0" style="margin: 10px;">
                     <tr>
@@ -179,6 +201,8 @@
                                 OnClick="btnSetReplicaServer_Click" />
 
                             <asp:RequiredFieldValidator ID="CertificateThumbnailValidator" runat="server" ControlToValidate="txtCertThumbnail"
+                                Text="*" meta:resourcekey="CertificateThumbnailValidator" Display="Dynamic" SetFocusOnError="true" />
+                            <asp:RequiredFieldValidator ID="CertificateDdlThumbnailValidator" runat="server" ControlToValidate="ddlCertThumbnail"
                                 Text="*" meta:resourcekey="CertificateThumbnailValidator" Display="Dynamic" SetFocusOnError="true" />
                         </td>
                     </tr>

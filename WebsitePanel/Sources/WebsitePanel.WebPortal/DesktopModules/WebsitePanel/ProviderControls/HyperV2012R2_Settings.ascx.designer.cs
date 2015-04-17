@@ -364,6 +364,60 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.RadioButtonList ReplicationModeList;
         
         /// <summary>
+        /// EnableReplicaRow control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow EnableReplicaRow;
+        
+        /// <summary>
+        /// locReplicaServer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locReplicaServer;
+        
+        /// <summary>
+        /// ddlReplicaServer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlReplicaServer;
+        
+        /// <summary>
+        /// ReplicaServerValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator ReplicaServerValidator;
+        
+        /// <summary>
+        /// EnableReplicaErrorTr control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow EnableReplicaErrorTr;
+        
+        /// <summary>
+        /// locEnableReplicaError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label locEnableReplicaError;
+        
+        /// <summary>
         /// IsReplicaServerRow control.
         /// </summary>
         /// <remarks>
@@ -416,6 +470,15 @@ namespace WebsitePanel.Portal.ProviderControls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RequiredFieldValidator CertificateThumbnailValidator;
+        
+        /// <summary>
+        /// CertificateDdlThumbnailValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator CertificateDdlThumbnailValidator;
         
         /// <summary>
         /// ReplicaPathErrorTr control.

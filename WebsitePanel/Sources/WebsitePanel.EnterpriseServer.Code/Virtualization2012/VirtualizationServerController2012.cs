@@ -3736,6 +3736,7 @@ namespace WebsitePanel.EnterpriseServer
                 
                 VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
                 vs.SetReplicaServer(remoteServer, thumbprint, storagePath);
+                result.IsSuccess = true;
             }
             catch (Exception ex)
             {

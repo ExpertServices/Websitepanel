@@ -408,16 +408,13 @@ The following substitution variables can be used in the pattern:&lt;br/&gt;
     <value>Enter the thumbnail of a SSL certificate</value>
   </data>
   <data name="locCertThumbnail.Text" xml:space="preserve">
-    <value>SSL Certificate Thumbnail:</value>
+    <value>SSL Certificate Thumbprint:</value>
   </data>
   <data name="locErrorSetReplica.Text" xml:space="preserve">
     <value>Can not to set server as a replication server with the entered server name, replication path and SSL certificate</value>
   </data>
   <data name="locReplicaPath.Text" xml:space="preserve">
     <value>Path for Replications:</value>
-  </data>
-  <data name="locReplicaServer.Text" xml:space="preserve">
-    <value>Replica Server:</value>
   </data>
   <data name="locReplication.Text" xml:space="preserve">
     <value>Replication</value>
@@ -426,7 +423,7 @@ The following substitution variables can be used in the pattern:&lt;br/&gt;
     <value>Enter path to replication virtual machines</value>
   </data>
   <data name="ReplicaServerValidator.ErrorMessage" xml:space="preserve">
-    <value>Enter a replication server name</value>
+    <value>Enter a replication server</value>
   </data>
   <data name="ReplicationModeDisabled.Text" xml:space="preserve">
     <value>No Hyper-v Replication</value>
@@ -437,7 +434,13 @@ The following substitution variables can be used in the pattern:&lt;br/&gt;
   <data name="ReplicationModeIsReplicaServer.Text" xml:space="preserve">
     <value>This is a Replica Server</value>
   </data>
+  <data name="locEnableReplicaError.Text" xml:space="preserve">
+    <value>Please add a server with the enabled replication and select it from list</value>
+  </data>
   <data name="locErrorPathReplica.Text" xml:space="preserve">
     <value>Please enter replication path</value>
+  </data>
+  <data name="locReplicaServer.Text" xml:space="preserve">
+    <value>Replication Server:</value>
   </data>
 </root>
