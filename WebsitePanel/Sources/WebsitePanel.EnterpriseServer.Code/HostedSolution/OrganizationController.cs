@@ -1684,6 +1684,11 @@ namespace WebsitePanel.EnterpriseServer
                 throw new Exception("Webdav portal system settings are not set");
             }
 
+            if (!settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
+            {
+                return string.Empty;
+            }
+
             var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
 
             var token = CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset);
@@ -1794,11 +1799,12 @@ namespace WebsitePanel.EnterpriseServer
                             NumbersCount = Utils.ParseInt(parts[4], 0),
                             SymbolsCount = Utils.ParseInt(parts[5], 0),
                             AccountLockoutThreshold = Utils.ParseInt(parts[7], 0),
-                            EnforcePasswordHistory = Utils.ParseInt(parts[8], 0),
-                            AccountLockoutDuration = Utils.ParseInt(parts[9], 0),
-                            ResetAccountLockoutCounterAfter = Utils.ParseInt(parts[10], 0),
-                            LockoutSettingsEnabled = Utils.ParseBool(parts[11], false),
-                            PasswordComplexityEnabled = Utils.ParseBool(parts[12], true),
+
+                            EnforcePasswordHistory = GetValueSafe(parts, 8, 0),
+                            AccountLockoutDuration = GetValueSafe(parts, 9, 0),
+                            ResetAccountLockoutCounterAfter = GetValueSafe(parts, 10, 0),
+                            LockoutSettingsEnabled = GetValueSafe(parts, 11, false),
+                            PasswordComplexityEnabled = GetValueSafe(parts, 11, true),
                         };
 
 
@@ -1819,6 +1825,21 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return passwordSettings;
+        }
+
+        public static T GetValueSafe<T>(string[] array, int index, T defaultValue)
+        {
+            if (array.Length > index)
+            {
+                if (string.IsNullOrEmpty(array[index]))
+                {
+                    return defaultValue;
+                }
+
+                return (T)Convert.ChangeType(array[index], typeof(T));
+            }
+
+            return defaultValue;
         }
 
         public static void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)

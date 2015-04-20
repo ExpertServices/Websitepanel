@@ -267,4 +267,7 @@
   <data name="Text.DeletedUsers" xml:space="preserve">
     <value>Deleted Users</value>
   </data>
+  <data name="Text.PasswordPolicy" xml:space="preserve">
+    <value>Password Policy</value>
+  </data>
 </root>
