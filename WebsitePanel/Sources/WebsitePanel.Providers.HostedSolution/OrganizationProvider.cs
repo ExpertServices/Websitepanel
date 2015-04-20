@@ -541,7 +541,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
 
-                    var expirationDate = pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
+                    var expirationDate = maxPasswordAgeSpan == TimeSpan.MaxValue ? DateTime.MaxValue : pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
 
                     if (expirationDate.AddDays(-daysBeforeExpiration) < DateTime.Now)
                     {
@@ -596,7 +596,15 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     if (sr != null && sr.Properties.Contains("maxPwdAge"))
                     {
-                        return TimeSpan.FromTicks((long)sr.Properties["maxPwdAge"][0]).Duration();
+                        try
+                        {
+                            return TimeSpan.FromTicks((long)sr.Properties["maxPwdAge"][0]).Duration();
+
+                        }
+                        catch (Exception)
+                        {
+                            return TimeSpan.MaxValue;
+                        }
                     }
 
                     throw new Exception("'maxPwdAge' property not found.");
@@ -1020,6 +1028,11 @@ namespace WebsitePanel.Providers.HostedSolution
                 var pwdLastSetTicks = ConvertADSLargeIntegerToInt64(entry.Properties[ADAttributes.PwdLastSet].Value);
 
                 var pwdLastSetDate = DateTime.FromFileTimeUtc(pwdLastSetTicks);
+
+                if (maxPasswordAgeSpan == TimeSpan.MaxValue)
+                {
+                    return DateTime.MaxValue;
+                }
 
                 return pwdLastSetDate.AddDays(maxPasswordAgeSpan.Days);
             }
