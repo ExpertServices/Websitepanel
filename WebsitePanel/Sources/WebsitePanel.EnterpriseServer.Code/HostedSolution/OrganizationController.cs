@@ -1793,12 +1793,12 @@ namespace WebsitePanel.EnterpriseServer
 
                         passwordSettings = new OrganizationPasswordSettings
                         {
-                            MinimumLength = Utils.ParseInt(parts[1], 0),
-                            MaximumLength = Utils.ParseInt(parts[2], 0),
-                            UppercaseLettersCount = Utils.ParseInt(parts[3], 0),
-                            NumbersCount = Utils.ParseInt(parts[4], 0),
-                            SymbolsCount = Utils.ParseInt(parts[5], 0),
-                            AccountLockoutThreshold = Utils.ParseInt(parts[7], 0),
+                            MinimumLength = GetValueSafe(parts, 1, 0),
+                            MaximumLength = GetValueSafe(parts, 2, 0),
+                            UppercaseLettersCount = GetValueSafe(parts, 3, 0),
+                            NumbersCount = GetValueSafe(parts, 4, 0),
+                            SymbolsCount = GetValueSafe(parts, 5, 0),
+                            AccountLockoutThreshold = GetValueSafe(parts, 7, 0),
 
                             EnforcePasswordHistory = GetValueSafe(parts, 8, 0),
                             AccountLockoutDuration = GetValueSafe(parts, 9, 0),
