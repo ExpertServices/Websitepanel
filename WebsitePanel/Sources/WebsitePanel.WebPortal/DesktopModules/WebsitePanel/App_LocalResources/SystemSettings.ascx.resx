@@ -174,4 +174,10 @@
   <data name="WebdavPortalSettings.Text" xml:space="preserve">
     <value>Webdav Portal</value>
   </data>
+  <data name="chkEnablePasswordReset.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="locEnablePasswordReset.Text" xml:space="preserve">
+    <value>Enable password reset:</value>
+  </data>
 </root>

@@ -9850,7 +9850,7 @@ Hello #user.FirstName#,
 Your password expiration date is #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
 </p>
 
-<a href="#passwordResetLink#">#passwordResetLink#</a>
+<a href="#passwordResetLink#" target="_blank">#passwordResetLink#</a>
 
 
 <p>
@@ -9963,7 +9963,7 @@ Hello #user.FirstName#,
 We received a request to reset the password for your account. If you made this request, click the link below. If you did not make this request, you can ignore this email.
 </p>
 
-<a href="#passwordResetLink#">#passwordResetLink#</a>
+<a href="#passwordResetLink#" target="_blank">#passwordResetLink#</a>
 
 
 <p>
@@ -10139,10 +10139,12 @@ Set @ExchangeMailboxSetupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/
             <td class="Label">E-mail:</td>
             <td>#Account.PrimaryEmailAddress#</td>
         </tr>
+		<ad:if test="#PswResetUrl#">
         <tr>
             <td class="Label">Password Reset Url:</td>
-            <td><a href="#PswResetUrl#">Click here</a></td>
+            <td><a href="#PswResetUrl#" target="_blank">Click here</a></td>
         </tr>
+		</ad:if>
     </table>
     </ad:if>
     <h1>DNS</h1>
@@ -10308,7 +10310,9 @@ The following user accounts have been created for you.
 
 Username: #Account.UserPrincipalName#
 E-mail: #Account.PrimaryEmailAddress#
+<ad:if test="#PswResetUrl#">
 Password Reset Url: #PswResetUrl#
+</ad:if>
 </ad:if>
 
 =================================

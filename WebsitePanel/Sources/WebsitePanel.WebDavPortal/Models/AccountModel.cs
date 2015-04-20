@@ -17,5 +17,7 @@ namespace WebsitePanel.WebDavPortal.Models
         public string Password { get; set; }
 
         public string LdapError { get; set; }
+
+        public bool PasswordResetEnabled { get; set; }
     }
 }

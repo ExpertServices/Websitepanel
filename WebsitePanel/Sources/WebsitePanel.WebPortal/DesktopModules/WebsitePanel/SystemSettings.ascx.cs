@@ -53,6 +53,7 @@ namespace WebsitePanel.Portal
         public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
         public const string RDS_MAIN_CONTROLLER = "RdsMainController";
         public const string WEBDAV_PORTAL_URL = "WebdavPortalUrl";
+        public const string WEBDAV_PASSWORD_RESET_ENABLED = "WebdavPasswordResetEnabled";
 
         /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
@@ -163,6 +164,7 @@ namespace WebsitePanel.Portal
 
             if (settings != null)
             {
+                chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WEBDAV_PASSWORD_RESET_ENABLED], false);
                 txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
             }
 		}
@@ -248,6 +250,7 @@ namespace WebsitePanel.Portal
 
                 settings = new WSP.SystemSettings();
                 settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
+                settings[WEBDAV_PASSWORD_RESET_ENABLED] = chkEnablePasswordReset.Checked.ToString();
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
 
                 if (result < 0)

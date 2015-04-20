@@ -86,6 +86,12 @@
     <wsp:CollapsiblePanel ID="WebdavPortalSettings" runat="server" TargetControlID="PanelWebdavPortalSettings" meta:resourcekey="WebdavPortalSettings" Text="Webdav Portal" />
     <asp:Panel ID="PanelWebdavPortalSettings" runat="server" Height="0" style="overflow:hidden;">
         <table>
+            <tr>
+				<td class="SubHead"><asp:Localize ID="locEnablePasswordReset" runat="server" meta:resourcekey="locEnablePasswordReset" /></td>
+				<td class="Normal">
+					<asp:CheckBox ID="chkEnablePasswordReset" runat="server" Text="Yes" meta:resourcekey="chkEnablePasswordReset" />
+				</td>
+			</tr>
 			<tr>
 				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblWebdavPortalUrl" runat="server" meta:resourcekey="lblWebdavPortalUrl" />
 				<td><asp:TextBox runat="server" ID="txtWebdavPortalUrl" Width="450px" /></td>

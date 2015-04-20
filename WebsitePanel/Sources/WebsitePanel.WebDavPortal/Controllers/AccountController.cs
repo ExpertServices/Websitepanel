@@ -44,7 +44,17 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return RedirectToRoute(FileSystemRouteNames.ShowContentPath, new { org = WspContext.User.OrganizationId });
             }
 
-            return View();
+            var model = new AccountModel();
+
+            var settings = WspContext.Services.System.GetSystemSettings(EnterpriseServer.SystemSettings.WEBDAV_PORTAL_SETTINGS);
+
+            if (settings != null)
+            {
+                model.PasswordResetEnabled = settings.GetValueOrDefault(EnterpriseServer.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false);
+
+            }
+
+            return View(model);
         }
 
         [HttpPost]
