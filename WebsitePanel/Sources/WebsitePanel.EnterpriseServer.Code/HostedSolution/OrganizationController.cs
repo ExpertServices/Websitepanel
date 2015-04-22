@@ -1673,18 +1673,18 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteExpiredAccessTokens();
         }
 
+        public static SystemSettings GetWebDavSystemSettings()
+        {
+            return SystemController.GetSystemSettingsInternal(SystemSettings.WEBDAV_PORTAL_SETTINGS, false);
+        }
+
         public static string GenerateUserPasswordResetLink(int itemId, int accountId)
         {
             string passwordResetUrlFormat = "account/password-reset/step-2";
 
-            var settings = SystemController.GetSystemSettings(SystemSettings.WEBDAV_PORTAL_SETTINGS);
+            var settings = GetWebDavSystemSettings();
 
-            if (settings == null)
-            {
-                throw new Exception("Webdav portal system settings are not set");
-            }
-
-            if (!settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
+            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
             {
                 return string.Empty;
             }
