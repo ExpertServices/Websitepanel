@@ -50,6 +50,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         private System.Threading.SendOrPostCallback UpdateOrganizationPasswordSettingsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetWebDavSystemSettingsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetOrganizationPasswordSettingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback CheckOrgIdExistsOperationCompleted;
@@ -181,6 +183,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event UpdateOrganizationPasswordSettingsCompletedEventHandler UpdateOrganizationPasswordSettingsCompleted;
+        
+        /// <remarks/>
+        public event GetWebDavSystemSettingsCompletedEventHandler GetWebDavSystemSettingsCompleted;
         
         /// <remarks/>
         public event GetOrganizationPasswordSettingsCompletedEventHandler GetOrganizationPasswordSettingsCompleted;
@@ -632,6 +637,44 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.UpdateOrganizationPasswordSettingsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.UpdateOrganizationPasswordSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetWebDavSystemSettings", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemSettings GetWebDavSystemSettings() {
+            object[] results = this.Invoke("GetWebDavSystemSettings", new object[0]);
+            return ((SystemSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWebDavSystemSettings(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWebDavSystemSettings", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public SystemSettings EndGetWebDavSystemSettings(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemSettings)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWebDavSystemSettingsAsync() {
+            this.GetWebDavSystemSettingsAsync(null);
+        }
+        
+        /// <remarks/>
+        public void GetWebDavSystemSettingsAsync(object userState) {
+            if ((this.GetWebDavSystemSettingsOperationCompleted == null)) {
+                this.GetWebDavSystemSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWebDavSystemSettingsOperationCompleted);
+            }
+            this.InvokeAsync("GetWebDavSystemSettings", new object[0], this.GetWebDavSystemSettingsOperationCompleted, userState);
+        }
+        
+        private void OnGetWebDavSystemSettingsOperationCompleted(object arg) {
+            if ((this.GetWebDavSystemSettingsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWebDavSystemSettingsCompleted(this, new GetWebDavSystemSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3404,6 +3447,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void UpdateOrganizationPasswordSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetWebDavSystemSettingsCompletedEventHandler(object sender, GetWebDavSystemSettingsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWebDavSystemSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWebDavSystemSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SystemSettings Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemSettings)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]

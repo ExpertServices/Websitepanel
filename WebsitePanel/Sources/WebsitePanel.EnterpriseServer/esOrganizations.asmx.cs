@@ -91,6 +91,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public SystemSettings GetWebDavSystemSettings()
+        {
+           return OrganizationController.GetWebDavSystemSettings();
+        }
+
+        [WebMethod]
         public OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
         {
             return OrganizationController.GetOrganizationPasswordSettings(itemId);

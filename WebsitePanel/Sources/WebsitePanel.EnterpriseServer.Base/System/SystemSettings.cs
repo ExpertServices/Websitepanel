@@ -47,7 +47,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string PACKAGE_DISPLAY_SETTINGS = "PackageDisplaySettings";
         public const string RDS_SETTINGS = "RdsSettings";
         public const string WEBDAV_PORTAL_SETTINGS = "WebdavPortalSettings";
-        public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPasswordResetEnabled";
+        public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPswResetEnabled";
 
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";

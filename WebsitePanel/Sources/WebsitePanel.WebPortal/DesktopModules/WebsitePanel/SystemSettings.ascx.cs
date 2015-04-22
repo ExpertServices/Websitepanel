@@ -164,7 +164,7 @@ namespace WebsitePanel.Portal
 
             if (settings != null)
             {
-                chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WEBDAV_PASSWORD_RESET_ENABLED], false);
+                chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
                 txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
             }
 		}
@@ -250,7 +250,7 @@ namespace WebsitePanel.Portal
 
                 settings = new WSP.SystemSettings();
                 settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
-                settings[WEBDAV_PASSWORD_RESET_ENABLED] = chkEnablePasswordReset.Checked.ToString();
+                settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY] = chkEnablePasswordReset.Checked.ToString();
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
 
                 if (result < 0)
