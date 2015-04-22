@@ -1670,10 +1670,7 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
                 }
 
-                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
-
-                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
-                    DataProvider.GetEnterpriseFolder(itemId, folderName));
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(DataProvider.GetEnterpriseFolder(itemId, folderName));
 
                 string path = string.Format(@"\\{0}@SSL\{1}\{2}", webDavSetting.Domain.Split('.')[0], org.OrganizationId, folderName);
 
