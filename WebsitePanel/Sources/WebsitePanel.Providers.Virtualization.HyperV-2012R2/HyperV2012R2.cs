@@ -239,7 +239,7 @@ namespace WebsitePanel.Providers.Virtualization
                         Name = current.GetString("Name"),
                         State = current.GetEnum<VirtualMachineState>("State"),
                         Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds),
-                        ReplicationState = result[0].GetEnum<ReplicationState>("ReplicationState")
+                        ReplicationState = current.GetEnum<ReplicationState>("ReplicationState")
                     };
                     vmachines.Add(vm);
                 }
@@ -2194,7 +2194,7 @@ namespace WebsitePanel.Providers.Virtualization
                 replica.Errors = result[0].GetInt("ReplicationErrors");
                 replica.FromTime = result[0].GetProperty<DateTime>("MonitoringStartTime");
                 replica.Health = result[0].GetEnum<ReplicationHealth>("ReplicationHealth");
-                replica.HealthDetails = string.Join(". ", result[0].GetProperty<string[]>("ReplicationHealthDetails"));
+                replica.HealthDetails = string.Join(" ", result[0].GetProperty<string[]>("ReplicationHealthDetails"));
                 replica.LastSynhronizedAt = result[0].GetProperty<DateTime?>("LastReplicationTime") ?? new DateTime();
                 replica.MaximumSize = result[0].GetMb("MaximumReplicationSize");
                 replica.Mode = result[0].GetEnum<VmReplicationMode>("ReplicationMode");
@@ -2203,6 +2203,7 @@ namespace WebsitePanel.Providers.Virtualization
                 replica.ReplicaServerName = result[0].GetString("CurrentReplicaServerName");
                 replica.State = result[0].GetEnum<ReplicationState>("ReplicationState");
                 replica.SuccessfulReplications = result[0].GetInt("SuccessfulReplicationCount");
+                replica.MissedReplicationCount = result[0].GetInt("MissedReplicationCount");
                 replica.ToTime = result[0].GetProperty<DateTime>("MonitoringEndTime");
             }
 
