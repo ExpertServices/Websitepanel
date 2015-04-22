@@ -3720,6 +3720,8 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Replication
 
+        #region IsReplicaServer Part
+
         public static CertificateInfo[] GetCertificates(int serviceId, string remoteServer)
         {
             VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
@@ -3745,11 +3747,29 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static bool IsReplicaServer(int serviceId, string remoteServer)
+        public static ResultObject UnsetReplicaServer(int serviceId, string remoteServer)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+                vs.UnsetReplicaServer(remoteServer);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.UNSET_REPLICA_SERVER_ERROR, ex);
+            }
+            return result;
+        }
+
+        public static ReplicationServerInfo GetReplicaServer(int serviceId, string remoteServer)
         {
             VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
-            return vs.IsReplicaServer(remoteServer);
+            return vs.GetReplicaServer(remoteServer);
         }
+
+        #endregion
 
         public static VmReplication GetReplication(int itemId)
         {
@@ -3758,7 +3778,14 @@ namespace WebsitePanel.EnterpriseServer
             return vs.GetReplication(vm.VirtualMachineId);
         }
 
-        public static ResultObject SetVmReplication(int itemId, string replicaServer, VmReplication replication)
+        public static ReplicationDetailInfo GetReplicationInfo(int itemId)
+        {
+            VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+            return vs.GetReplicationInfo(vm.VirtualMachineId);
+        }
+
+        public static ResultObject SetVmReplication(int itemId, VmReplication replication)
         {
             ResultObject result = new ResultObject();
             try
@@ -3766,34 +3793,155 @@ namespace WebsitePanel.EnterpriseServer
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
-                // Get replica server name
-                StringDictionary vsSesstings = ServerController.GetServiceSettings(vm.ServiceId);
-                string replicaServiceId = vsSesstings["ReplicaServerId"];
-
-                if (string.IsNullOrEmpty(replicaServiceId))
-                {
-                    result.ErrorCodes.Add(VirtualizationErrorCodes.SET_NO_REPLICA_SERVER_ERROR);
+                // Get replica server
+                var replicaServerInfo = GetReplicaInfoForService(vm.ServiceId, ref result);
+                if (result.ErrorCodes.Count > 0)
                     return result;
+
+                // We should use enable replication or set replication?
+                var vmReplica = vs.GetReplication(vm.VirtualMachineId);
+                if (vmReplica == null) // need enable
+                {
+                    vs.EnableVmReplication(vm.VirtualMachineId, replicaServerInfo.ComputerName, replication);
+                    vs.StartInitialReplication(vm.VirtualMachineId);
                 }
-
-                //StringDictionary vsSesstings = ServerController.GetServiceSettings(vm.replicaServiceId);
-                //string replicaServiceId = vsSesstings["ReplicaServerId"];
-
-                //if (string.IsNullOrEmpty(replicaServiceId))
-                //{
-                //    result.ErrorCodes.Add(VirtualizationErrorCodes.SET_NO_REPLICA_SERVER_ERROR);
-                //    return result;
-                //}
-
-                vs.SetVmReplication(vm.VirtualMachineId, replicaServer, replication);
+                else // need set
+                {
+                    vs.SetVmReplication(vm.VirtualMachineId, replicaServerInfo.ComputerName, replication);
+                }
                 result.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                result.AddError(VirtualizationErrorCodes.SET_SET_REPLICATION_ERROR, ex);
+                result.AddError(VirtualizationErrorCodes.SET_REPLICATION_ERROR, ex);
             }
             return result; 
         }
+
+        public static ResultObject DisableVmReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.DisableVmReplication(vm.VirtualMachineId, null);
+
+                CleanUpReplicaServer(vm);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.DISABLE_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        public static ResultObject PauseReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.PauseReplication(vm.VirtualMachineId);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.PAUSE_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        public static ResultObject ResumeReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.ResumeReplication(vm.VirtualMachineId);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.RESUME_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        #region Private methods
+
+        private static void CleanUpReplicaServer(VirtualMachine originalVm)
+        {
+            try
+            {
+                ResultObject result = new ResultObject();
+
+                // Get replica server
+                var replicaServer = GetReplicaForService(originalVm.ServiceId, ref result);
+
+                // Clean up replica server
+                var replicaVm = replicaServer.GetVirtualMachines().FirstOrDefault(m => m.Name == originalVm.Name);
+
+                if (replicaVm != null)
+                {
+                    replicaServer.DisableVmReplication(replicaVm.VirtualMachineId, null);
+                    replicaServer.ShutDownVirtualMachine(replicaVm.VirtualMachineId, true, "ReplicaDelete");
+                    replicaServer.DeleteVirtualMachine(replicaVm.VirtualMachineId);
+                }
+            }
+            catch { /* skip */ }
+        }
+
+        private static ReplicationServerInfo GetReplicaInfoForService(int serviceId, ref ResultObject result)
+        {
+            // Get service id of replica server
+            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
+            string replicaServiceId = vsSesstings["ReplicaServerId"];
+
+            if (string.IsNullOrEmpty(replicaServiceId))
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            // get replica server info for replica service id
+            VirtualizationServer2012 vsReplica = GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
+            StringDictionary vsReplicaSesstings = ServerController.GetServiceSettings(Convert.ToInt32(replicaServiceId));
+            string computerName = vsReplicaSesstings["ServerName"];
+            var replicaServerInfo = vsReplica.GetReplicaServer(computerName);
+
+            if (!replicaServerInfo.Enabled)
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            return replicaServerInfo;
+        }
+
+        private static VirtualizationServer2012 GetReplicaForService(int serviceId, ref ResultObject result)
+        {
+            // Get service id of replica server
+            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
+            string replicaServiceId = vsSesstings["ReplicaServerId"];
+
+            if (string.IsNullOrEmpty(replicaServiceId))
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            // get replica server for replica service id
+            return GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
+        }
+
+        #endregion
 
         #endregion
     }

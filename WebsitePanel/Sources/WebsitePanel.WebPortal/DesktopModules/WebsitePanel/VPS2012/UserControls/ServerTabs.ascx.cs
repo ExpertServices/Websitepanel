@@ -133,12 +133,15 @@ namespace WebsitePanel.Portal.VPS2012.UserControls
             if ((vm.ExternalNetworkEnabled || vm.PrivateNetworkEnabled) && !createError)
                 tabsList.Add(CreateTab("vps_network", "Tab.Network"));
 
+            if (!createError)
+                tabsList.Add(CreateTab("vps_replication", "Tab.Replication"));
+
             //tabsList.Add(CreateTab("vps_permissions", "Tab.Permissions"));
             //tabsList.Add(CreateTab("vps_tools", "Tab.Tools"));
             tabsList.Add(CreateTab("vps_audit_log", "Tab.AuditLog"));
 
-            if (!createError)
-                tabsList.Add(CreateTab("vps_help", "Tab.Help"));
+            //if (!createError)
+            //    tabsList.Add(CreateTab("vps_help", "Tab.Help"));
 
 
             // find selected menu item

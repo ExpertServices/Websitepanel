@@ -28,7 +28,9 @@
 
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
+﻿using System.Collections.Specialized;
+﻿using System.Linq;
+﻿using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Common;
@@ -42,221 +44,202 @@ namespace WebsitePanel.Portal.VPS2012
         {
             if (!IsPostBack)
             {
-                BindSnapshotsTree();
+                Bind();
+            }
+
+            Toogle();
+        }
+
+        private void Toogle()
+        {
+            ReplicaTable.Visible = chbEnable.Checked;
+
+            switch (radRecoveryPoints.SelectedValue)
+            {
+                case "OnlyLast":
+                    tabAdditionalRecoveryPoints.Visible = false;
+                    break;
+                case "Additional":
+                    tabAdditionalRecoveryPoints.Visible = true;
+                    VSSdiv.Visible = chbVSS.Checked;
+                    break;
             }
         }
 
-        private void BindSnapshotsTree()
+        private void Bind()
         {
-            VirtualMachineSnapshot[] snapshots = ES.Services.VPS2012.GetVirtualMachineSnapshots(PanelRequest.ItemID);
-            
-            // clear tree
-            SnapshotsTree.Nodes.Clear();
-
-            // fill tree by root nodes
-            AddChildNodes(SnapshotsTree.Nodes, null, snapshots);
-
-            // select first node
-            if (SnapshotsTree.Nodes.Count > 0)
+            try
             {
-                SnapshotsTree.Nodes[0].Selected = true;
-            }
+                const string na = "n/a";
 
-            // refresh
-            BindSelectedNode();
+                var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(PanelRequest.ItemID);
+                var vm = ES.Services.VPS2012.GetVirtualMachineExtendedInfo(packageVm.ServiceId, packageVm.VirtualMachineId);
+                var serviceSettings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(packageVm.ServiceId));
 
-            // quotas
-            VirtualMachine vm = ES.Services.VPS2012.GetVirtualMachineItem(PanelRequest.ItemID);
-            snapshotsQuota.QuotaUsedValue = snapshots.Length;
-            snapshotsQuota.QuotaValue = vm.SnapshotsNumber;
-            btnTakeSnapshot.Enabled = snapshots.Length < vm.SnapshotsNumber;
-        }
+                //var replicaMode = Enum.Parse(typeof(ReplicaMode), serviceSettings["ReplicaMode"]);
+                var computerName = serviceSettings["ServerName"];
 
-        private void BindSelectedNode()
-        {
-            TreeNode node = SnapshotsTree.SelectedNode;
+                var vmReplica = ES.Services.VPS2012.GetReplication(PanelRequest.ItemID);
+                var vmReplicaInfo = ES.Services.VPS2012.GetReplicationInfo(PanelRequest.ItemID);
 
-            btnApply.Enabled =
-                btnRename.Enabled =
-                btnDelete.Enabled =
-                btnDeleteSubtree.Enabled =
-                SnapshotDetailsPanel.Visible = (node != null);
+                // Enable checkpoint
+                chbEnable.Checked = ReplicaTable.Visible = vmReplica != null;
 
-            NoSnapshotsPanel.Visible = (SnapshotsTree.Nodes.Count == 0);
-
-            if (node != null)
-            {
-                // set name
-                txtSnapshotName.Text = node.Text;
-
-                // load snapshot details
-                VirtualMachineSnapshot snapshot = ES.Services.VPS2012.GetSnapshot(PanelRequest.ItemID, node.Value);
-                if (snapshot != null)
-                    litCreated.Text = snapshot.Created.ToString();
-
-                // set image
-                imgThumbnail.ImageUrl =
-                    string.Format("~/DesktopModules/WebsitePanel/VPS2012/VirtualMachineSnapshotImage.ashx?ItemID={0}&SnapshotID={1}&rnd={2}",
-                    PanelRequest.ItemID, HttpUtility.UrlEncode(node.Value), DateTime.Now.Ticks);
-            }
-        }
-
-        private void AddChildNodes(TreeNodeCollection parent, string parentId, VirtualMachineSnapshot[] snapshots)
-        {
-            foreach (VirtualMachineSnapshot snapshot in snapshots)
-            {
-                if (snapshot.ParentId == parentId)
+                // General labels
+                if (vmReplicaInfo != null)
                 {
-                    // add node
-                    TreeNode node = new TreeNode(snapshot.Name, snapshot.Id);
-                    node.Expanded = true;
-                    node.ImageUrl = PortalUtils.GetThemedImage("VPS/snapshot.png");
-                    parent.Add(node);
+                    labPrimaryServer.Text = vmReplicaInfo.PrimaryServerName;
+                    labReplicaServer.Text = vmReplicaInfo.ReplicaServerName;
+                    labLastSynchronized.Text = vmReplicaInfo.LastSynhronizedAt.ToShortTimeString();
+                }
+                else
+                {
+                    labPrimaryServer.Text = labReplicaServer.Text = labLastSynchronized.Text = na;
+                }
 
-                    // check if the current
-                    if (snapshot.IsCurrent)
+                // Certificates list
+                var certificates = ES.Services.VPS2012.GetCertificates(packageVm.ServiceId, computerName);
+                foreach (var cert in certificates)
+                {
+                    ddlCeritficate.Items.Add(new ListItem(cert.Title, cert.Thumbprint));
+                }
+                if (!string.IsNullOrEmpty(computerName))
+                {
+                    ddlCeritficateDiv.Visible = true;
+                    txtCeritficateDiv.Visible = false;
+                }
+                else
+                {
+                    ddlCeritficateDiv.Visible = true;
+                    txtCeritficateDiv.Visible = false;
+                }
+
+                // VHDs editable
+                trVHDEditable.Visible = true;
+                trVHDReadOnly.Visible = false; 
+                chlVHDs.Items.Clear();
+                chlVHDs.Items.AddRange(vm.Disks.Select(d => new ListItem(d.Path) {Selected = true}).ToArray());
+
+                if (vmReplica != null)
+                {
+                    // VHDs readonly
+                    labVHDs.Text = "";
+                    foreach (var disk in vm.Disks)
                     {
-                        TreeNode nowNode = new TreeNode(GetLocalizedString("Now.Text"), "");
-                        nowNode.ImageUrl = PortalUtils.GetThemedImage("VPS/start2.png");
-                        nowNode.SelectAction = TreeNodeSelectAction.None;
-                        node.ChildNodes.Add(nowNode);
+                        if (string.Equals(vmReplica.VhdToReplicate, disk.Path, StringComparison.OrdinalIgnoreCase))
+                            labVHDs.Text += disk.Path + "<br>";
                     }
+                    trVHDEditable.Visible = false;
+                    trVHDReadOnly.Visible = true;
 
-                    // fill children
-                    AddChildNodes(node.ChildNodes, snapshot.Id, snapshots);
-                }
-            }
-        }
+                    // Certificates
+                    ddlCeritficate.SelectedValue = txtCeritficate.Text = vmReplica.Thumbprint;
 
-        protected void btnTakeSnapshot_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ResultObject res = ES.Services.VPS2012.CreateSnapshot(PanelRequest.ItemID);
+                    // Frequency
+                    ddlFrequency.SelectedValue = ((int) vmReplica.ReplicaFrequency).ToString();
 
-                if (res.IsSuccess)
-                {
-                    // bind tree
-                    BindSnapshotsTree();
-                    return;
-                }
-                else
-                {
-                    // show error
-                    messageBox.ShowMessage(res, "VPS_ERROR_TAKE_SNAPSHOT", "VPS");
-                }
-            }
-            catch (Exception ex)
-            {
-                messageBox.ShowErrorMessage("VPS_ERROR_TAKE_SNAPSHOT", ex);
-            }
-        }
+                    // Recovery points
+                    if (vmReplica.AdditionalRecoveryPoints == 0)
+                    {
+                        radRecoveryPoints.SelectedValue = "OnlyLast";
+                        tabAdditionalRecoveryPoints.Visible = false;
+                    }
+                    else
+                    {
+                        radRecoveryPoints.SelectedValue = "Additional";
+                        tabAdditionalRecoveryPoints.Visible = true;
+                        txtRecoveryPointsAdditional.Text = vmReplica.AdditionalRecoveryPoints.ToString();
 
-        protected void btnApply_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                ResultObject res = ES.Services.VPS2012.ApplySnapshot(PanelRequest.ItemID, GetSelectedSnapshot());
+                        // VSS
+                        if (vmReplica.VSSSnapshotFrequencyHour == 0)
+                        {
+                            chbVSS.Checked = false;
+                            VSSdiv.Visible = false;
+                        }
+                        else
+                        {
+                            chbVSS.Checked = true;
+                            VSSdiv.Visible = true;
+                            txtRecoveryPointsVSS.Text = vmReplica.VSSSnapshotFrequencyHour.ToString();
+                        }
+                    }
+                }
 
-                if (res.IsSuccess)
-                {
-                    // bind tree
-                    BindSnapshotsTree();
-                    return;
-                }
-                else
-                {
-                    // show error
-                    messageBox.ShowMessage(res, "VPS_ERROR_APPLY_SNAPSHOT", "VPS");
-                }
+                secReplicationDetails.Visible = ReplicationDetailsPanel.Visible = vmReplica != null;
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("VPS_ERROR_APPLY_SNAPSHOT", ex);
+                messageBox.ShowErrorMessage("VPS_ERROR_GET_VM_REPLICATION", ex);
             }
         }
 
-        protected void btnRenameSnapshot_Click(object sender, EventArgs e)
+        protected void btnUpdate_Click(object sender, EventArgs e)
         {
+            if (!Page.IsValid)
+                return;
+
+            if (chbEnable.Checked)
+                SetReplication();
+            else
+                DisableReplication();
+        }
+
+        private void SetReplication()
+        {
+            var vmReplica = new VmReplication();
+
+            vmReplica.VhdToReplicate = chlVHDs.Items.Cast<ListItem>()
+                .Where(li => li.Selected)
+                .Select(li => li.Value)
+                .ToList()
+                .FirstOrDefault();
+
+            vmReplica.Thumbprint = ddlCeritficateDiv.Visible ? ddlCeritficate.SelectedValue : txtCeritficate.Text;
+            vmReplica.ReplicaFrequency = (ReplicaFrequency) Convert.ToInt32(ddlFrequency.SelectedValue);
+            vmReplica.AdditionalRecoveryPoints = radRecoveryPoints.SelectedValue == "OnlyLast" ? 0 : Convert.ToInt32(txtRecoveryPointsAdditional.Text);
+            vmReplica.VSSSnapshotFrequencyHour = chbVSS.Checked ? Convert.ToInt32(txtRecoveryPointsVSS.Text) : 0;
+
             try
             {
-                string newName = txtSnapshotName.Text.Trim();
-                ResultObject res = ES.Services.VPS2012.RenameSnapshot(PanelRequest.ItemID, GetSelectedSnapshot(), newName);
+                ResultObject res = ES.Services.VPS2012.SetVmReplication(PanelRequest.ItemID, vmReplica);
 
                 if (res.IsSuccess)
-                {
-                    // bind tree
-                    SnapshotsTree.SelectedNode.Text = newName;
-                    return;
-                }
+                    Bind();
                 else
-                {
-                    // show error
-                    messageBox.ShowMessage(res, "VPS_ERROR_RENAME_SNAPSHOT", "VPS");
-                }
+                    messageBox.ShowMessage(res, "VPS_ERROR_SET_VM_REPLICATION", "VPS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("VPS_ERROR_RENAME_SNAPSHOT", ex);
+                messageBox.ShowErrorMessage("VPS_ERROR_SET_VM_REPLICATION", ex);
             }
         }
 
-        protected void btnDelete_Click(object sender, EventArgs e)
+        private void DisableReplication()
         {
             try
             {
-                ResultObject res = ES.Services.VPS2012.DeleteSnapshot(PanelRequest.ItemID, GetSelectedSnapshot());
+                ResultObject res = ES.Services.VPS2012.DisableVmReplication(PanelRequest.ItemID);
 
                 if (res.IsSuccess)
-                {
-                    // bind tree
-                    BindSnapshotsTree();
-                    return;
-                }
+                    Bind();
                 else
-                {
-                    // show error
-                    messageBox.ShowMessage(res, "VPS_ERROR_DELETE_SNAPSHOT", "VPS");
-                }
+                    messageBox.ShowMessage(res, "VPS_ERROR_DISABLE_VM_REPLICATION", "VPS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("VPS_ERROR_DELETE_SNAPSHOT", ex);
+                messageBox.ShowErrorMessage("VPS_ERROR_DISABLE_VM_REPLICATION", ex);
             }
         }
 
-        protected void btnDeleteSubtree_Click(object sender, EventArgs e)
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
         {
-            try
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
             {
-                ResultObject res = ES.Services.VPS2012.DeleteSnapshotSubtree(PanelRequest.ItemID, GetSelectedSnapshot());
-
-                if (res.IsSuccess)
-                {
-                    // bind tree
-                    BindSnapshotsTree();
-                    return;
-                }
-                else
-                {
-                    // show error
-                    messageBox.ShowMessage(res, "VPS_ERROR_DELETE_SNAPSHOT_SUBTREE", "VPS");
-                }
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
             }
-            catch (Exception ex)
-            {
-                messageBox.ShowErrorMessage("VPS_ERROR_DELETE_SNAPSHOT_SUBTREE", ex);
-            }
-        }
-
-        private string GetSelectedSnapshot()
-        {
-            return SnapshotsTree.SelectedNode.Value;
-        }
-
-        protected void SnapshotsTree_SelectedNodeChanged(object sender, EventArgs e)
-        {
-            BindSelectedNode();
+            return r;
         }
     }
 }

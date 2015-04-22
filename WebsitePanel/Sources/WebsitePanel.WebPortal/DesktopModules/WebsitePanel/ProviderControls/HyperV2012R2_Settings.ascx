@@ -157,8 +157,8 @@
                 <td colspan="2">
                     <asp:RadioButtonList ID="ReplicationModeList" runat="server" AutoPostBack="true"
                         OnSelectedIndexChanged="radioServer_SelectedIndexChanged">
-                        <asp:ListItem Value="Disable" meta:resourcekey="ReplicationModeDisabled" Selected="True">No Hyper-v Replication</asp:ListItem>
-                        <asp:ListItem Value="Enable" meta:resourcekey="ReplicationModeEnabled">Enable Hyper-V Replication</asp:ListItem>
+                        <asp:ListItem Value="None" meta:resourcekey="ReplicationModeDisabled" Selected="True">No Hyper-v Replication</asp:ListItem>
+                        <asp:ListItem Value="ReplicationEnabled" meta:resourcekey="ReplicationModeEnabled">Enable Hyper-V Replication</asp:ListItem>
                         <asp:ListItem Value="IsReplicaServer" meta:resourcekey="ReplicationModeIsReplicaServer">This is a Replica Server</asp:ListItem>
                     </asp:RadioButtonList>
                 </td>
