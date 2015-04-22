@@ -46,7 +46,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             var model = new AccountModel();
 
-            var settings = WspContext.Services.System.GetSystemSettings(EnterpriseServer.SystemSettings.WEBDAV_PORTAL_SETTINGS);
+            var settings = WspContext.Services.Organizations.GetWebDavSystemSettings();
 
             if (settings != null)
             {
