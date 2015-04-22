@@ -1673,15 +1673,20 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteExpiredAccessTokens();
         }
 
+        public static SystemSettings GetWebDavSystemSettings()
+        {
+            return SystemController.GetSystemSettingsInternal(SystemSettings.WEBDAV_PORTAL_SETTINGS, false);
+        }
+
         public static string GenerateUserPasswordResetLink(int itemId, int accountId)
         {
             string passwordResetUrlFormat = "account/password-reset/step-2";
 
-            var settings = SystemController.GetSystemSettings(SystemSettings.WEBDAV_PORTAL_SETTINGS);
+            var settings = GetWebDavSystemSettings();
 
-            if (settings == null)
+            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
             {
-                throw new Exception("Webdav portal system settings are not set");
+                return string.Empty;
             }
 
             var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
@@ -1788,17 +1793,18 @@ namespace WebsitePanel.EnterpriseServer
 
                         passwordSettings = new OrganizationPasswordSettings
                         {
-                            MinimumLength = Utils.ParseInt(parts[1], 0),
-                            MaximumLength = Utils.ParseInt(parts[2], 0),
-                            UppercaseLettersCount = Utils.ParseInt(parts[3], 0),
-                            NumbersCount = Utils.ParseInt(parts[4], 0),
-                            SymbolsCount = Utils.ParseInt(parts[5], 0),
-                            AccountLockoutThreshold = Utils.ParseInt(parts[7], 0),
-                            EnforcePasswordHistory = Utils.ParseInt(parts[8], 0),
-                            AccountLockoutDuration = Utils.ParseInt(parts[9], 0),
-                            ResetAccountLockoutCounterAfter = Utils.ParseInt(parts[10], 0),
-                            LockoutSettingsEnabled = Utils.ParseBool(parts[11], false),
-                            PasswordComplexityEnabled = Utils.ParseBool(parts[12], true),
+                            MinimumLength = GetValueSafe(parts, 1, 0),
+                            MaximumLength = GetValueSafe(parts, 2, 0),
+                            UppercaseLettersCount = GetValueSafe(parts, 3, 0),
+                            NumbersCount = GetValueSafe(parts, 4, 0),
+                            SymbolsCount = GetValueSafe(parts, 5, 0),
+                            AccountLockoutThreshold = GetValueSafe(parts, 7, 0),
+
+                            EnforcePasswordHistory = GetValueSafe(parts, 8, 0),
+                            AccountLockoutDuration = GetValueSafe(parts, 9, 0),
+                            ResetAccountLockoutCounterAfter = GetValueSafe(parts, 10, 0),
+                            LockoutSettingsEnabled = GetValueSafe(parts, 11, false),
+                            PasswordComplexityEnabled = GetValueSafe(parts, 11, true),
                         };
 
 
@@ -1819,6 +1825,21 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return passwordSettings;
+        }
+
+        public static T GetValueSafe<T>(string[] array, int index, T defaultValue)
+        {
+            if (array.Length > index)
+            {
+                if (string.IsNullOrEmpty(array[index]))
+                {
+                    return defaultValue;
+                }
+
+                return (T)Convert.ChangeType(array[index], typeof(T));
+            }
+
+            return defaultValue;
         }
 
         public static void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)

@@ -181,6 +181,8 @@ namespace WebsitePanel.Portal.UserControls
 
             if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, Cntx))
                 items.Add(CreateMenuItem("SecurityGroups", "secur_groups", @"Icons/group_48.png"));
+
+            items.Add(CreateMenuItem("PasswordPolicy", "organization_settings_password_settings", @"Icons/user_48.png"));
         }
 
         private void PrepareExchangeMenuRoot(MenuItemCollection items)

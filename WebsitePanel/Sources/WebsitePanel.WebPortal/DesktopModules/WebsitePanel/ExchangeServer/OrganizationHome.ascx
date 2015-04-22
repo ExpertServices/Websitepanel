@@ -37,14 +37,6 @@
                                 <asp:Label runat="server" ID="lblCreatedValue" />
                             </td>
                         </tr>
-                        <tr>
-                            <td class="OrgStatsRow">
-                                <asp:Label runat="server" meta:resourcekey="OrganizationSettings" ID="Label1" />
-                            </td>
-                            <td>
-                                <asp:HyperLink ID="lnkEditOrganizationSettings" runat="server" meta:resourcekey="lnkEditOrganizationSettings"></asp:HyperLink>
-                            </td>
-                        </tr>
                     </table>
                     <br />
                     <table width="100%">

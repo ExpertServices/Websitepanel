@@ -2613,9 +2613,15 @@ namespace WebsitePanel.EnterpriseServer
 
             // add account
             items["Account"] = account;
-            items["PswResetUrl"] = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId);
             items["AccountDomain"] = account.PrimaryEmailAddress.Substring(account.PrimaryEmailAddress.IndexOf("@") + 1);
             items["DefaultDomain"] = org.DefaultDomain;
+
+            var passwordResetUrl = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId);
+            if (!string.IsNullOrEmpty(passwordResetUrl))
+            {
+                items["PswResetUrl"] = passwordResetUrl;
+            } 
+
 
             if (!String.IsNullOrEmpty(account.SamAccountName))
             {

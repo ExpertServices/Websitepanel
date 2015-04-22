@@ -221,6 +221,10 @@ namespace WebsitePanel.Portal.HostedSolution
                 password.ValidationEnabled = true;
                 password.Password = string.Empty;
 
+                var settings = ES.Services.Organizations.GetWebDavSystemSettings();
+
+                btnResetUserPassword.Visible = settings != null && Utils.ParseBool(settings[EnterpriseServer.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
+
                 chkUserMustChangePassword.Checked = user.UserMustChangePassword;
             }
             catch (Exception ex)
