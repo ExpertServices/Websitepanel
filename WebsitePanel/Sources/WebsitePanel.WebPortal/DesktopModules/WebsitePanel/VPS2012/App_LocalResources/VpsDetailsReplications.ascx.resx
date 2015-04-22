@@ -123,11 +123,26 @@
   <data name="btnUpdate.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating VM replication...');</value>
   </data>
+  <data name="btnPause.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Pausing VM replication...');</value>
+  </data>
+  <data name="btnResume.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Resuming VM replication...');</value>
+  </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Replication</value>
   </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
   <data name="btnDetailInfo.Text" xml:space="preserve">
     <value>Details</value>
+  </data>
+  <data name="btnPause.Text" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="btnResume.Text" xml:space="preserve">
+    <value>Resume</value>
   </data>
   <data name="btnUpdate.Text" xml:space="preserve">
     <value>Update</value>
@@ -147,14 +162,53 @@
   <data name="ddlFrequency5minutes.Text" xml:space="preserve">
     <value>5 minutes</value>
   </data>
+  <data name="locAverageLatency.Text" xml:space="preserve">
+    <value>Average latency:</value>
+  </data>
+  <data name="locAverageSize.Text" xml:space="preserve">
+    <value>Average size:</value>
+  </data>
   <data name="locCeritficate.Text" xml:space="preserve">
     <value>SSL ceritficate:</value>
+  </data>
+  <data name="locDetails.Text" xml:space="preserve">
+    <value>Replication details</value>
+  </data>
+  <data name="locDetailsHealth.Text" xml:space="preserve">
+    <value>Replication Health:</value>
+  </data>
+  <data name="locDetailsMode.Text" xml:space="preserve">
+    <value>Replication Mode:</value>
+  </data>
+  <data name="locDetailsPrimary.Text" xml:space="preserve">
+    <value>Current Primary Server:</value>
+  </data>
+  <data name="locDetailsReplica.Text" xml:space="preserve">
+    <value>Current Replica Server:</value>
+  </data>
+  <data name="locDetailsState.Text" xml:space="preserve">
+    <value>Replication State:</value>
+  </data>
+  <data name="locErrorsEncountered.Text" xml:space="preserve">
+    <value>Errors encountered:</value>
   </data>
   <data name="locFrequency.Text" xml:space="preserve">
     <value>Replication Frequency</value>
   </data>
+  <data name="locFromTime.Text" xml:space="preserve">
+    <value>From time:</value>
+  </data>
+  <data name="locHealth.Text" xml:space="preserve">
+    <value>Health:</value>
+  </data>
   <data name="locLastSynchronized.Text" xml:space="preserve">
     <value>Last synchronized at:</value>
+  </data>
+  <data name="locLastSyncro.Text" xml:space="preserve">
+    <value>Last synchronized at:</value>
+  </data>
+  <data name="locMaximumSize.Text" xml:space="preserve">
+    <value>Maximum size:</value>
   </data>
   <data name="locPrimaryServer.Text" xml:space="preserve">
     <value>Primary Server:</value>
@@ -168,6 +222,15 @@
   <data name="locReplicaServer.Text" xml:space="preserve">
     <value>Replica Server:</value>
   </data>
+  <data name="locSizeData.Text" xml:space="preserve">
+    <value>Size of data yet to be replicated:</value>
+  </data>
+  <data name="locSuccessfulReplicationCycles.Text" xml:space="preserve">
+    <value>Successful replication cycles:</value>
+  </data>
+  <data name="locToTime.Text" xml:space="preserve">
+    <value>To time:</value>
+  </data>
   <data name="locVHDs.Text" xml:space="preserve">
     <value>Choose Replication VHDs:</value>
   </data>
@@ -177,11 +240,17 @@
   <data name="radRecoveryPointsLast.Text" xml:space="preserve">
     <value>Maintain only the latest recovery point</value>
   </data>
+  <data name="secPendingReplication.Text" xml:space="preserve">
+    <value>Pending replication:</value>
+  </data>
   <data name="secReplication.Text" xml:space="preserve">
     <value>Replication Configuration</value>
   </data>
   <data name="secReplicationDetails.Text" xml:space="preserve">
     <value>Health</value>
+  </data>
+  <data name="secStatisticPanel.Text" xml:space="preserve">
+    <value>Statistic for past </value>
   </data>
   <data name="valCeritficateRequire.ErrorMessage" xml:space="preserve">
     <value>SSL certificate is required</value>

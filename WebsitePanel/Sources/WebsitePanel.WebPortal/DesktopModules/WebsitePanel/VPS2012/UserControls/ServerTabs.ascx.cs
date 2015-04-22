@@ -133,7 +133,7 @@ namespace WebsitePanel.Portal.VPS2012.UserControls
             if ((vm.ExternalNetworkEnabled || vm.PrivateNetworkEnabled) && !createError)
                 tabsList.Add(CreateTab("vps_network", "Tab.Network"));
 
-            if (!createError)
+            if (VirtualMachines2012Helper.IsReplicationEnabled(PanelSecurity.PackageId) && !createError)
                 tabsList.Add(CreateTab("vps_replication", "Tab.Replication"));
 
             //tabsList.Add(CreateTab("vps_permissions", "Tab.Permissions"));
@@ -161,7 +161,7 @@ namespace WebsitePanel.Portal.VPS2012.UserControls
             if(createError && idx == 0)
                 messageBox.ShowErrorMessage("VPS_PROVISION_ERROR");
         }
-
+        
         private void BindTask(VirtualMachine vm)
         {
             task = ES.Services.Tasks.GetTaskWithLogRecords(vm.CurrentTaskId, DateTime.MinValue);

@@ -53,15 +53,20 @@
                     <wsp:ServerTabs ID="tabs" runat="server" SelectedTab="vps_replication" />
                     <wsp:SimpleMessageBox ID="messageBox" runat="server" />
                     
-                    <asp:ValidationSummary ID="validatorsSummary" runat="server" 
+                    <asp:ValidationSummary ID="validatorsSummary" runat="server"
                         ValidationGroup="Vps" ShowMessageBox="True" ShowSummary="False" />
 
                     <wsp:CollapsiblePanel ID="secReplicationDetails" runat="server" Visible="False"
-                        TargetControlID="ReplicationDetailsPanel" meta:ResourceKey="secReplicationDetails" Text="Health">
-                    </wsp:CollapsiblePanel>
+                        TargetControlID="ReplicationDetailsPanel" meta:ResourceKey="secReplicationDetails" Text="Health"></wsp:CollapsiblePanel>
                     <asp:Panel ID="ReplicationDetailsPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 750px;">
+                        <asp:Localize ID="locHealth" runat="server" meta:resourcekey="locHealth" Text="Health:"></asp:Localize>
+                        <asp:Label ID="labHealth" runat="server"></asp:Label>
                         <asp:Button ID="btnDetailInfo" runat="server" CausesValidation="false" CssClass="ActionButtonRename"
-                            meta:resourcekey="btnDetailInfo" Text="Details"></asp:Button>
+                            meta:resourcekey="btnDetailInfo" Text="Details" Style="margin-left: 20px"></asp:Button>
+                        <asp:Button ID="btnPause" runat="server" CausesValidation="false" CssClass="ActionButtonRename"
+                            meta:resourcekey="btnPause" Text="Pause" OnClick="btnPause_Click" Style="margin-left: 20px"></asp:Button>
+                        <asp:Button ID="btnResume" runat="server" CausesValidation="false" CssClass="ActionButtonRename"
+                            meta:resourcekey="btnResume" Text="Resume" OnClick="btnResume_Click" Style="margin-left: 20px"></asp:Button>
                     </asp:Panel>
 
                     <wsp:CollapsiblePanel ID="secReplication" runat="server" Visible="True"
@@ -69,7 +74,7 @@
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="ReplicationPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 750px;">
                         <div class="FormButtonsBarClean">
-                            <asp:CheckBox ID="chbEnable" runat="server" meta:resourcekey="chbEnable" Text="Enable replication" AutoPostBack="True" />
+                            <asp:CheckBox ID="chbEnable" runat="server" meta:resourcekey="chbEnable" Text="Enable replication" AutoPostBack="True"  />
                         </div>
                         <table runat="server" id="ReplicaTable" class="ReplicaTable" style="margin: 10px; width: 100%;">
 				            <tr>
@@ -209,8 +214,7 @@
 		<tr>
 			<td class="Popup-HeaderLeft"></td>
 			<td class="Popup-HeaderTitle">
-				<asp:Localize ID="locRenameSnapshot" runat="server" Text="Rename snapshot"
-				    meta:resourcekey="locRenameSnapshot"></asp:Localize>
+				<asp:Localize ID="locDetails" runat="server" Text="Replication details" meta:resourcekey="locDetails"></asp:Localize>
 			</td>
 			<td class="Popup-HeaderRight"></td>
 		</tr>
@@ -221,31 +225,145 @@
 			
 			<table cellspacing="10">
 			    <tr>
-			        <td>
-			            <asp:TextBox ID="txtSnapshotName" runat="server" CssClass="NormalTextBox" Width="300"></asp:TextBox>
-			            
-			            <asp:RequiredFieldValidator ID="SnapshotNameValidator" runat="server" Text="*" Display="Dynamic"
-                                ControlToValidate="txtSnapshotName" meta:resourcekey="SnapshotNameValidator" SetFocusOnError="true"
-                                ValidationGroup="RenameSnapshot">*</asp:RequiredFieldValidator>
-			        </td>
-			    </tr>
+                    <td style="width: 180px">
+				        <asp:Localize ID="locDetailsState" runat="server" Text="Replication State:" meta:resourcekey="locDetailsState"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:Label ID="labDetailsState" runat="server"></asp:Label>
+                    </td>
+                </tr>
+			    <tr>
+                    <td>
+				        <asp:Localize ID="locDetailsMode" runat="server" Text="Replication Mode:" meta:resourcekey="locDetailsMode"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:Label ID="labDetailsMode" runat="server"></asp:Label>
+                    </td>
+                </tr>
+			    <tr>
+                    <td>
+				        <asp:Localize ID="locDetailsPrimary" runat="server" Text="Current Primary Server:" meta:resourcekey="locDetailsPrimary"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:Label ID="labDetailsPrimary" runat="server"></asp:Label>
+                    </td>
+                </tr>
+			    <tr>
+                    <td>
+				        <asp:Localize ID="locDetailsReplica" runat="server" Text="Current Replica Server:" meta:resourcekey="locDetailsReplica"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:Label ID="labDetailsReplica" runat="server"></asp:Label>
+                    </td>
+                </tr>
+			    <tr>
+                    <td>
+				        <asp:Localize ID="locDetailsHealth" runat="server" Text="Replication Health:" meta:resourcekey="locDetailsHealth"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:Label ID="labDetailsHealth" runat="server"></asp:Label>
+                        <br/>
+                        <asp:Label ID="labDetailsHealthDetails" runat="server"></asp:Label>
+                    </td>
+                </tr>
 			</table>
-			
-                                                
+
+            <wsp:CollapsiblePanel ID="StatisticCollapsiblePanel" runat="server" Visible="True"
+                TargetControlID="StatisticPanel" meta:ResourceKey="secStatisticPanel" Text="Statistic for past "></wsp:CollapsiblePanel>
+            <asp:Panel ID="StatisticPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 400px;">
+                <table cellspacing="10">
+                    <tr>
+                        <td style="width: 180px">
+                            <asp:Localize ID="locFromTime" runat="server" Text="From time:" meta:resourcekey="locFromTime"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labFromTime" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locToTime" runat="server" Text="To time:" meta:resourcekey="locToTime"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labToTime" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locAverageSize" runat="server" Text="Average size:" meta:resourcekey="locAverageSize"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labAverageSize" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locMaximumSize" runat="server" Text="Maximum size:" meta:resourcekey="locMaximumSize"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labMaximumSize" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locAverageLatency" runat="server" Text="Average latency:" meta:resourcekey="locAverageLatency"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labAverageLatency" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locErrorsEncountered" runat="server" Text="Errors encountered:" meta:resourcekey="locErrorsEncountered"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labErrorsEncountered" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locSuccessfulReplicationCycles" runat="server" Text="Successful replication cycles:" meta:resourcekey="locSuccessfulReplicationCycles"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labSuccessfulReplicationCycles" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                </table>
+            </asp:Panel>
+
+                      
+            <wsp:CollapsiblePanel ID="PendingReplicationCollapsiblePanel" runat="server" Visible="True"
+                TargetControlID="PendingReplicationPanel" meta:ResourceKey="secPendingReplication" Text="Pending replication"></wsp:CollapsiblePanel>
+            <asp:Panel ID="PendingReplicationPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 400px;">
+                <table cellspacing="10">
+                    <tr>
+                        <td style="width: 180px">
+                            <asp:Localize ID="locSizeData" runat="server" Text="Size of data yet to be replicated:" meta:resourcekey="locSizeData"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labSizeData" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Localize ID="locLastSyncro" runat="server" Text="Last synchronized at:" meta:resourcekey="locLastSyncro"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:Label ID="labLastSyncro" runat="server"></asp:Label>
+                        </td>
+                    </tr>
+                </table>
+            </asp:Panel>
+
 			<br />
 		</div>
 		
 		<div class="FormFooter">
-		    <asp:Button ID="btnRenameSnapshot" runat="server" CssClass="Button1"
-		        meta:resourcekey="btnRenameSnapshot" Text="Rename" 
-                ValidationGroup="RenameSnapshot" />
-		        
-			<asp:Button ID="btnCancelRename" runat="server" CssClass="Button1"
-			    meta:resourcekey="btnCancelRename" Text="Cancel" CausesValidation="false" />
+			&nbsp;<asp:Button ID="btnCancel" runat="server" CssClass="Button1" meta:resourcekey="btnCancel" Text="Cancel" CausesValidation="false" />
 		</div>
 	</div>
 </asp:Panel>
 
 <ajaxToolkit:ModalPopupExtender ID="DetailModal" runat="server" BehaviorID="DetailModal"
 	TargetControlID="btnDetailInfo" PopupControlID="DetailsPanel"
-	BackgroundCssClass="modalBackground" DropShadow="false" CancelControlID="btnCancelRename" />
+	BackgroundCssClass="modalBackground" DropShadow="false" CancelControlID="btnCancel" />

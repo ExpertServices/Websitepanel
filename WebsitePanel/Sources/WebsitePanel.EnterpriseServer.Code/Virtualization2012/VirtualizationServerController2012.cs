@@ -3825,7 +3825,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
-                vs.DisableVmReplication(vm.VirtualMachineId, null);
+                vs.DisableVmReplication(vm.VirtualMachineId);
 
                 CleanUpReplicaServer(vm);
 
@@ -3887,10 +3887,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Clean up replica server
                 var replicaVm = replicaServer.GetVirtualMachines().FirstOrDefault(m => m.Name == originalVm.Name);
-
                 if (replicaVm != null)
                 {
-                    replicaServer.DisableVmReplication(replicaVm.VirtualMachineId, null);
+                    replicaServer.DisableVmReplication(replicaVm.VirtualMachineId);
                     replicaServer.ShutDownVirtualMachine(replicaVm.VirtualMachineId, true, "ReplicaDelete");
                     replicaServer.DeleteVirtualMachine(replicaVm.VirtualMachineId);
                 }

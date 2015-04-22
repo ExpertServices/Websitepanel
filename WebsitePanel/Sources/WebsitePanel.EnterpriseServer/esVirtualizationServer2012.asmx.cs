@@ -532,7 +532,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public ResultObject ResumeReplication(int itemId)
         {
-            return VirtualizationServerController2012.PauseReplication(itemId);
+            return VirtualizationServerController2012.ResumeReplication(itemId);
         }
 
 

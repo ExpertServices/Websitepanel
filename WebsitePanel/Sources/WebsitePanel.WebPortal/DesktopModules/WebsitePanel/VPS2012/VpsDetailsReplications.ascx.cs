@@ -40,6 +40,8 @@ namespace WebsitePanel.Portal.VPS2012
 {
     public partial class VpsDetailsReplications : WebsitePanelModuleBase
     {
+        private const string DateFormat = "MM/dd/yyyy h:mm:ss tt";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -74,27 +76,31 @@ namespace WebsitePanel.Portal.VPS2012
 
                 var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(PanelRequest.ItemID);
                 var vm = ES.Services.VPS2012.GetVirtualMachineExtendedInfo(packageVm.ServiceId, packageVm.VirtualMachineId);
-                var serviceSettings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(packageVm.ServiceId));
+                var serviceSettings = VirtualMachines2012Helper.ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(packageVm.ServiceId));
 
                 //var replicaMode = Enum.Parse(typeof(ReplicaMode), serviceSettings["ReplicaMode"]);
                 var computerName = serviceSettings["ServerName"];
 
                 var vmReplica = ES.Services.VPS2012.GetReplication(PanelRequest.ItemID);
                 var vmReplicaInfo = ES.Services.VPS2012.GetReplicationInfo(PanelRequest.ItemID);
-
+                
                 // Enable checkpoint
                 chbEnable.Checked = ReplicaTable.Visible = vmReplica != null;
 
-                // General labels
                 if (vmReplicaInfo != null)
                 {
+                    // General labels
                     labPrimaryServer.Text = vmReplicaInfo.PrimaryServerName;
                     labReplicaServer.Text = vmReplicaInfo.ReplicaServerName;
-                    labLastSynchronized.Text = vmReplicaInfo.LastSynhronizedAt.ToShortTimeString();
+                    labLastSynchronized.Text = vmReplicaInfo.LastSynhronizedAt.ToString(DateFormat);
+
+                    // Details
+                    labHealth.Text = vmReplicaInfo.Health.ToString();
                 }
                 else
                 {
                     labPrimaryServer.Text = labReplicaServer.Text = labLastSynchronized.Text = na;
+                    labHealth.Text = "";
                 }
 
                 // Certificates list
@@ -126,7 +132,7 @@ namespace WebsitePanel.Portal.VPS2012
                     labVHDs.Text = "";
                     foreach (var disk in vm.Disks)
                     {
-                        if (string.Equals(vmReplica.VhdToReplicate, disk.Path, StringComparison.OrdinalIgnoreCase))
+                        if (vmReplica.VhdToReplicate.Any(p=>string.Equals(p, disk.Path, StringComparison.OrdinalIgnoreCase)))
                             labVHDs.Text += disk.Path + "<br>";
                     }
                     trVHDEditable.Visible = false;
@@ -163,14 +169,56 @@ namespace WebsitePanel.Portal.VPS2012
                             txtRecoveryPointsVSS.Text = vmReplica.VSSSnapshotFrequencyHour.ToString();
                         }
                     }
+
+                    BindDetailsPopup(vmReplicaInfo);
                 }
 
+                // Details
                 secReplicationDetails.Visible = ReplicationDetailsPanel.Visible = vmReplica != null;
+
+                // Pause buttons
+                if (vm.ReplicationState == ReplicationState.Suspended)
+                {
+                    btnResume.Visible = true;
+                    btnPause.Visible = false;
+                }
+                else
+                {
+                    btnResume.Visible = false;
+                    btnPause.Visible = true;
+                }
             }
             catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("VPS_ERROR_GET_VM_REPLICATION", ex);
             }
+        }
+
+        private void BindDetailsPopup(ReplicationDetailInfo vmReplicaInfo)
+        {
+            labDetailsState.Text = vmReplicaInfo.State.ToString();
+            labDetailsMode.Text = vmReplicaInfo.Mode.ToString();
+            labDetailsPrimary.Text = vmReplicaInfo.PrimaryServerName;
+            labDetailsReplica.Text = vmReplicaInfo.ReplicaServerName;
+            labDetailsHealth.Text = vmReplicaInfo.Health.ToString();
+            labDetailsHealthDetails.Text = vmReplicaInfo.HealthDetails;
+
+            // statistic
+            StatisticCollapsiblePanel.Text += ToReadableString(vmReplicaInfo.ToTime - vmReplicaInfo.FromTime);
+            labFromTime.Text = vmReplicaInfo.FromTime.ToString(DateFormat);
+            labToTime.Text = vmReplicaInfo.ToTime.ToString(DateFormat);
+            labAverageSize.Text = vmReplicaInfo.AverageSize;
+            labMaximumSize.Text = vmReplicaInfo.MaximumSize;
+            labAverageLatency.Text = vmReplicaInfo.AverageLatency.ToString("c");
+            labErrorsEncountered.Text = vmReplicaInfo.Errors.ToString();
+            labSuccessfulReplicationCycles.Text = string.Format("{0} out of {1} ({2}%)", 
+                vmReplicaInfo.SuccessfulReplications,
+                vmReplicaInfo.SuccessfulReplications + vmReplicaInfo.MissedReplicationCount,
+                Convert.ToInt32(100*vmReplicaInfo.SuccessfulReplications/vmReplicaInfo.MissedReplicationCount));
+
+            // pending replication
+            labSizeData.Text = vmReplicaInfo.PendingSize;
+            labLastSyncro.Text = vmReplicaInfo.LastSynhronizedAt.ToString(DateFormat);
         }
 
         protected void btnUpdate_Click(object sender, EventArgs e)
@@ -191,8 +239,7 @@ namespace WebsitePanel.Portal.VPS2012
             vmReplica.VhdToReplicate = chlVHDs.Items.Cast<ListItem>()
                 .Where(li => li.Selected)
                 .Select(li => li.Value)
-                .ToList()
-                .FirstOrDefault();
+                .ToArray();
 
             vmReplica.Thumbprint = ddlCeritficateDiv.Visible ? ddlCeritficate.SelectedValue : txtCeritficate.Text;
             vmReplica.ReplicaFrequency = (ReplicaFrequency) Convert.ToInt32(ddlFrequency.SelectedValue);
@@ -206,11 +253,11 @@ namespace WebsitePanel.Portal.VPS2012
                 if (res.IsSuccess)
                     Bind();
                 else
-                    messageBox.ShowMessage(res, "VPS_ERROR_SET_VM_REPLICATION", "VPS");
+                    messageBox.ShowMessage(res, "VPS_SET_REPLICA_SERVER_ERROR", "VPS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("VPS_ERROR_SET_VM_REPLICATION", ex);
+                messageBox.ShowErrorMessage("VPS_SET_REPLICA_SERVER_ERROR", ex);
             }
         }
 
@@ -223,23 +270,60 @@ namespace WebsitePanel.Portal.VPS2012
                 if (res.IsSuccess)
                     Bind();
                 else
-                    messageBox.ShowMessage(res, "VPS_ERROR_DISABLE_VM_REPLICATION", "VPS");
+                    messageBox.ShowMessage(res, "VPS_DISABLE_REPLICATION_ERROR", "VPS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("VPS_ERROR_DISABLE_VM_REPLICATION", ex);
+                messageBox.ShowErrorMessage("VPS_DISABLE_REPLICATION_ERROR", ex);
+            }
+        }
+        
+        protected void btnPause_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ResultObject res = ES.Services.VPS2012.PauseReplication(PanelRequest.ItemID);
+
+                if (res.IsSuccess)
+                    Bind();
+                else
+                    messageBox.ShowMessage(res, "VPS_PAUSE_REPLICATION_ERROR", "VPS");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("VPS_PAUSE_REPLICATION_ERROR", ex);
             }
         }
 
-        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        protected void btnResume_Click(object sender, EventArgs e)
         {
-            StringDictionary r = new StringDictionary();
-            foreach (string setting in settings)
+            try
             {
-                int idx = setting.IndexOf('=');
-                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+                ResultObject res = ES.Services.VPS2012.ResumeReplication(PanelRequest.ItemID);
+
+                if (res.IsSuccess)
+                    Bind();
+                else
+                    messageBox.ShowMessage(res, "VPS_RESUME_REPLICATION_ERROR", "VPS");
             }
-            return r;
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("VPS_RESUME_REPLICATION_ERROR", ex);
+            }
+        }
+
+        public string ToReadableString(TimeSpan span)
+        {
+            string formatted = string.Format("{0}{1}{2}",
+                span.Duration().Days > 0 ? string.Format("{0:0} Day{1}, ", span.Days, span.Days == 1 ? String.Empty : "s") : string.Empty,
+                span.Duration().Hours > 0 ? string.Format("{0:0} Hour{1}, ", span.Hours, span.Hours == 1 ? String.Empty : "s") : string.Empty,
+                span.Duration().Minutes > 0 ? string.Format("{0:0} Minute{1}, ", span.Minutes, span.Minutes == 1 ? String.Empty : "s") : string.Empty);
+
+            if (formatted.EndsWith(", ")) formatted = formatted.Substring(0, formatted.Length - 2);
+
+            if (string.IsNullOrEmpty(formatted)) formatted = "0 Minutes";
+
+            return formatted;
         }
     }
 }
