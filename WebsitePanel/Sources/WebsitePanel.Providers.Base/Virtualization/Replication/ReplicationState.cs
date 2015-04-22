@@ -14,6 +14,7 @@ namespace WebsitePanel.Providers.Virtualization
         FailedOver,
         NotApplicable,
         ReadyForInitialReplication,
+        InitialReplicationInProgress,
         Replicating,
         Resynchronizing,
         ResynchronizeSuspended,

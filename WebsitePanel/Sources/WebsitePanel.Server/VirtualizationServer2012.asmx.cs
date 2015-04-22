@@ -1023,14 +1023,13 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public bool DisableVmReplication(string vmId, string replicaServer)
+        public void DisableVmReplication(string vmId)
         {
             try
             {
                 Log.WriteStart("'{0}' DisableVmReplication", ProviderSettings.ProviderName);
-                var result = VirtualizationProvider.DisableVmReplication(vmId, replicaServer);
+                VirtualizationProvider.DisableVmReplication(vmId);
                 Log.WriteEnd("'{0}' DisableVmReplication", ProviderSettings.ProviderName);
-                return result;
             }
             catch (Exception ex)
             {
