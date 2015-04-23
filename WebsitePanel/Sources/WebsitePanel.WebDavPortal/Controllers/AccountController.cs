@@ -338,7 +338,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
         private UserProfile GetUserProfileModel(int itemId, int accountId)
         {
-            var user = WspContext.Services.Organizations.GetUserGeneralSettings(itemId, accountId);
+            var user = WspContext.Services.Organizations.GetUserGeneralSettingsWithExtraData(itemId, accountId);
 
             return Mapper.Map<OrganizationUser, UserProfile>(user);
         }

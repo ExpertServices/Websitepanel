@@ -57,11 +57,6 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
             }
-
-            // send mail message
-           // MailHelper.SendMessage(mailFrom, mailTo, mailSubject, mailBody, false);
         }
-
-        
     }
 }

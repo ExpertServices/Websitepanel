@@ -628,6 +628,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password never expires. If you want to change password then please click {0}..
+        /// </summary>
+        public static string PasswordNeverExpiresFormat {
+            get {
+                return ResourceManager.GetString("PasswordNeverExpiresFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password reset.
         /// </summary>
         public static string PasswordReset {

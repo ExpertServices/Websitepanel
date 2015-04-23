@@ -80,6 +80,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         private System.Threading.SendOrPostCallback SetDefaultOrganizationOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetUserGeneralSettingsWithExtraDataOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddOrganizationDomainOperationCompleted;
         
         private System.Threading.SendOrPostCallback ChangeOrganizationDomainTypeOperationCompleted;
@@ -228,6 +230,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event SetDefaultOrganizationCompletedEventHandler SetDefaultOrganizationCompleted;
+        
+        /// <remarks/>
+        public event GetUserGeneralSettingsWithExtraDataCompletedEventHandler GetUserGeneralSettingsWithExtraDataCompleted;
         
         /// <remarks/>
         public event AddOrganizationDomainCompletedEventHandler AddOrganizationDomainCompleted;
@@ -1307,6 +1312,50 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.SetDefaultOrganizationCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SetDefaultOrganizationCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetUserGeneralSettingsWithExtraData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId) {
+            object[] results = this.Invoke("GetUserGeneralSettingsWithExtraData", new object[] {
+                        itemId,
+                        accountId});
+            return ((OrganizationUser)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetUserGeneralSettingsWithExtraData(int itemId, int accountId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetUserGeneralSettingsWithExtraData", new object[] {
+                        itemId,
+                        accountId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationUser EndGetUserGeneralSettingsWithExtraData(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationUser)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetUserGeneralSettingsWithExtraDataAsync(int itemId, int accountId) {
+            this.GetUserGeneralSettingsWithExtraDataAsync(itemId, accountId, null);
+        }
+        
+        /// <remarks/>
+        public void GetUserGeneralSettingsWithExtraDataAsync(int itemId, int accountId, object userState) {
+            if ((this.GetUserGeneralSettingsWithExtraDataOperationCompleted == null)) {
+                this.GetUserGeneralSettingsWithExtraDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetUserGeneralSettingsWithExtraDataOperationCompleted);
+            }
+            this.InvokeAsync("GetUserGeneralSettingsWithExtraData", new object[] {
+                        itemId,
+                        accountId}, this.GetUserGeneralSettingsWithExtraDataOperationCompleted, userState);
+        }
+        
+        private void OnGetUserGeneralSettingsWithExtraDataOperationCompleted(object arg) {
+            if ((this.GetUserGeneralSettingsWithExtraDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetUserGeneralSettingsWithExtraDataCompleted(this, new GetUserGeneralSettingsWithExtraDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3815,6 +3864,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetDefaultOrganizationCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetUserGeneralSettingsWithExtraDataCompletedEventHandler(object sender, GetUserGeneralSettingsWithExtraDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetUserGeneralSettingsWithExtraDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetUserGeneralSettingsWithExtraDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationUser Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationUser)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
