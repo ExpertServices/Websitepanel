@@ -256,15 +256,6 @@ namespace WebsitePanel.Portal.VPS2012 {
         protected global::System.Web.UI.WebControls.Localize locVHDs;
         
         /// <summary>
-        /// vhdContainer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableCell vhdContainer;
-        
-        /// <summary>
         /// chlVHDs control.
         /// </summary>
         /// <remarks>

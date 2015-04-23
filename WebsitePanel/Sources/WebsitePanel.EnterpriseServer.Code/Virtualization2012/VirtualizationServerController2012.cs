@@ -3787,6 +3787,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ResultObject SetVmReplication(int itemId, VmReplication replication)
         {
+            TaskManager.StartTask("VPS2012", "SetVmReplication");
+
             ResultObject result = new ResultObject();
             try
             {
@@ -3813,8 +3815,13 @@ namespace WebsitePanel.EnterpriseServer
             }
             catch (Exception ex)
             {
-                result.AddError(VirtualizationErrorCodes.SET_REPLICATION_ERROR, ex);
+                throw TaskManager.WriteError(ex);
             }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+            TaskManager.WriteWarning("Organization with itemId '{0}' not found", itemId.ToString());
             return result; 
         }
 

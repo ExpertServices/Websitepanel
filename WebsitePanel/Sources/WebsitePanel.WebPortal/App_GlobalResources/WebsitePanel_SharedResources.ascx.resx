@@ -4097,14 +4097,29 @@
   <data name="Error.VPS_SET_REPLICATION_ERROR" xml:space="preserve">
     <value>Cannot enable\set replication for the virtual machine</value>
   </data>
+  <data name="Success.VPS_SET_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication set\enabled for the virtual machine</value>
+  </data>
   <data name="Error.VPS_DISABLE_REPLICATION_ERROR" xml:space="preserve">
     <value>Cannot disable replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_DISABLE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication disabled for the virtual machine</value>
   </data>
   <data name="Error.VPS_PAUSE_REPLICATION_ERROR" xml:space="preserve">
     <value>Cannot pause replication for the virtual machine</value>
   </data>
+  <data name="Success.VPS_PAUSE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication paused for the virtual machine</value>
+  </data>
   <data name="Error.VPS_RESUME_REPLICATION_ERROR" xml:space="preserve">
     <value>Cannot resume replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_RESUME_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication resumed for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_REQUIRED" xml:space="preserve">
+    <value>Please fill required fields</value>
   </data>
   
   <data name="VPS.VPS_JOB_FAILED_ERROR" xml:space="preserve">

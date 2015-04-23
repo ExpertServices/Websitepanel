@@ -11,7 +11,7 @@
 
 <script type="text/javascript">
     function ValidateCheckBoxList(sender, args) {
-        var checkBoxList = document.getElementById("vhdContainer");
+        var checkBoxList = document.getElementsByClassName("vhdContainer");
         var checkboxes = checkBoxList.getElementsByTagName("input");
         var isValid = false;
         for (var i = 0; i < checkboxes.length; i++) {
@@ -73,7 +73,7 @@
                         TargetControlID="ReplicationPanel" meta:ResourceKey="secReplication" Text="Replication Configuration">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="ReplicationPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 750px;">
-                        <div class="FormButtonsBarClean">
+                        <div class="FormButtonsBarClean" onclick="ShowProgressDialog('Prepare UI...');">
                             <asp:CheckBox ID="chbEnable" runat="server" meta:resourcekey="chbEnable" Text="Enable replication" AutoPostBack="True"  />
                         </div>
                         <table runat="server" id="ReplicaTable" class="ReplicaTable" style="margin: 10px; width: 100%;">
@@ -105,8 +105,8 @@
 				                <td>
 				                   <asp:Localize ID="locVHDs" runat="server" meta:resourcekey="locVHDs" Text="Choose Replication VHDs:"></asp:Localize>
                                 </td>
-                                <td id="vhdContainer">
-                                    <asp:CheckBoxList runat="server" ID="chlVHDs" />
+                                <td>
+                                    <asp:CheckBoxList runat="server" ID="chlVHDs"  class="vhdContainer"/>
                                     <asp:CustomValidator ID="valVHDs" ErrorMessage="Please select at least one VHD" ValidationGroup="Vps" Display="Dynamic" SetFocusOnError="true"
                                         ForeColor="Red" ClientValidationFunction="ValidateCheckBoxList" runat="server" />
                                 </td>
@@ -130,7 +130,7 @@
                                             ErrorMessage="SSL certificate is required" ForeColor="Red" meta:resourcekey="valCeritficateRequire" Text="*" />
                                     </div>
                                     <div runat="server" ID="txtCeritficateDiv">
-                                        <asp:TextBox runat="server" ID="txtCeritficate" />
+                                        <asp:TextBox runat="server" ID="txtCeritficate" Width="350px"/>
                                         <asp:RequiredFieldValidator runat="server" ControlToValidate="txtCeritficate" ValidationGroup="Vps" Display="Dynamic" SetFocusOnError="true"
                                             ErrorMessage="SSL certificate is required" ForeColor="Red" meta:resourcekey="valCeritficateRequire" Text="*" />
                                     </div>
