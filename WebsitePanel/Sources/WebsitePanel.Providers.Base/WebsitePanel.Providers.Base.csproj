@@ -314,6 +314,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Virtualization\ControllerType.cs" />
+    <Compile Include="Virtualization\IVirtualizationServer2012.cs" />
     <Compile Include="Virtualization\IVirtualizationServer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -330,6 +331,15 @@
     <Compile Include="Virtualization\MountedDiskInfo.cs" />
     <Compile Include="Virtualization\OperationalStatus.cs" />
     <Compile Include="Virtualization\PerformanceObject.cs" />
+    <Compile Include="Virtualization\Replication\CertificateInfo.cs" />
+    <Compile Include="Virtualization\Replication\ReplicaFrequency.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationHealth.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationServerInfo.cs" />
+    <Compile Include="Virtualization\Replication\VmReplicationMode.cs" />
+    <Compile Include="Virtualization\Replication\ReplicaMode.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationState.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationDetailInfo.cs" />
+    <Compile Include="Virtualization\Replication\VmReplication.cs" />
     <Compile Include="Virtualization\ReturnCode.cs">
       <SubType>Code</SubType>
     </Compile>

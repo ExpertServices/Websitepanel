@@ -472,5 +472,70 @@ namespace WebsitePanel.EnterpriseServer
             return VirtualizationServerController2012.SendVirtualMachineSummaryLetter(itemId, to, bcc, false);
         }
         #endregion
-    }
+
+        #region Replication
+
+        [WebMethod]
+        public CertificateInfo[] GetCertificates(int serviceId, string remoteServer)
+        {
+            return VirtualizationServerController2012.GetCertificates(serviceId, remoteServer);
+        }
+
+        [WebMethod]
+        public ResultObject SetReplicaServer(int serviceId, string remoteServer, string thumbprint, string storagePath)
+        {
+            return VirtualizationServerController2012.SetReplicaServer(serviceId, remoteServer, thumbprint, storagePath);
+        }
+
+        [WebMethod]
+        public ResultObject UnsetReplicaServer(int serviceId, string remoteServer)
+        {
+            return VirtualizationServerController2012.UnsetReplicaServer(serviceId, remoteServer);
+        }
+
+        [WebMethod]
+        public ReplicationServerInfo GetReplicaServer(int serviceId, string remoteServer)
+        {
+            return VirtualizationServerController2012.GetReplicaServer(serviceId, remoteServer);
+        }
+
+        [WebMethod]
+        public VmReplication GetReplication(int itemId)
+        {
+            return VirtualizationServerController2012.GetReplication(itemId);
+        }
+
+        [WebMethod]
+        public ReplicationDetailInfo GetReplicationInfo(int itemId)
+        {
+            return VirtualizationServerController2012.GetReplicationInfo(itemId);
+        }
+
+        [WebMethod]
+        public ResultObject SetVmReplication(int itemId, VmReplication replication)
+        {
+            return VirtualizationServerController2012.SetVmReplication(itemId, replication);
+        }
+
+        [WebMethod]
+        public ResultObject DisableVmReplication(int itemId)
+        {
+            return VirtualizationServerController2012.DisableVmReplication(itemId);
+        }
+
+        [WebMethod]
+        public ResultObject PauseReplication(int itemId)
+        {
+            return VirtualizationServerController2012.PauseReplication(itemId);
+        }
+
+        [WebMethod]
+        public ResultObject ResumeReplication(int itemId)
+        {
+            return VirtualizationServerController2012.ResumeReplication(itemId);
+        }
+
+
+        #endregion
+  }
 }

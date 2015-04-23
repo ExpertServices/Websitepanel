@@ -144,6 +144,9 @@
   <data name="Tab.Snapshots" xml:space="preserve">
     <value>Snapshots</value>
   </data>
+  <data name="Tab.Replication" xml:space="preserve">
+    <value>Replication</value>
+  </data>
   <data name="Tab.Tools" xml:space="preserve">
     <value>Tools</value>
   </data>

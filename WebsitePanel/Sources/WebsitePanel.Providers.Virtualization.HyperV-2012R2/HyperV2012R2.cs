@@ -56,7 +56,7 @@ using System.Configuration;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public class HyperV2012R2 : HostingServiceProviderBase, IVirtualizationServer
+    public class HyperV2012R2 : HostingServiceProviderBase, IVirtualizationServer2012
     {
         #region Provider Settings
         protected string ServerNameSettings
@@ -97,6 +97,20 @@ namespace WebsitePanel.Providers.Virtualization
         public int CpuWeightSettings
         {
             get { return ProviderSettings.GetInt("CpuWeight"); }
+        }
+
+
+        public ReplicaMode ReplicaMode
+        {
+            get { return (ReplicaMode) Enum.Parse(typeof(ReplicaMode) , ProviderSettings["ReplicaMode"]); }
+        }
+        protected string ReplicaServerPath
+        {
+            get { return ProviderSettings["ReplicaServerPath"]; }
+        }
+        protected string ReplicaServerThumbprint
+        {
+            get { return ProviderSettings["ReplicaServerThumbprint"]; }
         }
         #endregion
 
@@ -157,12 +171,12 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.RamSize = Convert.ToInt32(ConvertNullableToInt64(result[0].GetProperty("MemoryStartup")) / Constants.Size1M);
                     vm.Uptime = Convert.ToInt64(result[0].GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
                     vm.Status = result[0].GetProperty("Status").ToString();
-                    vm.ReplicationState = result[0].GetProperty("ReplicationState").ToString();
                     vm.Generation = result[0].GetInt("Generation");
                     vm.ProcessorCount = result[0].GetInt("ProcessorCount");
                     vm.ParentSnapshotId = result[0].GetString("ParentSnapshotId");
                     vm.Heartbeat = VirtualMachineHelper.GetVMHeartBeatStatus(PowerShell, vm.Name);
                     vm.CreatedDate = DateTime.Now;
+                    vm.ReplicationState = result[0].GetEnum<ReplicationState>("ReplicationState");
 
                     if (extendedInfo)
                     {
@@ -222,9 +236,10 @@ namespace WebsitePanel.Providers.Virtualization
                     VirtualMachine vm = new VirtualMachine
                     {
                         VirtualMachineId = current.GetProperty("Id").ToString(),
-                        Name = current.GetProperty("Name").ToString(),
-                        State = (VirtualMachineState)Enum.Parse(typeof(VirtualMachineState), current.GetProperty("State").ToString()),
-                        Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds)
+                        Name = current.GetString("Name"),
+                        State = current.GetEnum<VirtualMachineState>("State"),
+                        Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds),
+                        ReplicationState = current.GetEnum<ReplicationState>("ReplicationState")
                     };
                     vmachines.Add(vm);
                 }
@@ -443,30 +458,11 @@ namespace WebsitePanel.Providers.Virtualization
 
         public ReturnCode ShutDownVirtualMachine(string vmId, bool force, string reason)
         {
-            HostedSolutionLog.LogStart("ShutDownVirtualMachine");
-            ReturnCode returnCode  = ReturnCode.OK;
-
             var vm = GetVirtualMachine(vmId);
 
-            try
-            {
-                Command cmd = new Command("Stop-VM");
+            VirtualMachineHelper.Stop(PowerShell, vm.Name, force, ServerNameSettings);
 
-                cmd.Parameters.Add("Name", vm.Name);
-                if (force) cmd.Parameters.Add("Force");
-                //if (!string.IsNullOrEmpty(reason)) cmd.Parameters.Add("Reason", reason);
-
-                PowerShell.Execute(cmd, true);
-            }
-            catch (Exception ex)
-            {
-                HostedSolutionLog.LogError("ShutDownVirtualMachine", ex);
-                throw;
-            }
-
-            HostedSolutionLog.LogEnd("ShutDownVirtualMachine");
-
-            return returnCode;
+            return ReturnCode.OK;
         }
 
         public List<ConcreteJob> GetVirtualMachineJobs(string vmId)
@@ -517,10 +513,7 @@ namespace WebsitePanel.Providers.Virtualization
                     //DeleteSwitch(networkAdapter.SwitchName);
             }
 
-            Command cmdSet = new Command("Remove-VM");
-            cmdSet.Parameters.Add("Name", vm.Name);
-            cmdSet.Parameters.Add("Force");
-            PowerShell.Execute(cmdSet, true, true);
+            VirtualMachineHelper.Delete(PowerShell, vm.Name, ServerNameSettings);
 
             return JobHelper.CreateSuccessResult(ReturnCode.JobStarted);
         }
@@ -787,10 +780,10 @@ namespace WebsitePanel.Providers.Virtualization
                 Command cmd = new Command("Get-VMSwitch");
 
                 // Not needed as the PowerShellManager adds the computer name
-                //if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
                 if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                Collection<PSObject> result = PowerShell.Execute(cmd, true, true);
+                Collection<PSObject> result = PowerShell.Execute(cmd, false, true);
 
                 foreach (PSObject current in result)
                 {
@@ -1963,6 +1956,285 @@ namespace WebsitePanel.Providers.Virtualization
             return !String.IsNullOrEmpty(connString);
         }
         #endregion Hyper-V Cloud
-        
+
+        #region Replication
+
+        public List<CertificateInfo> GetCertificates(string remoteServer)
+        {
+            // we cant get certificates from remote server
+            if (!string.IsNullOrEmpty(remoteServer))
+                return null;
+
+            Command cmd = new Command("Get-ChildItem");
+            cmd.Parameters.Add("Path", @"cert:\LocalMachine\My");
+
+            Collection<PSObject> result = PowerShell.Execute(cmd, false);
+
+            return result
+                .Select(
+                    cert => new CertificateInfo
+                    {
+                        Subject = cert.GetString("Subject"),
+                        Thumbprint = cert.GetString("Thumbprint"),
+                        Title = string.Format("{0} ({1})", cert.GetString("Thumbprint"), cert.GetString("Subject")),
+                    })
+                .ToList();
+        }
+
+        public void SetReplicaServer(string remoteServer, string thumbprint, string storagePath)
+        {
+            // we cant enable firewall rules on remote server
+            if (string.IsNullOrEmpty(remoteServer)) 
+                ReplicaHelper.SetFirewallRule(PowerShell, true);
+
+            if (GetReplicaServer(remoteServer) != null)
+                UnsetReplicaServer(remoteServer);
+
+            ReplicaHelper.SetReplicaServer(PowerShell, true, remoteServer, thumbprint, storagePath);
+        }
+
+        public void UnsetReplicaServer(string remoteServer)
+        {
+            ReplicaHelper.SetReplicaServer(PowerShell, false, remoteServer, null, null);
+        }
+
+        public ReplicationServerInfo GetReplicaServer(string remoteServer)
+        {
+            ReplicationServerInfo replicaServer = null;
+            Command cmd = new Command("Get-VMReplicationServer");
+
+            if (!string.IsNullOrEmpty(remoteServer))
+            {
+                cmd.Parameters.Add("ComputerName", remoteServer);
+            }
+
+            Collection<PSObject> result = PowerShell.Execute(cmd, false);
+
+            if (result != null && result.Count > 0)
+            {
+                replicaServer = new ReplicationServerInfo();
+                replicaServer.Enabled = result[0].GetBool("RepEnabled");
+                replicaServer.ComputerName = result[0].GetString("ComputerName");
+            }
+
+            return replicaServer;
+        }
+
+        public void EnableVmReplication(string vmId, string replicaServer, VmReplication replication)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachineEx(vmId);
+
+            Command cmd = new Command("Enable-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+            cmd.Parameters.Add("ReplicaServerName", replicaServer);
+            cmd.Parameters.Add("ReplicaServerPort", 443);
+            cmd.Parameters.Add("AuthenticationType", "Cert");
+            cmd.Parameters.Add("CertificateThumbprint", replication.Thumbprint);
+            cmd.Parameters.Add("ReplicationFrequencySec", (int)replication.ReplicaFrequency);
+
+            var excludes = vm.Disks
+                .Select(d => d.Path)
+                .Where(p => replication.VhdToReplicate.All(vp => !p.Equals(vp, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
+            if (excludes.Any())
+                cmd.Parameters.Add("ExcludedVhdPath", excludes);
+
+            // recovery points
+            cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
+            if (replication.AdditionalRecoveryPoints > 0)
+            {
+                if (replication.AdditionalRecoveryPoints > 24)
+                    throw new Exception("AdditionalRecoveryPoints can not be greater than 24");
+
+                if (replication.VSSSnapshotFrequencyHour > 0)
+                {
+                    if (replication.VSSSnapshotFrequencyHour > 12)
+                        throw new Exception("VSSSnapshotFrequencyHour can not be greater than 12");
+
+                    cmd.Parameters.Add("VSSSnapshotFrequencyHour", replication.VSSSnapshotFrequencyHour);
+                }
+            }
+
+            PowerShell.Execute(cmd, true, true);
+        }
+
+        public void SetVmReplication(string vmId, string replicaServer, VmReplication replication)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachineEx(vmId);
+
+            Command cmd = new Command("Set-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+            cmd.Parameters.Add("ReplicaServerName", replicaServer);
+            cmd.Parameters.Add("ReplicaServerPort", 443);
+            cmd.Parameters.Add("AuthenticationType", "Cert");
+            cmd.Parameters.Add("CertificateThumbprint", replication.Thumbprint);
+            cmd.Parameters.Add("ReplicationFrequencySec", (int)replication.ReplicaFrequency);
+
+            // recovery points
+            cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
+            if (replication.AdditionalRecoveryPoints > 0)
+            {
+                if (replication.AdditionalRecoveryPoints > 24)
+                    throw new Exception("AdditionalRecoveryPoints can not be greater than 24");
+
+                if (replication.VSSSnapshotFrequencyHour > 0)
+                {
+                    if (replication.VSSSnapshotFrequencyHour > 12)
+                        throw new Exception("VSSSnapshotFrequencyHour can not be greater than 12");
+
+                    cmd.Parameters.Add("VSSSnapshotFrequencyHour", replication.VSSSnapshotFrequencyHour);
+                }
+                else
+                {
+                    cmd.Parameters.Add("DisableVSSSnapshotReplication");
+                }
+            }
+
+            PowerShell.Execute(cmd, true);
+        }
+
+        public void TestReplicationServer(string vmId, string replicaServer, string localThumbprint)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachine(vmId);
+
+            Command cmd = new Command("Test-VMReplicationConnection");
+            cmd.Parameters.Add("VmName", vm.Name);
+            cmd.Parameters.Add("ReplicaServerName", replicaServer);
+            cmd.Parameters.Add("ReplicaServerPort", 443);
+            cmd.Parameters.Add("AuthenticationType", "Cert");
+            cmd.Parameters.Add("CertificateThumbprint", localThumbprint);
+
+            PowerShell.Execute(cmd, true);
+        }
+
+        public void StartInitialReplication(string vmId)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachine(vmId);
+
+            Command cmd = new Command("Start-VMInitialReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+
+            PowerShell.Execute(cmd, true);
+        }
+
+        public VmReplication GetReplication(string vmId)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            VmReplication replica = null;
+            var vm = GetVirtualMachineEx(vmId);
+
+            Command cmd = new Command("Get-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+
+            Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
+            if (result != null && result.Count > 0)
+            {
+                replica = new VmReplication();
+                replica.ReplicaFrequency = result[0].GetEnum<ReplicaFrequency>("FrequencySec", ReplicaFrequency.Seconds30);
+                replica.Thumbprint = result[0].GetString("CertificateThumbprint");
+                replica.AdditionalRecoveryPoints = result[0].GetInt("RecoveryHistory");
+                replica.VSSSnapshotFrequencyHour = result[0].GetInt("VSSSnapshotFrequencyHour");
+
+                List<string> excludes = new List<string>();
+                foreach (dynamic item in (IEnumerable) result[0].GetProperty("ExcludedDisks"))
+                    excludes.Add(item.Path.ToString());
+                replica.VhdToReplicate = vm.Disks
+                    .Select(d => d.Path)
+                    .Where(p => excludes.All(ep => !p.Equals(ep, StringComparison.OrdinalIgnoreCase)))
+                    .ToArray();
+            }
+
+            return replica;
+        }
+
+        public void DisableVmReplication(string vmId)
+        {
+            if (ReplicaMode == ReplicaMode.None)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachine(vmId);
+
+            ReplicaHelper.RemoveVmReplication(PowerShell, vm.Name, ServerNameSettings);
+        }
+
+
+        public ReplicationDetailInfo GetReplicationInfo(string vmId)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            ReplicationDetailInfo replica = null;
+            var vm = GetVirtualMachine(vmId);
+
+            Command cmd = new Command("Measure-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+
+            Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
+            if (result != null && result.Count > 0)
+            {
+                replica = new ReplicationDetailInfo();
+                replica.AverageLatency = result[0].GetProperty<TimeSpan?>("AverageReplicationLatency") ?? new TimeSpan();
+                replica.AverageSize = result[0].GetMb("AverageReplicationSize");
+                replica.Errors = result[0].GetInt("ReplicationErrors");
+                replica.FromTime = result[0].GetProperty<DateTime>("MonitoringStartTime");
+                replica.Health = result[0].GetEnum<ReplicationHealth>("ReplicationHealth");
+                replica.HealthDetails = string.Join(" ", result[0].GetProperty<string[]>("ReplicationHealthDetails"));
+                replica.LastSynhronizedAt = result[0].GetProperty<DateTime?>("LastReplicationTime") ?? new DateTime();
+                replica.MaximumSize = result[0].GetMb("MaximumReplicationSize");
+                replica.Mode = result[0].GetEnum<VmReplicationMode>("ReplicationMode");
+                replica.PendingSize = result[0].GetMb("PendingReplicationSize");
+                replica.PrimaryServerName = result[0].GetString("PrimaryServerName");
+                replica.ReplicaServerName = result[0].GetString("CurrentReplicaServerName");
+                replica.State = result[0].GetEnum<ReplicationState>("ReplicationState");
+                replica.SuccessfulReplications = result[0].GetInt("SuccessfulReplicationCount");
+                replica.MissedReplicationCount = result[0].GetInt("MissedReplicationCount");
+                replica.ToTime = result[0].GetProperty<DateTime>("MonitoringEndTime");
+            }
+
+            return replica;
+        }
+
+        public void PauseReplication(string vmId)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachine(vmId);
+
+            Command cmd = new Command("Suspend-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+
+            PowerShell.Execute(cmd, true);
+        }
+
+        public void ResumeReplication(string vmId)
+        {
+            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+                throw new Exception("Server does not allow replication by settings");
+
+            var vm = GetVirtualMachine(vmId);
+
+            Command cmd = new Command("Resume-VMReplication");
+            cmd.Parameters.Add("VmName", vm.Name);
+
+            PowerShell.Execute(cmd, true);
+        }
+        #endregion
     }
 }

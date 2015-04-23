@@ -26,21 +26,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-﻿using System;
-using System.Collections;
-using System.Configuration;
-using System.Data;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Collections.Specialized;
-using WebsitePanel.Providers.Virtualization;
-using WebsitePanel.EnterpriseServer;
-using System.Web.UI.MobileControls;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Data;
+using System.Linq;
+using System.Web.UI.WebControls;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
@@ -49,6 +43,13 @@ namespace WebsitePanel.Portal.ProviderControls
         protected void Page_Load(object sender, EventArgs e)
         {
         }
+
+        public bool IsRemoteServer { get { return radioServer.SelectedIndex > 0; } }
+        public string RemoteServerName { get { return IsRemoteServer ? txtServerName.Text.Trim() : ""; } }
+        public string CertificateThumbprint { get { return IsRemoteServer ? txtCertThumbnail.Text.Trim() : ddlCertThumbnail.SelectedValue; } }
+        public bool IsReplicaServer { get { return ReplicationModeList.SelectedValue == ReplicaMode.IsReplicaServer.ToString(); } }
+        public bool EnabledReplica { get { return ReplicationModeList.SelectedValue == ReplicaMode.ReplicationEnabled.ToString(); } }
+        public string ReplicaServerId { get; set; }
 
         void IHostingServiceProviderSettings.BindSettings(StringDictionary settings)
         {
@@ -104,7 +105,25 @@ namespace WebsitePanel.Portal.ProviderControls
             // stop
             radioStopAction.SelectedValue = settings["StopAction"];
 
+            // replica
+            ReplicationModeList.SelectedValue = settings["ReplicaMode"] ?? ReplicaMode.None.ToString();
+            txtReplicaPath.Text = settings["ReplicaServerPath"];
+            ReplicaServerId = settings["ReplicaServerId"];
+
             ToggleControls();
+
+            // replica
+            txtCertThumbnail.Text = settings["ReplicaServerThumbprint"];
+            ddlCertThumbnail.SelectedValue = settings["ReplicaServerThumbprint"];
+            ddlReplicaServer.SelectedValue = settings["ReplicaServerId"];
+
+            if (IsReplicaServer)
+            {
+                var realReplica = ES.Services.VPS2012.GetReplicaServer(PanelRequest.ServiceId, RemoteServerName);
+
+                if (realReplica == null)
+                    ReplicaErrorTr.Visible = true;
+            }
         }
 
         void IHostingServiceProviderSettings.SaveSettings(StringDictionary settings)
@@ -156,13 +175,21 @@ namespace WebsitePanel.Portal.ProviderControls
 
             // stop
             settings["StopAction"] = radioStopAction.SelectedValue;
+
+            // replication
+            settings["ReplicaMode"] = ReplicationModeList.SelectedValue;
+            settings["ReplicaServerId"] = ddlReplicaServer.SelectedValue;
+            settings["ReplicaServerPath"] = txtReplicaPath.Text;
+            settings["ReplicaServerThumbprint"] = CertificateThumbprint;
+
+            SetUnsetReplication();
         }
 
         private void BindNetworksList()
         {
             try
             {
-                VirtualSwitch[] switches = ES.Services.VPS.GetExternalSwitches(PanelRequest.ServiceId, txtServerName.Text.Trim());
+                VirtualSwitch[] switches = ES.Services.VPS2012.GetExternalSwitches(PanelRequest.ServiceId, txtServerName.Text.Trim());
 
                 ddlExternalNetworks.DataSource = switches;
                 ddlExternalNetworks.DataBind();
@@ -181,6 +208,74 @@ namespace WebsitePanel.Portal.ProviderControls
             }
         }
 
+        private void BindCertificates()
+        {
+            CertificateInfo[] certificates = ES.Services.VPS2012.GetCertificates(PanelRequest.ServiceId, RemoteServerName);
+
+            if (certificates != null)
+            {
+                ddlCertThumbnail.Items.Clear();
+                certificates.ToList().ForEach(c => ddlCertThumbnail.Items.Add(new ListItem(c.Title, c.Thumbprint)));
+            }
+        }
+
+
+        private void BindReplicaServices()
+        {
+            ddlReplicaServer.Items.Clear();
+
+            ServiceInfo serviceInfo = ES.Services.Servers.GetServiceInfo(PanelRequest.ServiceId);
+            DataView dvServices = ES.Services.Servers.GetRawServicesByGroupName(ResourceGroups.VPS2012).Tables[0].DefaultView;
+
+            List<ServiceInfo> services = GetServices(ReplicaServerId);
+
+            foreach (DataRowView dr in dvServices)
+            {
+                int serviceId = (int)dr["ServiceID"];
+
+                ServiceInfo currentServiceInfo = ES.Services.Servers.GetServiceInfo(serviceId);
+                if (currentServiceInfo == null || currentServiceInfo.ProviderId != serviceInfo.ProviderId)
+                    continue;
+
+                var currentServiceSettings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
+                if (currentServiceSettings["ReplicaMode"] != ReplicaMode.IsReplicaServer.ToString())
+                    continue;
+
+                var exists = false;
+                if (services != null)
+                    exists = services.Any(current => current != null && current.ServiceId == serviceId);
+
+                var listItem = new ListItem(dr["FullServiceName"].ToString(), serviceId.ToString()) {Selected = exists};
+                ddlReplicaServer.Items.Add(listItem);
+            }
+        }
+
+        private List<ServiceInfo> GetServices(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return null;
+            List<ServiceInfo> list = new List<ServiceInfo>();
+            string[] servicesIds = data.Split(',');
+            foreach (string current in servicesIds)
+            {
+                ServiceInfo serviceInfo = ES.Services.Servers.GetServiceInfo(Utils.ParseInt(current));
+                list.Add(serviceInfo);
+            }
+
+            return list;
+        }
+
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
+        }
+
         private void ToggleControls()
         {
             ServerNameRow.Visible = (radioServer.SelectedIndex == 1);
@@ -197,6 +292,15 @@ namespace WebsitePanel.Portal.ProviderControls
             ManageNicConfigRow.Visible = (ddlManagementNetworks.SelectedIndex > 0);
             ManageAlternateNameServerRow.Visible = ManageNicConfigRow.Visible && (ddlManageNicConfig.SelectedIndex == 0);
             ManagePreferredNameServerRow.Visible = ManageNicConfigRow.Visible && (ddlManageNicConfig.SelectedIndex == 0);
+
+            // Replica
+            EnableReplicaRow.Visible = EnabledReplica;
+            IsReplicaServerRow.Visible = IsReplicaServer;
+            ddlCertThumbnail.Visible = CertificateDdlThumbnailValidator.Visible = !IsRemoteServer;
+            txtCertThumbnail.Visible = CertificateThumbnailValidator.Visible = IsRemoteServer;
+            ReplicaPathErrorTr.Visible = ReplicaErrorTr.Visible = false;
+            if (IsReplicaServer) BindCertificates();
+            if (EnabledReplica) BindReplicaServices();
         }
 
         protected void radioServer_SelectedIndexChanged(object sender, EventArgs e)
@@ -222,6 +326,33 @@ namespace WebsitePanel.Portal.ProviderControls
         protected void ddlManagementNetworks_SelectedIndexChanged(object sender, EventArgs e)
         {
             ToggleControls();
+        }
+
+        protected void btnSetReplicaServer_Click(object sender, EventArgs e)
+        {
+            ToggleControls();
+            SetUnsetReplication();
+        }
+
+        private void SetUnsetReplication()
+        {
+            if (!IsReplicaServer)
+            {
+                ES.Services.VPS2012.UnsetReplicaServer(PanelRequest.ServiceId, RemoteServerName);
+                return;
+            }
+
+            if (txtReplicaPath.Text == "")
+            {
+                ReplicaPathErrorTr.Visible = true;
+                return;
+            }
+
+            var thumbprint = IsRemoteServer ? txtCertThumbnail.Text : ddlCertThumbnail.SelectedValue;
+            ResultObject result = ES.Services.VPS2012.SetReplicaServer(PanelRequest.ServiceId, RemoteServerName, thumbprint, txtReplicaPath.Text);
+
+            if (!result.IsSuccess)
+                ReplicaErrorTr.Visible = true;
         }
     }
 }

@@ -61,5 +61,25 @@ namespace WebsitePanel.Providers.Virtualization
 
             powerShell.Execute(cmd, true);
         }
+
+        public static void Delete(PowerShellManager powerShell, string vmName, string server)
+        {
+            Command cmd = new Command("Remove-VM");
+            cmd.Parameters.Add("Name", vmName);
+            if (!string.IsNullOrEmpty(server)) cmd.Parameters.Add("ComputerName", server);
+            cmd.Parameters.Add("Force");
+            powerShell.Execute(cmd, false, true);
+        }
+        public static void Stop(PowerShellManager powerShell, string vmName, bool force, string server)
+        {
+            Command cmd = new Command("Stop-VM");
+
+            cmd.Parameters.Add("Name", vmName);
+            if (force) cmd.Parameters.Add("Force");
+            if (!string.IsNullOrEmpty(server)) cmd.Parameters.Add("ComputerName", server);
+            //if (!string.IsNullOrEmpty(reason)) cmd.Parameters.Add("Reason", reason);
+
+            powerShell.Execute(cmd, false);
+        }
     }
 }

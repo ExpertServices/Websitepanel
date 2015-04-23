@@ -7,370 +7,199 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal.VPS2012 {
     
     
-    public partial class HyperV2012R2_Settings {
+    public partial class VpsDetailsReplications {
         
         /// <summary>
-        /// ValidationSummary control.
+        /// asyncTasks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary;
+        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
         
         /// <summary>
-        /// locHyperVServer control.
+        /// breadcrumb control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locHyperVServer;
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.Breadcrumb breadcrumb;
         
         /// <summary>
-        /// radioServer control.
+        /// menu control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList radioServer;
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.Menu menu;
         
         /// <summary>
-        /// ServerNameRow control.
+        /// imgIcon control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ServerNameRow;
+        protected global::System.Web.UI.WebControls.Image imgIcon;
         
         /// <summary>
-        /// locServerName control.
+        /// locTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locServerName;
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.FormTitle locTitle;
         
         /// <summary>
-        /// txtServerName control.
+        /// tabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtServerName;
+        protected global::WebsitePanel.Portal.VPS2012.UserControls.ServerTabs tabs;
         
         /// <summary>
-        /// btnConnect control.
+        /// messageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnConnect;
+        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// ServerNameValidator control.
+        /// validatorsSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator ServerNameValidator;
+        protected global::System.Web.UI.WebControls.ValidationSummary validatorsSummary;
         
         /// <summary>
-        /// ServerErrorRow control.
+        /// secReplicationDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ServerErrorRow;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secReplicationDetails;
         
         /// <summary>
-        /// locErrorReadingNetworksList control.
+        /// ReplicationDetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label locErrorReadingNetworksList;
+        protected global::System.Web.UI.WebControls.Panel ReplicationDetailsPanel;
         
         /// <summary>
-        /// locGeneralSettings control.
+        /// locHealth control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locGeneralSettings;
+        protected global::System.Web.UI.WebControls.Localize locHealth;
         
         /// <summary>
-        /// locVpsRootFolder control.
+        /// labHealth control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locVpsRootFolder;
+        protected global::System.Web.UI.WebControls.Label labHealth;
         
         /// <summary>
-        /// txtVpsRootFolder control.
+        /// btnDetailInfo control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtVpsRootFolder;
+        protected global::System.Web.UI.WebControls.Button btnDetailInfo;
         
         /// <summary>
-        /// RootFolderValidator control.
+        /// btnPause control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RootFolderValidator;
+        protected global::System.Web.UI.WebControls.Button btnPause;
         
         /// <summary>
-        /// locFolderVariables control.
+        /// btnResume control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locFolderVariables;
+        protected global::System.Web.UI.WebControls.Button btnResume;
         
         /// <summary>
-        /// locOSTemplatesPath control.
+        /// secReplication control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locOSTemplatesPath;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secReplication;
         
         /// <summary>
-        /// txtOSTemplatesPath control.
+        /// ReplicationPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtOSTemplatesPath;
+        protected global::System.Web.UI.WebControls.Panel ReplicationPanel;
         
         /// <summary>
-        /// TemplatesPathValidator control.
+        /// chbEnable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator TemplatesPathValidator;
+        protected global::System.Web.UI.WebControls.CheckBox chbEnable;
         
         /// <summary>
-        /// locExportedVpsPath control.
+        /// ReplicaTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locExportedVpsPath;
+        protected global::System.Web.UI.HtmlControls.HtmlTable ReplicaTable;
         
         /// <summary>
-        /// txtExportedVpsPath control.
+        /// locPrimaryServer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtExportedVpsPath;
+        protected global::System.Web.UI.WebControls.Localize locPrimaryServer;
         
         /// <summary>
-        /// ExportedVpsPathValidator control.
+        /// labPrimaryServer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator ExportedVpsPathValidator;
-        
-        /// <summary>
-        /// locDvdIsoPath control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locDvdIsoPath;
-        
-        /// <summary>
-        /// txtDvdLibraryPath control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDvdLibraryPath;
-        
-        /// <summary>
-        /// DvdLibraryPathValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator DvdLibraryPathValidator;
-        
-        /// <summary>
-        /// locReplicaPath control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locReplicaPath;
-        
-        /// <summary>
-        /// txtReplicaPath control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtReplicaPath;
-        
-        /// <summary>
-        /// ReplicaPathValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator ReplicaPathValidator;
-        
-        /// <summary>
-        /// locProcessorSettings control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locProcessorSettings;
-        
-        /// <summary>
-        /// locCpuReserve control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCpuReserve;
-        
-        /// <summary>
-        /// txtCpuReserve control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCpuReserve;
-        
-        /// <summary>
-        /// CpuReserveValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator CpuReserveValidator;
-        
-        /// <summary>
-        /// locCpuLimit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCpuLimit;
-        
-        /// <summary>
-        /// txtCpuLimit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCpuLimit;
-        
-        /// <summary>
-        /// CpuLimitValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator CpuLimitValidator;
-        
-        /// <summary>
-        /// locCpuWeight control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCpuWeight;
-        
-        /// <summary>
-        /// txtCpuWeight control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCpuWeight;
-        
-        /// <summary>
-        /// CpuWeightValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator CpuWeightValidator;
-        
-        /// <summary>
-        /// locReplication control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locReplication;
-        
-        /// <summary>
-        /// ReplicationModeList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList ReplicationModeList;
-        
-        /// <summary>
-        /// EnableReplicaRow control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow EnableReplicaRow;
+        protected global::System.Web.UI.WebControls.Label labPrimaryServer;
         
         /// <summary>
         /// locReplicaServer control.
@@ -382,633 +211,579 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.Localize locReplicaServer;
         
         /// <summary>
-        /// ddlReplicaServer control.
+        /// labReplicaServer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlReplicaServer;
+        protected global::System.Web.UI.WebControls.Label labReplicaServer;
         
         /// <summary>
-        /// ReplicaServerValidator control.
+        /// locLastSynchronized control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator ReplicaServerValidator;
+        protected global::System.Web.UI.WebControls.Localize locLastSynchronized;
         
         /// <summary>
-        /// EnableReplicaErrorTr control.
+        /// labLastSynchronized control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow EnableReplicaErrorTr;
+        protected global::System.Web.UI.WebControls.Label labLastSynchronized;
         
         /// <summary>
-        /// locEnableReplicaError control.
+        /// trVHDEditable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label locEnableReplicaError;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trVHDEditable;
         
         /// <summary>
-        /// IsReplicaServerRow control.
+        /// locVHDs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow IsReplicaServerRow;
+        protected global::System.Web.UI.WebControls.Localize locVHDs;
         
         /// <summary>
-        /// locCertThumbnail control.
+        /// vhdContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locCertThumbnail;
+        protected global::System.Web.UI.HtmlControls.HtmlTableCell vhdContainer;
         
         /// <summary>
-        /// ddlCertThumbnail control.
+        /// chlVHDs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCertThumbnail;
+        protected global::System.Web.UI.WebControls.CheckBoxList chlVHDs;
         
         /// <summary>
-        /// txtCertThumbnail control.
+        /// valVHDs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCertThumbnail;
+        protected global::System.Web.UI.WebControls.CustomValidator valVHDs;
         
         /// <summary>
-        /// btnSetReplicaServer control.
+        /// trVHDReadOnly control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSetReplicaServer;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow trVHDReadOnly;
         
         /// <summary>
-        /// CertificateThumbnailValidator control.
+        /// locVHDsReadOnly control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator CertificateThumbnailValidator;
+        protected global::System.Web.UI.WebControls.Localize locVHDsReadOnly;
         
         /// <summary>
-        /// CertificateDdlThumbnailValidator control.
+        /// labVHDs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator CertificateDdlThumbnailValidator;
+        protected global::System.Web.UI.WebControls.Label labVHDs;
         
         /// <summary>
-        /// ReplicaPathErrorTr control.
+        /// locCeritficate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ReplicaPathErrorTr;
+        protected global::System.Web.UI.WebControls.Localize locCeritficate;
         
         /// <summary>
-        /// locErrorPathReplica control.
+        /// ddlCeritficateDiv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label locErrorPathReplica;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ddlCeritficateDiv;
         
         /// <summary>
-        /// ReplicaErrorTr control.
+        /// ddlCeritficate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ReplicaErrorTr;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCeritficate;
         
         /// <summary>
-        /// locErrorSetReplica control.
+        /// txtCeritficateDiv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label locErrorSetReplica;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtCeritficateDiv;
         
         /// <summary>
-        /// locVhd control.
+        /// txtCeritficate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locVhd;
+        protected global::System.Web.UI.WebControls.TextBox txtCeritficate;
         
         /// <summary>
-        /// locDiskType control.
+        /// locFrequency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locDiskType;
+        protected global::System.Web.UI.WebControls.Localize locFrequency;
         
         /// <summary>
-        /// radioVirtualDiskType control.
+        /// ddlFrequency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList radioVirtualDiskType;
+        protected global::System.Web.UI.WebControls.DropDownList ddlFrequency;
         
         /// <summary>
-        /// locExternalNetwork control.
+        /// locRecoveryPoints control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locExternalNetwork;
+        protected global::System.Web.UI.WebControls.Label locRecoveryPoints;
         
         /// <summary>
-        /// locExternalNetworkName control.
+        /// radRecoveryPoints control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locExternalNetworkName;
+        protected global::System.Web.UI.WebControls.RadioButtonList radRecoveryPoints;
         
         /// <summary>
-        /// ddlExternalNetworks control.
+        /// tabAdditionalRecoveryPoints control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlExternalNetworks;
+        protected global::System.Web.UI.HtmlControls.HtmlTable tabAdditionalRecoveryPoints;
         
         /// <summary>
-        /// locPreferredNameServer control.
+        /// locRecoveryPointsAdditional control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPreferredNameServer;
+        protected global::System.Web.UI.WebControls.Localize locRecoveryPointsAdditional;
         
         /// <summary>
-        /// externalPreferredNameServer control.
+        /// txtRecoveryPointsAdditional control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl externalPreferredNameServer;
+        protected global::System.Web.UI.WebControls.TextBox txtRecoveryPointsAdditional;
         
         /// <summary>
-        /// locAlternateNameServer control.
+        /// chbVSS control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locAlternateNameServer;
+        protected global::System.Web.UI.WebControls.CheckBox chbVSS;
         
         /// <summary>
-        /// externalAlternateNameServer control.
+        /// VSSdiv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl externalAlternateNameServer;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl VSSdiv;
         
         /// <summary>
-        /// chkAssignIPAutomatically control.
+        /// txtRecoveryPointsVSS control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkAssignIPAutomatically;
+        protected global::System.Web.UI.WebControls.TextBox txtRecoveryPointsVSS;
         
         /// <summary>
-        /// ManageUpdatePanel control.
+        /// btnUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ManageUpdatePanel;
+        protected global::System.Web.UI.WebControls.Button btnUpdate;
         
         /// <summary>
-        /// locManagementNetwork control.
+        /// DetailsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locManagementNetwork;
+        protected global::System.Web.UI.WebControls.Panel DetailsPanel;
         
         /// <summary>
-        /// locManagementNetworkName control.
+        /// locDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locManagementNetworkName;
+        protected global::System.Web.UI.WebControls.Localize locDetails;
         
         /// <summary>
-        /// ddlManagementNetworks control.
+        /// locDetailsState control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlManagementNetworks;
+        protected global::System.Web.UI.WebControls.Localize locDetailsState;
         
         /// <summary>
-        /// ManageNicConfigRow control.
+        /// labDetailsState control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ManageNicConfigRow;
+        protected global::System.Web.UI.WebControls.Label labDetailsState;
         
         /// <summary>
-        /// locManageNicConfig control.
+        /// locDetailsMode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locManageNicConfig;
+        protected global::System.Web.UI.WebControls.Localize locDetailsMode;
         
         /// <summary>
-        /// ddlManageNicConfig control.
+        /// labDetailsMode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlManageNicConfig;
+        protected global::System.Web.UI.WebControls.Label labDetailsMode;
         
         /// <summary>
-        /// ManagePreferredNameServerRow control.
+        /// locDetailsPrimary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ManagePreferredNameServerRow;
+        protected global::System.Web.UI.WebControls.Localize locDetailsPrimary;
         
         /// <summary>
-        /// locManagePreferredNameServer control.
+        /// labDetailsPrimary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locManagePreferredNameServer;
+        protected global::System.Web.UI.WebControls.Label labDetailsPrimary;
         
         /// <summary>
-        /// managePreferredNameServer control.
+        /// locDetailsReplica control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl managePreferredNameServer;
+        protected global::System.Web.UI.WebControls.Localize locDetailsReplica;
         
         /// <summary>
-        /// ManageAlternateNameServerRow control.
+        /// labDetailsReplica control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow ManageAlternateNameServerRow;
+        protected global::System.Web.UI.WebControls.Label labDetailsReplica;
         
         /// <summary>
-        /// locManageAlternateNameServer control.
+        /// locDetailsHealth control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locManageAlternateNameServer;
+        protected global::System.Web.UI.WebControls.Localize locDetailsHealth;
         
         /// <summary>
-        /// manageAlternateNameServer control.
+        /// labDetailsHealth control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl manageAlternateNameServer;
+        protected global::System.Web.UI.WebControls.Label labDetailsHealth;
         
         /// <summary>
-        /// PrivUpdatePanel control.
+        /// labDetailsHealthDetails control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel PrivUpdatePanel;
+        protected global::System.Web.UI.WebControls.Label labDetailsHealthDetails;
         
         /// <summary>
-        /// locPrivateNetwork control.
+        /// StatisticCollapsiblePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPrivateNetwork;
+        protected global::WebsitePanel.Portal.CollapsiblePanel StatisticCollapsiblePanel;
         
         /// <summary>
-        /// locIPFormat control.
+        /// StatisticPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locIPFormat;
+        protected global::System.Web.UI.WebControls.Panel StatisticPanel;
         
         /// <summary>
-        /// ddlPrivateNetworkFormat control.
+        /// locFromTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPrivateNetworkFormat;
+        protected global::System.Web.UI.WebControls.Localize locFromTime;
         
         /// <summary>
-        /// PrivCustomFormatRow control.
+        /// labFromTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow PrivCustomFormatRow;
+        protected global::System.Web.UI.WebControls.Label labFromTime;
         
         /// <summary>
-        /// locPrivCustomFormat control.
+        /// locToTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPrivCustomFormat;
+        protected global::System.Web.UI.WebControls.Localize locToTime;
         
         /// <summary>
-        /// privateIPAddress control.
+        /// labToTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl privateIPAddress;
+        protected global::System.Web.UI.WebControls.Label labToTime;
         
         /// <summary>
-        /// privateSubnetMask control.
+        /// locAverageSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox privateSubnetMask;
+        protected global::System.Web.UI.WebControls.Localize locAverageSize;
         
         /// <summary>
-        /// privateSubnetMaskValidator control.
+        /// labAverageSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator privateSubnetMaskValidator;
+        protected global::System.Web.UI.WebControls.Label labAverageSize;
         
         /// <summary>
-        /// locPrivDefaultGateway control.
+        /// locMaximumSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPrivDefaultGateway;
+        protected global::System.Web.UI.WebControls.Localize locMaximumSize;
         
         /// <summary>
-        /// privateDefaultGateway control.
+        /// labMaximumSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl privateDefaultGateway;
+        protected global::System.Web.UI.WebControls.Label labMaximumSize;
         
         /// <summary>
-        /// locPrivPreferredNameServer control.
+        /// locAverageLatency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPrivPreferredNameServer;
+        protected global::System.Web.UI.WebControls.Localize locAverageLatency;
         
         /// <summary>
-        /// privatePreferredNameServer control.
+        /// labAverageLatency control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl privatePreferredNameServer;
+        protected global::System.Web.UI.WebControls.Label labAverageLatency;
         
         /// <summary>
-        /// locPrivAlternateNameServer control.
+        /// locErrorsEncountered control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPrivAlternateNameServer;
+        protected global::System.Web.UI.WebControls.Localize locErrorsEncountered;
         
         /// <summary>
-        /// privateAlternateNameServer control.
+        /// labErrorsEncountered control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.EditIPAddressControl privateAlternateNameServer;
+        protected global::System.Web.UI.WebControls.Label labErrorsEncountered;
         
         /// <summary>
-        /// locHostname control.
+        /// locSuccessfulReplicationCycles control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locHostname;
+        protected global::System.Web.UI.WebControls.Localize locSuccessfulReplicationCycles;
         
         /// <summary>
-        /// locHostnamePattern control.
+        /// labSuccessfulReplicationCycles control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locHostnamePattern;
+        protected global::System.Web.UI.WebControls.Label labSuccessfulReplicationCycles;
         
         /// <summary>
-        /// txtHostnamePattern control.
+        /// PendingReplicationCollapsiblePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtHostnamePattern;
+        protected global::WebsitePanel.Portal.CollapsiblePanel PendingReplicationCollapsiblePanel;
         
         /// <summary>
-        /// HostnamePatternValidator control.
+        /// PendingReplicationPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator HostnamePatternValidator;
+        protected global::System.Web.UI.WebControls.Panel PendingReplicationPanel;
         
         /// <summary>
-        /// locPatternText control.
+        /// locSizeData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPatternText;
+        protected global::System.Web.UI.WebControls.Localize locSizeData;
         
         /// <summary>
-        /// locStartAction control.
+        /// labSizeData control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStartAction;
+        protected global::System.Web.UI.WebControls.Label labSizeData;
         
         /// <summary>
-        /// locStartOptionsText control.
+        /// locLastSyncro control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStartOptionsText;
+        protected global::System.Web.UI.WebControls.Localize locLastSyncro;
         
         /// <summary>
-        /// radioStartAction control.
+        /// labLastSyncro control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList radioStartAction;
+        protected global::System.Web.UI.WebControls.Label labLastSyncro;
         
         /// <summary>
-        /// locStartupDelayText control.
+        /// btnCancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStartupDelayText;
+        protected global::System.Web.UI.WebControls.Button btnCancel;
         
         /// <summary>
-        /// locStartupDelay control.
+        /// DetailModal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStartupDelay;
-        
-        /// <summary>
-        /// txtStartupDelay control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtStartupDelay;
-        
-        /// <summary>
-        /// locSeconds control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locSeconds;
-        
-        /// <summary>
-        /// StartupDelayValidator control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator StartupDelayValidator;
-        
-        /// <summary>
-        /// locStopAction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStopAction;
-        
-        /// <summary>
-        /// locStopActionText control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locStopActionText;
-        
-        /// <summary>
-        /// radioStopAction control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButtonList radioStopAction;
+        protected global::AjaxControlToolkit.ModalPopupExtender DetailModal;
     }
 }

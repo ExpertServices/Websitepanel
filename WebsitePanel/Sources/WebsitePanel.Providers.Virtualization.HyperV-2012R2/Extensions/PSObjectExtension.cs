@@ -20,9 +20,17 @@ namespace WebsitePanel.Providers.Virtualization
         {
             return (T)obj.Members[name].Value;
         }
-        public static T GetEnum<T>(this PSObject obj, string name) where T : struct
+        public static T GetEnum<T>(this PSObject obj, string name, T? defaultValue = null) where T : struct
         {
-            return (T)Enum.Parse(typeof(T), GetProperty(obj, name).ToString());
+            try
+            {
+                return (T) Enum.Parse(typeof (T), GetProperty(obj, name).ToString());
+            }
+            catch
+            {
+                if (defaultValue.HasValue) return defaultValue.Value;
+                throw;
+            }
         }
         public static int GetInt(this PSObject obj, string name)
         {
@@ -39,6 +47,25 @@ namespace WebsitePanel.Providers.Virtualization
         public static bool GetBool(this PSObject obj, string name)
         {
             return Convert.ToBoolean(obj.Members[name].Value);
+        }
+
+        public static string GetMb(this PSObject obj, string name)
+        {
+            var bytes = GetLong(obj, name);
+
+            if (bytes == 0)
+                return "0";
+
+            if (bytes > Constants.Size1G)
+                return string.Format("{0:0.0} GB", bytes / Constants.Size1G);
+
+            if (bytes > Constants.Size1M)
+                return string.Format("{0:0.0} MB", bytes / Constants.Size1M);
+
+            if (bytes > Constants.Size1K)
+                return string.Format("{0:0.0} KB", bytes / Constants.Size1K);
+
+            return string.Format("{0} b", bytes);
         }
         
         #endregion

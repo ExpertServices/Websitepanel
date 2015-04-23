@@ -42,6 +42,7 @@ using System.Net.Mail;
 using System.Diagnostics;
 ﻿using System.Linq;
 ﻿using System.Net;
+﻿using WebsitePanel.Providers.Virtualization2012;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -84,7 +85,7 @@ namespace WebsitePanel.EnterpriseServer
         public static VirtualMachine[] GetVirtualMachinesByServiceId(int serviceId)
         {
             // get proxy
-            VirtualizationServer vps = GetVirtualizationProxy(serviceId);
+            VirtualizationServer2012 vps = GetVirtualizationProxy(serviceId);
 
             // load details
             return vps.GetVirtualMachines();
@@ -166,7 +167,7 @@ namespace WebsitePanel.EnterpriseServer
             string path = settings["OsTemplatesPath"];
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(serviceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
 
             return vs.GetLibraryItems(path);
         }
@@ -176,7 +177,7 @@ namespace WebsitePanel.EnterpriseServer
         public static int GetMaximumCpuCoresNumber(int packageId)
         {
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxyByPackageId(packageId);
+            VirtualizationServer2012 vs = GetVirtualizationProxyByPackageId(packageId);
 
             return vs.GetProcessorCoresNumber();
         }
@@ -619,7 +620,7 @@ namespace WebsitePanel.EnterpriseServer
                 vm.ProvisioningStatus = VirtualMachineProvisioningStatus.Error;
 
                 // load proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // load service settings
                 StringDictionary settings = ServerController.GetServiceSettings(vm.ServiceId);
@@ -1199,7 +1200,7 @@ namespace WebsitePanel.EnterpriseServer
                 StringDictionary settings = ServerController.GetServiceSettings(serviceId);
 
                 // load virtual machine info from service
-                VirtualizationServer vs = GetVirtualizationProxy(serviceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
                 VirtualMachine vm = vs.GetVirtualMachineEx(vmId);
 
                 // set VM properties
@@ -1461,7 +1462,7 @@ namespace WebsitePanel.EnterpriseServer
             JobResult result = null;
 
             // load proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
             try
             {
@@ -1540,7 +1541,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // create switch
                 // load proxy
-                VirtualizationServer vs = GetVirtualizationProxy(item.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(item.ServiceId);
 
                 // create switch
                 VirtualSwitch sw = vs.CreateSwitch(name);
@@ -1591,7 +1592,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vps = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vps = GetVirtualizationProxy(vm.ServiceId);
 
             // load jobs
             ConcreteJob[] jobs = vps.GetVirtualMachineJobs(vm.VirtualMachineId);
@@ -1617,7 +1618,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vps = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vps = GetVirtualizationProxy(vm.ServiceId);
 
             // return thumbnail
             return vps.GetVirtualMachineThumbnailImage(vm.VirtualMachineId, size);
@@ -1632,7 +1633,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vps = GetVirtualizationProxy(machine.ServiceId);
+            VirtualizationServer2012 vps = GetVirtualizationProxy(machine.ServiceId);
 
             // load details
             VirtualMachine vm = vps.GetVirtualMachine(machine.VirtualMachineId);
@@ -1649,7 +1650,7 @@ namespace WebsitePanel.EnterpriseServer
         public static VirtualMachine GetVirtualMachineExtendedInfo(int serviceId, string vmId)
         {
             // get proxy
-            VirtualizationServer vps = GetVirtualizationProxy(serviceId);
+            VirtualizationServer2012 vps = GetVirtualizationProxy(serviceId);
 
             // load details
             return vps.GetVirtualMachineEx(vmId);
@@ -1692,7 +1693,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // update virtual machine name
                 JobResult result = vs.RenameVirtualMachine(vm.VirtualMachineId, hostname);
@@ -1812,7 +1813,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.WriteParameter("New state", state);
 
                 // load proxy
-                VirtualizationServer vps = GetVirtualizationProxy(machine.ServiceId);                    
+                VirtualizationServer2012 vps = GetVirtualizationProxy(machine.ServiceId);                    
 
                 try
                 {
@@ -1935,7 +1936,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // change administrator password
                 JobResult result = SendAdministratorPasswordKVP(itemId, password);
@@ -2044,7 +2045,7 @@ namespace WebsitePanel.EnterpriseServer
                 JobResult result = null;
 
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // stop VPS if required
                 VirtualMachine vps = vs.GetVirtualMachine(vm.VirtualMachineId);
@@ -2183,7 +2184,7 @@ namespace WebsitePanel.EnterpriseServer
             VirtualMachine vm = GetVirtualMachineByItemId(itemId);
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
             string isoPath = vs.GetInsertedDVD(vm.VirtualMachineId);
 
             if (String.IsNullOrEmpty(isoPath))
@@ -2212,7 +2213,7 @@ namespace WebsitePanel.EnterpriseServer
             string path = settings["DvdLibraryPath"];
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
             return vs.GetLibraryItems(path);
         }
@@ -2252,7 +2253,7 @@ namespace WebsitePanel.EnterpriseServer
                 string fullPath = Path.Combine(libPath, isoPath);
 
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // insert DVD
                 JobResult result = vs.InsertDVD(vm.VirtualMachineId, fullPath);
@@ -2301,7 +2302,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // insert DVD
                 JobResult result = vs.EjectDVD(vm.VirtualMachineId);
@@ -2332,7 +2333,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
             return vs.GetVirtualMachineSnapshots(vm.VirtualMachineId);
         }
 
@@ -2344,7 +2345,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
             return vs.GetSnapshot(snaphostId);
         }
 
@@ -2376,7 +2377,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 #region Check Quotas
                 // check quotas
@@ -2448,7 +2449,7 @@ namespace WebsitePanel.EnterpriseServer
                 JobResult result = null;
 
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // check VM state
                 VirtualMachine vps = vs.GetVirtualMachine(vm.VirtualMachineId);
@@ -2512,7 +2513,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // take snapshot
                 JobResult result = vs.RenameSnapshot(vm.VirtualMachineId, snapshotId, newName);
@@ -2561,7 +2562,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // take snapshot
                 JobResult result = vs.DeleteSnapshot(snapshotId);
@@ -2617,7 +2618,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // take snapshot
                 JobResult result = vs.DeleteSnapshotSubtree(snapshotId);
@@ -2653,7 +2654,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // get proxy
-            VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
             return vs.GetSnapshotThumbnailImage(snapshotId, size);
         }
@@ -3328,7 +3329,7 @@ namespace WebsitePanel.EnterpriseServer
         #region Virtual Switches
         public static VirtualSwitch[] GetExternalSwitches(int serviceId, string computerName)
         {
-            VirtualizationServer vs = new VirtualizationServer();
+            VirtualizationServer2012 vs = new VirtualizationServer2012();
             ServiceProviderProxy.Init(vs, serviceId);
             return vs.GetExternalSwitches(computerName);
         }
@@ -3363,7 +3364,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // get proxy
-                VirtualizationServer vs = GetVirtualizationProxy(vm.ServiceId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // check VM state
                 VirtualMachine vps = vs.GetVirtualMachine(vm.VirtualMachineId);
@@ -3628,7 +3629,7 @@ namespace WebsitePanel.EnterpriseServer
             return serviceId;
         }
 
-        private static VirtualizationServer GetVirtualizationProxyByPackageId(int packageId)
+        private static VirtualizationServer2012 GetVirtualizationProxyByPackageId(int packageId)
         {
             // get service
             int serviceId = GetServiceId(packageId);
@@ -3636,9 +3637,9 @@ namespace WebsitePanel.EnterpriseServer
             return GetVirtualizationProxy(serviceId);
         }
         
-        private static VirtualizationServer GetVirtualizationProxy(int serviceId)
+        private static VirtualizationServer2012 GetVirtualizationProxy(int serviceId)
         {
-            VirtualizationServer ws = new VirtualizationServer();
+            VirtualizationServer2012 ws = new VirtualizationServer2012();
             ServiceProviderProxy.Init(ws, serviceId);
             return ws;
         }
@@ -3686,7 +3687,7 @@ namespace WebsitePanel.EnterpriseServer
             res.ErrorCodes.Add(VirtualizationErrorCodes.JOB_FAILED_ERROR + ":" + job.ErrorDescription);
         }
 
-        private static bool JobCompleted(VirtualizationServer vs, ConcreteJob job)
+        private static bool JobCompleted(VirtualizationServer2012 vs, ConcreteJob job)
         {
             TaskManager.IndicatorMaximum = 100;
             bool jobCompleted = true;
@@ -3713,6 +3714,233 @@ namespace WebsitePanel.EnterpriseServer
         {
             return MS_MAC_PREFIX + Utils.GetRandomHexString(3);
         }
+
+        #endregion
+
+
+        #region Replication
+
+        #region IsReplicaServer Part
+
+        public static CertificateInfo[] GetCertificates(int serviceId, string remoteServer)
+        {
+            VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+            return vs.GetCertificates(remoteServer);
+        }
+
+        public static ResultObject SetReplicaServer(int serviceId, string remoteServer, string thumbprint, string storagePath)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                if (string.IsNullOrEmpty(storagePath))
+                    throw new Exception("Please enter replication path"); 
+                
+                VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+                vs.SetReplicaServer(remoteServer, thumbprint, storagePath);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.SET_REPLICA_SERVER_ERROR, ex);
+            }
+            return result;
+        }
+
+        public static ResultObject UnsetReplicaServer(int serviceId, string remoteServer)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+                vs.UnsetReplicaServer(remoteServer);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.UNSET_REPLICA_SERVER_ERROR, ex);
+            }
+            return result;
+        }
+
+        public static ReplicationServerInfo GetReplicaServer(int serviceId, string remoteServer)
+        {
+            VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+            return vs.GetReplicaServer(remoteServer);
+        }
+
+        #endregion
+
+        public static VmReplication GetReplication(int itemId)
+        {
+            VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+            return vs.GetReplication(vm.VirtualMachineId);
+        }
+
+        public static ReplicationDetailInfo GetReplicationInfo(int itemId)
+        {
+            VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+            return vs.GetReplicationInfo(vm.VirtualMachineId);
+        }
+
+        public static ResultObject SetVmReplication(int itemId, VmReplication replication)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+
+                // Get replica server
+                var replicaServerInfo = GetReplicaInfoForService(vm.ServiceId, ref result);
+                if (result.ErrorCodes.Count > 0)
+                    return result;
+
+                // We should use enable replication or set replication?
+                var vmReplica = vs.GetReplication(vm.VirtualMachineId);
+                if (vmReplica == null) // need enable
+                {
+                    vs.EnableVmReplication(vm.VirtualMachineId, replicaServerInfo.ComputerName, replication);
+                    vs.StartInitialReplication(vm.VirtualMachineId);
+                }
+                else // need set
+                {
+                    vs.SetVmReplication(vm.VirtualMachineId, replicaServerInfo.ComputerName, replication);
+                }
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.SET_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        public static ResultObject DisableVmReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.DisableVmReplication(vm.VirtualMachineId);
+
+                CleanUpReplicaServer(vm);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.DISABLE_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        public static ResultObject PauseReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.PauseReplication(vm.VirtualMachineId);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.PAUSE_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        public static ResultObject ResumeReplication(int itemId)
+        {
+            ResultObject result = new ResultObject();
+            try
+            {
+                VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+                VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+                vs.ResumeReplication(vm.VirtualMachineId);
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.AddError(VirtualizationErrorCodes.RESUME_REPLICATION_ERROR, ex);
+            }
+            return result; 
+        }
+
+        #region Private methods
+
+        private static void CleanUpReplicaServer(VirtualMachine originalVm)
+        {
+            try
+            {
+                ResultObject result = new ResultObject();
+
+                // Get replica server
+                var replicaServer = GetReplicaForService(originalVm.ServiceId, ref result);
+
+                // Clean up replica server
+                var replicaVm = replicaServer.GetVirtualMachines().FirstOrDefault(m => m.Name == originalVm.Name);
+                if (replicaVm != null)
+                {
+                    replicaServer.DisableVmReplication(replicaVm.VirtualMachineId);
+                    replicaServer.ShutDownVirtualMachine(replicaVm.VirtualMachineId, true, "ReplicaDelete");
+                    replicaServer.DeleteVirtualMachine(replicaVm.VirtualMachineId);
+                }
+            }
+            catch { /* skip */ }
+        }
+
+        private static ReplicationServerInfo GetReplicaInfoForService(int serviceId, ref ResultObject result)
+        {
+            // Get service id of replica server
+            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
+            string replicaServiceId = vsSesstings["ReplicaServerId"];
+
+            if (string.IsNullOrEmpty(replicaServiceId))
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            // get replica server info for replica service id
+            VirtualizationServer2012 vsReplica = GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
+            StringDictionary vsReplicaSesstings = ServerController.GetServiceSettings(Convert.ToInt32(replicaServiceId));
+            string computerName = vsReplicaSesstings["ServerName"];
+            var replicaServerInfo = vsReplica.GetReplicaServer(computerName);
+
+            if (!replicaServerInfo.Enabled)
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            return replicaServerInfo;
+        }
+
+        private static VirtualizationServer2012 GetReplicaForService(int serviceId, ref ResultObject result)
+        {
+            // Get service id of replica server
+            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
+            string replicaServiceId = vsSesstings["ReplicaServerId"];
+
+            if (string.IsNullOrEmpty(replicaServiceId))
+            {
+                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
+                return null;
+            }
+
+            // get replica server for replica service id
+            return GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
+        }
+
+        #endregion
 
         #endregion
     }

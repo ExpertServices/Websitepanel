@@ -292,6 +292,7 @@
     <Content Include="ServiceProvider.asmx" />
     <Content Include="SharePointServer.asmx" />
     <Content Include="StatisticsServer.asmx" />
+    <Content Include="VirtualizationServer2012.asmx" />
     <Content Include="VirtualizationServer.asmx" />
     <Content Include="VirtualizationServerForPrivateCloud.asmx" />
     <Content Include="bin\WebsitePanel.Server.dll.config" />
@@ -404,6 +405,10 @@
     </Compile>
     <Compile Include="StatisticsServer.asmx.cs">
       <DependentUpon>StatisticsServer.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="VirtualizationServer2012.asmx.cs">
+      <DependentUpon>VirtualizationServer2012.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="VirtualizationServer.asmx.cs">

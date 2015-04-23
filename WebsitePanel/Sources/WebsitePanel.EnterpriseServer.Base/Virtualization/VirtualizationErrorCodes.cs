@@ -113,6 +113,15 @@
         public const string INSERT_DVD_DISK_ERROR = "VPS_INSERT_DVD_DISK_ERROR";
         public const string EJECT_DVD_DISK_ERROR = "VPS_EJECT_DVD_DISK_ERROR";
 
+        // Replication
+        public const string SET_REPLICA_SERVER_ERROR = "VPS_SET_REPLICA_SERVER_ERROR";
+        public const string UNSET_REPLICA_SERVER_ERROR = "VPS_UNSET_REPLICA_SERVER_ERROR";
+        public const string NO_REPLICA_SERVER_ERROR = "VPS_NO_REPLICA_SERVER_ERROR";
+        public const string SET_REPLICATION_ERROR = "VPS_SET_REPLICATION_ERROR";
+        public const string DISABLE_REPLICATION_ERROR = "VPS_DISABLE_REPLICATION_ERROR";
+        public const string PAUSE_REPLICATION_ERROR = "VPS_PAUSE_REPLICATION_ERROR";
+        public const string RESUME_REPLICATION_ERROR = "VPS_RESUME_REPLICATION_ERROR";
+
         
         public const string HOST_NAMER_IS_ALREADY_USED = "HOST_NAMER_IS_ALREADY_USED";
         public const string CANNOT_CHECK_HOST_EXISTS = "CANNOT_CHECK_HOST_EXISTS";

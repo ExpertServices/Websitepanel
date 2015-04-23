@@ -134,8 +134,7 @@ namespace WebsitePanel.Providers.Virtualization
         [Persistent]
         public string Status { get; set; }
 
-        [Persistent]
-        public string ReplicationState { get; set; }
+        public ReplicationState ReplicationState { get; set; }
 
         [Persistent]
         public int Generation { get; set; }

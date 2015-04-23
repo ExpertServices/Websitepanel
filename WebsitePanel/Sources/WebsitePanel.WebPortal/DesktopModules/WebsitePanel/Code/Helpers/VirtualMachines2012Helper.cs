@@ -30,6 +30,7 @@
 using WebsitePanel.Providers.Virtualization;
 using System.Web;
 using System;
+﻿using System.Collections.Specialized;
 
 namespace WebsitePanel.Portal
 {
@@ -125,5 +126,30 @@ namespace WebsitePanel.Portal
             return privateAddresses.Count;
         }
         #endregion
+
+        public static StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
+        }
+
+        public static bool IsReplicationEnabled(int packageId)
+        {
+            var vmsMeta = (new VirtualMachines2012Helper()).GetVirtualMachines(packageId, null, null, null, 1, 0);
+            if (vmsMeta.Length == 0) return false;
+
+            var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(vmsMeta[0].ItemID);
+            if (packageVm == null) return false;
+
+            var serviceSettings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(packageVm.ServiceId));
+            if (serviceSettings == null) return false;
+
+            return serviceSettings["ReplicaMode"] == ReplicaMode.ReplicationEnabled.ToString();
+        }
     }
 }

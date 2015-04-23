@@ -4075,6 +4075,38 @@
   <data name="Error.VPS_ERROR_TAKE_SNAPSHOT" xml:space="preserve">
     <value>Cannot take virtual machine snapshot</value>
   </data>
+  <data name="Error.VPS_ERROR_SET_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot enable/set replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_ERROR_DISABLE_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot disable replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_ERROR_GET_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot get replication for the virtual machine</value>
+  </data>
+  
+  <data name="Error.VPS_SET_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot set replication for the server</value>
+  </data>
+  <data name="Error.VPS_UNSET_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot unset replication for the server</value>
+  </data>
+  <data name="Error.VPS_NO_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot find replication server</value>
+  </data>
+  <data name="Error.VPS_SET_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot enable\set replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_DISABLE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot disable replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_PAUSE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot pause replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_RESUME_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot resume replication for the virtual machine</value>
+  </data>
+  
   <data name="VPS.VPS_JOB_FAILED_ERROR" xml:space="preserve">
     <value>Job execution failed with the following code: {1}</value>
   </data>

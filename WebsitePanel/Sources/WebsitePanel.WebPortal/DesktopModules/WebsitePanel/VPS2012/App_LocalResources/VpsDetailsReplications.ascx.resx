@@ -117,76 +117,157 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnCreate.Text" xml:space="preserve">
-    <value>Create VM</value>
+  <data name="btnDetailInfo.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Gathering detailed information...', 'DetailModal');</value>
   </data>
-  <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;The form displays the list of Virtual Private Servers created in the hosting space.&lt;/p&gt;&lt;p&gt;In terms of WebsitePanel VPS module hosting space could be compared to the Virtual Dedicated Center (VDC). You can see VPS bindings to external and private IP addresses as well as search VPS by these fields.&lt;/p&gt;&lt;p&gt;Quotas in the bottom of the forms show the total amount of computer resources available for VPS.&lt;/p&gt;</value>
+  <data name="btnUpdate.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Updating VM replication...');</value>
   </data>
-  <data name="gvServers.Empty" xml:space="preserve">
-    <value>No VPS have been created. To create a new VPS click "Create VPS" button.</value>
+  <data name="btnPause.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Pausing VM replication...');</value>
   </data>
-  <data name="gvServersExternalIP.HeaderText" xml:space="preserve">
-    <value>External IP</value>
-  </data>
-  <data name="gvServersName.HeaderText" xml:space="preserve">
-    <value>Host name</value>
-  </data>
-  <data name="gvServersPrivateIP.HeaderText" xml:space="preserve">
-    <value>Private IP</value>
-  </data>
-  <data name="gvServersSpace.HeaderText" xml:space="preserve">
-    <value>Space</value>
-  </data>
-  <data name="gvServersUser.HeaderText" xml:space="preserve">
-    <value>User</value>
-  </data>
-  <data name="SearchField.ExternalIP" xml:space="preserve">
-    <value>External IP</value>
-  </data>
-  <data name="SearchField.IPAddress" xml:space="preserve">
-    <value>Private IP</value>
-  </data>
-  <data name="SearchField.ItemName" xml:space="preserve">
-    <value>VPS Name</value>
-  </data>
-  <data name="SearchField.Username" xml:space="preserve">
-    <value>User Name</value>
-  </data>
-  <data name="cmdDelete.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="locHddQuota.Text" xml:space="preserve">
-    <value>HDD, GB:</value>
-  </data>
-  <data name="locRamQuota.Text" xml:space="preserve">
-    <value>RAM, MB:</value>
+  <data name="btnResume.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Resuming VM replication...');</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Virtual Private Servers</value>
+    <value>Replication</value>
   </data>
-  <data name="locVpsQuota.Text" xml:space="preserve">
-    <value>Number of VPS:</value>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Close</value>
   </data>
-  <data name="secQuotas.Text" xml:space="preserve">
-    <value>Quotas</value>
+  <data name="btnDetailInfo.Text" xml:space="preserve">
+    <value>Details</value>
   </data>
-  <data name="btnImport.Text" xml:space="preserve">
-    <value>Import VPS</value>
+  <data name="btnPause.Text" xml:space="preserve">
+    <value>Pause</value>
   </data>
-  <data name="cmdDetach.OnClientClick" xml:space="preserve">
-    <value>return confirm('Remove this VM from meta-base?');</value>
+  <data name="btnResume.Text" xml:space="preserve">
+    <value>Resume</value>
   </data>
-  <data name="cmdDetach.Text" xml:space="preserve">
-    <value>Detach</value>
+  <data name="btnUpdate.Text" xml:space="preserve">
+    <value>Update</value>
   </data>
-  <data name="cmdMove.Text" xml:space="preserve">
-    <value>Move</value>
+  <data name="chbEnable.Text" xml:space="preserve">
+    <value>Enable replication</value>
   </data>
-  <data name="btnFastCreate.Text" xml:space="preserve">
-    <value>Fast Create VM</value>
+  <data name="chbVSS.Text" xml:space="preserve">
+    <value>Volume Shadow Copy Service (VSS) snapshot frequency (in hours):</value>
   </data>
-  <data name="gvReplication.HeaderText" xml:space="preserve">
-    <value>Replication status</value>
+  <data name="ddlFrequency15minutes.Text" xml:space="preserve">
+    <value>15 minutes</value>
+  </data>
+  <data name="ddlFrequency30seconds.Text" xml:space="preserve">
+    <value>30 seconds</value>
+  </data>
+  <data name="ddlFrequency5minutes.Text" xml:space="preserve">
+    <value>5 minutes</value>
+  </data>
+  <data name="locAverageLatency.Text" xml:space="preserve">
+    <value>Average latency:</value>
+  </data>
+  <data name="locAverageSize.Text" xml:space="preserve">
+    <value>Average size:</value>
+  </data>
+  <data name="locCeritficate.Text" xml:space="preserve">
+    <value>SSL ceritficate:</value>
+  </data>
+  <data name="locDetails.Text" xml:space="preserve">
+    <value>Replication details</value>
+  </data>
+  <data name="locDetailsHealth.Text" xml:space="preserve">
+    <value>Replication Health:</value>
+  </data>
+  <data name="locDetailsMode.Text" xml:space="preserve">
+    <value>Replication Mode:</value>
+  </data>
+  <data name="locDetailsPrimary.Text" xml:space="preserve">
+    <value>Current Primary Server:</value>
+  </data>
+  <data name="locDetailsReplica.Text" xml:space="preserve">
+    <value>Current Replica Server:</value>
+  </data>
+  <data name="locDetailsState.Text" xml:space="preserve">
+    <value>Replication State:</value>
+  </data>
+  <data name="locErrorsEncountered.Text" xml:space="preserve">
+    <value>Errors encountered:</value>
+  </data>
+  <data name="locFrequency.Text" xml:space="preserve">
+    <value>Replication Frequency</value>
+  </data>
+  <data name="locFromTime.Text" xml:space="preserve">
+    <value>From time:</value>
+  </data>
+  <data name="locHealth.Text" xml:space="preserve">
+    <value>Health:</value>
+  </data>
+  <data name="locLastSynchronized.Text" xml:space="preserve">
+    <value>Last synchronized at:</value>
+  </data>
+  <data name="locLastSyncro.Text" xml:space="preserve">
+    <value>Last synchronized at:</value>
+  </data>
+  <data name="locMaximumSize.Text" xml:space="preserve">
+    <value>Maximum size:</value>
+  </data>
+  <data name="locPrimaryServer.Text" xml:space="preserve">
+    <value>Primary Server:</value>
+  </data>
+  <data name="locRecoveryPoints.Text" xml:space="preserve">
+    <value>Additional Recovery Points:</value>
+  </data>
+  <data name="locRecoveryPointsAdditional.Text" xml:space="preserve">
+    <value>Coverage provided by additional recovery points (in hours):</value>
+  </data>
+  <data name="locReplicaServer.Text" xml:space="preserve">
+    <value>Replica Server:</value>
+  </data>
+  <data name="locSizeData.Text" xml:space="preserve">
+    <value>Size of data yet to be replicated:</value>
+  </data>
+  <data name="locSuccessfulReplicationCycles.Text" xml:space="preserve">
+    <value>Successful replication cycles:</value>
+  </data>
+  <data name="locToTime.Text" xml:space="preserve">
+    <value>To time:</value>
+  </data>
+  <data name="locVHDs.Text" xml:space="preserve">
+    <value>Choose Replication VHDs:</value>
+  </data>
+  <data name="radRecoveryPointsAdditional.Text" xml:space="preserve">
+    <value>Create additional hourly recovery points</value>
+  </data>
+  <data name="radRecoveryPointsLast.Text" xml:space="preserve">
+    <value>Maintain only the latest recovery point</value>
+  </data>
+  <data name="secPendingReplication.Text" xml:space="preserve">
+    <value>Pending replication:</value>
+  </data>
+  <data name="secReplication.Text" xml:space="preserve">
+    <value>Replication Configuration</value>
+  </data>
+  <data name="secReplicationDetails.Text" xml:space="preserve">
+    <value>Health</value>
+  </data>
+  <data name="secStatisticPanel.Text" xml:space="preserve">
+    <value>Statistic for past </value>
+  </data>
+  <data name="valCeritficateRequire.ErrorMessage" xml:space="preserve">
+    <value>SSL certificate is required</value>
+  </data>
+  <data name="valRecoveryPointsAdditionalRange.ErrorMessage" xml:space="preserve">
+    <value>chbVSS</value>
+  </data>
+  <data name="valRecoveryPointsAdditionalRequire.ErrorMessage" xml:space="preserve">
+    <value>Additional recovery points cannot be empty</value>
+  </data>
+  <data name="valRecoveryPointsVSSRange.ErrorMessage" xml:space="preserve">
+    <value>VSS snapshot frequency range is 1-12</value>
+  </data>
+  <data name="valRecoveryPointsVSSRequire.ErrorMessage" xml:space="preserve">
+    <value>VSS snapshot frequency cannot be empty</value>
+  </data>
+  <data name="valVHDs.ErrorMessage" xml:space="preserve">
+    <value>Please select at least one VHD</value>
   </data>
 </root>

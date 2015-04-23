@@ -82,6 +82,26 @@
                     Text="*" meta:resourcekey="ExportedVpsPathValidator" Display="Dynamic" SetFocusOnError="true" />
             </td>
 	    </tr>
+        <tr>
+		    <td class="SubHead" style="width:200px;">
+		        <asp:Localize ID="locDvdIsoPath" runat="server" meta:resourcekey="locDvdIsoPath" Text="Path to DVD ISO files:"></asp:Localize>
+		    </td>
+		    <td>
+                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtDvdLibraryPath"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="DvdLibraryPathValidator" runat="server" ControlToValidate="txtDvdLibraryPath"
+                    Text="*" meta:resourcekey="DvdLibraryPathValidator" Display="Dynamic" SetFocusOnError="true" />
+            </td>
+	    </tr>
+        <tr>
+		    <td class="SubHead" style="width:200px;">
+		        <asp:Localize ID="locReplicaPath" runat="server" meta:resourcekey="locReplicaPath" Text="Path to Replications:"></asp:Localize>
+		    </td>
+		    <td>
+                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtReplicaPath"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="ReplicaPathValidator" runat="server" ControlToValidate="txtReplicaPath"
+                    Text="*" meta:resourcekey="ReplicaPathValidator" Display="Dynamic" SetFocusOnError="true" />
+            </td>
+	    </tr>
 	 </table>
 </fieldset>
 <br />
@@ -129,19 +149,79 @@
 
 <fieldset>
     <legend>
-        <asp:Localize ID="locMediaLibrary" runat="server" meta:resourcekey="locMediaLibrary" Text="DVD Media Library"></asp:Localize>
+        <asp:Localize ID="locReplication" runat="server" meta:resourcekey="locReplication" Text="Replication"></asp:Localize>
     </legend>
     <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
-	    <tr>
-		    <td class="SubHead" style="width:200px;">
-		        <asp:Localize ID="locDvdIsoPath" runat="server" meta:resourcekey="locDvdIsoPath" Text="Path to DVD ISO files:"></asp:Localize>
-		    </td>
-		    <td>
-                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtDvdLibraryPath"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="DvdLibraryPathValidator" runat="server" ControlToValidate="txtDvdLibraryPath"
-                    Text="*" meta:resourcekey="DvdLibraryPathValidator" Display="Dynamic" SetFocusOnError="true" />
+        <table cellpadding="2" cellspacing="0" style="margin: 10px;">
+            <tr>
+                <td colspan="2">
+                    <asp:RadioButtonList ID="ReplicationModeList" runat="server" AutoPostBack="true"
+                        OnSelectedIndexChanged="radioServer_SelectedIndexChanged">
+                        <asp:ListItem Value="None" meta:resourcekey="ReplicationModeDisabled" Selected="True">No Hyper-v Replication</asp:ListItem>
+                        <asp:ListItem Value="ReplicationEnabled" meta:resourcekey="ReplicationModeEnabled">Enable Hyper-V Replication</asp:ListItem>
+                        <asp:ListItem Value="IsReplicaServer" meta:resourcekey="ReplicationModeIsReplicaServer">This is a Replica Server</asp:ListItem>
+                    </asp:RadioButtonList>
+                </td>
+            </tr>
+            <tr id="EnableReplicaRow" runat="server">
+                <td class="SubHead" style="padding-left: 20px;" colspan="2">
+                    <table cellpadding="2" cellspacing="0" style="margin: 10px;">
+                        <tr>
+                            <td style="width: 180px">
+                                <asp:Localize ID="locReplicaServer" runat="server" meta:resourcekey="locReplicaServer" Text="Replication Server:"></asp:Localize>
+                            </td>
+                            <td>
+                                <asp:DropDownList ID="ddlReplicaServer" runat="server" Width="300px"></asp:DropDownList>
+
+                                <asp:RequiredFieldValidator ID="ReplicaServerValidator" runat="server" ControlToValidate="ddlReplicaServer"
+                                    Text="*" meta:resourcekey="ReplicaServerValidator" Display="Dynamic" SetFocusOnError="true" />
+                            </td>
+                        </tr>
+                        <tr id="EnableReplicaErrorTr" runat="server" visible="False">
+                            <td colspan="2">
+                                <asp:Label ID="locEnableReplicaError" runat="server" meta:resourcekey="locEnableReplicaError" ForeColor="Red"></asp:Label>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="IsReplicaServerRow" runat="server">
+            <td class="SubHead" style="padding-left: 20px;" colspan="2">
+                <table cellpadding="2" cellspacing="0" style="margin: 10px;">
+                    <tr>
+                        <td style="width: 200px">
+                            <asp:Localize ID="locCertThumbnail" runat="server" meta:resourcekey="locCertThumbnail" Text="SSL Certificate Thumbnail:"></asp:Localize>
+                           </td>
+                        <td> 
+                            <asp:DropDownList ID="ddlCertThumbnail" runat="server" Width="500px"></asp:DropDownList>
+                            <asp:TextBox Width="400px" CssClass="NormalTextBox" runat="server" ID="txtCertThumbnail"></asp:TextBox>
+
+                            <asp:Button ID="btnSetReplicaServer" runat="server" meta:resourcekey="btnSetReplicaServer"
+                                CssClass="Button1" Text="Set" CausesValidation="false"
+                                OnClick="btnSetReplicaServer_Click" />
+
+                            <asp:RequiredFieldValidator ID="CertificateThumbnailValidator" runat="server" ControlToValidate="txtCertThumbnail"
+                                Text="*" meta:resourcekey="CertificateThumbnailValidator" Display="Dynamic" SetFocusOnError="true" />
+                            <asp:RequiredFieldValidator ID="CertificateDdlThumbnailValidator" runat="server" ControlToValidate="ddlCertThumbnail"
+                                Text="*" meta:resourcekey="CertificateThumbnailValidator" Display="Dynamic" SetFocusOnError="true" />
+                        </td>
+                    </tr>
+                    <tr id="ReplicaPathErrorTr" runat="server" Visible="False">
+                        <td colspan="2">
+                            <asp:Label ID="locErrorPathReplica" runat="server"
+                                meta:resourcekey="locErrorPathReplica" ForeColor="Red"></asp:Label>
+                        </td>
+                    </tr>
+                    <tr id="ReplicaErrorTr" runat="server" Visible="False">
+                        <td colspan="2">
+                            <asp:Label ID="locErrorSetReplica" runat="server"
+                                meta:resourcekey="locErrorSetReplica" ForeColor="Red"></asp:Label>
+                        </td>
+                    </tr>
+                </table>
             </td>
-	    </tr>
+        </tr>
+	</table>
 	</table>
 </fieldset>
 <br />

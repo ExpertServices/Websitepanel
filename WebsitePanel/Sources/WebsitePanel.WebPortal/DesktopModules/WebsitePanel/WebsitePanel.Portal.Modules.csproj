@@ -561,6 +561,13 @@
     <Compile Include="VPS2012\VpsDetailsPermissions.ascx.designer.cs">
       <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
     </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.designer.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
+    </Compile>
     <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.cs">
       <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4905,6 +4912,7 @@
     <Content Include="VPS2012\VpsDetailsInsertDvd.ascx" />
     <Content Include="VPS2012\VpsDetailsNetwork.ascx" />
     <Content Include="VPS2012\VpsDetailsPermissions.ascx" />
+    <Content Include="VPS2012\VpsDetailsReplications.ascx" />
     <Content Include="VPS2012\VpsDetailsSnapshots.ascx" />
     <Content Include="VPS2012\VpsDetailsTools.ascx" />
     <Content Include="VPS2012\VpsMoveServer.ascx" />
@@ -5182,7 +5190,9 @@
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
     <Content Include="UserControls\App_LocalResources\UserActions.ascx.resx" />
-    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
@@ -5283,6 +5293,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="VPS2012\UserControls\App_LocalResources\ServerTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsReplications.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
