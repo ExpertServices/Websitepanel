@@ -2096,7 +2096,7 @@ namespace WebsitePanel.Providers.Virtualization
                 }
             }
 
-            PowerShell.Execute(cmd, true);
+            PowerShell.Execute(cmd, true, true);
         }
 
         public void TestReplicationServer(string vmId, string replicaServer, string localThumbprint)
