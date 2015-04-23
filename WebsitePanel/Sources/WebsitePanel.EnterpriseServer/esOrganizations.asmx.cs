@@ -93,7 +93,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public SystemSettings GetWebDavSystemSettings()
         {
-           return OrganizationController.GetWebDavSystemSettings();
+            return OrganizationController.GetWebDavSystemSettings();
         }
 
         [WebMethod]
@@ -185,7 +185,13 @@ namespace WebsitePanel.EnterpriseServer
             OrganizationController.SetDefaultOrganization(newDefaultOrganizationId, currentDefaultOrganizationId);
         }
 
-        #endregion
+        [WebMethod]
+        public OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId)
+        {
+            return OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+        }
+
+    #endregion
 
         #region Domains
 

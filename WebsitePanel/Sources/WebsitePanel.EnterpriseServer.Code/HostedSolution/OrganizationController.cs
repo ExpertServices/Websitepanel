@@ -1581,11 +1581,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
             UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
-            OrganizationUser user = OrganizationController.GetAccount(itemId, accountId);
-
-            OrganizationUser settings = orgProxy.GetUserGeneralSettings(user.AccountName, org.OrganizationId);
-
-            user.PasswordExpirationDateTime = settings.PasswordExpirationDateTime;
+            OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
 
             if (string.IsNullOrEmpty(mailTo))
             {
@@ -1657,6 +1653,8 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+
 
         public static AccessToken GetAccessToken(Guid accessToken, AccessTokenTypes type)
         {
@@ -2664,6 +2662,50 @@ namespace WebsitePanel.EnterpriseServer
             {
                 //TaskManager.CompleteTask();
             }
+
+            return (account);
+        }
+
+        public static OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId)
+        {
+            OrganizationUser account = null;
+            Organization org = null;
+
+            try
+            {
+                // load organization
+                org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                // load account
+                account = GetAccount(itemId, accountId);
+            }
+            catch (Exception) { }
+
+            try
+            {
+                // get mailbox settings
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+                string accountName = GetAccountName(account.AccountName);
+
+
+                OrganizationUser retUser = orgProxy.GetOrganizationUserWithExtraData(accountName, org.OrganizationId);
+                retUser.AccountId = accountId;
+                retUser.AccountName = account.AccountName;
+                retUser.PrimaryEmailAddress = account.PrimaryEmailAddress;
+                retUser.AccountType = account.AccountType;
+                retUser.CrmUserId = CRMController.GetCrmUserId(accountId);
+                retUser.IsOCSUser = DataProvider.CheckOCSUserExists(accountId);
+                retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
+                retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
+                retUser.SubscriberNumber = account.SubscriberNumber;
+                retUser.LevelId = account.LevelId;
+                retUser.IsVIP = account.IsVIP;
+
+                return retUser;
+            }
+            catch { }
 
             return (account);
         }

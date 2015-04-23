@@ -273,5 +273,11 @@ namespace WebsitePanel.Server
         {
            return Organization.CheckPhoneNumberIsInUse(phoneNumber, userSamAccountName);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId)
+        {
+            return Organization.GetOrganizationUserWithExtraData(loginName, organizationId);
+        }
     }
 }

@@ -393,4 +393,7 @@
   <data name="Login" xml:space="preserve">
     <value>Login</value>
   </data>
+  <data name="PasswordNeverExpiresFormat" xml:space="preserve">
+    <value>Password never expires. If you want to change password then please click {0}.</value>
+  </data>
 </root>

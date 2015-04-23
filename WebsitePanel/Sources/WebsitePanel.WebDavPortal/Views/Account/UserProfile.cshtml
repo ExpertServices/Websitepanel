@@ -5,8 +5,17 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var passwordExpriationText = string.Empty;
 
-    var passwordExpriationText = string.Format(UI.PasswordExpirationFormat, Model.PasswordExpirationDateTime.ToString(Formats.DateFormatWithTime), Html.RouteLink(UI.Here.ToLowerInvariant(), AccountRouteNames.PasswordChange));
+    if (Model.PasswordExpirationDateTime == DateTime.MaxValue)
+    {
+        passwordExpriationText = string.Format(UI.PasswordNeverExpiresFormat, Html.RouteLink(UI.Here.ToLowerInvariant(), AccountRouteNames.PasswordChange));
+    }
+    else
+    {
+        passwordExpriationText = string.Format(UI.PasswordExpirationFormat, Model.PasswordExpirationDateTime.ToString(Formats.DateFormatWithTime), Html.RouteLink(UI.Here.ToLowerInvariant(), AccountRouteNames.PasswordChange));
+    }
 }
 
 <div class="container row">
