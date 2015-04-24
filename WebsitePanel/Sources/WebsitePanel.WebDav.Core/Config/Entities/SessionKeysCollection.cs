@@ -70,7 +70,7 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
             get
             {
                 SessionKeysElement sessionKey =
-                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.PassswordResetSmsKey);
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.PasswordResetSmsKey);
                 return sessionKey != null ? sessionKey.Value : null;
             }
         }

@@ -191,6 +191,20 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
         }
 
+        [WebMethod]
+        public ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason, string phoneTo = null)
+        {
+           return  OrganizationController.SendResetUserPasswordLinkSms(itemId, accountId, reason, phoneTo);
+        }
+
+
+        [WebMethod]
+        public ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
+        {
+            return OrganizationController.SendResetUserPasswordPincodeSms(token, phoneTo);
+        }
+
+
     #endregion
 
         #region Domains

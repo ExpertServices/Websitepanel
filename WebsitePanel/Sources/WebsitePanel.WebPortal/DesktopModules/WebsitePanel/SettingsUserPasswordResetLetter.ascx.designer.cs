@@ -119,5 +119,41 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtTextBody;
+        
+        /// <summary>
+        /// lblPasswordResetLinkSmsBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPasswordResetLinkSmsBody;
+        
+        /// <summary>
+        /// txtBodyPasswordResetLinkSmsBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtBodyPasswordResetLinkSmsBody;
+        
+        /// <summary>
+        /// lblPasswordResetPincodeSmsBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPasswordResetPincodeSmsBody;
+        
+        /// <summary>
+        /// txtPasswordResetPincodeSmsBody control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPasswordResetPincodeSmsBody;
     }
 }
