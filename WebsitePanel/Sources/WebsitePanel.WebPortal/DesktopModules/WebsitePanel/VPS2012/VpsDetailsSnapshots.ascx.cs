@@ -110,14 +110,14 @@ namespace WebsitePanel.Portal.VPS2012
                     // add node
                     TreeNode node = new TreeNode(snapshot.Name, snapshot.Id);
                     node.Expanded = true;
-                    node.ImageUrl = PortalUtils.GetThemedImage("VPS/snapshot.png");
+                    node.ImageUrl = PortalUtils.GetThemedImage("VPS2012/snapshot.png");
                     parent.Add(node);
 
                     // check if the current
                     if (snapshot.IsCurrent)
                     {
                         TreeNode nowNode = new TreeNode(GetLocalizedString("Now.Text"), "");
-                        nowNode.ImageUrl = PortalUtils.GetThemedImage("VPS/start2.png");
+                        nowNode.ImageUrl = PortalUtils.GetThemedImage("VPS2012/start2.png");
                         nowNode.SelectAction = TreeNodeSelectAction.None;
                         node.ChildNodes.Add(nowNode);
                     }

@@ -6,23 +6,9 @@
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SearchBox.ascx" TagName="SearchBox" TagPrefix="wsp" %>
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="imgIcon" SkinID="Servers48" runat="server" />
-				    <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Virtual Private Servers"></asp:Localize>
-			    </div>
+			    
 			    <div class="FormBody">
                     
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -49,7 +35,7 @@
 					        <asp:TemplateField HeaderText="gvServersName" SortExpression="ItemName" meta:resourcekey="gvServersName">
 						        <ItemStyle></ItemStyle>
 						        <ItemTemplate>
-						            <asp:Image runat="server" SkinID="Vps16" />
+						            <asp:Image runat="server" SkinID="Vps2012_16" />
 							        <asp:hyperlink id="lnk1" runat="server"
 								        NavigateUrl='<%# GetServerEditUrl(Eval("ItemID").ToString()) %>'>
 								        <%# Eval("ItemName") %>
@@ -81,7 +67,7 @@
 					        </asp:TemplateField>
 						    <asp:TemplateField>
 							    <ItemTemplate>
-								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="VpsDelete"
+								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="VpsDelete2012"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("ItemID") %>'
 									    meta:resourcekey="cmdDelete"></asp:ImageButton>
 							    </ItemTemplate>
@@ -140,5 +126,3 @@
 		    </div>
 	    </div>
     	
-    </div>
-</div>

@@ -6,23 +6,8 @@
 <%@ Register Src="../UserControls/PackageIPAddresses.ascx" TagName="PackageIPAddresses" TagPrefix="wsp" %>
 
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="vdc_external_network" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="Image1" SkinID="Network48" runat="server" />
-				    <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="External Network"></asp:Localize>
-			    </div>
 			    <div class="FormBody">
 
                     
@@ -56,6 +41,3 @@
 			    </div>
 		    </div>
 	    </div>
-    	
-    </div>
-</div>

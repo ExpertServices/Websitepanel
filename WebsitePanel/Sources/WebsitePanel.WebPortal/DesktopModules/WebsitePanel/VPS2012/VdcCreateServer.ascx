@@ -11,23 +11,8 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="imgIcon" SkinID="AddServer48" runat="server" />
-				    <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create New VPS"></asp:Localize>
-			    </div>
 			    <div class="FormBody">
     			    	
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -576,5 +561,3 @@
 		    </div>
 	    </div>
     	
-    </div>
-</div>

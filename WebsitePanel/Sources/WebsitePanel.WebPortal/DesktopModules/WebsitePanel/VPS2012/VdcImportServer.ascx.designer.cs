@@ -22,42 +22,6 @@ namespace WebsitePanel.Portal.VPS2012 {
         protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
         
         /// <summary>
-        /// breadcrumb control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.Breadcrumb breadcrumb;
-        
-        /// <summary>
-        /// menu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.VPS2012.UserControls.Menu menu;
-        
-        /// <summary>
-        /// imgIcon control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgIcon;
-        
-        /// <summary>
-        /// locTitle control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTitle;
-        
-        /// <summary>
         /// messageBox control.
         /// </summary>
         /// <remarks>
