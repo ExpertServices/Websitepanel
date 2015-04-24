@@ -82,6 +82,10 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         private System.Threading.SendOrPostCallback GetUserGeneralSettingsWithExtraDataOperationCompleted;
         
+        private System.Threading.SendOrPostCallback SendResetUserPasswordLinkSmsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SendResetUserPasswordPincodeSmsOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddOrganizationDomainOperationCompleted;
         
         private System.Threading.SendOrPostCallback ChangeOrganizationDomainTypeOperationCompleted;
@@ -233,6 +237,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetUserGeneralSettingsWithExtraDataCompletedEventHandler GetUserGeneralSettingsWithExtraDataCompleted;
+        
+        /// <remarks/>
+        public event SendResetUserPasswordLinkSmsCompletedEventHandler SendResetUserPasswordLinkSmsCompleted;
+        
+        /// <remarks/>
+        public event SendResetUserPasswordPincodeSmsCompletedEventHandler SendResetUserPasswordPincodeSmsCompleted;
         
         /// <remarks/>
         public event AddOrganizationDomainCompletedEventHandler AddOrganizationDomainCompleted;
@@ -1356,6 +1366,100 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.GetUserGeneralSettingsWithExtraDataCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetUserGeneralSettingsWithExtraDataCompleted(this, new GetUserGeneralSettingsWithExtraDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SendResetUserPasswordLinkSms", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason, string phoneTo) {
+            object[] results = this.Invoke("SendResetUserPasswordLinkSms", new object[] {
+                        itemId,
+                        accountId,
+                        reason,
+                        phoneTo});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSendResetUserPasswordLinkSms(int itemId, int accountId, string reason, string phoneTo, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SendResetUserPasswordLinkSms", new object[] {
+                        itemId,
+                        accountId,
+                        reason,
+                        phoneTo}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndSendResetUserPasswordLinkSms(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SendResetUserPasswordLinkSmsAsync(int itemId, int accountId, string reason, string phoneTo) {
+            this.SendResetUserPasswordLinkSmsAsync(itemId, accountId, reason, phoneTo, null);
+        }
+        
+        /// <remarks/>
+        public void SendResetUserPasswordLinkSmsAsync(int itemId, int accountId, string reason, string phoneTo, object userState) {
+            if ((this.SendResetUserPasswordLinkSmsOperationCompleted == null)) {
+                this.SendResetUserPasswordLinkSmsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSendResetUserPasswordLinkSmsOperationCompleted);
+            }
+            this.InvokeAsync("SendResetUserPasswordLinkSms", new object[] {
+                        itemId,
+                        accountId,
+                        reason,
+                        phoneTo}, this.SendResetUserPasswordLinkSmsOperationCompleted, userState);
+        }
+        
+        private void OnSendResetUserPasswordLinkSmsOperationCompleted(object arg) {
+            if ((this.SendResetUserPasswordLinkSmsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SendResetUserPasswordLinkSmsCompleted(this, new SendResetUserPasswordLinkSmsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SendResetUserPasswordPincodeSms", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject SendResetUserPasswordPincodeSms(System.Guid token, string phoneTo) {
+            object[] results = this.Invoke("SendResetUserPasswordPincodeSms", new object[] {
+                        token,
+                        phoneTo});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSendResetUserPasswordPincodeSms(System.Guid token, string phoneTo, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SendResetUserPasswordPincodeSms", new object[] {
+                        token,
+                        phoneTo}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndSendResetUserPasswordPincodeSms(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SendResetUserPasswordPincodeSmsAsync(System.Guid token, string phoneTo) {
+            this.SendResetUserPasswordPincodeSmsAsync(token, phoneTo, null);
+        }
+        
+        /// <remarks/>
+        public void SendResetUserPasswordPincodeSmsAsync(System.Guid token, string phoneTo, object userState) {
+            if ((this.SendResetUserPasswordPincodeSmsOperationCompleted == null)) {
+                this.SendResetUserPasswordPincodeSmsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSendResetUserPasswordPincodeSmsOperationCompleted);
+            }
+            this.InvokeAsync("SendResetUserPasswordPincodeSms", new object[] {
+                        token,
+                        phoneTo}, this.SendResetUserPasswordPincodeSmsOperationCompleted, userState);
+        }
+        
+        private void OnSendResetUserPasswordPincodeSmsOperationCompleted(object arg) {
+            if ((this.SendResetUserPasswordPincodeSmsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SendResetUserPasswordPincodeSmsCompleted(this, new SendResetUserPasswordPincodeSmsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3887,6 +3991,58 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((OrganizationUser)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SendResetUserPasswordLinkSmsCompletedEventHandler(object sender, SendResetUserPasswordLinkSmsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendResetUserPasswordLinkSmsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendResetUserPasswordLinkSmsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SendResetUserPasswordPincodeSmsCompletedEventHandler(object sender, SendResetUserPasswordPincodeSmsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendResetUserPasswordPincodeSmsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendResetUserPasswordPincodeSmsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
             }
         }
     }

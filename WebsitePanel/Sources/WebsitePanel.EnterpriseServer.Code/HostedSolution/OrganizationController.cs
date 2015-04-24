@@ -30,10 +30,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
 using WebsitePanel.EnterpriseServer.Extensions;
@@ -1560,6 +1563,162 @@ namespace WebsitePanel.EnterpriseServer
             return expiredUsersDb;
         }
 
+        public static ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason,
+            string phoneTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_SMS",
+                itemId);
+
+            try
+            {
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+
+                user.ItemId = itemId;
+
+                if (string.IsNullOrEmpty(phoneTo))
+                {
+                    phoneTo = user.MobilePhone;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId,
+                    UserSettings.USER_PASSWORD_RESET_LETTER);
+
+
+                string body = settings["PasswordResetLinkSmsBody"];
+
+                var items = new Hashtable();
+
+                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId);
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("Reason : " + reason);
+                TaskManager.Write("SmsTo : " + phoneTo);
+
+                // send Sms message
+                var response = SendSms(phoneTo, body);
+
+                if (response.RestException != null)
+                {
+                    throw new Exception(response.RestException.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
+        public static ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_SMS_PINCODE");
+
+            try
+            {
+                var accessToken = OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+
+                if (accessToken == null)
+                {
+                    throw new Exception(string.Format("Access token not found"));
+                }
+
+                // load organization
+                Organization org = GetOrganization(accessToken.ItemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found"));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(accessToken.ItemId,
+                    accessToken.AccountId);
+
+                if (string.IsNullOrEmpty(phoneTo))
+                {
+                    phoneTo = user.MobilePhone;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_RESET_LETTER);
+
+                string body = settings["PasswordResetPincodeSmsBody"];
+
+                var items = new Hashtable();
+
+                var pincode = GeneratePincode();
+
+                items["passwordResetPincode"] = pincode;
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("SmsTo : " + phoneTo);
+
+                // send Sms message
+                var response = SendSms(phoneTo, body);
+
+                if (response.RestException != null)
+                {
+                    throw new Exception(response.RestException.Message);
+                }
+
+                SetAccessTokenResponse(token, pincode);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
+        private static string GeneratePincode()
+        {
+            var random = new Random(Guid.NewGuid().GetHashCode());
+
+            return random.Next(10000, 99999).ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static TwilioRestClient GetTwilioRestClient()
+        {
+            string accountSid = ConfigurationManager.AppSettings["WebsitePanel.Twilio.AccountSid"];
+            string authToken = ConfigurationManager.AppSettings["WebsitePanel.Twilio.AuthorizationToken"];
+
+            return new TwilioRestClient(accountSid, authToken);
+        }
+
+        private static SMSMessage SendSms(string to, string body)
+        {
+            var client = GetTwilioRestClient();
+
+            string phoneFrom = ConfigurationManager.AppSettings["WebsitePanel.Twilio.PhoneFrom"];
+
+            return client.SendSmsMessage(phoneFrom, to, body);
+        }
+
         /// <summary>
         /// Send reset user password email
         /// </summary>
@@ -1582,6 +1741,8 @@ namespace WebsitePanel.EnterpriseServer
 
             UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
             OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+
+            user.ItemId = itemId;
 
             if (string.IsNullOrEmpty(mailTo))
             {

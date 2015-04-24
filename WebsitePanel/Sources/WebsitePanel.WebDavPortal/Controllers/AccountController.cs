@@ -4,6 +4,7 @@ using System.Net;
 using System.Web.Mvc;
 using System.Web.Routing;
 using AutoMapper;
+using log4net;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Security.Authentication;
@@ -27,12 +28,15 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly ICryptography _cryptography;
         private readonly IAuthenticationService _authenticationService;
         private readonly ISmsAuthenticationService _smsAuthService;
+        private readonly ILog Log;
 
         public AccountController(ICryptography cryptography, IAuthenticationService authenticationService, ISmsAuthenticationService smsAuthService)
         {
             _cryptography = cryptography;
             _authenticationService = authenticationService;
             _smsAuthService = smsAuthService;
+
+            Log = LogManager.GetLogger(this.GetType());
         }
         
         [HttpGet]
@@ -205,11 +209,15 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return View(model);
             }
 
-            if (accessToken.IsSmsSent == false)
-            {
-                var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId, accessToken.AccountId);
 
-                if (SendPasswordResetSms(accessToken.AccessTokenGuid, user.MobilePhone))
+            if (accessToken != null && accessToken.IsSmsSent == false)
+            {
+                var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId,
+                    accessToken.AccountId);
+
+                var result = WspContext.Services.Organizations.SendResetUserPasswordPincodeSms(token, user.MobilePhone);
+
+                if (result.IsSuccess)
                 {
                     AddMessage(MessageType.Success, Resources.Messages.SmsWasSent);
                 }
@@ -308,8 +316,10 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId,
                 accessToken.AccountId);
 
+            var result = WspContext.Services.Organizations.SendResetUserPasswordPincodeSms(accessToken.AccessTokenGuid,
+                user.MobilePhone);
 
-            if (SendPasswordResetSms(accessToken.AccessTokenGuid, user.MobilePhone))
+            if (result.IsSuccess)
             {
                 AddMessage(MessageType.Success, Resources.Messages.SmsWasSent);
             }
@@ -322,19 +332,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
         }
 
         #region Helpers
-
-        private bool SendPasswordResetSms(Guid token, string mobilePhone)
-        {
-            var response = _smsAuthService.SendRequestMessage(mobilePhone);
-
-            if (string.IsNullOrEmpty(response))
-            {
-                return false;
-            }
-            WspContext.Services.Organizations.SetAccessTokenResponse(token, response);
-
-            return true;
-        }
 
         private UserProfile GetUserProfileModel(int itemId, int accountId)
         {

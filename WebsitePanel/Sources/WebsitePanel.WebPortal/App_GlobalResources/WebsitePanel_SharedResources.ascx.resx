@@ -5131,7 +5131,6 @@
   <data name="Quota.VPSForPC.StartShutdownAllowed" xml:space="preserve">
     <value>Allow user to Start, Turn off VPS</value>
   </data>
-
   <data name="ResourceGroup.VPS2012" xml:space="preserve">
     <value>Virtual Private Servers 2012</value>
   </data>
@@ -5198,7 +5197,6 @@
   <data name="Quota.VPS2012.StartShutdownAllowed" xml:space="preserve">
     <value>Allow user to Start, Turn off VPS</value>
   </data>
-  
   <data name="Error.CreateCheckPointError" xml:space="preserve">
     <value>Error creating CheckPoint</value>
   </data>
@@ -5784,7 +5782,7 @@
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_VIEW_SESSION" xml:space="preserve">
     <value>View session error</value>
   </data>
-    <data name="ERROR.REMOTE_DESKTOP_SERVICES_CONTROL_SESSION" xml:space="preserve">
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_CONTROL_SESSION" xml:space="preserve">
     <value>Control session error</value>
   </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
@@ -5804,5 +5802,8 @@
   </data>
   <data name="Error.UNABLETOLOADPASSWORDSETTINGS" xml:space="preserve">
     <value>Unable to load password settings</value>
+  </data>
+  <data name="Error.SEND_USER_PASSWORD_RESET_SMS" xml:space="preserve">
+    <value>Sms was not sent.</value>
   </data>
 </root>

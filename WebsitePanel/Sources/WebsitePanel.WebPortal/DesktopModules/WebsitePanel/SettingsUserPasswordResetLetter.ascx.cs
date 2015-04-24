@@ -18,6 +18,9 @@ namespace WebsitePanel.Portal
             txtHtmlBody.Text = settings["HtmlBody"];
             txtTextBody.Text = settings["TextBody"];
             txtLogoUrl.Text = settings["LogoUrl"];
+
+            txtBodyPasswordResetLinkSmsBody.Text = settings["PasswordResetLinkSmsBody"];
+            txtPasswordResetPincodeSmsBody.Text = settings["PasswordResetPincodeSmsBody"];
         }
 
         public void SaveSettings(UserSettings settings)
@@ -28,6 +31,9 @@ namespace WebsitePanel.Portal
             settings["HtmlBody"] = txtHtmlBody.Text;
             settings["TextBody"] = txtTextBody.Text;
             settings["LogoUrl"] = txtLogoUrl.Text;
+
+            settings["PasswordResetLinkSmsBody"]= txtBodyPasswordResetLinkSmsBody.Text;
+            settings["PasswordResetPincodeSmsBody"] =txtPasswordResetPincodeSmsBody.Text;
         }
     }
 }
