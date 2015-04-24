@@ -52,7 +52,7 @@ namespace WebsitePanel.Providers.Virtualization
                 cmd.Parameters.Add("DynamicMemoryEnabled", false);
             }
 
-            powerShell.Execute(cmd, true);
+            powerShell.Execute(cmd, true, true);
         }
     }
 }
