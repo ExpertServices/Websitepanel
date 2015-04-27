@@ -74,6 +74,11 @@
 							        </asp:hyperlink>
 						        </ItemTemplate>
 					        </asp:TemplateField>
+					        <asp:TemplateField HeaderText="Replication" meta:resourcekey="gvReplication" >						        
+						        <ItemTemplate>
+							        <asp:Localize id="locReplication" runat="server" Text='<%# GetReplicationStatus((int)Eval("ItemID")) %>'></asp:Localize>
+						        </ItemTemplate>
+					        </asp:TemplateField>
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="VpsDelete"

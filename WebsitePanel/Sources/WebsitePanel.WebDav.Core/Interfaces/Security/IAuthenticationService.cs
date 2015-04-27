@@ -14,5 +14,6 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Security
         WspPrincipal LogIn(string login, string password);
         void CreateAuthenticationTicket(WspPrincipal principal);
         void LogOut();
+        bool ValidateAuthenticationData(string login, string password);
     }
 }

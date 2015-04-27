@@ -5,7 +5,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
-    public class AccountModel : BaseModel
+    public class AccountModel
     {
         [Required]
         [Display(Name = @"Login")]
@@ -17,5 +17,7 @@ namespace WebsitePanel.WebDavPortal.Models
         public string Password { get; set; }
 
         public string LdapError { get; set; }
+
+        public bool PasswordResetEnabled { get; set; }
     }
 }

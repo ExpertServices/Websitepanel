@@ -7,7 +7,7 @@
         public string Thumbprint { get; set; }
 
         [Persistent]
-        public string VhdToReplicate { get; set; }
+        public string[] VhdToReplicate { get; set; }
 
         [Persistent]
         public ReplicaFrequency ReplicaFrequency { get; set; }

@@ -17,6 +17,7 @@ namespace WebsitePanel.Providers.Virtualization
         public TimeSpan AverageLatency { get; set; }
         public int Errors { get; set; }
         public int SuccessfulReplications { get; set; }
+        public int MissedReplicationCount { get; set; }
         public string PendingSize { get; set; }
         public DateTime LastSynhronizedAt { get; set; }
     }

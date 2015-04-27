@@ -109,7 +109,7 @@ namespace WebsitePanel.Providers.Virtualization
         void TestReplicationServer(string vmId, string replicaServer, string localThumbprint);
         void StartInitialReplication(string vmId);
         VmReplication GetReplication(string vmId);
-        bool DisableVmReplication(string vmId, string replicaServer);
+        void DisableVmReplication(string vmId);
         ReplicationDetailInfo GetReplicationInfo(string vmId);
         void PauseReplication(string vmId);
         void ResumeReplication(string vmId);

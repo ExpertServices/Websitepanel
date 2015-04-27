@@ -2,10 +2,17 @@
 @using Ninject
 @using WebsitePanel.WebDav.Core
 @using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDavPortal.Controllers
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.Models.Common
+@using WebsitePanel.WebDavPortal.Resources
 @using WebsitePanel.WebDavPortal.UI.Routes;
-@model WebsitePanel.WebDavPortal.Models.Common.BaseModel
+    
+
+@{
+    var messages = TempData[BaseController.MessagesKey] as List<Message> ?? new List<Message>();
+}
 
 <!DOCTYPE html>
 <html>
@@ -21,12 +28,15 @@
     <div class="navbar navbar-inverse navbar-fixed-top prevent-deselect">
         <div class="container top-container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a href="@Url.RouteUrl(FileSystemRouteNames.ShowContentPath, new { pathPart = string.Empty })">
+                @if (WspContext.User != null)
+                {
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                }
+                <a href="/">
                     <img class="header-logo processing-dialog" src="@Url.Content("~/Content/Images/logo.png")" />
                 </a>
             </div>
@@ -34,15 +44,16 @@
                 @{
                     if (WspContext.User != null)
                     {
-                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
-                        <h4 id="username" class="nav navbar-text navbar-right">@WspContext.User.Login</h4>
+                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="@UI.LogOut"><i class="glyphicon glyphicon-log-out"></i></a>
+                        <a id="user-profile" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.UserProfile)" title="@UI.Profile">@WspContext.User.Login</a>
                     }
                 }
             </div>
         </div>
     </div>
     <div class="container body-content">
-        <div id="message-area" class="container prevent-deselect"> </div>
+        <div id="message-area" class="container row prevent-deselect"> </div>
+
         @RenderBody()
     </div>
     
@@ -65,20 +76,18 @@
         @Scripts.Render("~/bundles/authScripts")
         
         <script>
-    $(document).ready(function () {
-        StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
-    });
-        </script>
-    }
-
-    @if (Model != null)
-    {
-        <script>
             $(document).ready(function () {
-                wsp.messages.showMessages(@Html.Raw(Json.Encode(Model.Messages)));
+                StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
             });
         </script>
     }
+
+
+    <script>
+        $(document).ready(function () {
+            wsp.messages.showMessages(@Html.Raw(Json.Encode(messages)));
+        });
+    </script>
     
      @RenderSection("scripts", required: false)
 </body>

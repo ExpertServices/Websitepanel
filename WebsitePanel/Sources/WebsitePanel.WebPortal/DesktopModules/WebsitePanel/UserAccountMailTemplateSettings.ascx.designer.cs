@@ -103,6 +103,24 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.HyperLink lnkRdsSetupLetter;
         
         /// <summary>
+        /// lnkUserPasswordExpirationLetter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkUserPasswordExpirationLetter;
+        
+        /// <summary>
+        /// lnkOrganizationUserPasswordResetLetter control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkOrganizationUserPasswordResetLetter;
+        
+        /// <summary>
         /// btnCancel control.
         /// </summary>
         /// <remarks>

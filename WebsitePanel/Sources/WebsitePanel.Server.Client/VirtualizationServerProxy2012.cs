@@ -2749,45 +2749,40 @@ namespace WebsitePanel.Providers.Virtualization2012 {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DisableVmReplication", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool DisableVmReplication(string vmId, string replicaServer) {
-            object[] results = this.Invoke("DisableVmReplication", new object[] {
-                        vmId,
-                        replicaServer});
-            return ((bool)(results[0]));
+        public void DisableVmReplication(string vmId) {
+            this.Invoke("DisableVmReplication", new object[] {
+                        vmId});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginDisableVmReplication(string vmId, string replicaServer, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginDisableVmReplication(string vmId, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("DisableVmReplication", new object[] {
-                        vmId,
-                        replicaServer}, callback, asyncState);
+                        vmId}, callback, asyncState);
         }
         
         /// <remarks/>
-        public bool EndDisableVmReplication(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((bool)(results[0]));
+        public void EndDisableVmReplication(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
         }
         
         /// <remarks/>
-        public void DisableVmReplicationAsync(string vmId, string replicaServer) {
-            this.DisableVmReplicationAsync(vmId, replicaServer, null);
+        public void DisableVmReplicationAsync(string vmId) {
+            this.DisableVmReplicationAsync(vmId, null);
         }
         
         /// <remarks/>
-        public void DisableVmReplicationAsync(string vmId, string replicaServer, object userState) {
+        public void DisableVmReplicationAsync(string vmId, object userState) {
             if ((this.DisableVmReplicationOperationCompleted == null)) {
                 this.DisableVmReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDisableVmReplicationOperationCompleted);
             }
             this.InvokeAsync("DisableVmReplication", new object[] {
-                        vmId,
-                        replicaServer}, this.DisableVmReplicationOperationCompleted, userState);
+                        vmId}, this.DisableVmReplicationOperationCompleted, userState);
         }
         
         private void OnDisableVmReplicationOperationCompleted(object arg) {
             if ((this.DisableVmReplicationCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.DisableVmReplicationCompleted(this, new DisableVmReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.DisableVmReplicationCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -4179,29 +4174,7 @@ namespace WebsitePanel.Providers.Virtualization2012 {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void DisableVmReplicationCompletedEventHandler(object sender, DisableVmReplicationCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DisableVmReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DisableVmReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public bool Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
-            }
-        }
-    }
+    public delegate void DisableVmReplicationCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]

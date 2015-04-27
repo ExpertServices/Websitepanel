@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Collections.Generic;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -96,5 +97,10 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName);
 
         void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
+
+        List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration);
+        void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings);
+
+        bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null);
     }
 }

@@ -248,6 +248,27 @@
       <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationUserResetPassword.ascx.cs">
+      <DependentUpon>OrganizationUserResetPassword.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationUserResetPassword.ascx.designer.cs">
+      <DependentUpon>OrganizationUserResetPassword.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx.cs">
       <DependentUpon>EnterpriseStorageEditFolderTabs.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -262,9 +283,16 @@
     <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
       <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
@@ -311,7 +339,32 @@
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
     </Compile>
+   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="SearchObject.ascx.cs">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.designer.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile>
       <DependentUpon>SearchObject.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -321,6 +374,23 @@
     <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.cs">
       <DependentUpon>Connect.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.designer.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.designer.cs">
       <DependentUpon>Connect.aspx</DependentUpon>
@@ -519,6 +589,13 @@
     </Compile>
     <Compile Include="VPS2012\VpsDetailsPermissions.ascx.designer.cs">
       <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.designer.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.cs">
       <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
@@ -4819,8 +4896,12 @@
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationUserResetPassword.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx" />
@@ -4829,6 +4910,11 @@
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="SearchObject.ascx" />
+    <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
+
+    <Content Include="SearchObject.ascx" />
+    <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
+    <Content Include="SettingsUserPasswordResetLetter.ascx" />
     <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
     <Content Include="VPS2012\RemoteDesktop\msrdp.cab" />
     <Content Include="VPS2012\TestVirtualMachineTemplate.aspx" />
@@ -4858,6 +4944,7 @@
     <Content Include="VPS2012\VpsDetailsInsertDvd.ascx" />
     <Content Include="VPS2012\VpsDetailsNetwork.ascx" />
     <Content Include="VPS2012\VpsDetailsPermissions.ascx" />
+    <Content Include="VPS2012\VpsDetailsReplications.ascx" />
     <Content Include="VPS2012\VpsDetailsSnapshots.ascx" />
     <Content Include="VPS2012\VpsDetailsTools.ascx" />
     <Content Include="VPS2012\VpsMoveServer.ascx" />
@@ -4934,6 +5021,14 @@
     <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseStorageUsage.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationUserResetPassword.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordExpirationLetter.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\OrganizationSettingsTabs.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsPasswordSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordResetLetter.ascx.resx" />
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
@@ -5127,8 +5222,12 @@
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
     <Content Include="UserControls\App_LocalResources\UserActions.ascx.resx" />
-    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
+    <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
+
     <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
     <Content Include="VPS\UserControls\App_LocalResources\Generation.ascx.resx">
@@ -5228,6 +5327,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="VPS2012\UserControls\App_LocalResources\ServerTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsReplications.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

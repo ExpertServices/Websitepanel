@@ -186,4 +186,7 @@
   <data name="btnFastCreate.Text" xml:space="preserve">
     <value>Fast Create VM</value>
   </data>
+  <data name="gvReplication.HeaderText" xml:space="preserve">
+    <value>Replication status</value>
+  </data>
 </root>

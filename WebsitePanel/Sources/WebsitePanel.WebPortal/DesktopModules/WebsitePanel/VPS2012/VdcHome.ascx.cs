@@ -27,11 +27,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using System.Web.UI;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+﻿using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -52,15 +51,19 @@ namespace WebsitePanel.Portal.VPS2012
             gvServers.Columns[3].Visible = !isUserSelected;
             gvServers.Columns[4].Visible = !isUserSelected;
 
+            // replication
+            gvServers.Columns[5].Visible = VirtualMachines2012Helper.IsReplicationEnabled(PanelSecurity.PackageId);
+
             // check package quotas
             bool manageAllowed = VirtualMachines2012Helper.IsVirtualMachineManagementAllowed(PanelSecurity.PackageId);
 
             btnCreate.Visible = manageAllowed;
             btnImport.Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
-            gvServers.Columns[5].Visible = manageAllowed; // delete column
+            gvServers.Columns[6].Visible = manageAllowed; // delete column
 
             // admin operations column
-            gvServers.Columns[6].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+            gvServers.Columns[7].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+
         }
 
         public string GetServerEditUrl(string itemID)
@@ -79,6 +82,22 @@ namespace WebsitePanel.Portal.VPS2012
             return PortalUtils.GetUserHomePageUrl(userId);
         }
 
+        private VirtualMachine[] _machines;
+        public string GetReplicationStatus(int itemID)
+        {
+            if (_machines == null)
+            {
+                var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(itemID);
+                _machines = ES.Services.VPS2012.GetVirtualMachinesByServiceId(packageVm.ServiceId);
+            }
+
+            var vmItem = ES.Services.VPS2012.GetVirtualMachineItem(itemID);
+            if (vmItem == null) return "";
+
+            var vm = _machines.FirstOrDefault(v => v.VirtualMachineId == vmItem.VirtualMachineId);
+            return vm != null ? vm.ReplicationState.ToString() : "";
+        }
+        
         protected void odsServersPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)

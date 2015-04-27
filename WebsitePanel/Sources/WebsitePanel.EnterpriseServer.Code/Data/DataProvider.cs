@@ -31,6 +31,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.ApplicationBlocks.Data;
 using System.Collections.Generic;
@@ -2409,7 +2410,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, int mailboxPlanId, string subscriberNumber)
         {
             SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2427,7 +2428,6 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@SamAccountName", samAccountName),
-                new SqlParameter("@AccountPassword", accountPassword),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
             );
@@ -2612,7 +2612,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber,
+            string mailboxManagerActions, string samAccountName, int mailboxPlanId, int archivePlanId, string subscriberNumber,
             bool EnableArchiving)
         {
             SqlHelper.ExecuteNonQuery(
@@ -2626,7 +2626,6 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
                 new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
-                new SqlParameter("@Password", string.IsNullOrEmpty(accountPassword) ? (object)DBNull.Value : (object)accountPassword),
                 new SqlParameter("@SamAccountName", samAccountName),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId),
@@ -3209,6 +3208,91 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Organizations
+
+        public static int AddAccessToken(AccessToken token)
+        {
+            return AddAccessToken(token.AccessTokenGuid, token.AccountId, token.ItemId, token.ExpirationDate, token.TokenType);
+        }
+
+        public static int AddAccessToken(Guid accessToken, int accountId, int itemId, DateTime expirationDate, AccessTokenTypes type)
+        {
+            SqlParameter prmId = new SqlParameter("@TokenID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddAccessToken",
+                prmId,
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@ExpirationDate", expirationDate),
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@TokenType", (int)type)
+            );
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void SetAccessTokenResponseMessage(Guid accessToken, string response)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetAccessTokenSmsResponse",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@SmsResponse", response)
+            );
+        }
+
+        public static void DeleteExpiredAccessTokens()
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExpiredAccessTokenTokens"
+            );
+        }
+
+        public static IDataReader GetAccessTokenByAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@TokenType", type)
+            );
+        }
+
+        public static void DeleteAccessToken(Guid accessToken, AccessTokenTypes type)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteAccessToken",
+                new SqlParameter("@AccessToken", accessToken),
+                new SqlParameter("@TokenType", type)
+            );
+        }
+
+        public static void UpdateOrganizationSettings(int itemId, string settingsName, string xml)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "UpdateExchangeOrganizationSettings",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@SettingsName", settingsName),
+                new SqlParameter("@Xml", xml));
+        }
+
+        public static IDataReader GetOrganizationSettings(int itemId, string settingsName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetExchangeOrganizationSettings",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@SettingsName", settingsName));
+        }
 
         public static int AddOrganizationDeletedUser(int accountId, int originAT, string storagePath, string folderName, string fileName, DateTime expirationDate)
         {

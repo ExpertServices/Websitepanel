@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -46,6 +47,60 @@ namespace WebsitePanel.EnterpriseServer
     public class esOrganizations : WebService
     {
         #region Organizations
+
+        [WebMethod]
+        public bool CheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName = null)
+        {
+            return OrganizationController.CheckPhoneNumberIsInUse(itemId, phoneNumber, userSamAccountName);
+        }
+
+        [WebMethod]
+        public void DeletePasswordresetAccessToken(Guid accessToken)
+        {
+            OrganizationController.DeleteAccessToken(accessToken, AccessTokenTypes.PasswrodReset);
+        }
+
+        [WebMethod]
+        public void SetAccessTokenResponse(Guid accessToken, string response)
+        {
+            OrganizationController.SetAccessTokenResponse(accessToken, response);
+        }
+
+        [WebMethod]
+        public AccessToken GetPasswordresetAccessToken(Guid token)
+        {
+            return OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+        }
+
+        [WebMethod]
+        public void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)
+        {
+            OrganizationController.UpdateOrganizationGeneralSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public OrganizationGeneralSettings GetOrganizationGeneralSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationGeneralSettings(itemId);
+        }
+
+        [WebMethod]
+        public void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
+        {
+            OrganizationController.UpdateOrganizationPasswordSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public SystemSettings GetWebDavSystemSettings()
+        {
+           return OrganizationController.GetWebDavSystemSettings();
+        }
+
+        [WebMethod]
+        public OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationPasswordSettings(itemId);
+        }
 
         [WebMethod]
         public bool CheckOrgIdExists(string orgId)
@@ -280,6 +335,11 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetPasswordPolicy(itemId);
         }
 
+        [WebMethod]
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
+        {
+            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo);
+        }
 
         #endregion
 

@@ -14,6 +14,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication.Principals
         public string Login { get; set; }
 
         public string DisplayName { get; set; }
+        public string AccountName { get; set; }
 
         public string UserName
         {

@@ -47,7 +47,7 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             if (string.IsNullOrWhiteSpace(pathPart))
             {
-                children = GetWebDavRootItems().Select(x => new WebDavResource
+                children = ConnectToWebDavServer().Select(x => new WebDavResource
                 {
                     Href = new Uri(x.Url), 
                     ItemType = ItemType.Folder,
@@ -82,9 +82,10 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             SystemFile[] items;
 
+
             if (string.IsNullOrWhiteSpace(pathPart))
             {
-                var rootItems = GetWebDavRootItems().Select(x => x.Name).ToList();
+                var rootItems = ConnectToWebDavServer().Select(x => x.Name).ToList();
                 rootItems.Insert(0, string.Empty);
 
                 items = WspContext.Services.EnterpriseStorage.SearchFiles(itemId, rootItems.ToArray(), searchValue, uesrPrincipalName, recursive);
@@ -284,11 +285,25 @@ namespace WebsitePanel.WebDav.Core.Managers
             }
         }
 
-        private IList<SystemFile> GetWebDavRootItems()
+        private IList<SystemFile> ConnectToWebDavServer()
         {
+            var rootFolders = new List<SystemFile>();
             var user = WspContext.User;
 
-            var rootFolders = WspContext.Services.EnterpriseStorage.GetUserRootFolders(user.ItemId, user.AccountId,user.UserName, user.DisplayName);
+            var userGroups = WSP.Services.Organizations.GetSecurityGroupsByMember(user.ItemId, user.AccountId);
+
+            foreach (var folder in WSP.Services.EnterpriseStorage.GetEnterpriseFolders(WspContext.User.ItemId))
+            {
+                foreach (var rule in folder.Rules)
+                {
+                    if ((rule.Users.Any(x=> string.Compare(x, user.AccountName, StringComparison.InvariantCultureIgnoreCase) == 0))
+                        || (userGroups.Any(x => rule.Roles.Any(r => string.Compare(r, x.AccountName, StringComparison.InvariantCultureIgnoreCase) == 0))))
+                    {
+                        rootFolders.Add(folder);
+                        break;
+                    }
+                }
+            }
 
             return rootFolders;
         }

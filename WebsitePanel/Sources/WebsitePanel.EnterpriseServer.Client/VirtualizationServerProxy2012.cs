@@ -148,7 +148,21 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback SetReplicaServerOperationCompleted;
         
-        private System.Threading.SendOrPostCallback IsReplicaServerOperationCompleted;
+        private System.Threading.SendOrPostCallback UnsetReplicaServerOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetReplicaServerOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetReplicationOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetReplicationInfoOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetVmReplicationOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback DisableVmReplicationOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback PauseReplicationOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ResumeReplicationOperationCompleted;
         
         /// <remarks/>
         public esVirtualizationServer2012() {
@@ -327,7 +341,28 @@ namespace WebsitePanel.EnterpriseServer {
         public event SetReplicaServerCompletedEventHandler SetReplicaServerCompleted;
         
         /// <remarks/>
-        public event IsReplicaServerCompletedEventHandler IsReplicaServerCompleted;
+        public event UnsetReplicaServerCompletedEventHandler UnsetReplicaServerCompleted;
+        
+        /// <remarks/>
+        public event GetReplicaServerCompletedEventHandler GetReplicaServerCompleted;
+        
+        /// <remarks/>
+        public event GetReplicationCompletedEventHandler GetReplicationCompleted;
+        
+        /// <remarks/>
+        public event GetReplicationInfoCompletedEventHandler GetReplicationInfoCompleted;
+        
+        /// <remarks/>
+        public event SetVmReplicationCompletedEventHandler SetVmReplicationCompleted;
+        
+        /// <remarks/>
+        public event DisableVmReplicationCompletedEventHandler DisableVmReplicationCompleted;
+        
+        /// <remarks/>
+        public event PauseReplicationCompletedEventHandler PauseReplicationCompleted;
+        
+        /// <remarks/>
+        public event ResumeReplicationCompletedEventHandler ResumeReplicationCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetVirtualMachines", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -3234,46 +3269,339 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/IsReplicaServer", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool IsReplicaServer(int serviceId, string remoteServer) {
-            object[] results = this.Invoke("IsReplicaServer", new object[] {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/UnsetReplicaServer", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject UnsetReplicaServer(int serviceId, string remoteServer) {
+            object[] results = this.Invoke("UnsetReplicaServer", new object[] {
                         serviceId,
                         remoteServer});
-            return ((bool)(results[0]));
+            return ((ResultObject)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginIsReplicaServer(int serviceId, string remoteServer, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("IsReplicaServer", new object[] {
+        public System.IAsyncResult BeginUnsetReplicaServer(int serviceId, string remoteServer, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("UnsetReplicaServer", new object[] {
                         serviceId,
                         remoteServer}, callback, asyncState);
         }
         
         /// <remarks/>
-        public bool EndIsReplicaServer(System.IAsyncResult asyncResult) {
+        public ResultObject EndUnsetReplicaServer(System.IAsyncResult asyncResult) {
             object[] results = this.EndInvoke(asyncResult);
-            return ((bool)(results[0]));
+            return ((ResultObject)(results[0]));
         }
         
         /// <remarks/>
-        public void IsReplicaServerAsync(int serviceId, string remoteServer) {
-            this.IsReplicaServerAsync(serviceId, remoteServer, null);
+        public void UnsetReplicaServerAsync(int serviceId, string remoteServer) {
+            this.UnsetReplicaServerAsync(serviceId, remoteServer, null);
         }
         
         /// <remarks/>
-        public void IsReplicaServerAsync(int serviceId, string remoteServer, object userState) {
-            if ((this.IsReplicaServerOperationCompleted == null)) {
-                this.IsReplicaServerOperationCompleted = new System.Threading.SendOrPostCallback(this.OnIsReplicaServerOperationCompleted);
+        public void UnsetReplicaServerAsync(int serviceId, string remoteServer, object userState) {
+            if ((this.UnsetReplicaServerOperationCompleted == null)) {
+                this.UnsetReplicaServerOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUnsetReplicaServerOperationCompleted);
             }
-            this.InvokeAsync("IsReplicaServer", new object[] {
+            this.InvokeAsync("UnsetReplicaServer", new object[] {
                         serviceId,
-                        remoteServer}, this.IsReplicaServerOperationCompleted, userState);
+                        remoteServer}, this.UnsetReplicaServerOperationCompleted, userState);
         }
         
-        private void OnIsReplicaServerOperationCompleted(object arg) {
-            if ((this.IsReplicaServerCompleted != null)) {
+        private void OnUnsetReplicaServerOperationCompleted(object arg) {
+            if ((this.UnsetReplicaServerCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.IsReplicaServerCompleted(this, new IsReplicaServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.UnsetReplicaServerCompleted(this, new UnsetReplicaServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetReplicaServer", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ReplicationServerInfo GetReplicaServer(int serviceId, string remoteServer) {
+            object[] results = this.Invoke("GetReplicaServer", new object[] {
+                        serviceId,
+                        remoteServer});
+            return ((ReplicationServerInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetReplicaServer(int serviceId, string remoteServer, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetReplicaServer", new object[] {
+                        serviceId,
+                        remoteServer}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ReplicationServerInfo EndGetReplicaServer(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ReplicationServerInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetReplicaServerAsync(int serviceId, string remoteServer) {
+            this.GetReplicaServerAsync(serviceId, remoteServer, null);
+        }
+        
+        /// <remarks/>
+        public void GetReplicaServerAsync(int serviceId, string remoteServer, object userState) {
+            if ((this.GetReplicaServerOperationCompleted == null)) {
+                this.GetReplicaServerOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetReplicaServerOperationCompleted);
+            }
+            this.InvokeAsync("GetReplicaServer", new object[] {
+                        serviceId,
+                        remoteServer}, this.GetReplicaServerOperationCompleted, userState);
+        }
+        
+        private void OnGetReplicaServerOperationCompleted(object arg) {
+            if ((this.GetReplicaServerCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetReplicaServerCompleted(this, new GetReplicaServerCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetReplication", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public VmReplication GetReplication(int itemId) {
+            object[] results = this.Invoke("GetReplication", new object[] {
+                        itemId});
+            return ((VmReplication)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetReplication(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetReplication", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public VmReplication EndGetReplication(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((VmReplication)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetReplicationAsync(int itemId) {
+            this.GetReplicationAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void GetReplicationAsync(int itemId, object userState) {
+            if ((this.GetReplicationOperationCompleted == null)) {
+                this.GetReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetReplicationOperationCompleted);
+            }
+            this.InvokeAsync("GetReplication", new object[] {
+                        itemId}, this.GetReplicationOperationCompleted, userState);
+        }
+        
+        private void OnGetReplicationOperationCompleted(object arg) {
+            if ((this.GetReplicationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetReplicationCompleted(this, new GetReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetReplicationInfo", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ReplicationDetailInfo GetReplicationInfo(int itemId) {
+            object[] results = this.Invoke("GetReplicationInfo", new object[] {
+                        itemId});
+            return ((ReplicationDetailInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetReplicationInfo(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetReplicationInfo", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ReplicationDetailInfo EndGetReplicationInfo(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ReplicationDetailInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetReplicationInfoAsync(int itemId) {
+            this.GetReplicationInfoAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void GetReplicationInfoAsync(int itemId, object userState) {
+            if ((this.GetReplicationInfoOperationCompleted == null)) {
+                this.GetReplicationInfoOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetReplicationInfoOperationCompleted);
+            }
+            this.InvokeAsync("GetReplicationInfo", new object[] {
+                        itemId}, this.GetReplicationInfoOperationCompleted, userState);
+        }
+        
+        private void OnGetReplicationInfoOperationCompleted(object arg) {
+            if ((this.GetReplicationInfoCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetReplicationInfoCompleted(this, new GetReplicationInfoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetVmReplication", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject SetVmReplication(int itemId, VmReplication replication) {
+            object[] results = this.Invoke("SetVmReplication", new object[] {
+                        itemId,
+                        replication});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetVmReplication(int itemId, VmReplication replication, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetVmReplication", new object[] {
+                        itemId,
+                        replication}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndSetVmReplication(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SetVmReplicationAsync(int itemId, VmReplication replication) {
+            this.SetVmReplicationAsync(itemId, replication, null);
+        }
+        
+        /// <remarks/>
+        public void SetVmReplicationAsync(int itemId, VmReplication replication, object userState) {
+            if ((this.SetVmReplicationOperationCompleted == null)) {
+                this.SetVmReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetVmReplicationOperationCompleted);
+            }
+            this.InvokeAsync("SetVmReplication", new object[] {
+                        itemId,
+                        replication}, this.SetVmReplicationOperationCompleted, userState);
+        }
+        
+        private void OnSetVmReplicationOperationCompleted(object arg) {
+            if ((this.SetVmReplicationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetVmReplicationCompleted(this, new SetVmReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DisableVmReplication", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject DisableVmReplication(int itemId) {
+            object[] results = this.Invoke("DisableVmReplication", new object[] {
+                        itemId});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginDisableVmReplication(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("DisableVmReplication", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndDisableVmReplication(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DisableVmReplicationAsync(int itemId) {
+            this.DisableVmReplicationAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void DisableVmReplicationAsync(int itemId, object userState) {
+            if ((this.DisableVmReplicationOperationCompleted == null)) {
+                this.DisableVmReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDisableVmReplicationOperationCompleted);
+            }
+            this.InvokeAsync("DisableVmReplication", new object[] {
+                        itemId}, this.DisableVmReplicationOperationCompleted, userState);
+        }
+        
+        private void OnDisableVmReplicationOperationCompleted(object arg) {
+            if ((this.DisableVmReplicationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DisableVmReplicationCompleted(this, new DisableVmReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/PauseReplication", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject PauseReplication(int itemId) {
+            object[] results = this.Invoke("PauseReplication", new object[] {
+                        itemId});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginPauseReplication(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("PauseReplication", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndPauseReplication(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void PauseReplicationAsync(int itemId) {
+            this.PauseReplicationAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void PauseReplicationAsync(int itemId, object userState) {
+            if ((this.PauseReplicationOperationCompleted == null)) {
+                this.PauseReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnPauseReplicationOperationCompleted);
+            }
+            this.InvokeAsync("PauseReplication", new object[] {
+                        itemId}, this.PauseReplicationOperationCompleted, userState);
+        }
+        
+        private void OnPauseReplicationOperationCompleted(object arg) {
+            if ((this.PauseReplicationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.PauseReplicationCompleted(this, new PauseReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ResumeReplication", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject ResumeReplication(int itemId) {
+            object[] results = this.Invoke("ResumeReplication", new object[] {
+                        itemId});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginResumeReplication(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ResumeReplication", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndResumeReplication(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ResumeReplicationAsync(int itemId) {
+            this.ResumeReplicationAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void ResumeReplicationAsync(int itemId, object userState) {
+            if ((this.ResumeReplicationOperationCompleted == null)) {
+                this.ResumeReplicationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnResumeReplicationOperationCompleted);
+            }
+            this.InvokeAsync("ResumeReplication", new object[] {
+                        itemId}, this.ResumeReplicationOperationCompleted, userState);
+        }
+        
+        private void OnResumeReplicationOperationCompleted(object arg) {
+            if ((this.ResumeReplicationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ResumeReplicationCompleted(this, new ResumeReplicationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -4767,26 +5095,208 @@ namespace WebsitePanel.EnterpriseServer {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void IsReplicaServerCompletedEventHandler(object sender, IsReplicaServerCompletedEventArgs e);
+    public delegate void UnsetReplicaServerCompletedEventHandler(object sender, UnsetReplicaServerCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class IsReplicaServerCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+    public partial class UnsetReplicaServerCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
         
-        internal IsReplicaServerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+        internal UnsetReplicaServerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }
         
         /// <remarks/>
-        public bool Result {
+        public ResultObject Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetReplicaServerCompletedEventHandler(object sender, GetReplicaServerCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetReplicaServerCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetReplicaServerCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ReplicationServerInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ReplicationServerInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetReplicationCompletedEventHandler(object sender, GetReplicationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public VmReplication Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((VmReplication)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetReplicationInfoCompletedEventHandler(object sender, GetReplicationInfoCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetReplicationInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetReplicationInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ReplicationDetailInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ReplicationDetailInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void SetVmReplicationCompletedEventHandler(object sender, SetVmReplicationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetVmReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SetVmReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void DisableVmReplicationCompletedEventHandler(object sender, DisableVmReplicationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DisableVmReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DisableVmReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void PauseReplicationCompletedEventHandler(object sender, PauseReplicationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class PauseReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal PauseReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void ResumeReplicationCompletedEventHandler(object sender, ResumeReplicationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ResumeReplicationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ResumeReplicationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
             }
         }
     }

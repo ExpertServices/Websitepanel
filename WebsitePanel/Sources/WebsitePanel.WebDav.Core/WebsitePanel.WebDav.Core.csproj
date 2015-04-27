@@ -46,6 +46,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\Microsoft.Web.Services3.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.105.0.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -87,6 +90,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Twilio.Api">
+      <HintPath>..\packages\Twilio.3.6.29\lib\3.5\Twilio.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Base">
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
@@ -108,6 +115,7 @@
     <Compile Include="Config\Entities\OwaSupportedBrowsersCollection.cs" />
     <Compile Include="Config\Entities\SessionKeysCollection.cs" />
     <Compile Include="Config\Entities\OpenerCollection.cs" />
+    <Compile Include="Config\Entities\TwilioParameters.cs" />
     <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
     <Compile Include="Config\IWebDavAppConfig.cs" />
     <Compile Include="Config\WebConfigSections\ApplicationNameElement.cs" />
@@ -126,6 +134,7 @@
     <Compile Include="Config\WebConfigSections\SessionKeysElement.cs" />
     <Compile Include="Config\WebConfigSections\SessionKeysElementCollection.cs" />
     <Compile Include="Config\WebConfigSections\OpenerElement.cs" />
+    <Compile Include="Config\WebConfigSections\TwilioElement.cs" />
     <Compile Include="Config\WebConfigSections\UserDomainElement.cs" />
     <Compile Include="Config\WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
     <Compile Include="Config\WebConfigSections\WebdavRootElement.cs" />
@@ -149,6 +158,9 @@
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
     <Compile Include="Interfaces\Managers\Users\IUserSettingsManager.cs" />
+    <Compile Include="Interfaces\Security\ISmsAuthenticationService.cs" />
+    <Compile Include="Security\Authentication\SmsAuthenticationService.cs" />
+    <Compile Include="Interfaces\Services\ISmsDistributionService.cs" />
     <Compile Include="Interfaces\Storages\IKeyValueStorage.cs" />
     <Compile Include="Interfaces\Storages\ITtlStorage.cs" />
     <Compile Include="Managers\Users\UserSettingsManager.cs" />
@@ -188,6 +200,7 @@
     <Compile Include="Security\Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Security\Authentication\Principals\WspPrincipal.cs" />
     <Compile Include="Owa\WopiServer.cs" />
+    <Compile Include="Services\TwillioSmsDistributionService.cs" />
     <Compile Include="Storages\CacheTtlStorage.cs" />
     <Compile Include="WebDavSession.cs" />
     <Compile Include="WspContext.cs" />

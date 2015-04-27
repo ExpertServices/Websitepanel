@@ -49,23 +49,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (!IsPostBack)
             {
-                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
-                if (passwordPolicy.IsSuccess)
-                {
-                    password.MinimumLength = passwordPolicy.Value.MinLength;
-                    if (passwordPolicy.Value.IsComplexityEnable)
-                    {
-                        password.MinimumNumbers = 1;
-                        password.MinimumSymbols = 1;
-                        password.MinimumUppercase = 1;
-                    }
-                }
-                else
-                {
-                    messageBox.ShowMessage(passwordPolicy, "EXCHANGE_CREATE_MAILBOX", "HostedOrganization");
-                    return;
-                }
+                BindPasswordSettings();
 
                 string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
                 if (!string.IsNullOrEmpty(instructions))
@@ -133,6 +117,20 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (plan!=null)
                 rowArchiving.Visible = plan.EnableArchiving;
 
+        }
+
+        private void BindPasswordSettings()
+        {
+            var grainedPasswordSettigns = ES.Services.Organizations.GetOrganizationPasswordSettings(PanelRequest.ItemID);
+
+            if (grainedPasswordSettigns != null)
+            {
+                password.SetUserPolicy(grainedPasswordSettigns);
+            }
+            else
+            {
+                messageBox.ShowErrorMessage("UNABLETOLOADPASSWORDSETTINGS");
+            }
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)

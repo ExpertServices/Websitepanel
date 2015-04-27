@@ -47,8 +47,8 @@ namespace WebsitePanel.Portal.ProviderControls
         public bool IsRemoteServer { get { return radioServer.SelectedIndex > 0; } }
         public string RemoteServerName { get { return IsRemoteServer ? txtServerName.Text.Trim() : ""; } }
         public string CertificateThumbprint { get { return IsRemoteServer ? txtCertThumbnail.Text.Trim() : ddlCertThumbnail.SelectedValue; } }
-        public bool IsReplicaServer { get { return ReplicationModeList.SelectedValue == "IsReplicaServer"; } }
-        public bool EnabledReplica { get { return ReplicationModeList.SelectedValue == "Enable"; } }
+        public bool IsReplicaServer { get { return ReplicationModeList.SelectedValue == ReplicaMode.IsReplicaServer.ToString(); } }
+        public bool EnabledReplica { get { return ReplicationModeList.SelectedValue == ReplicaMode.ReplicationEnabled.ToString(); } }
         public string ReplicaServerId { get; set; }
 
         void IHostingServiceProviderSettings.BindSettings(StringDictionary settings)
@@ -106,7 +106,7 @@ namespace WebsitePanel.Portal.ProviderControls
             radioStopAction.SelectedValue = settings["StopAction"];
 
             // replica
-            ReplicationModeList.SelectedValue = settings["ReplicaMode"] ?? "Disabled";
+            ReplicationModeList.SelectedValue = settings["ReplicaMode"] ?? ReplicaMode.None.ToString();
             txtReplicaPath.Text = settings["ReplicaServerPath"];
             ReplicaServerId = settings["ReplicaServerId"];
 
@@ -115,12 +115,13 @@ namespace WebsitePanel.Portal.ProviderControls
             // replica
             txtCertThumbnail.Text = settings["ReplicaServerThumbprint"];
             ddlCertThumbnail.SelectedValue = settings["ReplicaServerThumbprint"];
+            ddlReplicaServer.SelectedValue = settings["ReplicaServerId"];
 
             if (IsReplicaServer)
             {
-                var serverIsRealReplica = ES.Services.VPS2012.IsReplicaServer(PanelRequest.ServiceId, RemoteServerName);
+                var realReplica = ES.Services.VPS2012.GetReplicaServer(PanelRequest.ServiceId, RemoteServerName);
 
-                if (!serverIsRealReplica)
+                if (realReplica == null)
                     ReplicaErrorTr.Visible = true;
             }
         }
@@ -181,7 +182,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["ReplicaServerPath"] = txtReplicaPath.Text;
             settings["ReplicaServerThumbprint"] = CertificateThumbprint;
 
-            SetReplication();
+            SetUnsetReplication();
         }
 
         private void BindNetworksList()
@@ -237,7 +238,7 @@ namespace WebsitePanel.Portal.ProviderControls
                     continue;
 
                 var currentServiceSettings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
-                if (currentServiceSettings["ReplicaMode"] == ReplicaMode.IsReplicaServer.ToString())
+                if (currentServiceSettings["ReplicaMode"] != ReplicaMode.IsReplicaServer.ToString())
                     continue;
 
                 var exists = false;
@@ -260,7 +261,6 @@ namespace WebsitePanel.Portal.ProviderControls
                 ServiceInfo serviceInfo = ES.Services.Servers.GetServiceInfo(Utils.ParseInt(current));
                 list.Add(serviceInfo);
             }
-
 
             return list;
         }
@@ -294,11 +294,10 @@ namespace WebsitePanel.Portal.ProviderControls
             ManagePreferredNameServerRow.Visible = ManageNicConfigRow.Visible && (ddlManageNicConfig.SelectedIndex == 0);
 
             // Replica
-            IsReplicaServerRow.Visible = IsReplicaServer;
             EnableReplicaRow.Visible = EnabledReplica;
-            ddlCertThumbnail.Visible = !IsRemoteServer;
-            txtCertThumbnail.Visible = CertificateThumbnailValidator.Visible = IsRemoteServer;
             IsReplicaServerRow.Visible = IsReplicaServer;
+            ddlCertThumbnail.Visible = CertificateDdlThumbnailValidator.Visible = !IsRemoteServer;
+            txtCertThumbnail.Visible = CertificateThumbnailValidator.Visible = IsRemoteServer;
             ReplicaPathErrorTr.Visible = ReplicaErrorTr.Visible = false;
             if (IsReplicaServer) BindCertificates();
             if (EnabledReplica) BindReplicaServices();
@@ -332,13 +331,16 @@ namespace WebsitePanel.Portal.ProviderControls
         protected void btnSetReplicaServer_Click(object sender, EventArgs e)
         {
             ToggleControls();
-            SetReplication();
+            SetUnsetReplication();
         }
 
-        private void SetReplication()
+        private void SetUnsetReplication()
         {
             if (!IsReplicaServer)
+            {
+                ES.Services.VPS2012.UnsetReplicaServer(PanelRequest.ServiceId, RemoteServerName);
                 return;
+            }
 
             if (txtReplicaPath.Text == "")
             {

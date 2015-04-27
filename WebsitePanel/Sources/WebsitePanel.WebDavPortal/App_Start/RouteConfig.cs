@@ -13,6 +13,48 @@ namespace WebsitePanel.WebDavPortal
             #region Account
 
             routes.MapRoute(
+               name: AccountRouteNames.PhoneNumberIsAvailible,
+               url: "account/profile/phone-number-availible",
+               defaults: new { controller = "Account", action = "PhoneNumberIsAvailible" }
+               );
+
+            routes.MapRoute(
+                name: AccountRouteNames.UserProfile,
+                url: "account/profile",
+                defaults: new { controller = "Account", action = "UserProfile" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordResetEmail,
+                url: "account/password-reset/step-1",
+                defaults: new { controller = "Account", action = "PasswordResetEmail" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordResetSms,
+                url: "account/password-reset/step-2/{token}",
+                defaults: new { controller = "Account", action = "PasswordResetSms" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordResetSendSms,
+                url: "account/password-reset/step-final/{token}",
+                defaults: new { controller = "Account", action = "PasswordResetSendSms" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordResetFinalStep,
+                url: "account/password-reset/send-new-sms/{token}",
+                defaults: new { controller = "Account", action = "PasswordResetFinalStep" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.PasswordChange,
+                url: "account/profile/password-change",
+                defaults: new { controller = "Account", action = "PasswordChange" }
+                );
+
+            routes.MapRoute(
                 name: AccountRouteNames.Logout,
                 url: "account/logout",
                 defaults: new { controller = "Account", action = "Logout" }

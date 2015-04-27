@@ -65,6 +65,10 @@ namespace WebsitePanel.EnterpriseServer
         public const string DEFAULT_LYNCUSERPLANS = "DefaultLyncUserPlans";
         public const string RDS_SETUP_LETTER = "RDSSetupLetter";
         public const string RDS_POLICY = "RdsPolicy";
+        public const string USER_PASSWORD_EXPIRATION_LETTER = "UserPasswordExpirationLetter";
+        public const string USER_PASSWORD_RESET_LETTER = "UserPasswordResetLetter";
+        public const string HOSTED_ORGANIZATION_PASSWORD_POLICY = "MailboxPasswordPolicy";
+
 
         public int UserId;
         public string SettingsName;

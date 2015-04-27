@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Configuration.Internal;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -41,6 +42,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal
 {
@@ -112,7 +114,14 @@ namespace WebsitePanel.Portal
         public int MaximumLength
         {
             get { return (ViewState["MaximumLength"] != null) ? (int)ViewState["MaximumLength"] : 0; }
-            set { ViewState["MaximumLength"] = value; }
+            set
+            {
+                {
+                    txtPassword.MaxLength = value;
+                    txtConfirmPassword.MaxLength = value;
+                    ViewState["MaximumLength"] = value;
+                }
+            }
         }
 
         public int MinimumNumbers
@@ -179,6 +188,38 @@ namespace WebsitePanel.Portal
             }
 
             // toggle controls
+            ToggleControls();
+        }
+
+        public void SetUserPolicy(OrganizationPasswordSettings settings)
+        {
+            int minimumUppercase;
+            int minimumNumbers;
+            int minimumSymbols;
+
+
+            if (settings.PasswordComplexityEnabled)
+            {
+                minimumUppercase = settings.UppercaseLettersCount;
+                minimumNumbers = settings.NumbersCount;
+                minimumSymbols = settings.SymbolsCount;
+            }
+            else
+            {
+                minimumUppercase = 0;
+                minimumNumbers = 0;
+                minimumSymbols = 0;
+            }
+
+            PolicyValue = string.Join(";", true, settings.MinimumLength, settings.MaximumLength, minimumUppercase, minimumNumbers, minimumSymbols, true);
+
+            ToggleControls();
+        }
+
+        public void SetUserPolicy(bool enabled, int minLength, int maxLength, int minimumUppercase, int minimumNumbers, int minimumSymbols, bool notEqualToUsername)
+        {
+            PolicyValue = string.Join(";", enabled, minLength, maxLength, minimumUppercase, minimumNumbers, minimumSymbols, notEqualToUsername);
+
             ToggleControls();
         }
 

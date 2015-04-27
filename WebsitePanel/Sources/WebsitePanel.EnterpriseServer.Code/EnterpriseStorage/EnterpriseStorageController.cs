@@ -1650,12 +1650,12 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static ResultObject DeleteMappedDrive(int itemId, string driveLetter)
+        public static ResultObject DeleteMappedDrive(int itemId, string folderName)
         {
-            return DeleteMappedDriveInternal(itemId, driveLetter);
+            return DeleteMappedDriveInternal(itemId, folderName);
         }
 
-        protected static ResultObject DeleteMappedDriveInternal(int itemId, string driveLetter)
+        protected static ResultObject DeleteMappedDriveInternal(int itemId, string folderName)
         {
             ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "DELETE_MAPPED_DRIVE", itemId);
 
@@ -1670,9 +1670,13 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
                 }
 
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                string path = string.Format(@"\\{0}@SSL\{1}\{2}", webDavSetting.Domain.Split('.')[0], org.OrganizationId, folderName);
+
                 Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.DeleteMappedDrive(org.OrganizationId, driveLetter);
+                orgProxy.DeleteMappedDriveByPath(org.OrganizationId, path);
             }
             catch (Exception ex)
             {

@@ -10,25 +10,11 @@ $(document).on('click', '.processing-dialog', function (e) {
 });
 
 
-$(document).ready(function() {
+$(document).ready(function () {
+
     //bootstrap jquery validate styles fix
-    $.validator.setDefaults({
-        highlight: function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-        },
-        unhighlight: function(element) {
-            $(element).closest('.form-group').removeClass('has-error');
-        },
-        errorElement: 'span',
-        errorClass: 'help-block',
-        errorPlacement: function(error, element) {
-            if (element.parent('.input-group').length) {
-                error.insertAfter(element.parent());
-            } else {
-                error.insertAfter(element);
-            }
-        }
-    });
+    BindBootstrapValidationStyles();
+
 
     $.validator.addMethod("synchronousRemote", function(value, element, param) {
         if (this.optional(element)) {
@@ -85,6 +71,60 @@ $(document).ready(function() {
         return valid;
     }, "Please fix this field.");
 });
+
+function BindBootstrapValidationStyles() {
+    $.validator.setDefaults({
+        highlight: function (element) {
+            $(element).closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element).closest('.form-group').removeClass('has-error');
+        },
+        errorElement: 'span',
+        errorClass: 'help-block',
+        errorPlacement: function (error, element) {
+            if (element.parent('.input-group').length) {
+                error.insertAfter(element.parent());
+            } else {
+                error.insertAfter(element);
+            }
+        }
+    });
+
+    $('.bs-val-styles').each(function () {
+        var form = $(this);
+        var formData = $.data(form[0]);
+        if (formData && formData.validator) {
+
+            var settings = formData.validator.settings;
+            // Store existing event handlers in local variables
+            var oldErrorPlacement = settings.errorPlacement;
+            var oldSuccess = settings.success;
+
+            settings.errorPlacement = function (label, element) {
+
+                oldErrorPlacement(label, element);
+
+                element.closest('.form-group').addClass('has-error');
+                label.addClass('text-danger');
+            };
+
+            settings.success = function (label, element) {
+                $(element).closest('.form-group').removeClass('has-error');
+
+                oldSuccess(label);
+            }
+        }
+    });
+
+    $('.input-validation-error').each(function () {
+        $(this).closest('.form-group').addClass('has-error');
+    });
+
+    $('.field-validation-error').each(function () {
+        $(this).addClass('text-danger');
+    });
+}
 
 
 $.fn.clearValidation = function () { var v = $(this).validate(); $('[name]', this).each(function () { v.successList.push(this); v.showErrors(); }); v.resetForm(); v.reset(); $(this).find('.form-group').removeClass('has-error'); };

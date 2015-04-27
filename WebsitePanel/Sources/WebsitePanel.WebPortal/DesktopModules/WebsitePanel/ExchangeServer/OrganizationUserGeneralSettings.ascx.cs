@@ -59,18 +59,7 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             try
             {
-                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
-                if (passwordPolicy.IsSuccess)
-                {
-                    password.MinimumLength = passwordPolicy.Value.MinLength;
-                    if (passwordPolicy.Value.IsComplexityEnable)
-                    {
-                        password.MinimumNumbers = 1;
-                        password.MinimumSymbols = 1;
-                        password.MinimumUppercase = 1;
-                    }
-                }
+                BindPasswordSettings();
 
                 // get settings
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
@@ -232,6 +221,10 @@ namespace WebsitePanel.Portal.HostedSolution
                 password.ValidationEnabled = true;
                 password.Password = string.Empty;
 
+                var settings = ES.Services.Organizations.GetWebDavSystemSettings();
+
+                btnResetUserPassword.Visible = settings != null && Utils.ParseBool(settings[EnterpriseServer.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
+
                 chkUserMustChangePassword.Checked = user.UserMustChangePassword;
             }
             catch (Exception ex)
@@ -271,6 +264,20 @@ namespace WebsitePanel.Portal.HostedSolution
             }
             else { secServiceLevels.Visible = false; }
 
+        }
+
+        private void BindPasswordSettings()
+        {
+            var grainedPasswordSettigns = ES.Services.Organizations.GetOrganizationPasswordSettings(PanelRequest.ItemID);
+
+            if (grainedPasswordSettigns != null)
+            {
+                password.SetUserPolicy(grainedPasswordSettigns);
+            }
+            else
+            {
+                messageBox.ShowErrorMessage("UNABLETOLOADPASSWORDSETTINGS");
+            }
         }
 
         private bool CheckServiceLevelQuota(QuotaValueInfo quota)
@@ -435,5 +442,13 @@ namespace WebsitePanel.Portal.HostedSolution
 
         }
 
+        protected void btnResetUserPassword_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "user_reset_password",
+                "SpaceID=" + PanelSecurity.PackageId,
+                "Context=" + ((PanelRequest.Context == "Mailbox") ? "Mailbox" : "User"),
+                "AccountID=" + PanelRequest.AccountID));
+        }
     }
 }

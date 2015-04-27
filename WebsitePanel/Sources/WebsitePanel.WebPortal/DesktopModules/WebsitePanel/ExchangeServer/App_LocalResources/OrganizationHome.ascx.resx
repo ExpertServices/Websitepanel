@@ -240,4 +240,10 @@
   <data name="locSharePointEnterprise.Text" xml:space="preserve">
     <value>SharePoint Server</value>
   </data>
+  <data name="lnkEditOrganizationSettings.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="OrganizationSettings.Text" xml:space="preserve">
+    <value>Organization settings:</value>
+  </data>
 </root>

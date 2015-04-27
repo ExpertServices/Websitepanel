@@ -28,10 +28,59 @@
             </td>
     </tr>
     <tr>
-        <td colspan="2" class="NormalBold"><asp:Label ID="lblShouldContain" runat="server"
-            meta:resourcekey="lblShouldContain" Text="Password should contain at least:"></asp:Label></td>
+        <td class="Normal" style="width:150px;"><asp:Label ID="lblEnforcePasswordHistory" runat="server"
+            meta:resourcekey="lblEnforcePasswordHistory" Text="Enforce Password History:"></asp:Label></td>
+        <td class="Normal">
+            <asp:TextBox ID="txtEnforcePasswordHistory" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="valRequireEnforcePasswordHistory" runat="server" ControlToValidate="txtEnforcePasswordHistory" meta:resourcekey="valRequireEnforcePasswordHistory"
+                ErrorMessage="*" ValidationGroup="SettingsEditor" Display="Dynamic"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valCorrectEnforcePasswordHistory" runat="server" ControlToValidate="txtEnforcePasswordHistory" meta:resourcekey="valCorrectEnforcePasswordHistory"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator></td>
     </tr>
+    <tr id="RowChkLockOutSettigns" runat="server">
+        <td colspan="2" class="NormalBold">
+            <asp:CheckBox id="chkLockOutSettigns" runat="server" meta:resourcekey="chkLockOutSettigns" 
+            Text="Enable Lockout Settings" CssClass="NormalBold" AutoPostBack="true" OnCheckedChanged="chkLockOutSettigns_CheckedChanged" />
+        </td>
+    </tr>
+    <tr id="RowAccountLockoutDuration" runat="server">
+        <td class="Normal" style="width:150px;"><asp:Label ID="lblAccountLockoutDuration" runat="server"
+            meta:resourcekey="lblAccountLockoutDuration" Text="Account Lockout Duration (minutes):"></asp:Label></td>
+        <td class="Normal">
+            <asp:TextBox ID="txtAccountLockoutDuration" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="valRequireAccountLockoutDuration" runat="server" ControlToValidate="txtAccountLockoutDuration" meta:resourcekey="valRequireAccountLockoutDuration"
+                ErrorMessage="*" ValidationGroup="SettingsEditor" Display="Dynamic"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valCorrectAccountLockoutDuration" runat="server" ControlToValidate="txtAccountLockoutDuration" meta:resourcekey="valCorrectAccountLockoutDuration"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator></td>
+    </tr>
+    <tr id="RowLockedOut" runat="server">
+        <td class="Normal">
+            <asp:Label ID="lblLockedOut" runat="server"
+                meta:resourcekey="lblLockedOut" Text="Account Lockout threshold:"></asp:Label>
+        </td>
+        <td class="Normal"><asp:TextBox ID="txtLockedOut" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="valCorrectLockedOut" runat="server" ControlToValidate="txtLockedOut" meta:resourcekey="valCorrectLockedOut"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
+        </td>
+    </tr>
+    <tr id="RowResetAccountLockout" runat="server">
+        <td class="Normal">
+            <asp:Label ID="lblResetAccountLockout" runat="server"
+                meta:resourcekey="lblResetAccountLockout" Text="Reset account lockout counter after (minutes):"></asp:Label>
+        </td>
+        <td class="Normal"><asp:TextBox ID="txtResetAccountLockout" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="valResetAccountLockout" runat="server" ControlToValidate="txtResetAccountLockout" meta:resourcekey="valResetAccountLockout"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
+        </td>
+    </tr>
+
     <tr>
+        <td colspan="2" class="NormalBold">
+            <asp:CheckBox id="chkPasswordComplexity" runat="server" meta:resourcekey="chkPasswordComplexity" 
+            Text="Enable Password Complexity" CssClass="NormalBold" AutoPostBack="true" OnCheckedChanged="chkPasswordComplexity_CheckedChanged" />
+        </td>
+    </tr>
+    <tr id="RowMinimumUppercase" runat="server">
         <td class="Normal">
             <asp:Label ID="lblMinimumUppercase" runat="server"
                 meta:resourcekey="lblMinimumUppercase" Text="Uppercase letters:"></asp:Label>
@@ -43,7 +92,7 @@
                 Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
             </td>
     </tr>
-    <tr>
+    <tr id="RowMinimumNumbers" runat="server">
         <td class="Normal">
             <asp:Label ID="lblMinimumNumbers" runat="server"
                 meta:resourcekey="lblMinimumNumbers" Text="Numbers:"></asp:Label>
@@ -55,7 +104,7 @@
                 Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
             </td>
     </tr>
-    <tr>
+    <tr id="RowMinimumSymbols" runat="server">
         <td class="Normal">
             <asp:Label ID="lblMinimumSymbols" runat="server"
                 meta:resourcekey="lblMinimumSymbols" Text="Non-alphanumeric symbols:"></asp:Label>
@@ -72,18 +121,6 @@
             <asp:CheckBox id="chkNotEqualUsername" runat="server" meta:resourcekey="chkNotEqualUsername" Text="Should not be equal to username" />
         </td>
     </tr>
-
-    <tr>
-        <td class="Normal">
-            <asp:Label ID="lblLockedOut" runat="server"
-                meta:resourcekey="lblLockedOut" Text="Lock out after :"></asp:Label>
-        </td>
-        <td class="Normal"><asp:TextBox ID="txtLockedOut" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
-            <asp:RegularExpressionValidator ID="valCorrectLockedOut" runat="server" ControlToValidate="txtLockedOut" meta:resourcekey="valCorrectLockedOut"
-                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
-        </td>
-    </tr>
-
 </table>
 
 	</ContentTemplate>

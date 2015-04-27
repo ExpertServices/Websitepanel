@@ -150,4 +150,10 @@
   <data name="lnkRdsSetupLetter.Text" xml:space="preserve">
     <value>RDS Setup Letter</value>
   </data>
+  <data name="lnkUserPasswordExpirationLetter.Text" xml:space="preserve">
+    <value>Organization User Password Expiration Letter</value>
+  </data>
+  <data name="lnkOrganizationUserPasswordResetLetter.Text" xml:space="preserve">
+    <value>Organization User Password Reset Letter</value>
+  </data>
 </root>

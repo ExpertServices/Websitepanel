@@ -66,7 +66,7 @@
 						    <asp:TemplateField>
 							    <ItemTemplate>
 									<asp:ImageButton ID="imgDelDriveMap" runat="server" Text="Delete" SkinID="ExchangeDelete"
-                                        CommandName="DeleteItem" CommandArgument='<%# Eval("DriveLetter") %>'
+                                        CommandName="DeleteItem" CommandArgument='<%# Eval("Folder.Name") %>'
                                         meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected map drive?')"></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>

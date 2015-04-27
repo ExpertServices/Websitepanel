@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Web.Mvc;
 using WebsitePanel.WebDavPortal.Models.Common.Enums;
 
 namespace WebsitePanel.WebDavPortal.Models.Common
 {
-    public class BaseModel
+    public class AjaxModel
     {
-        public BaseModel()
+        public AjaxModel()
         {
             Messages = new List<Message>();
         }
@@ -17,9 +16,9 @@ namespace WebsitePanel.WebDavPortal.Models.Common
         {
             Messages.Add(new Message
             {
-                Type =type,
+                Type = type,
                 Value = value
             });
-        }
+        } 
     }
 }

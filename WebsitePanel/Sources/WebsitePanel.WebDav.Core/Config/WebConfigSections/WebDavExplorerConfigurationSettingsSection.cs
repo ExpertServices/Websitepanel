@@ -20,6 +20,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         private const string OfficeOnlineKey = "officeOnline";
         private const string FilesToIgnoreKey = "filesToIgnore";
         private const string TypeOpenerKey = "typeOpener";
+        private const string TwilioKey = "twilio";
 
         public const string SectionName = "webDavExplorerConfigurationSettings";
 
@@ -63,6 +64,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (WebsitePanelConstantUserElement)this[WebsitePanelConstantUserKey]; }
             set { this[WebsitePanelConstantUserKey] = value; }
+        }
+
+        [ConfigurationProperty(TwilioKey, IsRequired = true)]
+        public TwilioElement Twilio
+        {
+            get { return (TwilioElement)this[TwilioKey]; }
+            set { this[TwilioKey] = value; }
         }
 
         [ConfigurationProperty(ElementsRenderingKey, IsRequired = true)]

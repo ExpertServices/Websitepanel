@@ -75,6 +75,7 @@
     <Compile Include="Common\CryptoUtils.cs" />
     <Compile Include="Common\EnterpriseServerIdentity.cs" />
     <Compile Include="Common\EnterpriseServerPrincipal.cs" />
+    <Compile Include="Common\Extensions\UriExtensions.cs" />
     <Compile Include="Common\FileUtils.cs" />
     <Compile Include="Common\Int128.cs" />
     <Compile Include="Common\IPAddress.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="SchedulerTasks\SendMailNotificationTask.cs" />
     <Compile Include="SchedulerTasks\SuspendOverdueInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\SuspendOverusedPackagesTask.cs" />
+    <Compile Include="SchedulerTasks\UserPasswordExpirationNotificationTask.cs" />
     <Compile Include="SchedulerTasks\ZipFilesTask.cs" />
     <Compile Include="Scheduling\Scheduler.cs" />
     <Compile Include="Scheduling\SchedulerController.cs" />

@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Services;
 using System.Web.Services.Protocols;
@@ -253,6 +254,24 @@ namespace WebsitePanel.Server
         public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
         {
             Organization.ChangeDriveMapFolderPath(organizationId, oldFolder, newFolder);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration)
+        {
+            return Organization.GetOrganizationUsersWithExpiredPassword(organizationId, daysBeforeExpiration);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings)
+        {
+            Organization.ApplyPasswordSettings(organizationId, passwordSettings);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null)
+        {
+           return Organization.CheckPhoneNumberIsInUse(phoneNumber, userSamAccountName);
         }
     }
 }

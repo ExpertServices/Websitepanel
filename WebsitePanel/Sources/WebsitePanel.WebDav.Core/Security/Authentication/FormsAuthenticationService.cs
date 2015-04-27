@@ -26,14 +26,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
 
         public WspPrincipal LogIn(string login, string password)
         {
-            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-            {
-                return null;
-            }
-
-            var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
-
-            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
+            if (ValidateAuthenticationData(login, password) == false)
             {
                 return null;
             }
@@ -47,6 +40,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
             principal.ItemId = exchangeAccount.ItemId;
             principal.OrganizationId = organization.OrganizationId;
             principal.DisplayName = exchangeAccount.DisplayName;
+            principal.AccountName = exchangeAccount.AccountName;
             principal.EncryptedPassword = _cryptography.Encrypt(password);
 
             if (HttpContext.Current != null)
@@ -82,6 +76,23 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
         public void LogOut()
         {
             FormsAuthentication.SignOut();
+        }
+
+        public bool ValidateAuthenticationData(string login, string password)
+        {
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
+
+            if (user == null || _principalContext.ValidateCredentials(login, password) == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

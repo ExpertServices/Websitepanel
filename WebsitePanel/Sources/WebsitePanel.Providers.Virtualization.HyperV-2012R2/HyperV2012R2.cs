@@ -102,7 +102,7 @@ namespace WebsitePanel.Providers.Virtualization
 
         public ReplicaMode ReplicaMode
         {
-            get { return (ReplicaMode) ProviderSettings.GetInt("ReplicaMode"); }
+            get { return (ReplicaMode) Enum.Parse(typeof(ReplicaMode) , ProviderSettings["ReplicaMode"]); }
         }
         protected string ReplicaServerPath
         {
@@ -239,7 +239,7 @@ namespace WebsitePanel.Providers.Virtualization
                         Name = current.GetString("Name"),
                         State = current.GetEnum<VirtualMachineState>("State"),
                         Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds),
-                        ReplicationState = result[0].GetEnum<ReplicationState>("ReplicationState")
+                        ReplicationState = current.GetEnum<ReplicationState>("ReplicationState")
                     };
                     vmachines.Add(vm);
                 }
@@ -780,10 +780,10 @@ namespace WebsitePanel.Providers.Virtualization
                 Command cmd = new Command("Get-VMSwitch");
 
                 // Not needed as the PowerShellManager adds the computer name
-                //if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
+                if (!string.IsNullOrEmpty(computerName)) cmd.Parameters.Add("ComputerName", computerName);
                 if (!string.IsNullOrEmpty(type)) cmd.Parameters.Add("SwitchType", type);
 
-                Collection<PSObject> result = PowerShell.Execute(cmd, true, true);
+                Collection<PSObject> result = PowerShell.Execute(cmd, false, true);
 
                 foreach (PSObject current in result)
                 {
@@ -2037,18 +2037,17 @@ namespace WebsitePanel.Providers.Virtualization
 
             var excludes = vm.Disks
                 .Select(d => d.Path)
-                .Where(p => !p.Equals(replication.VhdToReplicate, StringComparison.OrdinalIgnoreCase))
+                .Where(p => replication.VhdToReplicate.All(vp => !p.Equals(vp, StringComparison.OrdinalIgnoreCase)))
                 .ToArray();
             if (excludes.Any())
                 cmd.Parameters.Add("ExcludedVhdPath", excludes);
 
             // recovery points
+            cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
             if (replication.AdditionalRecoveryPoints > 0)
             {
                 if (replication.AdditionalRecoveryPoints > 24)
                     throw new Exception("AdditionalRecoveryPoints can not be greater than 24");
-
-                cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
 
                 if (replication.VSSSnapshotFrequencyHour > 0)
                 {
@@ -2059,10 +2058,7 @@ namespace WebsitePanel.Providers.Virtualization
                 }
             }
 
-            PowerShell.Execute(cmd, true);
-
-            // Initial Replication
-            StartInitialReplication(vmId);
+            PowerShell.Execute(cmd, true, true);
         }
 
         public void SetVmReplication(string vmId, string replicaServer, VmReplication replication)
@@ -2080,20 +2076,12 @@ namespace WebsitePanel.Providers.Virtualization
             cmd.Parameters.Add("CertificateThumbprint", replication.Thumbprint);
             cmd.Parameters.Add("ReplicationFrequencySec", (int)replication.ReplicaFrequency);
 
-            var excludes = vm.Disks
-                .Select(d => d.Path)
-                .Where(p => !p.Equals(replication.VhdToReplicate, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            if (excludes.Any())
-                cmd.Parameters.Add("ExcludedVhdPath", excludes);
-
             // recovery points
+            cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
             if (replication.AdditionalRecoveryPoints > 0)
             {
                 if (replication.AdditionalRecoveryPoints > 24)
                     throw new Exception("AdditionalRecoveryPoints can not be greater than 24");
-
-                cmd.Parameters.Add("RecoveryHistory", replication.AdditionalRecoveryPoints);
 
                 if (replication.VSSSnapshotFrequencyHour > 0)
                 {
@@ -2102,9 +2090,13 @@ namespace WebsitePanel.Providers.Virtualization
 
                     cmd.Parameters.Add("VSSSnapshotFrequencyHour", replication.VSSSnapshotFrequencyHour);
                 }
+                else
+                {
+                    cmd.Parameters.Add("DisableVSSSnapshotReplication");
+                }
             }
 
-            PowerShell.Execute(cmd, true);
+            PowerShell.Execute(cmd, true, true);
         }
 
         public void TestReplicationServer(string vmId, string replicaServer, string localThumbprint)
@@ -2163,36 +2155,21 @@ namespace WebsitePanel.Providers.Virtualization
                     excludes.Add(item.Path.ToString());
                 replica.VhdToReplicate = vm.Disks
                     .Select(d => d.Path)
-                    .FirstOrDefault(p => excludes.All(ep => !p.Equals(ep, StringComparison.OrdinalIgnoreCase)));
+                    .Where(p => excludes.All(ep => !p.Equals(ep, StringComparison.OrdinalIgnoreCase)))
+                    .ToArray();
             }
 
             return replica;
         }
 
-        public bool DisableVmReplication(string vmId, string replicaServer)
+        public void DisableVmReplication(string vmId)
         {
-            if (ReplicaMode != ReplicaMode.ReplicationEnabled)
+            if (ReplicaMode == ReplicaMode.None)
                 throw new Exception("Server does not allow replication by settings");
 
             var vm = GetVirtualMachine(vmId);
 
             ReplicaHelper.RemoveVmReplication(PowerShell, vm.Name, ServerNameSettings);
-
-            // move it to EnterpriseServer?
-            // If we have access - delete garbage from replica server
-            try
-            {
-                ReplicaHelper.RemoveVmReplication(PowerShell, vm.Name, replicaServer);
-                // Delete replica vm
-                VirtualMachineHelper.Stop(PowerShell, vm.Name, true, replicaServer);
-                VirtualMachineHelper.Delete(PowerShell, vm.Name, replicaServer);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
         }
 
 
@@ -2212,13 +2189,13 @@ namespace WebsitePanel.Providers.Virtualization
             if (result != null && result.Count > 0)
             {
                 replica = new ReplicationDetailInfo();
-                replica.AverageLatency = result[0].GetProperty<TimeSpan>("AverageReplicationLatency");
+                replica.AverageLatency = result[0].GetProperty<TimeSpan?>("AverageReplicationLatency") ?? new TimeSpan();
                 replica.AverageSize = result[0].GetMb("AverageReplicationSize");
                 replica.Errors = result[0].GetInt("ReplicationErrors");
                 replica.FromTime = result[0].GetProperty<DateTime>("MonitoringStartTime");
                 replica.Health = result[0].GetEnum<ReplicationHealth>("ReplicationHealth");
-                replica.HealthDetails = result[0].GetString("ReplicationHealthDetails");
-                replica.LastSynhronizedAt = result[0].GetProperty<DateTime>("LastReplicationTime");
+                replica.HealthDetails = string.Join(" ", result[0].GetProperty<string[]>("ReplicationHealthDetails"));
+                replica.LastSynhronizedAt = result[0].GetProperty<DateTime?>("LastReplicationTime") ?? new DateTime();
                 replica.MaximumSize = result[0].GetMb("MaximumReplicationSize");
                 replica.Mode = result[0].GetEnum<VmReplicationMode>("ReplicationMode");
                 replica.PendingSize = result[0].GetMb("PendingReplicationSize");
@@ -2226,6 +2203,7 @@ namespace WebsitePanel.Providers.Virtualization
                 replica.ReplicaServerName = result[0].GetString("CurrentReplicaServerName");
                 replica.State = result[0].GetEnum<ReplicationState>("ReplicationState");
                 replica.SuccessfulReplications = result[0].GetInt("SuccessfulReplicationCount");
+                replica.MissedReplicationCount = result[0].GetInt("MissedReplicationCount");
                 replica.ToTime = result[0].GetProperty<DateTime>("MonitoringEndTime");
             }
 

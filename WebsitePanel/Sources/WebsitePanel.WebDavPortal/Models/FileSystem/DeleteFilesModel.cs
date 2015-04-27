@@ -3,7 +3,7 @@ using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models.FileSystem
 {
-    public class DeleteFilesModel : BaseModel
+    public class DeleteFilesModel : AjaxModel
     {
         public DeleteFilesModel()
         {

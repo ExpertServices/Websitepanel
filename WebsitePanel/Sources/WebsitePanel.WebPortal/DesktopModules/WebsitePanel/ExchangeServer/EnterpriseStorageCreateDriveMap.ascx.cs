@@ -75,16 +75,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ddlLetters.Items.Add(new ListItem(Convert.ToChar(i).ToString() + ":", Convert.ToChar(i).ToString()));// Add uppercase letters to possible drive letters
             }
             
-            string[] usedLetters = ES.Services.EnterpriseStorage.GetUsedDriveLetters(PanelRequest.ItemID);
+            //string[] usedLetters = ES.Services.EnterpriseStorage.GetUsedDriveLetters(PanelRequest.ItemID);
 
-            foreach (string elem in usedLetters)
-            {
-                ListItem item = new ListItem(elem + ":", elem);
-                if (ddlLetters.Items.Contains(item))
-                {
-                    ddlLetters.Items.Remove(item);
-                }
-            }
+            //foreach (string elem in usedLetters)
+            //{
+            //    ListItem item = new ListItem(elem + ":", elem);
+            //    if (ddlLetters.Items.Contains(item))
+            //    {
+            //        ddlLetters.Items.Remove(item);
+            //    }
+            //}
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)

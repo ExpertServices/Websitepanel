@@ -52,6 +52,8 @@ namespace WebsitePanel.Portal
 		public const string BACKUPS_PATH = "BackupsPath";
         public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
         public const string RDS_MAIN_CONTROLLER = "RdsMainController";
+        public const string WEBDAV_PORTAL_URL = "WebdavPortalUrl";
+        public const string WEBDAV_PASSWORD_RESET_ENABLED = "WebdavPasswordResetEnabled";
 
         /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
@@ -156,6 +158,15 @@ namespace WebsitePanel.Portal
             {
                 ddlRdsController.SelectedValue = ddlRdsController.Items[0].Value;
             }
+
+            // Webdav portal
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS);
+
+            if (settings != null)
+            {
+                chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
+                txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
+            }
 		}
 
 		private void SaveSettings()
@@ -236,6 +247,11 @@ namespace WebsitePanel.Portal
                 settings = new WSP.SystemSettings();
                 settings[RDS_MAIN_CONTROLLER] = ddlRdsController.SelectedValue;
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.RDS_SETTINGS, settings);
+
+                settings = new WSP.SystemSettings();
+                settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
+                settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY] = chkEnablePasswordReset.Checked.ToString();
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
 
                 if (result < 0)
                 {

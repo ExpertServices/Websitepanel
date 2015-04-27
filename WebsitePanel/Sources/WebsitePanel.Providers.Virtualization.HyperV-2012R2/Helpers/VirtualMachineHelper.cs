@@ -74,6 +74,7 @@ namespace WebsitePanel.Providers.Virtualization
         {
             Command cmd = new Command("Stop-VM");
 
+            cmd.Parameters.Add("Name", vmName);
             if (force) cmd.Parameters.Add("Force");
             if (!string.IsNullOrEmpty(server)) cmd.Parameters.Add("ComputerName", server);
             //if (!string.IsNullOrEmpty(reason)) cmd.Parameters.Add("Reason", reason);
