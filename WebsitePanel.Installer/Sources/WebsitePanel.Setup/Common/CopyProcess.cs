@@ -48,9 +48,9 @@ namespace WebsitePanel.Setup
 		/// <param name="bar">Progress bar.</param>
 		/// <param name="source">Source folder.</param>
 		/// <param name="destination">Destination folder.</param>
-		public CopyProcess(ProgressBar bar, string source, string destination)
+		public CopyProcess(object bar, string source, string destination)
 		{
-			this.progressBar = bar;
+            this.progressBar = bar as ProgressBar;
 			this.sourceFolder = new DirectoryInfo(source);
 			this.destFolder = new DirectoryInfo(destination);
 		}
@@ -63,9 +63,13 @@ namespace WebsitePanel.Setup
 			// unzip
 			long totalSize = FileUtils.CalculateFolderSize(sourceFolder.FullName);
 			long copied = 0;
-			progressBar.Minimum = 0;
-			progressBar.Maximum = 100;
-			progressBar.Value = 0;
+
+            if (progressBar != null)
+            {
+                progressBar.Minimum = 0;
+                progressBar.Maximum = 100;
+                progressBar.Value = 0;
+            }
 
 			int i = 0;
 			List<DirectoryInfo> folders = new List<DirectoryInfo>();
@@ -122,7 +126,10 @@ namespace WebsitePanel.Setup
 					copied += files[i].Length;
 					if (totalSize != 0)
 					{
-						progressBar.Value = Convert.ToInt32(copied * 100 / totalSize);
+                        if (progressBar != null)
+                        {
+                            progressBar.Value = Convert.ToInt32(copied * 100 / totalSize);
+                        }
 					}
 				}
 			}

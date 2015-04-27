@@ -170,5 +170,7 @@ namespace WebsitePanel.Setup
 			}
 			catch { }
 		}
+
+        public static TraceListenerCollection Listeners { get { return Trace.Listeners; } }
 	}
 }

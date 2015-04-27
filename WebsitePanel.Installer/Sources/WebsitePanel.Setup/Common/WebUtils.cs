@@ -150,7 +150,7 @@ namespace WebsitePanel.Setup
 				FileUtils.CreateDirectory(path);
 
 			SecurityUtils.GrantNtfsPermissions(path, userDomain, userAccount, NtfsPermission.Modify, true, true);
-			SecurityUtils.GrantNtfsPermissionsBySid(path, SystemSID.NETWORK_SERVICE, NtfsPermission.Modify, true, true);
+            SecurityUtils.GrantNtfsPermissionsBySid(path, SystemSID.NETWORK_SERVICE, NtfsPermission.Modify, true, true);
 		}
 
 		/// <summary>

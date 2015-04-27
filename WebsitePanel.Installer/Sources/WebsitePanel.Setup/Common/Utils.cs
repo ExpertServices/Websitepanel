@@ -481,11 +481,11 @@ namespace WebsitePanel.Setup
 		public static void StopService(string serviceName)
 		{
 			ServiceController sc = new ServiceController(serviceName);
-			// Start the service if the current status is stopped.
+			// Stop the service if the current status is not stopped.
 			if (sc.Status != ServiceControllerStatus.Stopped &&
 				sc.Status != ServiceControllerStatus.StopPending)
 			{
-				// Start the service, and wait until its status is "Running".
+				// Stop the service, and wait until its status is "Running".
 				sc.Stop();
 				sc.WaitForStatus(ServiceControllerStatus.Stopped);
 			}

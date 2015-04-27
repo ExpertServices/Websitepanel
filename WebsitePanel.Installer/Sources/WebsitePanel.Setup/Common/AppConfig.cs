@@ -38,25 +38,27 @@ namespace WebsitePanel.Setup
 	public sealed class AppConfig
 	{
 		public const string AppConfigFileNameWithoutExtension = "WebsitePanel.Installer.exe";
-
+        static AppConfig()
+        {
+            ConfigurationPath = DefaultConfigurationPath;
+        }
 		private AppConfig()
 		{
+        
 		}
-
 		private static Configuration appConfig = null;
 		private static XmlDocument xmlConfig = null;
-
-		public static void LoadConfiguration()
+        public static string ConfigurationPath { get; set; }
+        public static string DefaultConfigurationPath { get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfigFileNameWithoutExtension); } }
+		public static void LoadConfiguration(ExeConfigurationFileMap FnMap = null, ConfigurationUserLevel CuLevel = ConfigurationUserLevel.None)
 		{
-			//
-			var exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AppConfigFileNameWithoutExtension);
-			//
-			appConfig = ConfigurationManager.OpenExeConfiguration(exePath);
-			//
+            if (FnMap == null)
+                appConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationPath);
+            else
+                appConfig = ConfigurationManager.OpenMappedExeConfiguration(FnMap, CuLevel);
 			ConfigurationSection section = appConfig.Sections["installer"];
 			if (section == null)
-				throw new ConfigurationErrorsException("instalelr section not found");
-
+				throw new ConfigurationErrorsException("installer section not found in " + appConfig.FilePath);
 			string strXml = section.SectionInformation.GetRawXml();
 			xmlConfig = new XmlDocument();
 			xmlConfig.LoadXml(strXml);
