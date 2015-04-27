@@ -53,6 +53,7 @@
 		<LocalizationToolkitBuild>$(BuildFolder)\LocalizationToolkit</LocalizationToolkitBuild>
 		<InstallerBuild>$(BuildFolder)\Installer</InstallerBuild>
     <FixDefaultPublicFolderMailboxBuild>$(BuildFolder)\FixDefaultPublicFolderMailbox</FixDefaultPublicFolderMailboxBuild>
+        <WiXInstallerBuild>$(BuildFolder)\WiXInstaller</WiXInstallerBuild>
 
     <ftphost></ftphost>
 		<ftpUsername></ftpUsername>
@@ -360,11 +361,20 @@
     </ItemGroup>
     <Copy SourceFiles="@(FixDefaultPublicFolderMailboxBuildFiles)" DestinationFolder="$(FixDefaultPublicFolderMailboxBuild)\%(RecursiveDir)" />
   </Target>
+    
+    <Target Name="WiXCreateRedistFileListBuild" DependsOnTargets="CreateFixDefaultPublicFolderMailboxBuild" >
+        <RemoveDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
+        <MakeDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr INSTALLENTERPRISESERVERFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr INSTALLSERVERFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr INSTALLPORTALFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr INSTALLWEBDAVPORTALFOLDER' />
+    </Target>
 
-    <Target Name="Build" DependsOnTargets="CreateFixDefaultPublicFolderMailboxBuild">
+    <Target Name="Build" DependsOnTargets="WiXCreateRedistFileListBuild">
 		<!-- Do nothing -->
 	</Target>
-
+    
   <!-- Create full distributives -->
 	<PropertyGroup>
 		<InstallFolder>$(DeployFolder)\Install</InstallFolder>
@@ -384,7 +394,6 @@
 		<AWStatsViewerInstall>$(ToolsFolder)\AWStats.Viewer</AWStatsViewerInstall>
 		<WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
     <FixDefaultPublicFolderMailboxInstall>$(ToolsFolder)\FixDefaultPublicFolderMailbox</FixDefaultPublicFolderMailboxInstall>
-
   </PropertyGroup>
 
 	<Target Name="PrepareInstalls" DependsOnTargets="Build">
@@ -640,8 +649,15 @@
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.pdb" DestinationFolder="$(StandaloneInstall)\Setup" Condition="'$(BuildConfiguration)' == 'Debug'" />
 	</Target>
 
+    <Target Name="CreateStandaloneFullMsi" DependsOnTargets="CreateSetupDLL">
+        <MSBuild Projects='$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIXInstaller\Setup.WIXInstaller.wixproj' Properties='Configuration=$(BuildConfiguration)' Targets='Build'>
+           <Output TaskParameter="TargetOutputs" ItemName="StandaloneFullMsi" />	 
+        </MSBuild>    			
+		<Copy SourceFiles="@(StandaloneFullMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
+    </Target>
+
 	<!-- Deploy -->
-	<Target Name="Deploy" DependsOnTargets="CreateSetupDLL" >
+	<Target Name="Deploy" DependsOnTargets="CreateStandaloneFullMsi" >
 		<ItemGroup>
 			<PortalInstallFiles Include="$(PortalInstall)\**\*.*" />
 			<WebDavPortalInstallFiles Include="$(WebDavPortalInstall)\**\*.*" />
@@ -814,10 +830,11 @@
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
-      <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
+          <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-VMConfig-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Websitepanel-SchedulerService-$(Version).msi" LocalFile="$(DeployFolder)\Websitepanel-SchedulerService.msi" />
+          <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Full-$(Version).msi" LocalFile="$(DeployFolder)\Websitepanel.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Manual-Update-$(Version).zip" LocalFile="$(DeployFolder)\Manual-Update.zip" />
       <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-FixDefaultPublicFolderMailbox-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-FixDefaultPublicFolderMailbox-$(Version).zip" />
   </Target>
