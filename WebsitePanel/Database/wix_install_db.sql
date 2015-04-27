@@ -1,4 +1,3 @@
-USE [${install.database}]
 GO
 
 SET ANSI_NULLS ON
