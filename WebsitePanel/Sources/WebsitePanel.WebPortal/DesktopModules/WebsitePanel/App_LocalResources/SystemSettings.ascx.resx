@@ -180,4 +180,16 @@
   <data name="locEnablePasswordReset.Text" xml:space="preserve">
     <value>Enable password reset:</value>
   </data>
+  <data name="lblAccountSid.Text" xml:space="preserve">
+    <value>AccountSID</value>
+  </data>
+  <data name="lblAuthToken.Text" xml:space="preserve">
+    <value>AuthToken</value>
+  </data>
+  <data name="lblPhoneFrom.Text" xml:space="preserve">
+    <value>Phone From</value>
+  </data>
+  <data name="TwilioSettings.Text" xml:space="preserve">
+    <value>Twilio</value>
+  </data>
 </root>

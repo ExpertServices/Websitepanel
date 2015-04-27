@@ -356,9 +356,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
         {
-            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo);
+            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo, finalStep);
         }
 
         #endregion

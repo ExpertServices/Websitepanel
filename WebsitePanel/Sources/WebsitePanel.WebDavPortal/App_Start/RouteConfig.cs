@@ -38,14 +38,14 @@ namespace WebsitePanel.WebDavPortal
 
             routes.MapRoute(
                 name: AccountRouteNames.PasswordResetSendSms,
-                url: "account/password-reset/step-final/{token}",
+                url: "account/password-reset/send-new-sms/{token}",
                 defaults: new { controller = "Account", action = "PasswordResetSendSms" }
                 );
 
             routes.MapRoute(
                 name: AccountRouteNames.PasswordResetFinalStep,
-                url: "account/password-reset/send-new-sms/{token}",
-                defaults: new { controller = "Account", action = "PasswordResetFinalStep" }
+                url: "account/password-reset/step-final/{token}/{pincode}",
+                defaults: new { controller = "Account", action = "PasswordResetFinalStep", pincode = UrlParameter.Optional }
                 );
 
             routes.MapRoute(

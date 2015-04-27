@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using AutoMapper;
 using log4net;
+using Microsoft.Web.Services3.Addressing;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Security.Authentication;
@@ -186,7 +187,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return View(model);
             }
 
-            WspContext.Services.Organizations.SendResetUserPasswordEmail(exchangeAccount.ItemId, exchangeAccount.AccountId, Resources.Messages.PasswordResetUserReason, exchangeAccount.PrimaryEmailAddress);
+            WspContext.Services.Organizations.SendResetUserPasswordEmail(exchangeAccount.ItemId, exchangeAccount.AccountId, Resources.Messages.PasswordResetUserReason, exchangeAccount.PrimaryEmailAddress, false);
 
             return View("PasswordResetEmailSent");
         }
@@ -257,14 +258,15 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult PasswordResetFinalStep(Guid token)
+        public ActionResult PasswordResetFinalStep(Guid token, string pincode)
         {
-            var smsResponse = Session[WebDavAppConfigManager.Instance.SessionKeys.PasswordResetSmsKey] as string;
+            var result = VerifyPincode(token, pincode);
 
-            if (_smsAuthService.VerifyResponse(token, smsResponse) == false)
+            if (result != null)
             {
-                return RedirectToRoute(AccountRouteNames.PasswordResetSms);
+                return result;
             }
+
 
             var model = new PasswordEditor();
 
@@ -273,20 +275,18 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult PasswordResetFinalStep(Guid token, PasswordEditor model)
+        public ActionResult PasswordResetFinalStep(Guid token, string pincode, PasswordEditor model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var smsResponse = Session[WebDavAppConfigManager.Instance.SessionKeys.PasswordResetSmsKey] as string;
+            var result = VerifyPincode(token, pincode);
 
-            if (_smsAuthService.VerifyResponse(token, smsResponse) == false)
+            if (result != null)
             {
-                AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
-
-                return RedirectToRoute(AccountRouteNames.PasswordResetSms);
+                return result;
             }
 
             var tokenEntity = WspContext.Services.Organizations.GetPasswordresetAccessToken(token);
@@ -332,6 +332,34 @@ namespace WebsitePanel.WebDavPortal.Controllers
         }
 
         #region Helpers
+
+        /// <summary>
+        /// Verify pincode, if it's absent - verifying pincode from session 
+        /// </summary>
+        /// <param name="token">Password reset token</param>
+        /// <param name="pincode">Pincode to verify if session pincode is absent</param>
+        private ActionResult VerifyPincode(Guid token, string pincode)
+        {
+            var smsResponse = Session[WebDavAppConfigManager.Instance.SessionKeys.PasswordResetSmsKey] as string;
+
+            if (string.IsNullOrEmpty(pincode) == false)
+            {
+                smsResponse = pincode;
+            }
+
+            if (_smsAuthService.VerifyResponse(token, smsResponse) == false)
+            {
+                AddMessage(MessageType.Error, Resources.Messages.IncorrectSmsResponse);
+
+                return RedirectToRoute(AccountRouteNames.PasswordResetSms);
+            }
+
+            var tokenEntity = WspContext.Services.Organizations.GetPasswordresetAccessToken(token);
+
+            Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = tokenEntity.ItemId;
+
+            return null;
+        }
 
         private UserProfile GetUserProfileModel(int itemId, int accountId)
         {

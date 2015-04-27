@@ -2648,21 +2648,23 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SendResetUserPasswordEmail", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo) {
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep) {
             this.Invoke("SendResetUserPasswordEmail", new object[] {
                         itemId,
                         accountId,
                         reason,
-                        mailTo});
+                        mailTo,
+                        finalStep});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SendResetUserPasswordEmail", new object[] {
                         itemId,
                         accountId,
                         reason,
-                        mailTo}, callback, asyncState);
+                        mailTo,
+                        finalStep}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -2671,12 +2673,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         }
         
         /// <remarks/>
-        public void SendResetUserPasswordEmailAsync(int itemId, int accountId, string reason, string mailTo) {
-            this.SendResetUserPasswordEmailAsync(itemId, accountId, reason, mailTo, null);
+        public void SendResetUserPasswordEmailAsync(int itemId, int accountId, string reason, string mailTo, bool finalStep) {
+            this.SendResetUserPasswordEmailAsync(itemId, accountId, reason, mailTo, finalStep, null);
         }
         
         /// <remarks/>
-        public void SendResetUserPasswordEmailAsync(int itemId, int accountId, string reason, string mailTo, object userState) {
+        public void SendResetUserPasswordEmailAsync(int itemId, int accountId, string reason, string mailTo, bool finalStep, object userState) {
             if ((this.SendResetUserPasswordEmailOperationCompleted == null)) {
                 this.SendResetUserPasswordEmailOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSendResetUserPasswordEmailOperationCompleted);
             }
@@ -2684,7 +2686,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
                         itemId,
                         accountId,
                         reason,
-                        mailTo}, this.SendResetUserPasswordEmailOperationCompleted, userState);
+                        mailTo,
+                        finalStep}, this.SendResetUserPasswordEmailOperationCompleted, userState);
         }
         
         private void OnSendResetUserPasswordEmailOperationCompleted(object arg) {

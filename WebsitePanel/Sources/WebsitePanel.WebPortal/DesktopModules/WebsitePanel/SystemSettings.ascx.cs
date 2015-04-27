@@ -167,6 +167,17 @@ namespace WebsitePanel.Portal
                 chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
                 txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
             }
+
+            // Twilio portal
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.TWILIO_SETTINGS);
+
+            if (settings != null)
+            {
+                txtAccountSid.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty);
+                txtAuthToken.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty);
+                txtPhoneFrom.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty);
+            }
+
 		}
 
 		private void SaveSettings()
@@ -252,6 +263,19 @@ namespace WebsitePanel.Portal
                 settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
                 settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY] = chkEnablePasswordReset.Checked.ToString();
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                // Twilio portal
+                settings = new WSP.SystemSettings();
+                settings[WSP.SystemSettings.TWILIO_ACCOUNTSID_KEY] = txtAccountSid.Text;
+                settings[WSP.SystemSettings.TWILIO_AUTHTOKEN_KEY] = txtAuthToken.Text;
+                settings[WSP.SystemSettings.TWILIO_PHONEFROM_KEY] = txtPhoneFrom.Text;
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.TWILIO_SETTINGS, settings);
 
                 if (result < 0)
                 {
