@@ -46,7 +46,13 @@ namespace WebsitePanel.Portal
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString());
 
             if (!IsPostBack)
-                txtFilterValue.Focus();
+            {
+                searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
+                searchBox.AddCriteria("FullName", GetLocalizedString("SearchField.Name"));
+                searchBox.AddCriteria("Email", GetLocalizedString("SearchField.EMail"));
+                searchBox.AddCriteria("CompanyName", GetLocalizedString("SearchField.CompanyName"));
+                searchBox.Focus();
+            }
         }
 
         private void BindGroupings()
@@ -71,14 +77,6 @@ namespace WebsitePanel.Portal
             return NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
                 parameterName + "=" + parameterValue);
-        }
-
-        protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
-        {
-            Response.Redirect(NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
-                PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
-                "FilterColumn=" + ddlFilterColumn.SelectedValue,
-                "FilterValue=" + Server.UrlEncode(txtFilterValue.Text)));
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)

@@ -842,6 +842,13 @@ namespace WebsitePanel.Portal
             return PortalConfiguration.SiteSettings["SpacesSearchPage"];
         }
 
+        //TODO START
+        public static string GetObjectSearchPageId()
+        {
+            return PortalConfiguration.SiteSettings["SearchObjectPage"];
+        }
+        //TODO END
+
         public static string GetNestedSpacesPageId()
         {
             return PortalConfiguration.SiteSettings["NestedSpacesPage"];

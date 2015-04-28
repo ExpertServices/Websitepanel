@@ -22,10 +22,10 @@
         <xs:annotation>
             <xs:appinfo>
                 <xse:remarks>
-                    <html:p>You can specify any valid Windows code page by integer like 1252, or by web name like Windows-1252 or iso-8859-1. See <a href="/html/codepage.htm">Code Pages</a> for more information.</html:p>
+                    <html:p>You can specify any valid Windows code page by integer like 1252, or by web name like Windows-1252 or iso-8859-1. See <a href="~/overview/codepage.html">Code Pages</a> for more information.</html:p>
                 </xse:remarks>
-                <xse:howtoRef href="build_a_localized_version.htm">How To: Build a localized version of your installer</xse:howtoRef>
-                <xse:howtoRef href="make_installer_localizable.htm">How To: Make your installer localizable</xse:howtoRef>
+                <xse:howtoRef href="ui_and_localization/build_a_localized_version.html">How To: Build a localized version of your installer</xse:howtoRef>
+                <xse:howtoRef href="ui_and_localization/make_installer_localizable.html">How To: Make your installer localizable</xse:howtoRef>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
@@ -54,8 +54,8 @@
     <xs:element name="String">
         <xs:annotation>
             <xs:appinfo>
-                <xse:howtoRef href="build_a_localized_version.htm">How To: Build a localized version of your installer</xse:howtoRef>
-                <xse:howtoRef href="make_installer_localizable.htm">How To: Make your installer localizable</xse:howtoRef>
+                <xse:howtoRef href="ui_and_localization/build_a_localized_version.html">How To: Build a localized version of your installer</xse:howtoRef>
+                <xse:howtoRef href="ui_and_localization/make_installer_localizable.html">How To: Make your installer localizable</xse:howtoRef>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType mixed="true">

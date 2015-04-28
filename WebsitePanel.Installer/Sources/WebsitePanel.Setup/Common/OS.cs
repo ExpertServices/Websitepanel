@@ -286,7 +286,8 @@ namespace WebsitePanel.Setup
             Windows7,
             WindowsServer2008R2,
             Windows8,
-            WindowsServer2012
+            WindowsServer2012,
+            WindowsServer2012R2
 		}
 
 		public static string GetName(WindowsVersion version)
@@ -427,6 +428,9 @@ namespace WebsitePanel.Setup
                                         ret = WindowsVersion.Windows8;
                                     else
                                         ret = WindowsVersion.WindowsServer2012;
+                                    break;
+                                case 3:
+                                        ret = WindowsVersion.WindowsServer2012R2;
                                     break;
                             }
                             break;

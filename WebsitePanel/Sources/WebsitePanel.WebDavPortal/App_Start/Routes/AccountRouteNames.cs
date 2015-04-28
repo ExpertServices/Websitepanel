@@ -16,6 +16,7 @@ namespace WebsitePanel.WebDavPortal.UI.Routes
         public const string PasswordResetSms = "PasswordResetSmsRoute";
         public const string PasswordResetSendSms = "PasswordResetSendSmsRoute";
         public const string PasswordResetFinalStep = "PasswordResetFinalStepRoute";
+        public const string PasswordResetSuccess = "PasswordResetSuccess";
 
         public const string PhoneNumberIsAvailible = "PhoneNumberIsAvailibleRoute";
     }

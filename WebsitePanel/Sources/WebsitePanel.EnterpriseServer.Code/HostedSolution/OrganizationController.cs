@@ -1858,17 +1858,22 @@ namespace WebsitePanel.EnterpriseServer
             return SystemController.GetSystemSettingsInternal(SystemSettings.WEBDAV_PORTAL_SETTINGS, false);
         }
 
-        public static string GenerateUserPasswordResetLink(int itemId, int accountId, out Guid tokenGuid, string pincode = null)
+        public static string GenerateUserPasswordResetLink(int itemId, int accountId, out Guid tokenGuid, string pincode = null, string resetUrl = null)
         {
-            string passwordResetUrlFormat = string.IsNullOrEmpty(pincode) ? "account/password-reset/step-2" : "account/password-reset/step-final";
-
             var settings = GetWebDavSystemSettings();
+            tokenGuid = new Guid();
 
-            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
+            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) || !settings.Contains("WebdavPortalUrl"))
             {
-                tokenGuid = new Guid();
                 return string.Empty;
             }
+
+            if (string.IsNullOrEmpty(resetUrl) == false)
+            {
+                return resetUrl;
+            }
+
+            string passwordResetUrlFormat = string.IsNullOrEmpty(pincode) ? "account/password-reset/step-2" : "account/password-reset/step-final";
 
             var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
 
@@ -1994,7 +1999,8 @@ namespace WebsitePanel.EnterpriseServer
                             AccountLockoutDuration = GetValueSafe(parts, 9, 0),
                             ResetAccountLockoutCounterAfter = GetValueSafe(parts, 10, 0),
                             LockoutSettingsEnabled = GetValueSafe(parts, 11, false),
-                            PasswordComplexityEnabled = GetValueSafe(parts, 11, true),
+                            PasswordComplexityEnabled = GetValueSafe(parts, 12, true),
+                            MaxPasswordAge = GetValueSafe(parts, 13, 42),
                         };
 
 

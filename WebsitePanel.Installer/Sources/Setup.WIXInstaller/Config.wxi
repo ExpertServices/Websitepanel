@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-  <?define PROJECTPATH = "..\..\..\WebsitePanel"?>
-  <?define VERSION="2.1"?>
+    <?define PROJECTPATH = "..\..\..\WebsitePanel"?>
+    <?define NAME="WebsitePanel"?>
+    <?define ServerTitle="Server"?>
+    <?define ServerDescription="WebsitePanel Server is a set of services running on the remote server to be controlled. Server application should be reachable from Enterprise Server one."?>
+    <?define EServerTitle="Enterprise Server"?>
+    <?define EServerDescription="Enterprise Server is the heart of WebsitePanel system. It includes all business logic of the application. Enterprise Server should have access to Server and be accessible from Portal applications."?>
+    <?define PortalTitle="Portal"?>
+    <?define PortalDescription="WebsitePanel Portal is a control panel itself with user interface which allows managing user accounts, hosting spaces, web sites, FTP accounts, files, etc."?>
+    <?define VERSION="$(var.Version)"?>
+    <?define sql_release_version = "$(var.Version)"?> <!--N'${release.version}'-->
+    <?define sql_build_date = "$(var.BuildDate)"?> <!-- '${release.date}T00:00:00' - ISO 8601 Format (YYYY-MM-DDTHH:MM:SS) -->
 </Include>

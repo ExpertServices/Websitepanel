@@ -141,6 +141,12 @@
   <data name="PageTitle.SearchSpaces" xml:space="preserve">
     <value>{user} - Search Hosting Spaces</value>
   </data>
+  <data name="PageName.SearchObject" xml:space="preserve">
+    <value>Search Objects</value>
+  </data>
+  <data name="PageTitle.SearchObject" xml:space="preserve">
+    <value>{user} - Search Objects</value>
+  </data>
   <data name="PageName.Home" xml:space="preserve">
     <value>Account Home</value>
   </data>

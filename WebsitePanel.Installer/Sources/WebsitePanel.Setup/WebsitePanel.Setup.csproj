@@ -143,6 +143,7 @@
     <Compile Include="Common\ZipIndicator.cs" />
     <Compile Include="EnterpriseServer10.cs" />
     <Compile Include="EnterpriseServer20.cs" />
+    <Compile Include="Internal\Adapter.cs" />
     <Compile Include="Portal10.cs" />
     <Compile Include="Portal20.cs" />
     <Compile Include="Server10.cs" />

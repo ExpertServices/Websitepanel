@@ -5,6 +5,7 @@
         public int MinimumLength { get; set; }
         public int MaximumLength { get; set; }
         public int EnforcePasswordHistory { get; set; }
+        public int MaxPasswordAge { get; set; }
 
         public bool LockoutSettingsEnabled { get; set; }
         public int AccountLockoutDuration { get; set; }

@@ -299,7 +299,14 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             AddMessage(MessageType.Success, Resources.Messages.PasswordSuccessfullyChanged);
 
-            return RedirectToRoute(AccountRouteNames.Login);
+            return RedirectToRoute(AccountRouteNames.PasswordResetSuccess);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult PasswordSuccessfullyChanged()
+        {
+            return View();
         }
 
         [HttpGet]

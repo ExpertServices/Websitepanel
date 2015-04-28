@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.7</ProductVersion>
+    <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>{978f0a18-7c81-4561-8f6d-5a165484ad0a}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>Websitepanel</OutputName>
@@ -14,34 +14,49 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;BUILD=debug</DefineConstants>
+    <DefineConstants>Debug;BUILD=debug;Version=$(Version);BuildDate=$(ReleaseDate)</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>
     </SuppressIces>
     <CompilerAdditionalOptions>
     </CompilerAdditionalOptions>
-    <LinkerAdditionalOptions>
+    <LinkerAdditionalOptions> 
     </LinkerAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>BUILD=release</DefineConstants>
+    <DefineConstants>BUILD=release;Version=$(Version);BuildDate=$(ReleaseDate)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="EnterpriseServerFiles.wxs" />
-    <Compile Include="PortalFiles.wxs" />
+    <Compile Include="CustomVerifyReadyDlg.wxs" />
     <Compile Include="Product.wxs" />
     <Compile Include="SchedulerServiceFiles.wxs" />
-    <Compile Include="ServerFiles.wxs" />
+    <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\ServerFiles.wxs" />
+    <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\EnterpriseServerFiles.wxs" />
+    <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\PortalFiles.wxs" />
+    <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\WebDavPortalFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.wxi" />
+    <Content Include="WebsitePanel.config" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
       <HintPath>..\..\..\tools\WIX\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixIIsExtension">
+      <HintPath>..\..\..\tools\WIX\WixIIsExtension.dll</HintPath>
+      <Name>WixIIsExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixSqlExtension">
+      <HintPath>..\..\..\tools\WIX\WixSqlExtension.dll</HintPath>
+      <Name>WixSqlExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>..\..\..\tools\WIX\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />

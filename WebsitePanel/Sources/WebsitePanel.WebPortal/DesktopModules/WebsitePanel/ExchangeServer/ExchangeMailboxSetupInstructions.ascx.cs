@@ -47,7 +47,12 @@ namespace WebsitePanel.Portal.ExchangeServer
             // load content
             litContent.Text = ES.Services.ExchangeServer.GetMailboxSetupInstructions(
                 PanelRequest.ItemID, PanelRequest.AccountID,
-                false, false, false);
+                false, false, false,
+                PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "user_reset_password",
+                "SpaceID=" + PanelSecurity.PackageId,
+                "Context=Mailbox",
+                "AccountID=" + PanelRequest.AccountID).Trim('~'));
 
             // bind user details
             PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);

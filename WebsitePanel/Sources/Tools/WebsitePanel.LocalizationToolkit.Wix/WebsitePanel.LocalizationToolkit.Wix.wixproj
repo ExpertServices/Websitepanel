@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.7</ProductVersion>
+    <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>3f3f1c39-6719-4862-bb45-4c227f13b821</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>WebsitePanel.LocalizationToolkit</OutputName>

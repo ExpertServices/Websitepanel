@@ -46,9 +46,9 @@ namespace WebsitePanel.Setup.Common
 		int totalFiles = 0;
 		int files = 0;
 
-		public ZipIndicator(ProgressBar progressBar, string sourcePath, string zipFile)
+		public ZipIndicator(object progressBar, string sourcePath, string zipFile)
 		{
-			this.progressBar = progressBar;
+			this.progressBar = progressBar as ProgressBar;
 			this.sourcePath = sourcePath;
 			this.zipFile = zipFile;
 		}
@@ -71,8 +71,11 @@ namespace WebsitePanel.Setup.Common
 			{
 				string fileName = e.CurrentEntry.FileName;
 				files++;
-				this.progressBar.Value = Convert.ToInt32(files * 100 / totalFiles);
-				this.progressBar.Update();
+                if (this.progressBar != null)
+                {
+                    this.progressBar.Value = Convert.ToInt32(files * 100 / totalFiles);
+                    this.progressBar.Update();
+                }
 			}
 		}
 	}

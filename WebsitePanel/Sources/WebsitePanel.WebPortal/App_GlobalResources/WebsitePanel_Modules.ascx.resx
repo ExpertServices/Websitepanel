@@ -711,6 +711,9 @@
   <data name="ModuleTitle.SearchSpaces" xml:space="preserve">
     <value>Search Hosting Spaces</value>
   </data>
+  <data name="ModuleTitle.SearchObject" xml:space="preserve">
+    <value>Search Objects</value>
+  </data>
   <data name="ModuleTitle.SearchUsers" xml:space="preserve">
     <value>Search User Accounts</value>
   </data>

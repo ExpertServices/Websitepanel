@@ -70,32 +70,20 @@ namespace WebsitePanel.Portal.SkinControls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(!IsPostBack)
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery",ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+            cs.RegisterClientScriptInclude("jqueryui",ResolveUrl("~/JavaScript/jquery-ui-1.8.9.min.js"));
+//            cs.RegisterClientScriptBlock(this.GetType(), "jquerycss",
+//                "<link rel='stylesheet' type='text/css' href='" + ResolveUrl("~/App_Themes/Default/Styles/jquery-ui-1.8.9.css") + "' />");
+            if (!IsPostBack)
             {
-                BindTabs();
                 BindItemTypes();
             }
         }
 
-        private void BindTabs()
-        {
-            List<Tab> tabsList = new List<Tab>();
-            if (PanelSecurity.EffectiveUser.Role != UserRole.User)
-                tabsList.Add(new Tab(0, GetLocalizedString("Users.Text")));
-
-			tabsList.Add(new Tab(1, GetLocalizedString("Spaces.Text")));
-
-            if(dlTabs.SelectedIndex == -1)
-                dlTabs.SelectedIndex = 0;   
-            dlTabs.DataSource = tabsList.ToArray();
-            dlTabs.DataBind();
-
-            tabs.ActiveViewIndex = tabsList[dlTabs.SelectedIndex].Index;
-        }
-
         private void BindItemTypes()
         {
-            // bind item types
+/*            // bind item types
             DataTable dtItemTypes = ES.Services.Packages.GetSearchableServiceItemTypes().Tables[0];
 			foreach (DataRow dr in dtItemTypes.Rows)
 			{
@@ -108,28 +96,63 @@ namespace WebsitePanel.Portal.SkinControls
 				}
 				//
 				ddlItemType.Items.Add(new ListItem(localizedStr, dr["ItemTypeID"].ToString()));
-			}
-        }
-
-        protected void dlTabs_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            BindTabs();
+			} */
         }
 
         protected void btnSearchUsers_Click(object sender, EventArgs e)
         {
-            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
+/*            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
                 "Query=" + Server.UrlEncode(txtUsersQuery.Text),
-                "Criteria=" + ddlUserFields.SelectedValue));
+                "Criteria=" + ddlUserFields.SelectedValue)); */
         }
 
         protected void btnSearchSpaces_Click(object sender, EventArgs e)
         {
-            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
+/*            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
                 "Query=" + Server.UrlEncode(txtSpacesQuery.Text),
-                "ItemTypeID=" + ddlItemType.SelectedValue));
+                "ItemTypeID=" + ddlItemType.SelectedValue)); */
         }
+
+        //TODO START
+        protected void btnSearchObject_Click(object sender, EventArgs e)
+        {
+            String strColumnType = tbSearchColumnType.Text;
+            String strFullType = tbSearchFullType.Text;
+            String strText = tbSearchText.Text;
+            if (strText.Length > 0)
+            {
+                if (strFullType == "Users")
+                {
+                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
+                       PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "Query=" + Server.UrlEncode(strText),
+                        "Criteria=" + Server.UrlEncode(strColumnType)
+                    ));
+                }
+                else if (strFullType == "Space")
+                {
+                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "Query=" + Server.UrlEncode(strText),
+                        "Criteria=" + Server.UrlEncode(strColumnType)
+                    ));
+                }
+                else
+                {
+                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "Query=" + Server.UrlEncode(strText)));
+                }
+            }
+            else
+            {
+                Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                    PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                    "Query=" + Server.UrlEncode(tbSearch.Text)));
+            }
+        }
+        //TODO END
     }
 }

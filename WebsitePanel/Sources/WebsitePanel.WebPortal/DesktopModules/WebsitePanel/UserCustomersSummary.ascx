@@ -1,5 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserCustomersSummary.ascx.cs" Inherits="WebsitePanel.Portal.UserCustomersSummary" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="UserControls/CollapsiblePanel.ascx" %>
+<%@ Register Src="UserControls/SearchBox.ascx" TagName="SearchBox" TagPrefix="uc1" %>
+
 <%@ Import Namespace="WebsitePanel.Portal" %>
 <div class="FormButtonsBar">
 	<div class="Left">
@@ -7,14 +9,8 @@
 			runat="server" CssClass="Button1"></asp:Button>
 	</div>
 	<div class="Right">
-		<asp:Panel ID="tblSearch" runat="server" DefaultButton="cmdSearch" CssClass="NormalBold">
-			<asp:DropDownList ID="ddlFilterColumn" runat="server" resourcekey="ddlFilterColumn" CssClass="NormalTextBox" style="vertical-align: middle;">
-				<asp:ListItem Value="Username">Username</asp:ListItem>
-				<asp:ListItem Value="Email">E-mail</asp:ListItem>
-				<asp:ListItem Value="FullName">FullName</asp:ListItem>
-                <asp:ListItem Value="CompanyName">CompanyName</asp:ListItem>
-			</asp:DropDownList><asp:TextBox ID="txtFilterValue" runat="server" CssClass="NormalTextBox" Width="100" style="vertical-align: middle;"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
-				CausesValidation="false" OnClick="cmdSearch_Click" style="vertical-align: middle;"/>
+		<asp:Panel ID="tblSearch" runat="server" CssClass="NormalBold">
+            <uc1:SearchBox ID="searchBox" runat="server" />
 		</asp:Panel>
 	</div>
 </div>
