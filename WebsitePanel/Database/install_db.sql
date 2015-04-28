@@ -111,25 +111,25 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddBlackBerryUser]	
+CREATE PROCEDURE [dbo].[AddBlackBerryUser]
 	@AccountID int
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 INSERT INTO
 	dbo.BlackBerryUsers
-	(	 
-	 
+	(
+
 	 AccountID,
 	 CreatedDate,
 	 ModifiedDate)
 VALUES
-(		
+(
 	@AccountID,
 	getdate(),
 	getdate()
-)		
+)
 END
 
 
@@ -355,7 +355,7 @@ CREATE PROCEDURE [dbo].[AddDnsRecord]
 	@RecordData nvarchar(500),
 	@MXPriority int,
 	@SrvPriority int,
-	@SrvWeight int, 
+	@SrvWeight int,
 	@SrvPort int,
 	@IPAddressID int
 )
@@ -378,7 +378,7 @@ IF EXISTS
 	ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
 	AND RecordName = @RecordName AND RecordType = @RecordType
 )
-	
+
 	UPDATE GlobalDnsRecords
 	SET
 		RecordData = RecordData,
@@ -386,7 +386,7 @@ IF EXISTS
 		SrvPriority = SrvPriority,
 		SrvWeight = SrvWeight,
 		SrvPort = SrvPort,
-	
+
 		IPAddressID = @IPAddressID
 	WHERE
 		ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
@@ -439,7 +439,7 @@ GO
 
 
 
-CREATE PROCEDURE AddDomain 
+CREATE PROCEDURE AddDomain
 (
 	@DomainID int OUTPUT,
 	@ActorID int,
@@ -516,7 +516,7 @@ GO
 
 
 /****** Object:  Table [dbo].[AddExchangeAccount]    ******/
-CREATE PROCEDURE [dbo].[AddExchangeAccount] 
+CREATE PROCEDURE [dbo].[AddExchangeAccount]
 (
 	@AccountID int OUTPUT,
 	@ItemID int,
@@ -664,7 +664,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan]
 (
 	@MailboxPlanId int OUTPUT,
 	@ItemID int,
@@ -818,7 +818,7 @@ GO
 
 
 
-CREATE PROCEDURE AddExchangeOrganizationDomain 
+CREATE PROCEDURE AddExchangeOrganizationDomain
 (
 	@ItemID int,
 	@DomainID int,
@@ -884,7 +884,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddIPAddress]	
+CREATE PROCEDURE [dbo].[AddIPAddress]
 (
 	@AddressID int OUTPUT,
 	@ServerID int,
@@ -1049,7 +1049,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddLyncUser]	
+CREATE PROCEDURE [dbo].[AddLyncUser]
 	@AccountID int,
 	@LyncUserPlanID int,
 	@SipAddress nvarchar(300)
@@ -1062,7 +1062,7 @@ INSERT INTO
 	 ModifiedDate,
 	 SipAddress)
 VALUES
-(		
+(
 	@AccountID,
 	@LyncUserPlanID,
 	getdate(),
@@ -1084,7 +1084,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddLyncUserPlan] 
+CREATE PROCEDURE [dbo].[AddLyncUserPlan]
 (
 	@LyncUserPlanId int OUTPUT,
 	@ItemID int,
@@ -1154,28 +1154,28 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
-CREATE PROCEDURE [dbo].[AddOCSUser]	
+CREATE PROCEDURE [dbo].[AddOCSUser]
 	@AccountID int,
 	@InstanceID nvarchar(50)
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
 INSERT INTO
 	dbo.OCSUsers
-	(	 
-	 
+	(
+
 	 AccountID,
      InstanceID,
 	 CreatedDate,
 	 ModifiedDate)
 VALUES
-(		
+(
 	@AccountID,
 	@InstanceID,
 	getdate(),
 	getdate()
-)		
+)
 END
 
 
@@ -1490,20 +1490,20 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddPFX] 
+CREATE PROCEDURE [dbo].[AddPFX]
 (
 	@ActorID int,
 	@PackageID int,
 	@UserID int,
 	@WebSiteID int,
 	@FriendlyName nvarchar(255),
-	@HostName nvarchar(255),	
+	@HostName nvarchar(255),
 	@CSRLength int,
 	@DistinguishedName nvarchar(500),
 	@SerialNumber nvarchar(250),
 	@ValidFrom datetime,
 	@ExpiryDate datetime
-	
+
 )
 AS
 
@@ -1642,7 +1642,7 @@ SELECT
 	@ScheduleID,
 	ParameterID,
 	ParameterValue
-FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
+FROM OPENXML(@idoc, '/parameters/parameter',1) WITH
 (
 	ParameterID nvarchar(50) '@id',
 	ParameterValue nvarchar(3000) '@value'
@@ -1776,7 +1776,7 @@ VALUES
 
 SET @ServerID = SCOPE_IDENTITY()
 
-RETURN 
+RETURN
 
 
 
@@ -1937,7 +1937,7 @@ ORDER BY RecordOrder
 COMMIT TRAN
 
 END
-RETURN 
+RETURN
 
 
 
@@ -2023,9 +2023,9 @@ BEGIN
 	BEGIN
 		INSERT INTO ServiceItems (PackageID, ItemTypeID,ServiceID,ItemName,CreatedDate)
 		VALUES(1, @ItemTypeID, @ServiceID, 'System',  @CreatedDate)
-		
+
 		DECLARE @TempItemID int
-		
+
 		SET @TempItemID = SCOPE_IDENTITY()
 		INSERT INTO ExchangeOrganizations (ItemID, OrganizationID)
 		VALUES(@TempItemID, 'System')
@@ -2071,7 +2071,7 @@ SELECT
 	@ItemID,
 	PropertyName,
 	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
+FROM OPENXML(@idoc, '/properties/property',1) WITH
 (
 	PropertyName nvarchar(50) '@name',
 	PropertyValue nvarchar(3000) '@value'
@@ -2081,7 +2081,7 @@ FROM OPENXML(@idoc, '/properties/property',1) WITH
 exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
-RETURN 
+RETURN
 
 
 GO
@@ -2091,7 +2091,7 @@ SET QUOTED_IDENTIFIER OFF
 GO
 
 
-CREATE PROCEDURE [dbo].[AddSSLRequest] 
+CREATE PROCEDURE [dbo].[AddSSLRequest]
 (
 	@SSLID int OUTPUT,
 	@ActorID int,
@@ -2105,7 +2105,7 @@ CREATE PROCEDURE [dbo].[AddSSLRequest]
 	@DistinguishedName nvarchar(500),
 	@IsRenewal bit = 0,
 	@PreviousId int = NULL
-	
+
 )
 AS
 
@@ -2254,7 +2254,7 @@ VALUES
 
 SET @UserID = SCOPE_IDENTITY()
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -2321,7 +2321,7 @@ INSERT INTO VirtualServices
 SELECT
 	@ServerID,
 	ServiceID
-FROM OPENXML(@idoc, '/services/service',1) WITH 
+FROM OPENXML(@idoc, '/services/service',1) WITH
 (
 	ServiceID int '@id'
 ) as XS
@@ -2404,7 +2404,7 @@ BEGIN
 	-- delete
 	DELETE FROM PackageIPAddresses
 	FROM PackageIPAddresses AS PIP
-	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
+	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH
 	(
 		AddressID int '@id'
 	) as PV ON PIP.AddressID = PV.AddressID
@@ -2412,15 +2412,15 @@ BEGIN
 
 	-- insert
 	INSERT INTO dbo.PackageIPAddresses
-	(		
+	(
 		PackageID,
-		AddressID	
+		AddressID
 	)
-	SELECT		
+	SELECT
 		@PackageID,
 		AddressID
 
-	FROM OPENXML(@idoc, '/items/item', 1) WITH 
+	FROM OPENXML(@idoc, '/items/item', 1) WITH
 	(
 		AddressID int '@id'
 	) as PV
@@ -2466,7 +2466,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType
 (
 	@ItemID int,
 	@DomainID int,
@@ -2530,7 +2530,7 @@ UPDATE Users
 SET Password = @Password
 WHERE UserID = @UserID
 
-RETURN 
+RETURN
 
 
 
@@ -2588,13 +2588,13 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[CheckBlackBerryUserExists] 
+CREATE PROCEDURE [dbo].[CheckBlackBerryUserExists]
 	@AccountID int
 AS
-BEGIN	
-	SELECT 
+BEGIN
+	SELECT
 		COUNT(AccountID)
-	FROM 
+	FROM
 		dbo.BlackBerryUsers
 	WHERE AccountID = @AccountID
 END
@@ -2691,7 +2691,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
-CREATE PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization] 
+CREATE PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization]
 	@DomainName nvarchar(100),
 	@Result int OUTPUT
 AS
@@ -2710,7 +2710,7 @@ AS
 	BEGIN
 		SET @Result = 1
 	END
-		
+
 	RETURN @Result
 GO
 SET ANSI_NULLS ON
@@ -2725,13 +2725,13 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[CheckLyncUserExists] 
+CREATE PROCEDURE [dbo].[CheckLyncUserExists]
 	@AccountID int
 AS
-BEGIN	
-	SELECT 
+BEGIN
+	SELECT
 		COUNT(AccountID)
-	FROM 
+	FROM
 		dbo.LyncUsers
 	WHERE AccountID = @AccountID
 END
@@ -2750,13 +2750,13 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[CheckOCSUserExists] 
+CREATE PROCEDURE [dbo].[CheckOCSUserExists]
 	@AccountID int
 AS
-BEGIN	
-	SELECT 
+BEGIN
+	SELECT
 		COUNT(AccountID)
-	FROM 
+	FROM
 		dbo.OCSUsers
 	WHERE AccountID = @AccountID
 END
@@ -2971,7 +2971,7 @@ GO
 CREATE PROCEDURE [dbo].[CheckSSL]
 (
 	@siteID int,
-	@Renewal bit = 0,	
+	@Renewal bit = 0,
 	@Result int OUTPUT
 )
 AS
@@ -3009,7 +3009,7 @@ GO
 
 CREATE PROCEDURE [dbo].[CheckSSLExistsForWebsite]
 (
-	@siteID int,	
+	@siteID int,
 	@SerialNumber nvarchar(250),
 	@Result bit OUTPUT
 )
@@ -3024,7 +3024,7 @@ AS
 SET @Result = 0 -- OK
 
 -- check if a SSL Certificate is installed for domain
-IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID 
+IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID
 --AND SerialNumber=@SerialNumber
 )
 BEGIN
@@ -3131,18 +3131,18 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[CompleteSSLRequest] 
+CREATE PROCEDURE [dbo].[CompleteSSLRequest]
 (
 	@ActorID int,
 	@PackageID int,
-	@ID int,	
+	@ID int,
 	@Certificate ntext,
 	@SerialNumber nvarchar(250),
 	@Hash ntext,
 	@DistinguishedName nvarchar(500),
 	@ValidFrom datetime,
 	@ExpiryDate datetime
-	
+
 )
 AS
 
@@ -3156,16 +3156,16 @@ END
 -- insert record
 UPDATE
 	[dbo].[SSLCertificates]
-SET	
+SET
 	[Certificate] = @Certificate,
 	[Installed] = 1,
 	[SerialNumber] = @SerialNumber,
 	[DistinguishedName] = @DistinguishedName,
 	[Hash] = @Hash,
 	[ValidFrom] = @ValidFrom,
-	[ExpiryDate] = @ExpiryDate 
+	[ExpiryDate] = @ExpiryDate
 WHERE
-	[ID] = @ID;           
+	[ID] = @ID;
 
 
 
@@ -3204,18 +3204,18 @@ GO
 
 CREATE PROCEDURE [dbo].[ConvertToExchangeOrganization]
 (
-	@ItemID int	
+	@ItemID int
 )
 AS
 
-UPDATE 
+UPDATE
 	[dbo].[ServiceItems]
-SET 
+SET
 	[ItemTypeID] = 26
-WHERE 
+WHERE
 	[ItemID] = @ItemID
 
-RETURN 
+RETURN
 
 
 
@@ -3357,7 +3357,7 @@ AS
 
 DELETE FROM Log
 
-RETURN 
+RETURN
 
 
 
@@ -3461,7 +3461,7 @@ AND ((@TaskName = '') OR (@TaskName <> '' AND TaskName = @TaskName))
 AND ((@ItemID = 0) OR (@ItemID > 0 AND ItemID = @ItemID))
 AND ((@ItemName = '') OR (@ItemName <> '' AND ItemName LIKE @ItemName))
 
-RETURN 
+RETURN
 
 
 
@@ -3539,7 +3539,7 @@ AS
 
 TRUNCATE TABLE AuditLog
 
-RETURN 
+RETURN
 
 
 
@@ -3598,17 +3598,17 @@ GO
 
 
 CREATE PROCEDURE [dbo].[DeleteBlackBerryUser]
-(	
+(
 	@AccountID int
 )
 AS
 
-DELETE FROM 
+DELETE FROM
 	BlackBerryUsers
-WHERE 
+WHERE
 	AccountID = @AccountID
 
-RETURN 
+RETURN
 
 
 
@@ -3637,12 +3637,12 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[DeleteCertificate] 
+CREATE PROCEDURE [dbo].[DeleteCertificate]
 (
 	@ActorID int,
 	@PackageID int,
 	@id int
-	
+
 )
 AS
 
@@ -3658,7 +3658,7 @@ DELETE FROM
 	[dbo].[SSLCertificates]
 WHERE
 	[ID] = @id
-           
+
 RETURN
 
 
@@ -4272,7 +4272,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[DeleteExchangeOrganization] 
+CREATE PROCEDURE [dbo].[DeleteExchangeOrganization]
 (
 	@ItemID int
 )
@@ -4316,7 +4316,7 @@ GO
 
 
 
-CREATE PROCEDURE DeleteExchangeOrganizationDomain 
+CREATE PROCEDURE DeleteExchangeOrganizationDomain
 (
 	@ItemID int,
 	@DomainID int
@@ -4769,17 +4769,17 @@ GO
 
 
 CREATE PROCEDURE [dbo].[DeleteLyncUser]
-(	
+(
 	@AccountId int
 )
 AS
 
-DELETE FROM 
+DELETE FROM
 	LyncUsers
-WHERE 
+WHERE
 	AccountId = @AccountId
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -4816,17 +4816,17 @@ GO
 
 
 CREATE PROCEDURE [dbo].[DeleteOCSUser]
-(	
+(
 	@InstanceId nvarchar(50)
 )
 AS
 
-DELETE FROM 
+DELETE FROM
 	OCSUsers
-WHERE 
+WHERE
 	InstanceId = @InstanceId
 
-RETURN 
+RETURN
 
 
 
@@ -4858,7 +4858,7 @@ GO
 
 
 CREATE PROCEDURE [dbo].[DeleteOrganizationUsers]
-	@ItemID int 
+	@ItemID int
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -4976,7 +4976,7 @@ BEGIN
 	WHERE PackageID = @PackageID
 
 	COMMIT TRAN
-END 
+END
 
 
 
@@ -5269,7 +5269,7 @@ DELETE FROM VirtualServices
 WHERE ServerID = @ServerID
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -5381,7 +5381,7 @@ WHERE ServiceID = @ServiceID
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -5482,7 +5482,7 @@ WHERE ItemID = @ItemID
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 GO
@@ -5526,7 +5526,7 @@ IF (@@ERROR <> 0 )
             RETURN -1
       END
 
---delete reseller addon  
+--delete reseller addon
 DELETE FROM HostingPlans WHERE UserID = @UserID AND IsAddon = 'True'
 
 IF (@@ERROR <> 0 )
@@ -5608,14 +5608,14 @@ GO
 -- =============================================
 -- Description:	Delete user email addresses except primary email
 -- =============================================
-CREATE PROCEDURE [dbo].[DeleteUserEmailAddresses] 
+CREATE PROCEDURE [dbo].[DeleteUserEmailAddresses]
 	@AccountId int,
 	@PrimaryEmailAddress nvarchar(300)
 AS
 BEGIN
-	
-DELETE FROM 
-	ExchangeAccountEmailAddresses 
+
+DELETE FROM
+	ExchangeAccountEmailAddresses
 WHERE
 	AccountID = @AccountID AND LOWER(EmailAddress) <> LOWER(@PrimaryEmailAddress)
 END
@@ -5710,7 +5710,7 @@ DELETE FROM VirtualServices
 WHERE ServiceID IN (
 SELECT
 	ServiceID
-FROM OPENXML(@idoc, '/services/service',1) WITH 
+FROM OPENXML(@idoc, '/services/service',1) WITH
 (
 	ServiceID int '@id'
 ) as XS)
@@ -5795,7 +5795,7 @@ SELECT
 	END
 FROM ResourceGroups AS RG
 WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, NULL) = 1
-AND RG.GroupID NOT IN 
+AND RG.GroupID NOT IN
 (
 	SELECT P.GroupID
 	FROM PackageServices AS PS
@@ -5821,7 +5821,7 @@ END
 ELSE
 BEGIN
 	-- VIRTUAL SERVER
-	
+
 	DECLARE @GroupID int, @PrimaryGroup int
 	DECLARE GroupsCursor CURSOR FOR
 	SELECT GroupID, PrimaryGroup FROM @Groups
@@ -5839,7 +5839,7 @@ BEGIN
 			DEALLOCATE GroupsCursor
 			BREAK
 		END
-		
+
 		-- read group information
 		DECLARE @DistributionType int, @BindDistributionToPrimary int
 		SELECT
@@ -5847,11 +5847,11 @@ BEGIN
 			@BindDistributionToPrimary = BindDistributionToPrimary
 		FROM VirtualGroups AS VG
 		WHERE ServerID = @ServerID AND GroupID = @GroupID
-		
+
 		-- bind distribution to primary
 		IF @BindDistributionToPrimary = 1 AND @PrimaryGroup = 0 AND @PrimaryGroupID <> 0
 		BEGIN
-			-- if only one service found just use it and do not distribute			
+			-- if only one service found just use it and do not distribute
 			IF (SELECT COUNT(*) FROM VirtualServices AS VS
 				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
 				INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
@@ -5876,7 +5876,7 @@ BEGIN
 					INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
 					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
 					WHERE PS.PackageID = @PackageID AND P.GroupID = @PrimaryGroupID
-					
+
 					INSERT INTO PackageServices (PackageID, ServiceID)
 					SELECT
 						@PackageID,
@@ -5889,7 +5889,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			
+
 			-- DISTRIBUTION
 			DECLARE @Services TABLE
 			(
@@ -5897,9 +5897,9 @@ BEGIN
 				ItemsNumber int,
 				RandomNumber int
 			)
-			
+
 			DELETE FROM @Services
-			
+
 			INSERT INTO @Services (ServiceID, ItemsNumber, RandomNumber)
 			SELECT
 				VS.ServiceID,
@@ -5909,7 +5909,7 @@ BEGIN
 			INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
 			INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
 			WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID
-			
+
 			-- BALANCED DISTRIBUTION
 			IF @DistributionType = 1
 			BEGIN
@@ -5933,12 +5933,12 @@ BEGIN
 				ORDER BY RandomNumber
 			END
 		END
-		
+
 		IF @PrimaryGroup = 1
 		SET @PrimaryGroupID = @GroupID
 
 	END -- while groups
-	
+
 END -- end virtual server
 
 RETURN
@@ -6010,7 +6010,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecAddBillingCycle] 
+CREATE PROCEDURE [dbo].[ecAddBillingCycle]
 	@ActorID int,
 	@UserID int,
 	@CycleName nvarchar(255),
@@ -6126,7 +6126,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecAddCategory] 
+CREATE PROCEDURE [dbo].[ecAddCategory]
 	@ActorID int,
 	@UserID int,
 	@CategoryName nvarchar(255),
@@ -6150,7 +6150,7 @@ BEGIN
 
 	IF @ParentID = -1
 		SET @ParentID = NULL;
-	
+
 	-- identify category level
 	SELECT @Level = [Level] FROM [dbo].[ecCategory] WHERE [CategoryID] = @ParentID AND [ResellerID] = @UserID;
 	IF @Level >= 0
@@ -6169,7 +6169,7 @@ BEGIN
 		[CreatorID],
 		[ResellerID]
 	)
-	VALUES 
+	VALUES
 	(
 		@CategoryName,
 		@CategorySku,
@@ -6341,7 +6341,7 @@ GO
 
 
 CREATE PROCEDURE [dbo].[ecAddCustomerPayment]
-	@ActorID int, 
+	@ActorID int,
 	@ContractID nvarchar(50),
 	@InvoiceID int,
 	@TransactionID nvarchar(255),
@@ -6364,7 +6364,7 @@ BEGIN
 		RAISERROR('You are not allowed to perform this action', 16, 1);
 		RETURN;
 	END
-	
+
 	SET NOCOUNT ON;
 
 	INSERT INTO [dbo].[ecCustomersPayments]
@@ -6449,7 +6449,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecAddDomainNameSvc] 
+CREATE PROCEDURE [dbo].[ecAddDomainNameSvc]
 	@ContractID nvarchar(50),
 	@ParentID int,
 	@ProductID int,
@@ -6466,7 +6466,7 @@ BEGIN
 		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
 	WHERE
 		[ContractID] = @ContractID;
-	
+
 BEGIN TRAN ADD_TLD_SVC
 	-- add service
 	INSERT INTO [dbo].[ecService]
@@ -6707,7 +6707,7 @@ XML Format:
 			[dbo].[ecHostingAddons]
 		SET
 			[SetupFee] = [SXML].[Data].value('@SetupFee','money'),
-			[OneTimeFee] = [SXML].[Data].value('@RecurringFee','money') 
+			[OneTimeFee] = [SXML].[Data].value('@RecurringFee','money')
 		FROM
 			@AddonCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
 		WHERE
@@ -6738,15 +6738,15 @@ XML Format:
 	END
 	--
 	COMMIT TRAN ADD_ADDON;
-	-- 
+	--
 	RETURN;
-	
+
 
 ERROR_HANDLE:
 BEGIN
 	SET @Result = -1;
 	ROLLBACK TRAN ADD_ADDON;
-	RETURN;	
+	RETURN;
 END
 
 END
@@ -7222,7 +7222,7 @@ BEGIN TRAN ADD_HPLAN_SVC
 		GOTO ERROR_HANDLE;
 	-- obtain result
 	SET @SvcCycleID = SCOPE_IDENTITY();
-	
+
 	-- add plan details
 	INSERT INTO [dbo].[ecHostingPackageSvcs]
 	(
@@ -7249,7 +7249,7 @@ BEGIN TRAN ADD_HPLAN_SVC
 	-- check error
 	IF @@ROWCOUNT = 0
 		GOTO ERROR_HANDLE;
-	
+
 
 	-- commit tran
 	COMMIT TRAN ADD_HPLAN_SVC;
@@ -7315,7 +7315,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecAddInvoice] 
+CREATE PROCEDURE [dbo].[ecAddInvoice]
 	@ContractID nvarchar(50),
 	@Created datetime,
 	@DueDate datetime,
@@ -7351,7 +7351,7 @@ BEGIN TRAN ADD_INVOICE
 
 		--Create an internal representation of the XML document.
 		EXEC sp_xml_preparedocument @XmlDocID OUTPUT, @Xml;;
-		-- 
+		--
 		INSERT INTO [dbo].[ecInvoiceItems]
 		(
 			[InvoiceID],
@@ -7365,7 +7365,7 @@ BEGIN TRAN ADD_INVOICE
 		)
 		SELECT
 			@Result,
-			CASE [XML].[ServiceID] 
+			CASE [XML].[ServiceID]
 				WHEN 0 THEN NULL
 				ELSE [XML].[ServiceID]
 			END,
@@ -7375,7 +7375,7 @@ BEGIN TRAN ADD_INVOICE
 			[XML].[Total],
 			[XML].[SubTotal],
 			[XML].[UnitPrice]
-		FROM OPENXML(@XmlDocID, '/items/item',1) WITH 
+		FROM OPENXML(@XmlDocID, '/items/item',1) WITH
 		(
 			[ServiceID] int '@serviceid',
 			[ItemName] nvarchar(255) '@itemname',
@@ -7545,7 +7545,7 @@ CREATE PROCEDURE [dbo].[ecAddServiceUsageRecord]
 	@Result int OUTPUT
 AS
 BEGIN
-	
+
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -7566,7 +7566,7 @@ BEGIN
 		@StartDate,
 		@EndDate
 	);
-	
+
 END
 
 
@@ -7632,7 +7632,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF NOT EXISTS(SELECT * FROM [dbo].[ecSystemTriggers] WHERE [OwnerID] = @OwnerID AND 
+	IF NOT EXISTS(SELECT * FROM [dbo].[ecSystemTriggers] WHERE [OwnerID] = @OwnerID AND
 		[TriggerHandler] = @TriggerHandler AND [ReferenceID] = @ReferenceID AND
 		[Namespace] = @Namespace AND [Status] = @Status)
 	BEGIN
@@ -7711,7 +7711,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	-- check before insert
-	IF EXISTS (SELECT [TaxationID] FROM [dbo].[ecTaxations] 
+	IF EXISTS (SELECT [TaxationID] FROM [dbo].[ecTaxations]
 		WHERE [ResellerID] = @UserID AND [Country] = @Country AND [State] = @State)
 	BEGIN
 		SET @Result = -202;
@@ -7741,7 +7741,7 @@ BEGIN
 	);
 	--
 	SET @Result = SCOPE_IDENTITY();
-	
+
 END
 
 
@@ -7906,7 +7906,7 @@ XML Format:
 		GOTO ERROR_HANDLE;
 	--
 	COMMIT TRAN ADD_DOMAIN;
-	-- 
+	--
 	RETURN;
 
 ERROR_HANDLE:
@@ -8112,7 +8112,7 @@ BEGIN TRAN CHNG_SVC_CYCLE
 		GOTO ERROR_HANDLE;
 	-- obtain result
 	SET @Result = SCOPE_IDENTITY();
-	
+
 	-- update service
 	UPDATE
 		[dbo].[ecHostingPackageSvcs]
@@ -8128,7 +8128,7 @@ BEGIN TRAN CHNG_SVC_CYCLE
 	COMMIT TRAN CHNG_SVC_CYCLE;
 	-- exit
 	RETURN;
-		
+
 -- error handler
 ERROR_HANDLE:
 BEGIN
@@ -8363,7 +8363,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecDeleteCategory] 
+CREATE PROCEDURE [dbo].[ecDeleteCategory]
 	@ActorID int,
 	@UserID int,
 	@CategoryID int,
@@ -8381,7 +8381,7 @@ BEGIN
 
 	SET @Result = 0;
 
-	-- check whether the category doesn't empty 
+	-- check whether the category doesn't empty
     IF EXISTS(
 		SELECT
 			[ProductID]
@@ -8417,8 +8417,8 @@ BEGIN
 	DELETE FROM
 		[dbo].[ecCategory]
 	WHERE
-		[CategoryID] = @CategoryID 
-		AND 
+		[CategoryID] = @CategoryID
+		AND
 		[ResellerID] = @UserID;
 
 END
@@ -8505,7 +8505,7 @@ BEGIN
 		SET @Result = -1;
 		RETURN;
 	END
-	
+
 	SET @Result = 0;
 	DELETE FROM [dbo].[ecContracts]  WHERE [ContractID] = @ContractID;
 
@@ -8590,7 +8590,7 @@ BEGIN
 	SET @Result = 0;
 
     DELETE
-		FROM [dbo].[ecCustomersPayments] 
+		FROM [dbo].[ecCustomersPayments]
 	WHERE
 		[PaymentID] = @PaymentID;
 
@@ -8754,10 +8754,10 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	-- 
+	--
 	SET @Result = 0;
     -- remove
-	DELETE FROM [dbo].[ecPaymentMethods] 
+	DELETE FROM [dbo].[ecPaymentMethods]
 	WHERE [ResellerID] = @UserID AND [MethodName] = @MethodName;
 
 END
@@ -8911,7 +8911,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecDeleteProduct] 
+CREATE PROCEDURE [dbo].[ecDeleteProduct]
 	@ActorID int,
 	@UserID int,
 	@ProductID int,
@@ -8926,7 +8926,7 @@ BEGIN
 		RETURN;
 	END
 
-BEGIN TRAN RMV_PRODUCT    
+BEGIN TRAN RMV_PRODUCT
 	-- remove product
 	DELETE FROM [dbo].[ecProduct] WHERE [ProductID] = @ProductID AND [ResellerID] = @UserID;
 	-- check errors
@@ -9197,13 +9197,13 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetAddonProducts] 
+CREATE PROCEDURE [dbo].[ecGetAddonProducts]
 	@UserID int,
 	@ProductID int
 AS
 BEGIN
 
-    SELECT 
+    SELECT
 		[P].*
 	FROM
 		[dbo].[ecProduct] AS [P]
@@ -9292,8 +9292,8 @@ CREATE PROCEDURE [dbo].[ecGetAddonProductsIds]
 	@ProductID int
 AS
 BEGIN
-	
-	SELECT 
+
+	SELECT
 		[P].[ProductID]
 	FROM
 		[dbo].[ecProduct] AS [P]
@@ -9302,7 +9302,7 @@ BEGIN
 	WHERE
 		[ATP].[AddonID] = @ProductID
 		AND
-		[P].[ResellerID] = @UserID;	
+		[P].[ResellerID] = @UserID;
 
 END
 
@@ -9644,7 +9644,7 @@ CREATE PROCEDURE [dbo].[ecGetBillingCyclesPaged]
 	@StartRowIndex int
 AS
 BEGIN
-	
+
 	-- check actor user rights
 	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
 	BEGIN
@@ -9864,7 +9864,7 @@ AS
 				SELECT
 					ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
 					*
-				FROM 
+				FROM
 					[dbo].[ecCategory]
 				WHERE
 					[ParentID] = @ParentID
@@ -9880,7 +9880,7 @@ AS
 				SELECT
 					ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
 					*
-				FROM 
+				FROM
 					[dbo].[ecCategory]
 				WHERE
 					[ParentID] IS NULL
@@ -9890,7 +9890,7 @@ AS
 
 			SELECT * FROM [CategoryCTE] WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex ORDER BY [CategoryID], [CategoryName];
 		END
-	
+
 RETURN
 
 
@@ -9965,7 +9965,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetCategory] 
+CREATE PROCEDURE [dbo].[ecGetCategory]
 	@ActorID int,
 	@UserID int,
 	@CategoryID int
@@ -9974,13 +9974,13 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-    SELECT 
+    SELECT
 		*
-	FROM 
-		[dbo].[ecCategory] 
-	WHERE 
-		[CategoryID] = @CategoryID 
-		AND 
+	FROM
+		[dbo].[ecCategory]
+	WHERE
+		[CategoryID] = @CategoryID
+		AND
 		[ResellerID] = @UserID;
 
 END
@@ -10250,7 +10250,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetCustomerInvoiceItems] 
+CREATE PROCEDURE [dbo].[ecGetCustomerInvoiceItems]
 	@ActorID int,
 	@InvoiceID int
 AS
@@ -10337,7 +10337,7 @@ BEGIN
 		@ContractID = [ContractID] FROM [dbo].[ecCustomersPayments]
 	WHERE
 		[PaymentID] = @PaymentID;
-	
+
 	SET NOCOUNT ON;
 
     SELECT
@@ -10501,7 +10501,7 @@ BEGIN
 			[ResellerID] = @UserID;
 		RETURN;
 	END
-	
+
 	SELECT
 		@Result = COUNT([InvoiceID]) FROM [dbo].[ContractsInvoicesDetailed]
 	WHERE
@@ -10598,7 +10598,7 @@ BEGIN
 
 		RETURN;
 	END;
-	
+
 	-- get customer invoices
 	WITH [INVOICES] AS (
 		SELECT
@@ -10607,7 +10607,7 @@ BEGIN
 			[CustomerID] = @UserID
 	)
 
-	SELECT * FROM [INVOICES] 
+	SELECT * FROM [INVOICES]
 		WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex
 			ORDER BY [Created] DESC;
 
@@ -10787,7 +10787,7 @@ BEGIN
 			WHERE
 				[C].[ResellerID] = @UserID
 		)
-		
+
 		SELECT
 			[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
 		LEFT OUTER JOIN
@@ -10795,13 +10795,13 @@ BEGIN
 		LEFT OUTER JOIN
 			[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
 		WHERE
-			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
+			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex
 		ORDER BY
 			[Created] DESC;
-		
+
 		RETURN;
 	END;
-	
+
 	WITH [PAYMENTS] AS (
 		SELECT
 			ROW_NUMBER() OVER(ORDER BY [CP].[Created] DESC) AS [RowIndex], [CP].* FROM [dbo].[ecCustomersPayments] AS [CP]
@@ -10810,15 +10810,15 @@ BEGIN
 		WHERE
 			[C].[CustomerID] = @UserID
 	)
-	
+
 	SELECT
 		[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
 	LEFT OUTER JOIN
 		[dbo].[ecSupportedPlugins] AS [SP] ON [SP].[PluginID] = [P].[PluginID]
 	LEFT OUTER JOIN
-		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID] 
+		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
 	WHERE
-		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
+		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex
 	ORDER BY
 		[Created] DESC;
 
@@ -10899,7 +10899,7 @@ BEGIN
 			[ResellerID] = @UserID;
 		RETURN;
 	END
-	
+
 	SELECT
 		@Result = COUNT([ServiceID]) FROM [dbo].[ContractsServicesDetailed]
 	WHERE
@@ -10996,7 +10996,7 @@ BEGIN
 		-- exit
 		RETURN;
 	END;
-	
+
 	WITH [SERVICES] AS (
 		SELECT
 			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsServicesDetailed]
@@ -11081,7 +11081,7 @@ BEGIN
 		*
 	FROM
 		[dbo].[ecTaxations]
-	WHERE 
+	WHERE
 		[ResellerID] = @ResellerID
 	AND
 		([Country] = @Country OR [Country] = '*')
@@ -11252,7 +11252,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetDomainNameSvcHistory] 
+CREATE PROCEDURE [dbo].[ecGetDomainNameSvcHistory]
 	@ActorID int,
 	@ServiceID int
 AS
@@ -11787,7 +11787,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetHostingPackageSvc] 
+CREATE PROCEDURE [dbo].[ecGetHostingPackageSvc]
 	@ActorID int,
 	@ServiceID int
 AS
@@ -11808,7 +11808,7 @@ BEGIN
 		RETURN;
 	END
 
-	-- 
+	--
 	SET NOCOUNT ON;
 
     SELECT
@@ -12275,7 +12275,7 @@ BEGIN
 		AND
 			[CP].[StatusID] = 1 -- Approved payments only
 	)
-    SELECT * FROM [dbo].[ecInvoiceItems] 
+    SELECT * FROM [dbo].[ecInvoiceItems]
 		WHERE [ServiceID] IS NOT NULL
 			AND [InvoiceID] IN (
 				SELECT [InvoiceID] FROM [OVERDUE_INVOICES]
@@ -12362,7 +12362,7 @@ BEGIN
 		* FROM [dbo].[ecInvoiceItems]
 	WHERE
 		[ServiceID] IS NOT NULL AND [Processed] = 0 AND [InvoiceID] IN (SELECT [InvoiceID] FROM [PAID_INVOICES]);
-		
+
 
 END
 
@@ -12442,7 +12442,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    SELECT * FROM [dbo].[ecPaymentMethods] 
+    SELECT * FROM [dbo].[ecPaymentMethods]
 	WHERE [MethodName] = @MethodName AND [ResellerID] = @UserID;
 
 END
@@ -12798,7 +12798,7 @@ CREATE PROCEDURE [dbo].[ecGetProductCategoriesIds]
 AS
 BEGIN
 
-	SELECT [CategoryID] FROM [dbo].[ecProductCategories] WHERE [ResellerID] = @UserID AND [ProductID] = @ProductID;	
+	SELECT [CategoryID] FROM [dbo].[ecProductCategories] WHERE [ResellerID] = @UserID AND [ProductID] = @ProductID;
 
 END
 
@@ -12874,7 +12874,7 @@ CREATE PROCEDURE [dbo].[ecGetProductHighlights]
 	@ProductID int
 AS
 BEGIN
-	
+
 	SELECT
 		[PH].[HighlightText]
 	FROM
@@ -12960,7 +12960,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetProductsByType] 
+CREATE PROCEDURE [dbo].[ecGetProductsByType]
 	@UserID int,
 	@TypeID int
 AS
@@ -13145,7 +13145,7 @@ BEGIN
 		SELECT
 			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
 			*
-		FROM 
+		FROM
 			[dbo].[ecProduct]
 		WHERE
 			[ResellerID] = @UserID
@@ -13740,7 +13740,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    SELECT 
+    SELECT
 		* FROM [ServiceHandlersResponsesDetailed]
 	WHERE
 		[ResellerID] = @ResellerID AND [ErrorMessage] IS NULL
@@ -13800,7 +13800,7 @@ CREATE PROCEDURE [dbo].[ecGetServiceItemType]
 	@ServiceID int
 AS
 BEGIN
-	
+
     SELECT
 		[PT].* FROM [dbo].[ecProductType] AS [PT]
 	INNER JOIN
@@ -13861,7 +13861,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetServicesToInvoice] 
+CREATE PROCEDURE [dbo].[ecGetServicesToInvoice]
 	@ActorID int,
 	@ResellerID int,
 	@TodayDate datetime,
@@ -13904,7 +13904,7 @@ BEGIN
 	INNER JOIN
 		@Svcs AS [SVCS] ON [S].[ServiceID] = [SVCS].[ServiceID]
 	WHERE
-		[S].[Status] = 1 AND @DaysOffset >= DATEDIFF(d, @TodayDate, [SVCS].[MaxEndDate]) 
+		[S].[Status] = 1 AND @DaysOffset >= DATEDIFF(d, @TodayDate, [SVCS].[MaxEndDate])
 	ORDER BY
 		[ContractID];
 
@@ -14519,13 +14519,13 @@ BEGIN
 
 	SET NOCOUNT ON;
 
-    SELECT 
+    SELECT
 		*
-	FROM 
+	FROM
 		[dbo].[ecProduct]
-	WHERE 
-		[ProductID] = @ProductID 
-	AND 
+	WHERE
+		[ProductID] = @ProductID
+	AND
 		[ResellerID] = @ResellerID
 	AND
 		[Enabled] = 1;
@@ -14607,9 +14607,9 @@ CREATE PROCEDURE [dbo].[ecGetStorefrontProductsByType]
 AS
 BEGIN
 
-	SELECT 
+	SELECT
 		*
-	FROM 
+	FROM
 		[dbo].[ecProduct]
 	WHERE
 		[ResellerID] = @UserID
@@ -14872,7 +14872,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetSupportedPlugin] 
+CREATE PROCEDURE [dbo].[ecGetSupportedPlugin]
 	@PluginName nvarchar(50),
 	@GroupName nvarchar(50)
 AS
@@ -15032,7 +15032,7 @@ CREATE PROCEDURE [dbo].[ecGetSupportedPluginsByGroup]
 AS
 BEGIN
 
-	SELECT * FROM [dbo].[ecSupportedPlugins] 
+	SELECT * FROM [dbo].[ecSupportedPlugins]
 	WHERE [PluginGroup] = @GroupName
 	ORDER BY [DisplayName];
 
@@ -15117,8 +15117,8 @@ BEGIN
 		[C].[ResellerID] = @ResellerID
 		AND
 		[S].[ServiceID] IN (SELECT [SXML].[Data].value('@id','int') FROM @SvcsXml.nodes('/Svcs/Svc') [SXML]([Data]));
-	
-	-- result is empty	
+
+	-- result is empty
 	SET @Result = ISNULL(@Result, @DefaultValue);
 
 END
@@ -15641,7 +15641,7 @@ BEGIN
 	AND
 		[TLDC].[ProductID] = @ProductID
 	ORDER BY
-		[TLDC].[SortOrder];	
+		[TLDC].[SortOrder];
 
 END
 
@@ -15722,7 +15722,7 @@ BEGIN
 		SELECT
 			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
 			*
-		FROM 
+		FROM
 			[dbo].[ecProduct]
 		WHERE
 			[ResellerID] = @UserID
@@ -15730,7 +15730,7 @@ BEGIN
 			[TypeID] = 3 -- Top Level Domain
 	)
 
-	SELECT 
+	SELECT
 		[TldsCTE].*,
 		[Tlds].[PluginId],
 		[PLG].[DisplayName]
@@ -15746,7 +15746,7 @@ BEGIN
 		[PLG].[PluginID] = [Tlds].[PluginID]
 	WHERE
 		[TldsCTE].[RowIndex] BETWEEN @StartRowIndex AND @EndIndex;
-    
+
 END
 
 
@@ -16009,7 +16009,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    IF EXISTS(SELECT * FROM [dbo].[ecPluginsProperties] 
+    IF EXISTS(SELECT * FROM [dbo].[ecPluginsProperties]
 		WHERE [ResellerID] = @ResellerID AND [PluginID] = @PluginID)
 	BEGIN
 		SET @Active = 1;
@@ -16576,7 +16576,7 @@ XML Format:
 	--Create an internal representation of the XML document.
 	EXEC sp_xml_preparedocument @XmlDocID OUTPUT, @xml;
     -- cleanup
-	DELETE FROM [dbo].[ecPluginsProperties] 
+	DELETE FROM [dbo].[ecPluginsProperties]
 	WHERE [ResellerID] = @UserID AND [PluginID] = @PluginID;
 	-- insert
 	INSERT INTO [dbo].[ecPluginsProperties]
@@ -16591,7 +16591,7 @@ XML Format:
 		@UserID,
 		[XML].[PropertyName],
 		[XML].[PropertyValue]
-	FROM OPENXML(@XmlDocID, '/properties/property',1) WITH 
+	FROM OPENXML(@XmlDocID, '/properties/property',1) WITH
 	(
 		[PropertyName] nvarchar(50) '@name',
 		[PropertyValue] ntext '@value'
@@ -16668,7 +16668,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecSetStoreSettings] 
+CREATE PROCEDURE [dbo].[ecSetStoreSettings]
 	@ActorID int,
 	@UserID int,
 	@SettingsName nvarchar(50),
@@ -16698,7 +16698,7 @@ XML Format:
 	EXEC sp_xml_preparedocument @docid OUTPUT, @Xml;
 
 	-- cleanup
-    DELETE FROM [dbo].[ecStoreSettings] 
+    DELETE FROM [dbo].[ecStoreSettings]
     WHERE [SettingsName] = @SettingsName AND [ResellerID] = @UserID;
 
 	INSERT INTO [dbo].[ecStoreSettings]
@@ -16713,7 +16713,7 @@ XML Format:
 		@SettingsName,
 		[XML].[PropertyName],
 		[XML].[PropertyValue]
-	FROM OPENXML(@docid, '/settings/setting', 1) WITH 
+	FROM OPENXML(@docid, '/settings/setting', 1) WITH
 	(
 		[PropertyName] nvarchar(50) '@name',
 		[PropertyValue] ntext '@value'
@@ -16721,7 +16721,7 @@ XML Format:
 
 	-- remove document
 	EXEC sp_xml_removedocument @docid;
-	
+
 END
 
 
@@ -16972,7 +16972,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecUpdateCategory] 
+CREATE PROCEDURE [dbo].[ecUpdateCategory]
 	@ActorID int,
 	@UserID int,
 	@CategoryID int,
@@ -17066,9 +17066,9 @@ BEGIN
 		END
 
 	-- update a category
-    UPDATE 
+    UPDATE
 		[dbo].[ecCategory]
-	SET 
+	SET
 		[CategoryName] = @CategoryName,
 		[CategorySku] = @CategorySku,
 		[ParentID] = @ParentID,
@@ -17077,9 +17077,9 @@ BEGIN
 		[FullDescription] = @FullDescription,
 		[Modified] = GETUTCDATE(),
 		[ModifierID] = @ActorID
-	WHERE 
-		[CategoryID] = @CategoryID 
-		AND 
+	WHERE
+		[CategoryID] = @CategoryID
+		AND
 		[ResellerID] = @UserID;
 
 END
@@ -17172,7 +17172,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
+
 	SET @Result = 0;
 
 	IF @CustomerID < 1
@@ -17541,7 +17541,7 @@ XML Format:
 */
 	-- cleanup hosting addon cycles first
 	DELETE FROM [dbo].[ecHostingAddonsCycles] WHERE [ProductID] = @ProductID;
-	
+
 	IF @Recurring = 1
 		-- insert cycles
 		INSERT INTO [dbo].[ecHostingAddonsCycles]
@@ -17586,22 +17586,22 @@ XML Format:
 	FROM @AssignedProductsXml.nodes('/AssignedProducts/Product') [SXML]([Data]);
 	-- check errors
 	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;	
+		GOTO ERROR_HANDLE;
 
 	-- set result ok
 	SET @Result = 0;
 	--
 	COMMIT TRAN UPDATE_ADDON;
-	-- 
+	--
 	RETURN;
-	
+
 
 ERROR_HANDLE:
 BEGIN
 	SET @Result = -1;
 	ROLLBACK TRAN UPDATE_ADDON;
 	RETURN;
-		
+
 END
 END
 
@@ -17730,7 +17730,7 @@ BEGIN
 	SET @Result = -1;
 	ROLLBACK TRAN UPD_HADDON_SVC;
 	RETURN;
-END    
+END
 END
 
 
@@ -18088,7 +18088,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecUpdateInvoice] 
+CREATE PROCEDURE [dbo].[ecUpdateInvoice]
 	@ActorID int,
 	@InvoiceID int,
 	@InvoiceNumber nvarchar(50),
@@ -18190,7 +18190,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecUpdateServiceHandlersResponses] 
+CREATE PROCEDURE [dbo].[ecUpdateServiceHandlersResponses]
 	@ResellerID int,
 	@XmlData xml
 AS
@@ -18212,7 +18212,7 @@ BEGIN
 	WHERE
 		[ResponseID] IN (SELECT [SXML].[Data].value('@ID','int') FROM @XmlData.nodes('/Succeed/Response') [SXML]([Data]))
 
-	UPDATE 
+	UPDATE
 		[ecServiceHandlersResponses]
 	SET
 		[ErrorMessage] = [SXML].[Data].value('@Error','nvarchar(255)')
@@ -18389,7 +18389,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
+
 	--
 	DECLARE @T_TaxationID int;
 	--
@@ -18421,7 +18421,7 @@ BEGIN
 
 	-- taxation update error
 	SET @Result = -202;
-	
+
 END
 
 
@@ -18574,7 +18574,7 @@ XML Format:
 	SET @Result = 0;
 	--
 	COMMIT TRAN UPDATE_DOMAIN;
-	-- 
+	--
 	RETURN;
 
 ERROR_HANDLE:
@@ -18658,7 +18658,7 @@ BEGIN
 		RAISERROR('You are not allowed to access the contract', 16, 1);
 		RETURN;
 	END
-	-- 
+	--
 	SET NOCOUNT ON;
 	-- void invoice
 	DELETE FROM [dbo].[ecInvoice] WHERE [InvoiceID] = @InvoiceID;
@@ -18812,7 +18812,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ExchangeAccountExists] 
+CREATE PROCEDURE [dbo].[ExchangeAccountExists]
 (
 	@AccountName nvarchar(20),
 	@Exists bit OUTPUT
@@ -18860,7 +18860,7 @@ GO
 
 
 
-CREATE PROCEDURE ExchangeOrganizationDomainExists 
+CREATE PROCEDURE ExchangeOrganizationDomainExists
 (
 	@DomainID int,
 	@Exists bit OUTPUT
@@ -19131,7 +19131,7 @@ SELECT
     L.TaskName,
     L.ItemName,
     L.ExecutionLog,
-    
+
     ISNULL(L.UserID, 0) AS UserID,
 	L.Username,
 	U.FirstName,
@@ -19142,7 +19142,7 @@ SELECT
 FROM AuditLog AS L
 LEFT OUTER JOIN UsersDetailed AS U ON L.UserID = U.UserID
 WHERE RecordID = @RecordID
-RETURN 
+RETURN
 
 
 
@@ -19229,7 +19229,7 @@ IF @TaskName IS NULL SET @TaskName = ''
 IF @ItemName IS NULL SET @ItemName = ''
 
 IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'L.StartDate DESC' 
+SET @SortColumn = 'L.StartDate DESC'
 
 -- build query and run it to the temporary table
 DECLARE @sql nvarchar(2000)
@@ -19542,7 +19542,7 @@ WHERE
 	ServiceID NOT IN (SELECT ServiceID FROM VirtualServices WHERE ServerID = @ServerID)
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 
 
@@ -19606,7 +19606,7 @@ CREATE PROCEDURE [dbo].[GetBlackBerryUsers]
 	@Name nvarchar(400),
 	@Email nvarchar(400),
 	@StartRow int,
-	@Count int	
+	@Count int
 )
 AS
 
@@ -19620,84 +19620,84 @@ BEGIN
 	SET @Email = '%'
 END
 
-CREATE TABLE #TempBlackBerryUsers 
-(	
+CREATE TABLE #TempBlackBerryUsers
+(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
+	[AccountID] [int],
 	[ItemID] [int] NOT NULL,
 	[AccountName] [nvarchar](300) NOT NULL,
 	[DisplayName] [nvarchar](300) NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
+	[SamAccountName] [nvarchar](100) NULL
 )
 
 
 IF (@SortColumn = 'DisplayName')
 BEGIN
-	INSERT INTO 
-		#TempBlackBerryUsers 
-	SELECT 
+	INSERT INTO
+		#TempBlackBerryUsers
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		BlackBerryUsers bu 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		BlackBerryUsers bu
+	ON
 		ea.AccountID = bu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
 		ea.DisplayName
 END
 ELSE
 BEGIN
-	INSERT INTO 
+	INSERT INTO
 		#TempBlackBerryUsers
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		BlackBerryUsers bu 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		BlackBerryUsers bu
+	ON
 		ea.AccountID = bu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
+		ea.PrimaryEmailAddress
 END
 
 DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers
 
 IF (@SortDirection = 'ASC')
 BEGIN
-	SELECT * FROM #TempBlackBerryUsers 
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+	SELECT * FROM #TempBlackBerryUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count)
 END
 ELSE
 BEGIN
 	IF (@SortColumn = 'DisplayName')
 	BEGIN
-		SELECT * FROM #TempBlackBerryUsers 
+		SELECT * FROM #TempBlackBerryUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
 	END
 	ELSE
 	BEGIN
-		SELECT * FROM #TempBlackBerryUsers 
+		SELECT * FROM #TempBlackBerryUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
 	END
-	
+
 END
 
 
@@ -19722,12 +19722,12 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetBlackBerryUsersCount] 
+CREATE PROCEDURE [dbo].[GetBlackBerryUsersCount]
 (
 	@ItemID int,
 	@Name nvarchar(400),
 	@Email nvarchar(400)
-	
+
 )
 AS
 
@@ -19741,16 +19741,16 @@ BEGIN
 	SET @Email = '%'
 END
 
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	BlackBerryUsers bu 
-ON 
+SELECT
+	COUNT(ea.AccountID)
+FROM
+	ExchangeAccounts ea
+INNER JOIN
+	BlackBerryUsers bu
+ON
 	ea.AccountID = bu.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+WHERE
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
 
 
 
@@ -19793,8 +19793,8 @@ BEGIN
 END
 
 SELECT
-	[ID], [UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], 
-	[CSR], [CSRLength], [ValidFrom], [ExpiryDate], [Installed], [IsRenewal], 
+	[ID], [UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName],
+	[CSR], [CSRLength], [ValidFrom], [ExpiryDate], [Installed], [IsRenewal],
 	[PreviousId], [SerialNumber]
 FROM
 	[dbo].[SSLCertificates]
@@ -19950,7 +19950,7 @@ SELECT
 	C.CreatedDate,
 	C.CommentText,
 	C.SeverityID,
-	
+
 	-- user
 	U.Username,
 	U.FirstName,
@@ -20027,20 +20027,20 @@ CREATE PROCEDURE [dbo].[GetCRMOrganizationUsers]
 	@ItemID int
 AS
 BEGIN
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		CRMUsers cu
+	ON
 		ea.AccountID = cu.AccountID
-	WHERE 
+	WHERE
 		ea.ItemID = @ItemID
 END
 
@@ -20100,7 +20100,7 @@ SELECT
 FROM
 	CRMUsers
 WHERE
-	AccountID = @AccountID		
+	AccountID = @AccountID
 END
 
 
@@ -20146,7 +20146,7 @@ CREATE PROCEDURE [dbo].[GetCRMUsers]
 	@Name nvarchar(400),
 	@Email nvarchar(400),
 	@StartRow int,
-	@Count int	
+	@Count int
 )
 AS
 
@@ -20160,61 +20160,61 @@ BEGIN
 	SET @Email = '%'
 END
 
-CREATE TABLE #TempCRMUsers 
-(	
+CREATE TABLE #TempCRMUsers
+(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
+	[AccountID] [int],
 	[ItemID] [int] NOT NULL,
 	[AccountName] [nvarchar](300) NOT NULL,
 	[DisplayName] [nvarchar](300) NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
+	[SamAccountName] [nvarchar](100) NULL
 )
 
 
 IF (@SortColumn = 'DisplayName')
 BEGIN
-	INSERT INTO 
+	INSERT INTO
 		#TempCRMUsers
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		CRMUsers cu
+	ON
 		ea.AccountID = cu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
 		ea.DisplayName
 END
 ELSE
 BEGIN
-	INSERT INTO 
+	INSERT INTO
 		#TempCRMUsers
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		CRMUsers cu
+	ON
 		ea.AccountID = cu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
+		ea.PrimaryEmailAddress
 END
 
 DECLARE @RetCount int
@@ -20223,7 +20223,7 @@ SELECT @RetCount = COUNT(ID) FROM #TempCRMUsers
 IF (@SortDirection = 'ASC')
 BEGIN
 	SELECT * FROM #TempCRMUsers
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count)
 END
 ELSE
 BEGIN
@@ -20237,7 +20237,7 @@ BEGIN
 		SELECT * FROM #TempCRMUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
 	END
-	
+
 END
 
 
@@ -20267,12 +20267,12 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetCRMUsersCount] 
+CREATE PROCEDURE [dbo].[GetCRMUsersCount]
 (
 	@ItemID int,
 	@Name nvarchar(400),
 	@Email nvarchar(400)
-	
+
 )
 AS
 
@@ -20286,16 +20286,16 @@ BEGIN
 	SET @Email = '%'
 END
 
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	CRMUsers cu 
-ON 
+SELECT
+	COUNT(ea.AccountID)
+FROM
+	ExchangeAccounts ea
+INNER JOIN
+	CRMUsers cu
+ON
 	ea.AccountID = cu.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+WHERE
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
 
 
 
@@ -20369,7 +20369,7 @@ SELECT
 	NR.MXPriority,
 	NR.SrvPriority,
 	NR.SrvWeight,
-	NR.SrvPort,	
+	NR.SrvPort,
 	NR.IPAddressID
 FROM
 	GlobalDnsRecords AS NR
@@ -20502,7 +20502,7 @@ SELECT
 	NR.MXPriority,
 	NR.SrvPriority,
 	NR.SrvWeight,
-	NR.SrvPort,	
+	NR.SrvPort,
 	NR.IPAddressID,
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
@@ -20559,7 +20559,7 @@ SELECT
 	NR.MXPriority,
 	NR.SrvPriority,
 	NR.SrvWeight,
-	NR.SrvPort,		
+	NR.SrvPort,
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -20610,7 +20610,7 @@ SELECT
 	NR.MXPriority,
 	NR.SrvPriority,
 	NR.SrvWeight,
-	NR.SrvPort,			
+	NR.SrvPort,
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -20676,10 +20676,10 @@ BEGIN
 		@ParentPackageID = ParentPackageID
 	FROM Packages
 	WHERE PackageID = @TmpPackageID
-	
+
 	IF @ParentPackageID IS NULL -- the last parent
 	BREAK
-	
+
 	SET @TmpPackageID = @ParentPackageID
 END
 
@@ -20741,7 +20741,7 @@ SELECT
 	NR.MXPriority,
 	NR.SrvPriority,
 	NR.SrvWeight,
-	NR.SrvPort,	
+	NR.SrvPort,
 	NR.IPAddressID,
 	ISNULL(IP.ExternalIP, '') AS ExternalIP,
 	ISNULL(IP.InternalIP, '') AS InternalIP,
@@ -21068,16 +21068,16 @@ SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
 	D.IsSubDomain,
 	D.IsInstantAlias,
 	D.IsDomainPointer,
-	
+
 	-- packages
 	P.PackageName,
-	
+
 	-- server
 	ISNULL(SRV.ServerID, 0) AS ServerID,
 	ISNULL(SRV.ServerName, '''') AS ServerName,
 	ISNULL(SRV.Comments, '''') AS ServerComments,
 	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -21118,7 +21118,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeAccount] 
+CREATE PROCEDURE [dbo].[GetExchangeAccount]
 (
 	@ItemID int,
 	@AccountID int
@@ -21138,10 +21138,10 @@ SELECT
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
-	E.UserPrincipalName 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.ItemID = @ItemID AND
 	E.AccountID = @AccountID
@@ -21155,7 +21155,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountName]
 (
 	@ItemID int,
 	@AccountName nvarchar(300)
@@ -21175,10 +21175,10 @@ SELECT
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
-	E.UserPrincipalName 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.ItemID = @ItemID AND
 	E.AccountName = @AccountName
@@ -21195,7 +21195,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
+CREATE PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId]
 (
 	@ItemID int,
 	@MailboxPlanId int
@@ -21218,14 +21218,14 @@ SELECT
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
-	E.UserPrincipalName 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.ItemID = @ItemID AND
 	E.MailboxPlanId IS NULL AND
-	E.AccountType IN (1,5) 
+	E.AccountType IN (1,5)
 RETURN
 
 END
@@ -21246,13 +21246,13 @@ SELECT
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
-	E.UserPrincipalName 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.MailboxPlanId = @MailboxPlanId AND
-	E.AccountType IN (1,5) 
+	E.AccountType IN (1,5)
 END
 ELSE
 BEGIN
@@ -21270,14 +21270,14 @@ SELECT
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
-	E.UserPrincipalName 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.ItemID = @ItemID AND
 	E.MailboxPlanId = @MailboxPlanId AND
-	E.AccountType IN (1,5) 
+	E.AccountType IN (1,5)
 RETURN
 END
 
@@ -21395,15 +21395,15 @@ SELECT
 	E.PrimaryEmailAddress,
 	E.MailEnabledPublicFolder,
 	E.MailboxPlanId,
-	P.MailboxPlan, 
+	P.MailboxPlan,
 	E.SubscriberNumber,
 	E.UserPrincipalName
 FROM
 	ExchangeAccounts  AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId
 WHERE
 	E.ItemID = @ItemID AND
-	(E.AccountType = @AccountType OR @AccountType IS NULL) 
+	(E.AccountType = @AccountType OR @AccountType IS NULL)
 ORDER BY DisplayName
 RETURN
 
@@ -21455,11 +21455,11 @@ IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
 AND @FilterValue <> '' AND @FilterValue IS NOT NULL
 BEGIN
 	IF @FilterColumn = 'PrimaryEmailAddress' AND @AccountTypes <> '2'
-	BEGIN		
+	BEGIN
 		SET @condition = @condition + ' AND EA.AccountID IN (SELECT EAEA.AccountID FROM ExchangeAccountEmailAddresses EAEA WHERE EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
 	END
 	ELSE
-	BEGIN		
+	BEGIN
 		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
 	END
 END
@@ -21501,7 +21501,7 @@ print @sql
 exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
 @ItemID, @StartRow, @MaximumRows
 
-RETURN 
+RETURN
 
 
 
@@ -21539,7 +21539,7 @@ FROM
 	ExchangeAccounts
 WHERE
 	ItemID = @ItemID AND
-	(AccountType =1  OR AccountType=5 OR AccountType=6) 
+	(AccountType =1  OR AccountType=5 OR AccountType=6)
 ORDER BY 1
 
 END
@@ -21556,7 +21556,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan]
 (
 	@MailboxPlanId int
 )
@@ -21628,7 +21628,7 @@ SELECT
 FROM
 	ExchangeMailboxPlans
 WHERE
-	ItemID = @ItemID 
+	ItemID = @ItemID
 ORDER BY MailboxPlan
 RETURN
 
@@ -21649,7 +21649,7 @@ SELECT
 FROM
 	ExchangeOrganizations
 WHERE
-	ItemID = @ItemID 
+	ItemID = @ItemID
 RETURN
 GO
 SET ANSI_NULLS ON
@@ -21660,7 +21660,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeOrganizationDomains] 
+CREATE PROCEDURE [dbo].[GetExchangeOrganizationDomains]
 (
 	@ItemID int
 )
@@ -21699,7 +21699,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeOrganizationStatistics] 
+CREATE PROCEDURE [dbo].[GetExchangeOrganizationStatistics]
 (
 	@ItemID int
 )
@@ -21993,7 +21993,7 @@ SELECT
 FROM HostingPlans AS HP
 WHERE HP.PlanID = @PlanID
 
-RETURN 
+RETURN
 
 
 
@@ -22084,7 +22084,7 @@ SELECT
 	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
 	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
 	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
-FROM ResourceGroups AS RG 
+FROM ResourceGroups AS RG
 LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
 WHERE (RG.ShowGroup = 1)
 ORDER BY RG.GroupOrder
@@ -22160,19 +22160,19 @@ SELECT
 	HP.RecurrenceLength,
 	HP.RecurrenceUnit,
 	HP.IsAddon,
-	
+
 	(SELECT COUNT(P.PackageID) FROM Packages AS P WHERE P.PlanID = HP.PlanID) AS PackagesNumber,
-	
+
 	-- server
 	ISNULL(HP.ServerID, 0) AS ServerID,
 	ISNULL(S.ServerName, 'None') AS ServerName,
 	ISNULL(S.Comments, '') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- package
 	ISNULL(HP.PackageID, 0) AS PackageID,
 	ISNULL(P.PackageName, 'None') AS PackageName
-	
+
 FROM HostingPlans AS HP
 LEFT OUTER JOIN Servers AS S ON HP.ServerID = S.ServerID
 LEFT OUTER JOIN Packages AS P ON HP.PackageID = P.PackageID
@@ -22240,9 +22240,9 @@ GO
 CREATE PROCEDURE [dbo].[GetInstanceID]
 	 @AccountID int
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-    
+
 	SELECT InstanceID FROM OCSUsers WHERE AccountID = @AccountID
 END
 
@@ -22278,7 +22278,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetIPAddress]	
+CREATE PROCEDURE [dbo].[GetIPAddress]
 (
 	@AddressID int
 )
@@ -22299,7 +22299,7 @@ BEGIN
 	WHERE
 		AddressID = @AddressID
 
-	RETURN 
+	RETURN
 END
 
 
@@ -22340,7 +22340,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetIPAddresses]	
+CREATE PROCEDURE [dbo].[GetIPAddresses]
 (
 	@ActorID int,
 	@PoolID int,
@@ -22424,7 +22424,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetIPAddressesPaged]	
+CREATE PROCEDURE [dbo].[GetIPAddressesPaged]
 (
 	@ActorID int,
 	@PoolID int,
@@ -22551,17 +22551,17 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
+CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId]
 	@OrganizationId nvarchar(128)
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
-	SELECT 
+
+	SELECT
 		ItemID
-	FROM 
+	FROM
 		dbo.ExchangeOrganizations
-	WHERE 
+	WHERE
 		OrganizationId = @OrganizationId
 END
 
@@ -22678,7 +22678,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetLyncUserPlan] 
+CREATE PROCEDURE [dbo].[GetLyncUserPlan]
 (
 	@LyncUserPlanId int
 )
@@ -22714,7 +22714,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetLyncUserPlanByAccountId] 
+CREATE PROCEDURE [dbo].[GetLyncUserPlanByAccountId]
 (
 	@AccountID int
 )
@@ -22770,7 +22770,7 @@ SELECT
 FROM
 	LyncUserPlans
 WHERE
-	ItemID = @ItemID 
+	ItemID = @ItemID
 ORDER BY LyncUserPlanName
 RETURN
 
@@ -22789,22 +22789,22 @@ CREATE PROCEDURE [dbo].[GetLyncUsers]
 	@SortColumn nvarchar(40),
 	@SortDirection nvarchar(20),
 	@StartRow int,
-	@Count int	
+	@Count int
 )
 AS
 
-CREATE TABLE #TempLyncUsers 
-(	
+CREATE TABLE #TempLyncUsers
+(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
+	[AccountID] [int],
 	[ItemID] [int] NOT NULL,
 	[AccountName] [nvarchar](300)  NOT NULL,
 	[DisplayName] [nvarchar](300)  NOT NULL,
 	[UserPrincipalName] [nvarchar](300) NULL,
 	[SipAddress] [nvarchar](300) NULL,
 	[SamAccountName] [nvarchar](100) NULL,
-	[LyncUserPlanId] [int] NOT NULL,		
-	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+	[LyncUserPlanId] [int] NOT NULL,
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,
 )
 
 
@@ -22835,9 +22835,9 @@ END
 DECLARE @sql nvarchar(3500)
 
 set @sql = ''
-	INSERT INTO 
-		#TempLyncUsers 
-	SELECT 
+	INSERT INTO
+		#TempLyncUsers
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
@@ -22846,29 +22846,29 @@ set @sql = ''
 		ou.SipAddress,
 		ea.SamAccountName,
 		ou.LyncUserPlanId,
-		lp.LyncUserPlanName				
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
+		lp.LyncUserPlanName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
 		LyncUsers ou
 	INNER JOIN
-		LyncUserPlans lp 
+		LyncUserPlans lp
 	ON
-		ou.LyncUserPlanId = lp.LyncUserPlanId				
-	ON 
+		ou.LyncUserPlanId = lp.LyncUserPlanId
+	ON
 		ea.AccountID = ou.AccountID
-	WHERE 
+	WHERE
 		ea.ItemID = @ItemID + @condition
 
 exec sp_executesql @sql, N'@ItemID int',@ItemID
 
 DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers
 
 IF (@SortDirection = 'ASC')
 BEGIN
-	SELECT * FROM #TempLyncUsers 
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+	SELECT * FROM #TempLyncUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count)
 END
 ELSE
 BEGIN
@@ -22876,34 +22876,34 @@ BEGIN
 	BEGIN
 		IF (@SortColumn = 'DisplayName')
 		BEGIN
-			SELECT * FROM #TempLyncUsers 
+			SELECT * FROM #TempLyncUsers
 				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
 		END
 		IF (@SortColumn = 'UserPrincipalName')
 		BEGIN
-			SELECT * FROM #TempLyncUsers 
+			SELECT * FROM #TempLyncUsers
 				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
 		END
 
 		IF (@SortColumn = 'SipAddress')
 		BEGIN
-			SELECT * FROM #TempLyncUsers 
+			SELECT * FROM #TempLyncUsers
 				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY SipAddress DESC
 		END
 
 		IF (@SortColumn = 'LyncUserPlanName')
 		BEGIN
-			SELECT * FROM #TempLyncUsers 
+			SELECT * FROM #TempLyncUsers
 				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
 		END
 	END
 	ELSE
 	BEGIN
-		SELECT * FROM #TempLyncUsers 
+		SELECT * FROM #TempLyncUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
 	END
 
-	
+
 END
 
 DROP TABLE #TempLyncUsers
@@ -22927,7 +22927,7 @@ CREATE PROCEDURE [dbo].[GetLyncUsersByPlanId]
 )
 AS
 
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
@@ -22936,17 +22936,17 @@ AS
 		ea.SamAccountName,
 		ou.LyncUserPlanId,
 		lp.LyncUserPlanName
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
 		LyncUsers ou
 	INNER JOIN
-		LyncUserPlans lp 
+		LyncUserPlans lp
 	ON
-		ou.LyncUserPlanId = lp.LyncUserPlanId				
-	ON 
+		ou.LyncUserPlanId = lp.LyncUserPlanId
+	ON
 		ea.AccountID = ou.AccountID
-	WHERE 
+	WHERE
 		ea.ItemID = @ItemID AND
 		ou.LyncUserPlanId = @PlanId
 
@@ -22965,21 +22965,21 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetLyncUsersCount] 
+CREATE PROCEDURE [dbo].[GetLyncUsersCount]
 (
 	@ItemID int
 )
 AS
 
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	LyncUsers ou 
-ON 
+SELECT
+	COUNT(ea.AccountID)
+FROM
+	ExchangeAccounts ea
+INNER JOIN
+	LyncUsers ou
+ON
 	ea.AccountID = ou.AccountID
-WHERE 
+WHERE
 	ea.ItemID = @ItemID
 
 GO
@@ -23007,18 +23007,18 @@ SELECT
 	P.StatusID,
 	P.PlanID,
 	P.PurchaseDate,
-	
+
 	dbo.GetItemComments(P.PackageID, 'PACKAGE', @ActorID) AS Comments,
-	
+
 	-- server
 	ISNULL(P.ServerID, 0) AS ServerID,
 	ISNULL(S.ServerName, 'None') AS ServerName,
 	ISNULL(S.Comments, '') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- hosting plan
 	HP.PlanName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -23159,19 +23159,19 @@ SELECT
 	P.PackageName,
 	P.StatusID,
 	P.PurchaseDate,
-	
+
 	dbo.GetItemComments(P.PackageID, ''PACKAGE'', @ActorID) AS Comments,
-	
+
 	-- server
 	P.ServerID,
 	ISNULL(S.ServerName, ''None'') AS ServerName,
 	ISNULL(S.Comments, '''') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- hosting plan
 	P.PlanID,
 	HP.PlanName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -23465,7 +23465,7 @@ CREATE PROCEDURE [dbo].[GetOCSUsers]
 	@Name nvarchar(400),
 	@Email nvarchar(400),
 	@StartRow int,
-	@Count int	
+	@Count int
 )
 AS
 
@@ -23479,87 +23479,87 @@ BEGIN
 	SET @Email = '%'
 END
 
-CREATE TABLE #TempOCSUsers 
-(	
+CREATE TABLE #TempOCSUsers
+(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
+	[AccountID] [int],
 	[ItemID] [int] NOT NULL,
 	[AccountName] [nvarchar](300)  NOT NULL,
 	[DisplayName] [nvarchar](300)  NOT NULL,
 	[InstanceID] [nvarchar](50)  NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
+	[SamAccountName] [nvarchar](100) NULL
 )
 
 
 IF (@SortColumn = 'DisplayName')
 BEGIN
-	INSERT INTO 
-		#TempOCSUsers 
-	SELECT 
+	INSERT INTO
+		#TempOCSUsers
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ou.InstanceID,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName		
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		OCSUsers ou 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		OCSUsers ou
+	ON
 		ea.AccountID = ou.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
 		ea.DisplayName
 END
 ELSE
 BEGIN
-	INSERT INTO 
+	INSERT INTO
 		#TempOCSUsers
-	SELECT 
+	SELECT
 		ea.AccountID,
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
 		ou.InstanceID,
 		ea.PrimaryEmailAddress,
-		ea.SamAccountName		
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		OCSUsers ou 
-	ON 
+		ea.SamAccountName
+	FROM
+		ExchangeAccounts ea
+	INNER JOIN
+		OCSUsers ou
+	ON
 		ea.AccountID = ou.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
+	WHERE
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	ORDER BY
+		ea.PrimaryEmailAddress
 END
 
 DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers 
+SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers
 
 IF (@SortDirection = 'ASC')
 BEGIN
-	SELECT * FROM #TempOCSUsers 
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+	SELECT * FROM #TempOCSUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count)
 END
 ELSE
 BEGIN
 	IF (@SortColumn = 'DisplayName')
 	BEGIN
-		SELECT * FROM #TempOCSUsers 
+		SELECT * FROM #TempOCSUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
 	END
 	ELSE
 	BEGIN
-		SELECT * FROM #TempOCSUsers 
+		SELECT * FROM #TempOCSUsers
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
 	END
-	
+
 END
 
 
@@ -23580,12 +23580,12 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetOCSUsersCount] 
+CREATE PROCEDURE [dbo].[GetOCSUsersCount]
 (
 	@ItemID int,
 	@Name nvarchar(400),
 	@Email nvarchar(400)
-	
+
 )
 AS
 
@@ -23599,16 +23599,16 @@ BEGIN
 	SET @Email = '%'
 END
 
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	OCSUsers ou 
-ON 
+SELECT
+	COUNT(ea.AccountID)
+FROM
+	ExchangeAccounts ea
+INNER JOIN
+	OCSUsers ou
+ON
 	ea.AccountID = ou.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+WHERE
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
 
 
 
@@ -23651,13 +23651,13 @@ CREATE PROCEDURE [dbo].[GetOrganizationCRMUserCount]
 	@ItemID int
 AS
 BEGIN
-SELECT 
- COUNT(CRMUserID) 
-FROM 
+SELECT
+ COUNT(CRMUserID)
+FROM
 	CrmUsers CU
-INNER JOIN 
+INNER JOIN
 	ExchangeAccounts EA
-ON 
+ON
 	CU.AccountID = EA.AccountID
 WHERE EA.ItemID = @ItemID
 END
@@ -23717,7 +23717,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetOrganizationStatistics] 
+CREATE PROCEDURE [dbo].[GetOrganizationStatistics]
 (
 	@ItemID int
 )
@@ -24139,7 +24139,7 @@ LEFT OUTER JOIN
 WHERE GB.BytesTotal > 0
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -24220,7 +24220,7 @@ CREATE PROCEDURE GetPackageBandwidthUpdate
 AS
 	SELECT @UpdateDate = BandwidthUpdated FROM Packages
 	WHERE PackageID = @PackageID
-RETURN 
+RETURN
 
 
 
@@ -24326,7 +24326,7 @@ LEFT OUTER JOIN
 WHERE GD.Diskspace <> 0
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -24616,17 +24616,17 @@ SELECT
 	P.PackageName,
 	P.StatusID,
 	P.PurchaseDate,
-	
+
 	-- server
 	P.ServerID,
 	ISNULL(S.ServerName, 'None') AS ServerName,
 	ISNULL(S.Comments, '') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- hosting plan
 	P.PlanID,
 	HP.PlanName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -25210,17 +25210,17 @@ SELECT
 	P.PackageName,
 	P.StatusID,
 	P.PurchaseDate,
-	
+
 	-- server
 	ISNULL(P.ServerID, 0) AS ServerID,
 	ISNULL(S.ServerName, 'None') AS ServerName,
 	ISNULL(S.Comments, '') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- hosting plan
 	P.PlanID,
 	HP.PlanName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -25233,7 +25233,7 @@ INNER JOIN Users AS U ON P.UserID = U.UserID
 INNER JOIN Servers AS S ON P.ServerID = S.ServerID
 INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
 WHERE
-	P.UserID = @UserID	
+	P.UserID = @UserID
 RETURN
 
 GO
@@ -25346,12 +25346,12 @@ SELECT
 	ISNULL(R.QuotaValue, 0) AS QuotaValue,
 	ISNULL(R.Bandwidth, 0) AS Bandwidth,
 	ISNULL(R.UsagePercentage, 0) AS UsagePercentage,
-	
+
 	-- package
 	P.PackageName,
 	ISNULL(R.PackagesNumber, 0) AS PackagesNumber,
 	P.StatusID,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -25370,7 +25370,7 @@ WHERE R.ItemPosition BETWEEN @StartRow AND @EndRow
 exec sp_executesql @sql, N'@ActorID int, @UserID int, @PackageID int, @StartDate datetime, @EndDate datetime, @StartRow int, @MaximumRows int',
 @ActorID, @UserID, @PackageID, @StartDate, @EndDate, @StartRow, @MaximumRows
 
-RETURN 
+RETURN
 
 
 
@@ -25512,12 +25512,12 @@ SELECT
 	ISNULL(R.QuotaValue, 0) AS QuotaValue,
 	ISNULL(R.Diskspace, 0) AS Diskspace,
 	ISNULL(R.UsagePercentage, 0) AS UsagePercentage,
-	
+
 	-- package
 	P.PackageName,
 	ISNULL(R.PackagesNumber, 0) AS PackagesNumber,
 	P.StatusID,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -25536,7 +25536,7 @@ WHERE R.ItemPosition BETWEEN @StartRow AND @EndRow
 exec sp_executesql @sql, N'@ActorID int, @UserID int, @PackageID int, @StartRow int, @MaximumRows int',
 @ActorID, @UserID, @PackageID, @StartRow, @MaximumRows
 
-RETURN 
+RETURN
 
 
 
@@ -25661,7 +25661,7 @@ INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
 INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
 WHERE PS.PackageID = @PackageID AND P.GroupID = @GroupID
 
-RETURN 
+RETURN
 
 
 
@@ -25776,27 +25776,27 @@ BEGIN
 			WHERE
 				PackageID = @TmpPackageID AND
 				SettingsName = @SettingsName
-				
+
 			BREAK
 		END
 	END
 
 
 	SET @ParentPackageID = NULL --reset var
-	
+
 	-- get owner
 	SELECT
 		@ParentPackageID = ParentPackageID
 	FROM Packages
 	WHERE PackageID = @TmpPackageID
-	
+
 	IF @ParentPackageID IS NULL -- the last parent
 	BREAK
-	
+
 	SET @TmpPackageID = @ParentPackageID
 END
 
-RETURN 
+RETURN
 
 
 
@@ -25920,19 +25920,19 @@ SELECT
 	P.PackageName,
 	P.StatusID,
 	P.PurchaseDate,
-	
+
 	dbo.GetItemComments(P.PackageID, ''PACKAGE'', @ActorID) AS Comments,
-	
+
 	-- server
 	P.ServerID,
 	ISNULL(S.ServerName, ''None'') AS ServerName,
 	ISNULL(S.Comments, '''') AS ServerComments,
 	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
+
 	-- hosting plan
 	P.PlanID,
 	HP.PlanName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -26147,7 +26147,7 @@ FROM Providers
 WHERE
 	ProviderID = @ProviderID
 
-RETURN 
+RETURN
 
 
 
@@ -26242,7 +26242,7 @@ INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
 WHERE
 	S.ServiceID = @ServiceID
 
-RETURN 
+RETURN
 
 
 
@@ -26480,7 +26480,7 @@ SELECT
 FROM Quotas AS Q
 INNER JOIN ResourceGroups AS RG ON Q.GroupID = RG.GroupID
 ORDER BY RG.GroupOrder, Q.QuotaOrder
-RETURN 
+RETURN
 
 
 
@@ -26574,7 +26574,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -26726,7 +26726,7 @@ SELECT
 FROM ResourceGroups AS RG
 WHERE RG.GroupID = @GroupID
 
-RETURN 
+RETURN
 
 
 
@@ -26808,7 +26808,7 @@ SELECT
 	GroupController
 FROM ResourceGroups
 ORDER BY GroupOrder
-RETURN 
+RETURN
 
 
 
@@ -27225,7 +27225,7 @@ SELECT
 FROM Schedule AS S
 INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON S.PackageID = PT.PackageID
 ORDER BY S.Enabled DESC, S.NextRun
-	
+
 
 -- select schedules
 SELECT
@@ -27419,7 +27419,7 @@ SELECT
 	-- packages
 	P.PackageID,
 	P.PackageName,
-	
+
 	-- user
 	P.UserID,
 	U.Username,
@@ -27596,7 +27596,7 @@ GO
 
 
 
-CREATE PROCEDURE GetScheduleTasks 
+CREATE PROCEDURE GetScheduleTasks
 (
 	@ActorID int
 )
@@ -27869,7 +27869,7 @@ WHERE
 	ServerID = @ServerID
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 
 
@@ -27973,7 +27973,7 @@ WHERE
 	ServerName = @ServerName
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 
 
@@ -28070,7 +28070,7 @@ FROM Servers
 WHERE
 	ServerID = @ServerID
 
-RETURN 
+RETURN
 
 
 
@@ -28174,7 +28174,7 @@ INNER JOIN ResourceGroups AS RG ON P.GroupID = RG.GroupID
 WHERE @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -28264,7 +28264,7 @@ FROM Servers
 WHERE
 	ServerID = @ServerID
 
-RETURN 
+RETURN
 
 
 
@@ -28336,7 +28336,7 @@ FROM Services INNER JOIN Servers ON Services.ServerID = Servers.ServerID
 WHERE
 	ServiceID = @ServiceID
 
-RETURN 
+RETURN
 
 
 
@@ -28431,7 +28431,7 @@ FROM ServiceItemProperties AS IP
 INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
 
 
-RETURN 
+RETURN
 
 
 
@@ -28549,7 +28549,7 @@ FROM ServiceItemProperties AS IP
 INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
 
 
-RETURN 
+RETURN
 
 
 
@@ -28665,7 +28665,7 @@ SELECT
 FROM ServiceItemProperties AS IP
 INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
 
-RETURN 
+RETURN
 
 
 
@@ -28777,7 +28777,7 @@ FROM ServiceItemProperties AS IP
 INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
 
 
-RETURN 
+RETURN
 
 
 
@@ -29336,7 +29336,7 @@ INNER JOIN @Items AS TSI ON IP.ItemID = TSI.ItemID'
 exec sp_executesql @sql, N'@ItemTypeID int, @PackageID int, @GroupID int, @StartRow int, @MaximumRows int, @Recursive bit, @ServerID int',
 @ItemTypeID, @PackageID, @GroupID, @StartRow, @MaximumRows, @Recursive, @ServerID
 
-RETURN 
+RETURN
 
 
 
@@ -29579,7 +29579,7 @@ FROM ServiceProperties
 WHERE
 	ServiceID = @ServiceID
 
-RETURN 
+RETURN
 
 
 
@@ -29681,7 +29681,7 @@ INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
 WHERE
 	PROV.GroupID = @GroupID
 	AND @IsAdmin = 1
-RETURN 
+RETURN
 
 
 
@@ -29760,7 +29760,7 @@ INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
 WHERE
 	RG.GroupName = @GroupName
 	AND @IsAdmin = 1
-RETURN 
+RETURN
 
 
 
@@ -29844,7 +29844,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -29951,7 +29951,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -30142,7 +30142,7 @@ GO
 SET QUOTED_IDENTIFIER OFF
 GO
 
-CREATE PROCEDURE [dbo].[GetUnallottedIPAddresses]	
+CREATE PROCEDURE [dbo].[GetUnallottedIPAddresses]
 	@PackageID int,
 	@ServiceID int,
 	@PoolID int = 0
@@ -30151,7 +30151,7 @@ BEGIN
 
 	DECLARE @ParentPackageID int
 	DECLARE @ServerID int
-	
+
 	SELECT
 		@ParentPackageID = ParentPackageID,
 		@ServerID = ServerID
@@ -30159,7 +30159,7 @@ BEGIN
 	WHERE PackageID = @PackageId
 
     IF (@ParentPackageID = 1 OR @PoolID = 4 /* management network */) -- "System" space
-    BEGIN		
+    BEGIN
 		-- check if server is physical
 		IF EXISTS(SELECT * FROM Servers WHERE ServerID = @ServerID AND VirtualServer = 0)
 		BEGIN
@@ -30187,7 +30187,7 @@ BEGIN
 			SELECT @GroupID = P.GroupID FROM Services AS S
 			INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
 			WHERE S.ServiceID = @ServiceID
-			
+
 			SELECT
 				IP.AddressID,
 				IP.ExternalIP,
@@ -30213,7 +30213,7 @@ BEGIN
 		-- get service location
 		SELECT @ServerID = S.ServerID FROM Services AS S
 		WHERE S.ServiceID = @ServiceID
-	
+
 		SELECT
 			IP.AddressID,
 			IP.ExternalIP,
@@ -30511,7 +30511,7 @@ AS
 	FROM Users AS U
 	WHERE U.UserID IN (SELECT UserID FROM Packages WHERE PackageID IN (
 	SELECT PackageID FROM ServiceItems WHERE ItemID = @ItemID))
-	
+
 RETURN
 
 GO
@@ -30892,7 +30892,7 @@ SELECT
 FROM UserParents(@ActorID, @UserID) AS UP
 INNER JOIN Users AS U ON UP.UserID = U.UserID
 ORDER BY UP.UserOrder DESC
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -30946,7 +30946,7 @@ FROM UsersDetailed AS U
 WHERE U.OwnerID = @UserID AND IsPeer = 1
 AND @CanGetDetails = 1 -- actor rights
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -31006,12 +31006,12 @@ SELECT
 	U.EcommerceEnabled
 FROM UsersDetailed AS U
 WHERE U.UserID <> @OwnerID AND
-((@Recursive = 1 AND dbo.CheckUserParent(@OwnerID, U.UserID) = 1) OR 
+((@Recursive = 1 AND dbo.CheckUserParent(@OwnerID, U.UserID) = 1) OR
 (@Recursive = 0 AND U.OwnerID = @OwnerID))
 AND U.IsPeer = 0
 AND @CanGetDetails = 1 -- actor user rights
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -31063,28 +31063,28 @@ Algorythm:
 	3. If the requested resource has one service
 		remember the ID of this single service
 	4. If the requested resource has several services DO distribution:
-		
+
 		4.1. If the resource is NOT BOUNDED or is PRIMARY DISTRIBUTION RESOURCE
 			if PRIMARY DISTRIBUTION RESOURCE and exists in UserServices
 				return serviceId from UserServices table
-				
+
 			remember any service from that resource according to distribution type ("BALANCED" or "RANDOM") - get the number of ServiceItems for each service
-			
+
 		4.2. If the resource is BOUNDED to primary distribution resource
 			- If the primary distribution resource is NULL
 			EXCEPTION "Requested resource marked as bound to primary distribution resource, but there is no any resources in hosting plan marked as primary"
-			
+
 			- Get the service id of the primary distribution resource
 			GetServiceId(userId, primaryResourceId)
-			
-		
-		Get from user assigned hosting plan 
-		
+
+
+		Get from user assigned hosting plan
+
 	5. If it is PRIMARY DISTRIBUTION RESOURCE
 		Save it's ID to UserServices table
-	
+
 	6. return serviceId
-	
+
 ERROR CODES:
 	-1 - there are several hosting plans with PDR assigned to that user
 	-2 - The requested service is not available for the user. The resource of the
@@ -31103,7 +31103,7 @@ CREATE PROCEDURE GetUserServiceID
 )
 AS
 	DECLARE @PrimaryResourceID int -- primary distribution resource assigned through hosting plan
-	
+
 	----------------------------------------
 	-- Get the primary distribution resource
 	----------------------------------------
@@ -31114,14 +31114,14 @@ AS
 		SET @ServiceID = -1
 		RETURN
 	END
-		
+
 	SELECT @PrimaryResourceID = HP.PrimaryResourceID FROM PurchasedHostingPlans AS PHP
 	INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
 	WHERE PHP.UserID = @UserID AND HP.PrimaryResourceID IS NOT NULL AND HP.PrimaryResourceID <> 0
 
-	
+
 	----------------------------------------------
-	-- Check whether user has a resource 
+	-- Check whether user has a resource
 	-- of this type in his hosting plans or addons
 	----------------------------------------------
 	DECLARE @UserResourcesTable TABLE
@@ -31151,13 +31151,13 @@ AS
 		SET @ServiceID = -3 -- several resources of the same type was assigned
 		RETURN
 	END
-	
+
 	----------------------------------------
 	-- Check services number
 	----------------------------------------
 	DECLARE @ResourceID int
 	SET @ResourceID = (SELECT TOP 1 ResourceID FROM @UserResourcesTable)
-	
+
 	DECLARE @UserServicesTable TABLE
 	(
 		ServiceID int,
@@ -31174,7 +31174,7 @@ AS
 	FROM ResourceServices AS RS
 	INNER JOIN Services AS S ON RS.ServiceID = S.ServiceID
 	WHERE RS.ResourceID = @ResourceID
-	
+
 	DECLARE @ServicesCount int
 	SET @ServicesCount = @@ROWCOUNT
 	IF @ServicesCount = 0
@@ -31182,7 +31182,7 @@ AS
 		SET @ServiceID = -4 -- The resource {name} of type {type} should contain atleast one service
 		RETURN
 	END
-	
+
 	-- try to return from UserServices
 	-- if it is a PDR
 	IF @ResourceID = @PrimaryResourceID
@@ -31191,7 +31191,7 @@ AS
 		SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
 		INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
 		WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
-		
+
 		-- check validness of the current primary service id
 		IF @ServiceID IS NOT NULL
 		BEGIN
@@ -31202,7 +31202,7 @@ AS
 				DELETE FROM UserServices WHERE UserID = @UserID
 		END
 	END
-	
+
 	IF @ServicesCount = 1
 	BEGIN
 		-- nothing to distribute
@@ -31216,7 +31216,7 @@ AS
 		DECLARE @BoundToPrimaryResource bit
 		SELECT @DistributionTypeID = R.DistributionTypeID, @BoundToPrimaryResource = R.BoundToPrimaryResource
 		FROM Resources AS R WHERE R.ResourceID = @ResourceID
-	
+
 		IF @BoundToPrimaryResource = 0 OR @ResourceID = @PrimaryResourceID
 		BEGIN
 			IF @ResourceID = @PrimaryResourceID -- it's PDR itself
@@ -31225,7 +31225,7 @@ AS
 				SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
 				INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
 				WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
-				
+
 				-- check validness of the current primary service id
 				IF @ServiceID IS NOT NULL
 				BEGIN
@@ -31236,7 +31236,7 @@ AS
 						DELETE FROM UserServices WHERE UserID = @UserID
 				END
 			END
-			
+
 			-- distribute
 			IF @DistributionTypeID = 1 -- BALANCED distribution
 				SELECT @ServiceID = ServiceID FROM @UserServicesTable
@@ -31253,14 +31253,14 @@ AS
 									-- but there is no any resources in hosting plan marked as primary
 				RETURN
 			END
-			
+
 			-- get the type of primary resource
 			DECLARE @PrimaryTypeName nvarchar(200)
 			SELECT @PrimaryTypeName = ST.TypeName FROM  Resources AS R
 			INNER JOIN ServiceTypes AS ST ON R.ServiceTypeID = ST.ServiceTypeID
 			WHERE R.ResourceID = @PrimaryResourceID
-			
-			
+
+
 			DECLARE @PrimaryServiceID int
 			EXEC GetUserServiceID @UserID, @PrimaryTypeName, @PrimaryServiceID OUTPUT
 
@@ -31269,29 +31269,29 @@ AS
 				SET @ServiceID = @PrimaryServiceID
 				RETURN
 			END
-			
+
 			DECLARE @ServerID int
 			SET @ServerID = (SELECT ServerID FROM Services WHERE ServiceID = @PrimaryServiceID)
-			
+
 			-- try to get the service of the requested type on PDR server
 			SET @ServiceID = (SELECT ServiceID FROM @UserServicesTable WHERE ServerID = @ServerID)
-			
+
 			IF @ServiceID IS NULL
 			BEGIN
 				SET @ServiceID = -6 -- the server where PDR is located doesn't contain the service of requested resource type
 			END
 		END
 	END
-	
+
 	IF @ResourceID = @PrimaryResourceID -- it's PDR
 	BEGIN
 		DELETE FROM UserServices WHERE UserID = @UserID
-		
+
 		INSERT INTO UserServices (UserID, ServiceID)
 		VALUES (@UserID, @ServiceID)
 	END
-	
-RETURN 
+
+RETURN
 
 
 
@@ -31403,25 +31403,25 @@ BEGIN
 		WHERE
 			UserID = @TmpUserID AND
 			SettingsName = @SettingsName
-			
+
 		BREAK
 	END
 
 	SET @ParentUserID = NULL --reset var
-	
+
 	-- get owner
 	SELECT
 		@ParentUserID = OwnerID
 	FROM Users
 	WHERE UserID = @TmpUserID
-	
+
 	IF @ParentUserID IS NULL -- the last parent
 	BREAK
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
-RETURN 
+RETURN
 
 
 
@@ -31510,7 +31510,7 @@ INSERT INTO @Users (UserID)
 SELECT
 	U.UserID
 FROM UsersDetailed AS U
-WHERE 
+WHERE
 	U.UserID <> @UserID AND U.IsPeer = 0 AND
 	(
 		(@Recursive = 0 AND OwnerID = @UserID) OR
@@ -31776,7 +31776,7 @@ LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPr
 exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
 @PackageID, @StartRow, @MaximumRows, @Recursive
 
-RETURN 
+RETURN
 
 
 
@@ -31965,7 +31965,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY S.ServerName
 
-RETURN 
+RETURN
 
 
 
@@ -32065,7 +32065,7 @@ WHERE
 	VS.ServerID = @ServerID
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 GO
 SET ANSI_NULLS ON
@@ -32106,15 +32106,15 @@ INSERT INTO
 	CRMUserGuid,
 	BusinessUnitID
 )
-VALUES 
+VALUES
 (
-	@ItemID, 
+	@ItemID,
 	@CrmUserID,
 	@BusinessUnitID
 )
 
-	
-    
+
+
 END
 
 
@@ -32181,7 +32181,7 @@ AS
 		BEGIN
 			SET @Exists = 1
 		END
-		
+
 
 	RETURN
 
@@ -32221,7 +32221,7 @@ WHERE ItemID = @ItemID
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -32346,7 +32346,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[OrganizationUserExists] 
+CREATE PROCEDURE [dbo].[OrganizationUserExists]
 (
 	@LoginName nvarchar(20),
 	@Exists bit OUTPUT
@@ -32447,13 +32447,13 @@ SELECT
 	MailEnabledPublicFolder,
 	MailboxManagerActions,
 	SamAccountName,
-	AccountPassword, 
+	AccountPassword,
 	SubscriberNumber,
 	UserPrincipalName
 FROM ExchangeAccounts
 WHERE AccountID = @AccountID
 
-RETURN 
+RETURN
 
 
 GO
@@ -32534,7 +32534,7 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes int, @IncludeContacts 
     @IncludeDistributionLists int, @IncludeRooms bit, @IncludeEquipment bit',
 @ItemID, @IncludeMailboxes, @IncludeContacts, @IncludeDistributionLists, @IncludeRooms, @IncludeEquipment
 
-RETURN 
+RETURN
 
 
 GO
@@ -32609,10 +32609,10 @@ WHERE ' + @condition
 
 print @sql
 
-exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit', 
+exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 @ItemID, @IncludeMailboxes
 
-RETURN 
+RETURN
 
 
 GO
@@ -32677,7 +32677,7 @@ BEGIN
 
 	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
 	SELECT
-		
+
 		SI.ItemID,
 		SI.ItemName,
 
@@ -32685,7 +32685,7 @@ BEGIN
 		P.PackageName,
 		P.StatusID,
 		P.PurchaseDate,
-		
+
 		-- user
 		P.UserID,
 		U.Username,
@@ -32704,7 +32704,7 @@ ELSE
 BEGIN
 
 	SET @SortColumn = REPLACE(@SortColumn, 'ItemName', 'DomainName')
-	
+
 	SET @sql = '
 	DECLARE @EndRow int
 	SET @EndRow = @StartRow + @MaximumRows
@@ -32733,7 +32733,7 @@ BEGIN
 
 	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
 	SELECT
-		
+
 		D.DomainID AS ItemID,
 		D.DomainName AS ItemName,
 
@@ -32741,7 +32741,7 @@ BEGIN
 		P.PackageName,
 		P.StatusID,
 		P.PurchaseDate,
-		
+
 		-- user
 		P.UserID,
 		U.Username,
@@ -32781,7 +32781,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[SetExchangeAccountMailboxplan] 
+CREATE PROCEDURE [dbo].[SetExchangeAccountMailboxplan]
 (
 	@AccountID int,
 	@MailboxPlanId int
@@ -32928,7 +32928,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[SetLyncUserLyncUserPlan] 
+CREATE PROCEDURE [dbo].[SetLyncUserLyncUserPlan]
 (
 	@AccountID int,
 	@LyncUserPlanId int
@@ -32950,7 +32950,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan] 
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan]
 (
 	@ItemID int,
 	@MailboxPlanId int
@@ -32977,7 +32977,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan] 
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan]
 (
 	@ItemID int,
 	@LyncUserPlanId int
@@ -33043,7 +33043,7 @@ XML Format:
 		DECLARE @idoc int;
 		--Create an internal representation of the XML document.
 		EXEC sp_xml_preparedocument @idoc OUTPUT, @xml;
-	
+
 		DELETE FROM [dbo].[SystemSettings] WHERE [SettingsName] = @SettingsName;
 
 		INSERT INTO [dbo].[SystemSettings]
@@ -33056,7 +33056,7 @@ XML Format:
 			@SettingsName,
 			[XML].[PropertyName],
 			[XML].[PropertyValue]
-		FROM OPENXML(@idoc, '/properties/property',1) WITH 
+		FROM OPENXML(@idoc, '/properties/property',1) WITH
 		(
 			[PropertyName] nvarchar(50) '@name',
 			[PropertyValue] ntext '@value'
@@ -33128,8 +33128,8 @@ CREATE PROCEDURE [dbo].[UpdateDnsRecord]
 	@RecordData nvarchar(500),
 	@MXPriority int,
 	@SrvPriority int,
-	@SrvWeight int, 
-	@SrvPort int,	
+	@SrvWeight int,
+	@SrvPort int,
 	@IPAddressID int
 )
 AS
@@ -33238,7 +33238,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[UpdateExchangeAccount] 
+CREATE PROCEDURE [dbo].[UpdateExchangeAccount]
 (
 	@AccountID int,
 	@AccountName nvarchar(300),
@@ -33254,9 +33254,9 @@ CREATE PROCEDURE [dbo].[UpdateExchangeAccount]
 )
 AS
 
-BEGIN TRAN	
+BEGIN TRAN
 
-IF (@MailboxPlanId = -1) 
+IF (@MailboxPlanId = -1)
 BEGIN
 	SET @MailboxPlanId = NULL
 END
@@ -33266,7 +33266,7 @@ UPDATE ExchangeAccounts SET
 	DisplayName = @DisplayName,
 	PrimaryEmailAddress = @PrimaryEmailAddress,
 	MailEnabledPublicFolder = @MailEnabledPublicFolder,
-	MailboxManagerActions = @MailboxManagerActions,	
+	MailboxManagerActions = @MailboxManagerActions,
 	AccountType =@AccountType,
 	SamAccountName = @SamAccountName,
 	MailboxPlanId = @MailboxPlanId,
@@ -33281,7 +33281,7 @@ IF (@@ERROR <> 0 )
 		RETURN -1
 	END
 
-UPDATE ExchangeAccounts SET 
+UPDATE ExchangeAccounts SET
 	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
 
 IF (@@ERROR <> 0 )
@@ -33297,7 +33297,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
- CREATE PROCEDURE [dbo].[UpdateExchangeAccountUserPrincipalName] 
+ CREATE PROCEDURE [dbo].[UpdateExchangeAccountUserPrincipalName]
 (
 	@AccountID int,
 	@UserPrincipalName nvarchar(300)
@@ -33322,7 +33322,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[UpdateExchangeMailboxPlan] 
+CREATE PROCEDURE [dbo].[UpdateExchangeMailboxPlan]
 (
 	@MailboxPlanId int,
 	@MailboxPlan	nvarchar(300),
@@ -33498,7 +33498,7 @@ SELECT
 	GroupID,
 	CalculateDiskSpace,
 	CalculateBandwidth
-FROM OPENXML(@idoc, '/plan/groups/group',1) WITH 
+FROM OPENXML(@idoc, '/plan/groups/group',1) WITH
 (
 	GroupID int '@id',
 	CalculateDiskSpace bit '@calculateDiskSpace',
@@ -33516,7 +33516,7 @@ SELECT
 	@PlanID,
 	QuotaID,
 	QuotaValue
-FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH 
+FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH
 (
 	QuotaID int '@id',
 	QuotaValue int '@value'
@@ -33525,7 +33525,7 @@ FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH
 -- remove document
 exec sp_xml_removedocument @idoc
 
-RETURN 
+RETURN
 
 
 
@@ -33613,7 +33613,7 @@ END
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -33710,7 +33710,7 @@ SET @PlanID = SCOPE_IDENTITY()
 EXEC UpdateHostingPlanQuotas @ActorID, @PlanID, @QuotasXml
 
 COMMIT TRAN
-RETURN 
+RETURN
 
 
 
@@ -33770,7 +33770,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[UpdateIPAddress]	
+CREATE PROCEDURE [dbo].[UpdateIPAddress]
 (
 	@AddressID int,
 	@ServerID int,
@@ -33865,7 +33865,7 @@ BEGIN
 		DefaultGateway = @DefaultGateway,
 		Comments = @Comments
 	FROM IPAddresses AS IP
-	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
+	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH
 	(
 		AddressID int '@id'
 	) as PV ON IP.AddressID = PV.AddressID
@@ -33898,7 +33898,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
-CREATE PROCEDURE [dbo].[UpdateLyncUser] 
+CREATE PROCEDURE [dbo].[UpdateLyncUser]
 (
 	@AccountID int,
 	@SipAddress nvarchar(300)
@@ -33924,7 +33924,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[UpdateLyncUserPlan] 
+CREATE PROCEDURE [dbo].[UpdateLyncUserPlan]
 (
 	@LyncUserPlanId int,
 	@LyncUserPlanName	nvarchar(300),
@@ -34147,14 +34147,14 @@ INSERT INTO @Items
 	ItemID,
 	LogDate,
 	BytesSent,
-	BytesReceived	
+	BytesReceived
 )
 SELECT
 	ItemID,
 	CONVERT(datetime, LogDate, 101),
 	BytesSent,
 	BytesReceived
-FROM OPENXML(@idoc, '/items/item',1) WITH 
+FROM OPENXML(@idoc, '/items/item',1) WITH
 (
 	ItemID int '@id',
 	LogDate nvarchar(10) '@date',
@@ -34192,7 +34192,7 @@ GROUP BY I.LogDate, SIT.GroupID
 -- remove document
 exec sp_xml_removedocument @idoc
 
-RETURN 
+RETURN
 
 
 
@@ -34275,7 +34275,7 @@ AS
 UPDATE Packages SET BandwidthUpdated = @UpdateDate
 WHERE PackageID = @PackageID
 
-RETURN 
+RETURN
 
 
 
@@ -34365,7 +34365,7 @@ DECLARE @Items TABLE
 )
 
 INSERT INTO @Items (ItemID, Bytes)
-SELECT ItemID, DiskSpace FROM OPENXML (@idoc, '/items/item',1) 
+SELECT ItemID, DiskSpace FROM OPENXML (@idoc, '/items/item',1)
 WITH
 (
 	ItemID int '@id',
@@ -34613,7 +34613,7 @@ BEGIN
 	-- delete old Package quotas
 	DELETE FROM PackageQuotas
 	WHERE PackageID = @PackageID
-	
+
 	DECLARE @idoc int
 	--Create an internal representation of the XML document.
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
@@ -34631,7 +34631,7 @@ BEGIN
 		GroupID,
 		CalculateDiskSpace,
 		CalculateBandwidth
-	FROM OPENXML(@idoc, '/plan/groups/group',1) WITH 
+	FROM OPENXML(@idoc, '/plan/groups/group',1) WITH
 	(
 		GroupID int '@id',
 		CalculateDiskSpace bit '@calculateDiskSpace',
@@ -34649,16 +34649,16 @@ BEGIN
 		@PackageID,
 		QuotaID,
 		QuotaValue
-	FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH 
+	FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH
 	(
 		QuotaID int '@id',
 		QuotaValue int '@value'
 	) as PV
-	
+
 	-- remove document
 	exec sp_xml_removedocument @idoc
 END
-RETURN 
+RETURN
 
 
 
@@ -34763,7 +34763,7 @@ SELECT
 	@SettingsName,
 	PropertyName,
 	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
+FROM OPENXML(@idoc, '/properties/property',1) WITH
 (
 	PropertyName nvarchar(50) '@name',
 	PropertyValue ntext '@value'
@@ -34774,7 +34774,7 @@ exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -34898,7 +34898,7 @@ SET
 	WeekMonthDay = @WeekMonthDay
 WHERE
 	ScheduleID = @ScheduleID
-	
+
 DECLARE @idoc int
 --Create an internal representation of the XML document.
 EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
@@ -34917,7 +34917,7 @@ SELECT
 	@ScheduleID,
 	ParameterID,
 	ParameterValue
-FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
+FROM OPENXML(@idoc, '/parameters/parameter',1) WITH
 (
 	ParameterID nvarchar(50) '@id',
 	ParameterValue nvarchar(3000) '@value'
@@ -35127,7 +35127,7 @@ SET
 	ClusterID = @ClusterID
 WHERE ServiceID = @ServiceID
 
-RETURN 
+RETURN
 
 
 
@@ -35249,7 +35249,7 @@ SELECT
 	@ItemID,
 	PropertyName,
 	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
+FROM OPENXML(@idoc, '/properties/property',1) WITH
 (
 	PropertyName nvarchar(50) '@name',
 	PropertyValue nvarchar(3000) '@value'
@@ -35262,9 +35262,9 @@ INSERT INTO ServiceItemProperties
 	PropertyName,
 	PropertyValue
 )
-SELECT 
-	ItemID, 
-	PropertyName, 
+SELECT
+	ItemID,
+	PropertyName,
 	PropertyValue
 FROM #TempTable
 
@@ -35275,7 +35275,7 @@ exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -35366,7 +35366,7 @@ EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
 
 -- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ServiceProperties
-WHERE ServiceID = @ServiceID 
+WHERE ServiceID = @ServiceID
 AND PropertyName COLLATE Latin1_General_CI_AS IN
 (
 	SELECT PropertyName
@@ -35384,7 +35384,7 @@ SELECT
 	@ServiceID,
 	PropertyName,
 	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
+FROM OPENXML(@idoc, '/properties/property',1) WITH
 (
 	PropertyName nvarchar(50) '@name',
 	PropertyValue nvarchar(1000) '@value'
@@ -35394,7 +35394,7 @@ FROM OPENXML(@idoc, '/properties/property',1) WITH
 exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
-RETURN 
+RETURN
 
 
 
@@ -35479,12 +35479,12 @@ AS
 
 	IF @LoginStatusId = 0
 	BEGIN
-		UPDATE Users SET 
+		UPDATE Users SET
 			FailedLogins = 0
 		WHERE UserID = @UserID
 	END
 
-	UPDATE Users SET 
+	UPDATE Users SET
 		RoleID = @RoleID,
 		StatusID = @StatusID,
 		SubscriberNumber = @SubscriberNumber,
@@ -35641,7 +35641,7 @@ SELECT
 	@SettingsName,
 	PropertyName,
 	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
+FROM OPENXML(@idoc, '/properties/property',1) WITH
 (
 	PropertyName nvarchar(50) '@name',
 	PropertyValue ntext '@value'
@@ -35652,7 +35652,7 @@ exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 
-RETURN 
+RETURN
 
 
 
@@ -35767,7 +35767,7 @@ SELECT
 	GroupID,
 	DistributionType,
 	BindDistributionToPrimary
-FROM OPENXML(@idoc, '/groups/group',1) WITH 
+FROM OPENXML(@idoc, '/groups/group',1) WITH
 (
 	GroupID int '@id',
 	DistributionType int '@distributionType',
@@ -35778,7 +35778,7 @@ FROM OPENXML(@idoc, '/groups/group',1) WITH
 exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
-RETURN 
+RETURN
 
 
 
@@ -36098,13 +36098,13 @@ AS
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 319 -- BB Users
-			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea
 							INNER JOIN BlackBerryUsers bu ON ea.AccountID = bu.AccountID
 							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 							WHERE pt.ParentPackageID = @PackageID)
 		ELSE IF @QuotaID = 320 -- OCS Users
-			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea
 							INNER JOIN OCSUsers ocs ON ea.AccountID = ocs.AccountID
 							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
@@ -36118,12 +36118,12 @@ AS
 			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
-				WHERE pt.ParentPackageID = @PackageID 
+				WHERE pt.ParentPackageID = @PackageID
 				AND ea.AccountType IN (1)
 				AND ea.MailboxPlanId IS NOT NULL)
 		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
-			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
-			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
+			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea
+			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId
 			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 			WHERE pt.ParentPackageID = @PackageID)
@@ -36231,10 +36231,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -36369,10 +36369,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -36481,12 +36481,12 @@ BEGIN
 	-- and his owner
 	IF @UserID = @OwnerID
 	RETURN 0
-	
+
 	IF EXISTS (
 		SELECT UserID FROM Users
 		WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID
 	) RETURN 0
-	
+
 	-- set actor to his owner
 	SET @ActorID = @OwnerID
 END
@@ -36514,10 +36514,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -36739,10 +36739,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -36850,12 +36850,12 @@ BEGIN
 	-- check if the peer is trying to update his owner
 	IF @UserID = @OwnerID
 	RETURN 0
-	
+
 	-- check if the peer is trying to update his peers
 	IF EXISTS (SELECT UserID FROM Users
 	WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID)
 	RETURN 0
-	
+
 	SET @ActorID = @OwnerID
 END
 
@@ -36875,10 +36875,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -37213,10 +37213,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @ActorID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -37310,7 +37310,7 @@ DECLARE @UsedAddons int
 	INNER JOIN PackageQuotas AS PQ ON P.PackageID = PQ.PackageID AND PQ.QuotaID = @QuotaID
 	WHERE P.ParentPackageID = @PackageID
 		AND P.OverrideQuotas = 1
-	
+
 	-- addons
 	SELECT @UsedAddons = SUM(HPQ.QuotaValue * PA.Quantity)
 	FROM Packages AS P
@@ -37319,9 +37319,9 @@ DECLARE @UsedAddons int
 	WHERE P.ParentPackageID = @PackageID AND HPQ.QuotaID = @QuotaID AND PA.StatusID = 1 -- active
 
 --SET @UsedQuantity = (SELECT SUM(dbo.GetPackageAllocatedQuota(PackageID, @QuotaID)) FROM Packages WHERE ParentPackageID = @PackageID)
-	
+
 SET @UsedQuantity = @UsedPlans + @UsedOverrides + @UsedAddons
-	
+
 IF @UsedQuantity IS NULL
 RETURN 0 -- can exceed
 
@@ -37492,10 +37492,10 @@ BEGIN
 
 	IF @TmpParentPackageID IS NULL -- the last parent package
 		BREAK
-	
+
 	IF @TmpParentPackageID = @ParentPackageID
 	RETURN 1
-	
+
 	SET @TmpPackageID = @TmpParentPackageID
 END
 
@@ -37620,10 +37620,10 @@ BEGIN
 
 	IF @ParentUserID IS NULL -- the last parent
 		BREAK
-	
+
 	IF @ParentUserID = @OwnerID
 	RETURN 1
-	
+
 	SET @TmpUserID = @ParentUserID
 END
 
@@ -37883,7 +37883,7 @@ GO
 
 
 
-CREATE FUNCTION dbo.GetPackageAllocatedQuota 
+CREATE FUNCTION dbo.GetPackageAllocatedQuota
 (
 	@PackageID int,
 	@QuotaID int
@@ -37912,7 +37912,7 @@ WHILE 1 = 1
 BEGIN
 
 	DECLARE @QuotaValue int
-	
+
 	-- get package info
 	SELECT
 		@ParentPackageID = ParentPackageID,
@@ -37938,10 +37938,10 @@ BEGIN
 			SELECT @QuotaValue = HPQ.QuotaValue FROM Packages AS P
 			INNER JOIN HostingPlanQuotas AS HPQ ON P.PlanID = HPQ.PlanID
 			WHERE HPQ.QuotaID = @QuotaID AND P.PackageID = @PID
-			
+
 		IF @QuotaValue IS NULL
 		SET @QuotaValue = 0
-			
+
 		-- check package addons
 		DECLARE @QuotaAddonValue int
 		SELECT
@@ -37949,7 +37949,7 @@ BEGIN
 		FROM PackageAddons AS PA
 		INNER JOIN HostingPlanQuotas AS HPQ ON PA.PlanID = HPQ.PlanID
 		WHERE PA.PackageID = @PID AND HPQ.QuotaID = @QuotaID AND PA.StatusID = 1 -- active
-		
+
 		-- process bool quota
 		IF @QuotaAddonValue IS NOT NULL
 		BEGIN
@@ -37967,7 +37967,7 @@ BEGIN
 			END
 		END
 	END
-	
+
 	-- process bool quota
 	IF @QuotaTypeID = 1
 	BEGIN
@@ -37978,14 +37978,14 @@ BEGIN
 	BEGIN -- numeric quota
 		IF @QuotaValue = 0 OR @QuotaValue IS NULL -- zero quantity
 		RETURN 0
-		
+
 		IF (@QuotaValue <> -1 AND @Result = -1) OR (@QuotaValue < @Result AND @QuotaValue <> -1)
 			SET @Result = @QuotaValue
 	END
-	
+
 	IF @ParentPackageID IS NULL
 	RETURN @Result -- exit from the loop
-	
+
 	SET @PID = @ParentPackageID
 
 END -- end while
@@ -38088,7 +38088,7 @@ WHILE 1 = 1
 BEGIN
 
 	DECLARE @GroupEnabled int
-	
+
 	-- get package info
 	SELECT
 		@ParentPackageID = ParentPackageID,
@@ -38099,14 +38099,14 @@ BEGIN
 	SET @GroupEnabled = 1 -- enabled
 	IF @ParentPackageID IS NULL
 	BEGIN
-	
+
 		IF @ServerID = -1 OR @ServerID IS NULL
 		RETURN 1
-	
+
 		IF EXISTS (SELECT VirtualServer FROM Servers WHERE ServerID = @ServerID AND VirtualServer = 1)
 		BEGIN
 			IF NOT EXISTS(
-				SELECT 
+				SELECT
 					DISTINCT(PROV.GroupID)
 				FROM VirtualServices AS VS
 				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
@@ -38118,7 +38118,7 @@ BEGIN
 		ELSE
 		BEGIN
 			IF NOT EXISTS(
-				SELECT 
+				SELECT
 					DISTINCT(PROV.GroupID)
 				FROM Services AS S
 				INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
@@ -38126,7 +38126,7 @@ BEGIN
 			)
 			SET @GroupEnabled = 0
 		END
-		
+
 		RETURN @GroupEnabled -- exit from the loop
 	END
 	ELSE -- parentpackage is not null
@@ -38148,7 +38148,7 @@ BEGIN
 			)
 			SET @GroupEnabled = 0
 		END
-		
+
 		-- check addons
 		IF EXISTS(
 			SELECT HPR.GroupID FROM PackageAddons AS PA
@@ -38158,10 +38158,10 @@ BEGIN
 		)
 		SET @GroupEnabled = 1
 	END
-	
+
 	IF @GroupEnabled = 0
 		RETURN 0
-	
+
 	SET @PID = @ParentPackageID
 
 END -- end while
@@ -38316,19 +38316,19 @@ BEGIN
 	-- owner
 	DECLARE @ParentPackageID int, @TmpPackageID int
 	SET @TmpPackageID = @PackageID
-	
+
 	WHILE 10 = 10
 	BEGIN
-	
+
 		SET @ParentPackageID = NULL --reset var
 		SELECT @ParentPackageID = ParentPackageID FROM Packages
 		WHERE PackageID = @TmpPackageID
-		
+
 		IF @ParentPackageID IS NULL -- parent not found
 		BREAK
-	
+
 		INSERT @T VALUES (@ParentPackageID)
-		
+
 		SET @TmpPackageID = @ParentPackageID
 	END
 
@@ -38423,7 +38423,7 @@ INSERT INTO @T VALUES (@PackageID)
 
 IF @Recursive = 1
 BEGIN
-	WITH RecursivePackages(ParentPackageID, PackageID, PackageLevel) AS 
+	WITH RecursivePackages(ParentPackageID, PackageID, PackageLevel) AS
 	(
 		SELECT ParentPackageID, PackageID, 0 AS PackageLevel
 		FROM Packages
@@ -38439,7 +38439,7 @@ BEGIN
 	SELECT PackageID
 	FROM RecursivePackages
 END
-	
+
 RETURN
 END
 
@@ -38527,7 +38527,7 @@ AS
 BEGIN
 	-- insert current user
 	INSERT @T VALUES (@UserID)
-	
+
 	DECLARE @TopUserID int
 	IF @ActorID = -1
 	BEGIN
@@ -38536,14 +38536,14 @@ BEGIN
 	ELSE
 	BEGIN
 		SET @TopUserID = @ActorID
-		
+
 		IF EXISTS (SELECT UserID FROM Users WHERE UserID = @ActorID AND IsPeer = 1)
 		SELECT @TopUserID = OwnerID FROM Users WHERE UserID = @ActorID AND IsPeer = 1
 	END
 
 	-- owner
 	DECLARE @OwnerID int, @TmpUserID int
-	
+
 	SET @TmpUserID = @UserID
 
 	WHILE (@TmpUserID <> @TopUserID)
@@ -38551,7 +38551,7 @@ BEGIN
 
 		SET @OwnerID = NULL
 		SELECT @OwnerID = OwnerID FROM Users WHERE UserID = @TmpUserID
-		
+
 		IF @OwnerID IS NOT NULL
 		BEGIN
 			INSERT @T VALUES (@OwnerID)
@@ -38650,7 +38650,7 @@ BEGIN
 	BEGIN
 		-- insert "root" user
 		INSERT @T VALUES(@OwnerID)
-	
+
 		-- get all children recursively
 		WHILE @@ROWCOUNT > 0
 		BEGIN
@@ -38663,7 +38663,7 @@ BEGIN
 	BEGIN
 		INSERT @T VALUES(@OwnerID)
 	END
-	
+
 RETURN
 END
 
@@ -38722,7 +38722,7 @@ CREATE TABLE [dbo].[AuditLog](
 	[ItemName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[ExecutionLog] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[PackageID] [int] NULL,
- CONSTRAINT [PK_Log] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Log] PRIMARY KEY CLUSTERED
 (
 	[RecordID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38735,7 +38735,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[AuditLogSources](
 	[SourceName] [varchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_AuditLogSources] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_AuditLogSources] PRIMARY KEY CLUSTERED
 (
 	[SourceName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38750,7 +38750,7 @@ CREATE TABLE [dbo].[AuditLogTasks](
 	[SourceName] [varchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[TaskName] [varchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[TaskDescription] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_LogActions] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_LogActions] PRIMARY KEY CLUSTERED
 (
 	[SourceName] ASC,
 	[TaskName] ASC
@@ -38767,7 +38767,7 @@ CREATE TABLE [dbo].[BlackBerryUsers](
 	[AccountId] [int] NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
 	[ModifiedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_BlackBerryUsers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_BlackBerryUsers] PRIMARY KEY CLUSTERED
 (
 	[BlackBerryUserId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38781,7 +38781,7 @@ GO
 CREATE TABLE [dbo].[Clusters](
 	[ClusterID] [int] IDENTITY(1,1) NOT NULL,
 	[ClusterName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_Clusters] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Clusters] PRIMARY KEY CLUSTERED
 (
 	[ClusterID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38800,7 +38800,7 @@ CREATE TABLE [dbo].[Comments](
 	[CreatedDate] [datetime] NOT NULL,
 	[CommentText] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
 	[SeverityID] [int] NULL,
- CONSTRAINT [PK_Comments] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Comments] PRIMARY KEY CLUSTERED
 (
 	[CommentID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38818,7 +38818,7 @@ CREATE TABLE [dbo].[CRMUsers](
 	[ChangedDate] [datetime] NOT NULL,
 	[CRMUserGuid] [uniqueidentifier] NULL,
 	[BusinessUnitID] [uniqueidentifier] NULL,
- CONSTRAINT [PK_CRMUsers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_CRMUsers] PRIMARY KEY CLUSTERED
 (
 	[CRMUserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38841,7 +38841,7 @@ CREATE TABLE [dbo].[Domains](
 	[IsInstantAlias] [bit] NOT NULL,
 	[IsDomainPointer] [bit] NOT NULL,
 	[DomainItemId] [int] NULL,
- CONSTRAINT [PK_Domains] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Domains] PRIMARY KEY CLUSTERED
 (
 	[DomainID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38856,7 +38856,7 @@ CREATE TABLE [dbo].[ecAddonProducts](
 	[AddonID] [int] NOT NULL,
 	[ProductID] [int] NOT NULL,
 	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecAddonProducts] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecAddonProducts] PRIMARY KEY CLUSTERED
 (
 	[AddonID] ASC,
 	[ProductID] ASC,
@@ -38876,7 +38876,7 @@ CREATE TABLE [dbo].[ecBillingCycles](
 	[BillingPeriod] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PeriodLength] [int] NOT NULL,
 	[Created] [datetime] NOT NULL,
- CONSTRAINT [PK_ecBillingCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecBillingCycles] PRIMARY KEY CLUSTERED
 (
 	[CycleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38901,7 +38901,7 @@ CREATE TABLE [dbo].[ecCategory](
 	[ModifierID] [int] NULL,
 	[ItemOrder] [int] NULL,
 	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_EC_Categories] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_Categories] PRIMARY KEY CLUSTERED
 (
 	[CategoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38927,7 +38927,7 @@ CREATE TABLE [dbo].[ecContracts](
 	[CompanyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
 	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecContracts] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecContracts] PRIMARY KEY CLUSTERED
 (
 	[ContractID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38949,7 +38949,7 @@ CREATE TABLE [dbo].[ecCustomersPayments](
 	[PluginID] [int] NOT NULL,
 	[StatusID] [int] NOT NULL,
 	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_Payments] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_Payments] PRIMARY KEY CLUSTERED
 (
 	[PaymentID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38969,7 +38969,7 @@ CREATE TABLE [dbo].[ecDomainSvcs](
 	[SvcCycleID] [int] NULL,
 	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecDomainsSvcs] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecDomainsSvcs] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -38989,7 +38989,7 @@ CREATE TABLE [dbo].[ecDomainSvcsCycles](
 	[SetupFee] [money] NOT NULL,
 	[RecurringFee] [money] NOT NULL,
 	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecDomainsSvcsCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecDomainsSvcsCycles] PRIMARY KEY CLUSTERED
 (
 	[SvcCycleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39023,7 +39023,7 @@ CREATE TABLE [dbo].[ecHostingAddonsCycles](
 	[SetupFee] [money] NOT NULL,
 	[RecurringFee] [money] NOT NULL,
 	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingAddonsCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecHostingAddonsCycles] PRIMARY KEY CLUSTERED
 (
 	[ProductID] ASC,
 	[CycleID] ASC
@@ -39044,7 +39044,7 @@ CREATE TABLE [dbo].[ecHostingAddonSvcs](
 	[Recurring] [bit] NOT NULL,
 	[DummyAddon] [bit] NOT NULL,
 	[SvcCycleID] [int] NOT NULL,
- CONSTRAINT [PK_ecAddonPackagesSvcs] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecAddonPackagesSvcs] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39064,7 +39064,7 @@ CREATE TABLE [dbo].[ecHostingAddonSvcsCycles](
 	[SetupFee] [money] NULL,
 	[CyclePrice] [money] NOT NULL,
 	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecAddonPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecAddonPackagesSvcsCycles] PRIMARY KEY CLUSTERED
 (
 	[SvcCycleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39083,7 +39083,7 @@ CREATE TABLE [dbo].[ecHostingPackageSvcs](
 	[UserRole] [int] NOT NULL,
 	[InitialStatus] [int] NOT NULL,
 	[SvcCycleID] [int] NOT NULL,
- CONSTRAINT [PK_ecPackagesSvcs] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecPackagesSvcs] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39103,7 +39103,7 @@ CREATE TABLE [dbo].[ecHostingPackageSvcsCycles](
 	[SetupFee] [money] NULL,
 	[RecurringFee] [money] NOT NULL,
 	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecPackagesSvcsCycles] PRIMARY KEY CLUSTERED
 (
 	[SvcCycleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39121,7 +39121,7 @@ CREATE TABLE [dbo].[ecHostingPlans](
 	[UserRole] [int] NOT NULL,
 	[InitialStatus] [int] NOT NULL,
 	[DomainOption] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingPlans] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecHostingPlans] PRIMARY KEY CLUSTERED
 (
 	[ProductID] ASC,
 	[ResellerID] ASC,
@@ -39140,7 +39140,7 @@ CREATE TABLE [dbo].[ecHostingPlansBillingCycles](
 	[SetupFee] [money] NOT NULL,
 	[RecurringFee] [money] NOT NULL,
 	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingPlansBillingCycles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecHostingPlansBillingCycles] PRIMARY KEY CLUSTERED
 (
 	[ProductID] ASC,
 	[CycleID] ASC
@@ -39163,7 +39163,7 @@ CREATE TABLE [dbo].[ecInvoice](
 	[InvoiceNumber] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
 	[TaxationID] [int] NULL,
 	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_Invoices] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_Invoices] PRIMARY KEY CLUSTERED
 (
 	[InvoiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39185,7 +39185,7 @@ CREATE TABLE [dbo].[ecInvoiceItems](
 	[SubTotal] [money] NOT NULL,
 	[UnitPrice] [money] NOT NULL,
 	[Processed] [bit] NOT NULL,
- CONSTRAINT [PK_EC_InvoiceItems] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_InvoiceItems] PRIMARY KEY CLUSTERED
 (
 	[ItemID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39202,7 +39202,7 @@ CREATE TABLE [dbo].[ecPaymentMethods](
 	[PluginID] [int] NOT NULL,
 	[DisplayName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[SupportedItems] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecPaymentMethods] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecPaymentMethods] PRIMARY KEY CLUSTERED
 (
 	[ResellerID] ASC,
 	[MethodName] ASC
@@ -39219,7 +39219,7 @@ CREATE TABLE [dbo].[ecPaymentProfiles](
 	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
 	[Created] [datetime] NOT NULL,
 	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecPaymentProfiles] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecPaymentProfiles] PRIMARY KEY CLUSTERED
 (
 	[ContractID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39235,7 +39235,7 @@ CREATE TABLE [dbo].[ecPluginsProperties](
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
 	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecPluginsSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecPluginsSettings] PRIMARY KEY CLUSTERED
 (
 	[PluginID] ASC,
 	[ResellerID] ASC,
@@ -39258,7 +39258,7 @@ CREATE TABLE [dbo].[ecProduct](
 	[Enabled] [bit] NOT NULL,
 	[ResellerID] [int] NOT NULL,
 	[TaxInclusive] [bit] NULL,
- CONSTRAINT [PK_EC_Products] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_Products] PRIMARY KEY CLUSTERED
 (
 	[ProductID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39273,7 +39273,7 @@ CREATE TABLE [dbo].[ecProductCategories](
 	[ProductID] [int] NOT NULL,
 	[CategoryID] [int] NOT NULL,
 	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecProductCategories] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecProductCategories] PRIMARY KEY CLUSTERED
 (
 	[ProductID] ASC,
 	[CategoryID] ASC,
@@ -39304,7 +39304,7 @@ CREATE TABLE [dbo].[ecProductType](
 	[Created] [datetime] NOT NULL,
 	[NativeItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
 	[ServiceItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_ProductTypes] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_EC_ProductTypes] PRIMARY KEY CLUSTERED
 (
 	[TypeID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39319,7 +39319,7 @@ CREATE TABLE [dbo].[ecProductTypeControls](
 	[TypeID] [int] NOT NULL,
 	[ControlKey] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[ControlSrc] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecProductTypeControls] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecProductTypeControls] PRIMARY KEY CLUSTERED
 (
 	[TypeID] ASC,
 	[ControlKey] ASC
@@ -39340,7 +39340,7 @@ CREATE TABLE [dbo].[ecService](
 	[Modified] [datetime] NULL,
 	[ParentID] [int] NULL,
 	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_SpaceInstances] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_SpaceInstances] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39359,7 +39359,7 @@ CREATE TABLE [dbo].[ecServiceHandlersResponses](
 	[TextResponse] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[Received] [datetime] NOT NULL,
 	[ErrorMessage] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecServiceHandlersResponses] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecServiceHandlersResponses] PRIMARY KEY CLUSTERED
 (
 	[ResponseID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39374,7 +39374,7 @@ CREATE TABLE [dbo].[ecStoreDefaultSettings](
 	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecSpaceDefaultSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecSpaceDefaultSettings] PRIMARY KEY CLUSTERED
 (
 	[SettingsName] ASC,
 	[PropertyName] ASC
@@ -39391,7 +39391,7 @@ CREATE TABLE [dbo].[ecStoreSettings](
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecSystemSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecSystemSettings] PRIMARY KEY CLUSTERED
 (
 	[ResellerID] ASC,
 	[SettingsName] ASC,
@@ -39411,7 +39411,7 @@ CREATE TABLE [dbo].[ecSupportedPluginLog](
 	[RawData] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
 	[Created] [datetime] NOT NULL,
 	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecSpacePluginLog] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecSpacePluginLog] PRIMARY KEY CLUSTERED
 (
 	[RecordID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39431,7 +39431,7 @@ CREATE TABLE [dbo].[ecSupportedPlugins](
 	[Interactive] [bit] NOT NULL,
 	[SupportedItems] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
 	[UniqueID] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecSupportedPlugins] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecSupportedPlugins] PRIMARY KEY CLUSTERED
 (
 	[PluginID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39448,7 +39448,7 @@ CREATE TABLE [dbo].[ecSvcsUsageLog](
 	[EndDate] [datetime] NOT NULL,
 	[SvcCycleID] [int] NOT NULL,
 	[PeriodClosed] [bit] NULL,
- CONSTRAINT [PK_ecServicesLifeCyclesLog] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecServicesLifeCyclesLog] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC,
 	[SvcCycleID] ASC,
@@ -39469,7 +39469,7 @@ CREATE TABLE [dbo].[ecSystemTriggers](
 	[ReferenceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[Namespace] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
 	[Status] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecSystemTriggers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecSystemTriggers] PRIMARY KEY CLUSTERED
 (
 	[TriggerID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39489,7 +39489,7 @@ CREATE TABLE [dbo].[ecTaxations](
 	[TypeID] [int] NOT NULL,
 	[Amount] [decimal](5, 2) NOT NULL,
 	[Active] [bit] NOT NULL,
- CONSTRAINT [PK_ecTaxations_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecTaxations_1] PRIMARY KEY CLUSTERED
 (
 	[TaxationID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39506,7 +39506,7 @@ CREATE TABLE [dbo].[ecTopLevelDomains](
 	[PluginID] [int] NOT NULL,
 	[ResellerID] [int] NOT NULL,
 	[WhoisEnabled] [bit] NULL,
- CONSTRAINT [PK_ecTopLevelDomains] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecTopLevelDomains] PRIMARY KEY CLUSTERED
 (
 	[TopLevelDomain] ASC,
 	[ResellerID] ASC
@@ -39536,7 +39536,7 @@ CREATE TABLE [dbo].[ExchangeAccountEmailAddresses](
 	[AddressID] [int] IDENTITY(1,1) NOT NULL,
 	[AccountID] [int] NOT NULL,
 	[EmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ExchangeAccountEmailAddresses] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ExchangeAccountEmailAddresses] PRIMARY KEY CLUSTERED
 (
 	[AddressID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39562,7 +39562,7 @@ CREATE TABLE [dbo].[ExchangeAccounts](
 	[MailboxPlanId] [int] NULL,
 	[SubscriberNumber] [nvarchar](32) COLLATE Latin1_General_CI_AS NULL,
 	[UserPrincipalName] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED
 (
 	[AccountID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39593,7 +39593,7 @@ CREATE TABLE [dbo].[ExchangeMailboxPlans](
 	[ProhibitSendPct] [int] NOT NULL,
 	[ProhibitSendReceivePct] [int] NOT NULL,
 	[HideFromAddressBook] [bit] NOT NULL,
- CONSTRAINT [PK_ExchangeMailboxPlans] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ExchangeMailboxPlans] PRIMARY KEY CLUSTERED
 (
 	[MailboxPlanId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39610,7 +39610,7 @@ CREATE TABLE [dbo].[ExchangeOrganizationDomains](
 	[DomainID] [int] NULL,
 	[IsHost] [bit] NULL,
 	[DomainTypeID] [int] NOT NULL,
- CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED
 (
 	[OrganizationDomainID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39626,7 +39626,7 @@ CREATE TABLE [dbo].[ExchangeOrganizations](
 	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
 	[ExchangeMailboxPlanID] [int] NULL,
 	[LyncUserPlanID] [int] NULL,
- CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED
 (
 	[ItemID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39650,7 +39650,7 @@ CREATE TABLE [dbo].[GlobalDnsRecords](
 	[SrvPriority] [int] NULL,
 	[SrvWeight] [int] NULL,
 	[SrvPort] [int] NULL,
- CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED
 (
 	[RecordID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39665,7 +39665,7 @@ CREATE TABLE [dbo].[HostingPlanQuotas](
 	[PlanID] [int] NOT NULL,
 	[QuotaID] [int] NOT NULL,
 	[QuotaValue] [int] NOT NULL,
- CONSTRAINT [PK_HostingPlanQuotas_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_HostingPlanQuotas_1] PRIMARY KEY CLUSTERED
 (
 	[PlanID] ASC,
 	[QuotaID] ASC
@@ -39682,7 +39682,7 @@ CREATE TABLE [dbo].[HostingPlanResources](
 	[GroupID] [int] NOT NULL,
 	[CalculateDiskSpace] [bit] NULL,
 	[CalculateBandwidth] [bit] NULL,
- CONSTRAINT [PK_HostingPlanResources] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_HostingPlanResources] PRIMARY KEY CLUSTERED
 (
 	[PlanID] ASC,
 	[GroupID] ASC
@@ -39707,7 +39707,7 @@ CREATE TABLE [dbo].[HostingPlans](
 	[RecurrenceUnit] [int] NULL,
 	[RecurrenceLength] [int] NULL,
 	[IsAddon] [bit] NULL,
- CONSTRAINT [PK_HostingPlans] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_HostingPlans] PRIMARY KEY CLUSTERED
 (
 	[PlanID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39727,7 +39727,7 @@ CREATE TABLE [dbo].[IPAddresses](
 	[SubnetMask] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
 	[DefaultGateway] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
 	[PoolID] [int] NULL,
- CONSTRAINT [PK_IPAddresses] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_IPAddresses] PRIMARY KEY CLUSTERED
 (
 	[AddressID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39751,7 +39751,7 @@ CREATE TABLE [dbo].[LyncUserPlans](
 	[EnterpriseVoice] [bit] NOT NULL,
 	[VoicePolicy] [int] NOT NULL,
 	[IsDefault] [bit] NOT NULL,
- CONSTRAINT [PK_LyncUserPlans] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_LyncUserPlans] PRIMARY KEY CLUSTERED
 (
 	[LyncUserPlanId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39769,7 +39769,7 @@ CREATE TABLE [dbo].[LyncUsers](
 	[CreatedDate] [datetime] NOT NULL,
 	[ModifiedDate] [datetime] NOT NULL,
 	[SipAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_LyncUsers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_LyncUsers] PRIMARY KEY CLUSTERED
 (
 	[LyncUserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39786,7 +39786,7 @@ CREATE TABLE [dbo].[OCSUsers](
 	[InstanceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[CreatedDate] [datetime] NOT NULL,
 	[ModifiedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_OCSUsers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_OCSUsers] PRIMARY KEY CLUSTERED
 (
 	[OCSUserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39805,7 +39805,7 @@ CREATE TABLE [dbo].[PackageAddons](
 	[PurchaseDate] [datetime] NULL,
 	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[StatusID] [int] NULL,
- CONSTRAINT [PK_PackageAddons] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageAddons] PRIMARY KEY CLUSTERED
 (
 	[PackageAddonID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39822,7 +39822,7 @@ CREATE TABLE [dbo].[PackageIPAddresses](
 	[AddressID] [int] NOT NULL,
 	[ItemID] [int] NULL,
 	[IsPrimary] [bit] NULL,
- CONSTRAINT [PK_PackageIPAddresses] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageIPAddresses] PRIMARY KEY CLUSTERED
 (
 	[PackageAddressID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39837,7 +39837,7 @@ CREATE TABLE [dbo].[PackageQuotas](
 	[PackageID] [int] NOT NULL,
 	[QuotaID] [int] NOT NULL,
 	[QuotaValue] [int] NOT NULL,
- CONSTRAINT [PK_PackageQuotas] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageQuotas] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[QuotaID] ASC
@@ -39854,7 +39854,7 @@ CREATE TABLE [dbo].[PackageResources](
 	[GroupID] [int] NOT NULL,
 	[CalculateDiskspace] [bit] NOT NULL,
 	[CalculateBandwidth] [bit] NOT NULL,
- CONSTRAINT [PK_PackageResources_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageResources_1] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[GroupID] ASC
@@ -39878,7 +39878,7 @@ CREATE TABLE [dbo].[Packages](
 	[PurchaseDate] [datetime] NULL,
 	[OverrideQuotas] [bit] NOT NULL,
 	[BandwidthUpdated] [datetime] NULL,
- CONSTRAINT [PK_Packages] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Packages] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39895,7 +39895,7 @@ CREATE TABLE [dbo].[PackagesBandwidth](
 	[LogDate] [datetime] NOT NULL,
 	[BytesSent] [bigint] NOT NULL,
 	[BytesReceived] [bigint] NOT NULL,
- CONSTRAINT [PK_PackagesBandwidth] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackagesBandwidth] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[GroupID] ASC,
@@ -39912,7 +39912,7 @@ CREATE TABLE [dbo].[PackagesDiskspace](
 	[PackageID] [int] NOT NULL,
 	[GroupID] [int] NOT NULL,
 	[DiskSpace] [bigint] NOT NULL,
- CONSTRAINT [PK_PackagesDiskspace] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackagesDiskspace] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[GroupID] ASC
@@ -39927,7 +39927,7 @@ GO
 CREATE TABLE [dbo].[PackageServices](
 	[PackageID] [int] NOT NULL,
 	[ServiceID] [int] NOT NULL,
- CONSTRAINT [PK_PackageServices] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageServices] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[ServiceID] ASC
@@ -39944,7 +39944,7 @@ CREATE TABLE [dbo].[PackageSettings](
 	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_PackageSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PackageSettings] PRIMARY KEY CLUSTERED
 (
 	[PackageID] ASC,
 	[SettingsName] ASC,
@@ -39972,7 +39972,7 @@ CREATE TABLE [dbo].[PrivateIPAddresses](
 	[ItemID] [int] NOT NULL,
 	[IPAddress] [varchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
 	[IsPrimary] [bit] NOT NULL,
- CONSTRAINT [PK_PrivateIPAddresses] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_PrivateIPAddresses] PRIMARY KEY CLUSTERED
 (
 	[PrivateAddressID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -39991,7 +39991,7 @@ CREATE TABLE [dbo].[Providers](
 	[ProviderType] [nvarchar](400) COLLATE Latin1_General_CI_AS NULL,
 	[EditorControl] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[DisableAutoDiscovery] [bit] NULL,
- CONSTRAINT [PK_ServiceTypes] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceTypes] PRIMARY KEY CLUSTERED
 (
 	[ProviderID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40012,7 +40012,7 @@ CREATE TABLE [dbo].[Quotas](
 	[ServiceQuota] [bit] NULL,
 	[ItemTypeID] [int] NULL,
 	[HideQuota] [bit] NULL,
- CONSTRAINT [PK_Quotas] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Quotas] PRIMARY KEY CLUSTERED
 (
 	[QuotaID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40031,7 +40031,7 @@ CREATE TABLE [dbo].[ResourceGroupDnsRecords](
 	[RecordName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[RecordData] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
 	[MXPriority] [int] NULL,
- CONSTRAINT [PK_ResourceGroupDnsRecords] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ResourceGroupDnsRecords] PRIMARY KEY CLUSTERED
 (
 	[RecordID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40048,7 +40048,7 @@ CREATE TABLE [dbo].[ResourceGroups](
 	[GroupOrder] [int] NOT NULL,
 	[GroupController] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
 	[ShowGroup] [bit] NULL,
- CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED
 (
 	[GroupID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40076,7 +40076,7 @@ CREATE TABLE [dbo].[Schedule](
 	[HistoriesNumber] [int] NULL,
 	[MaxExecutionTime] [int] NULL,
 	[WeekMonthDay] [int] NULL,
- CONSTRAINT [PK_Schedule] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Schedule] PRIMARY KEY CLUSTERED
 (
 	[ScheduleID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40091,7 +40091,7 @@ CREATE TABLE [dbo].[ScheduleParameters](
 	[ScheduleID] [int] NOT NULL,
 	[ParameterID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[ParameterValue] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ScheduleParameters] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ScheduleParameters] PRIMARY KEY CLUSTERED
 (
 	[ScheduleID] ASC,
 	[ParameterID] ASC
@@ -40109,7 +40109,7 @@ CREATE TABLE [dbo].[ScheduleTaskParameters](
 	[DataTypeID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[DefaultValue] [nvarchar](140) COLLATE Latin1_General_CI_AS NULL,
 	[ParameterOrder] [int] NOT NULL,
- CONSTRAINT [PK_ScheduleTaskParameters] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ScheduleTaskParameters] PRIMARY KEY CLUSTERED
 (
 	[TaskID] ASC,
 	[ParameterID] ASC
@@ -40125,7 +40125,7 @@ CREATE TABLE [dbo].[ScheduleTasks](
 	[TaskID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[TaskType] [nvarchar](500) COLLATE Latin1_General_CI_AS NOT NULL,
 	[RoleID] [int] NOT NULL,
- CONSTRAINT [PK_ScheduleTasks] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ScheduleTasks] PRIMARY KEY CLUSTERED
 (
 	[TaskID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40141,7 +40141,7 @@ CREATE TABLE [dbo].[ScheduleTaskViewConfiguration](
 	[ConfigurationID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[Environment] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[Description] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ScheduleTaskViewConfiguration] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ScheduleTaskViewConfiguration] PRIMARY KEY CLUSTERED
 (
 	[ConfigurationID] ASC,
 	[TaskID] ASC
@@ -40167,7 +40167,7 @@ CREATE TABLE [dbo].[Servers](
 	[ADPassword] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[ADAuthenticationType] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
 	[ADEnabled] [bit] NULL,
- CONSTRAINT [PK_Servers] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Servers] PRIMARY KEY CLUSTERED
 (
 	[ServerID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40182,7 +40182,7 @@ CREATE TABLE [dbo].[ServiceDefaultProperties](
 	[ProviderID] [int] NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ServiceDefaultProperties_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceDefaultProperties_1] PRIMARY KEY CLUSTERED
 (
 	[ProviderID] ASC,
 	[PropertyName] ASC
@@ -40198,7 +40198,7 @@ CREATE TABLE [dbo].[ServiceItemProperties](
 	[ItemID] [int] NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [nvarchar](3000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ServiceItemProperties] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceItemProperties] PRIMARY KEY CLUSTERED
 (
 	[ItemID] ASC,
 	[PropertyName] ASC
@@ -40217,7 +40217,7 @@ CREATE TABLE [dbo].[ServiceItems](
 	[ServiceID] [int] NULL,
 	[ItemName] [nvarchar](500) COLLATE Latin1_General_CI_AS NULL,
 	[CreatedDate] [datetime] NULL,
- CONSTRAINT [PK_ServiceItems] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceItems] PRIMARY KEY CLUSTERED
 (
 	[ItemID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40241,7 +40241,7 @@ CREATE TABLE [dbo].[ServiceItemTypes](
 	[Searchable] [bit] NULL,
 	[Importable] [bit] NOT NULL,
 	[Backupable] [bit] NOT NULL,
- CONSTRAINT [PK_ServiceItemTypes] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceItemTypes] PRIMARY KEY CLUSTERED
 (
 	[ItemTypeID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40256,7 +40256,7 @@ CREATE TABLE [dbo].[ServiceProperties](
 	[ServiceID] [int] NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ServiceProperties_1] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ServiceProperties_1] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC,
 	[PropertyName] ASC
@@ -40276,7 +40276,7 @@ CREATE TABLE [dbo].[Services](
 	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
 	[ServiceQuotaValue] [int] NULL,
 	[ClusterID] [int] NULL,
- CONSTRAINT [PK_Services] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Services] PRIMARY KEY CLUSTERED
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40316,7 +40316,7 @@ CREATE TABLE [dbo].[SystemSettings](
 	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_SystemSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_SystemSettings] PRIMARY KEY CLUSTERED
 (
 	[SettingsName] ASC,
 	[PropertyName] ASC
@@ -40360,7 +40360,7 @@ CREATE TABLE [dbo].[Users](
 	[LoginStatusId] [int] NULL,
 	[FailedLogins] [int] NULL,
 	[SubscriberNumber] [nvarchar](32) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED
 (
 	[UserID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40376,7 +40376,7 @@ CREATE TABLE [dbo].[UserSettings](
 	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_UserSettings] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_UserSettings] PRIMARY KEY CLUSTERED
 (
 	[UserID] ASC,
 	[SettingsName] ASC,
@@ -40392,7 +40392,7 @@ GO
 CREATE TABLE [dbo].[Versions](
 	[DatabaseVersion] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
 	[BuildDate] [datetime] NOT NULL,
- CONSTRAINT [PK_Versions] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Versions] PRIMARY KEY CLUSTERED
 (
 	[DatabaseVersion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40409,7 +40409,7 @@ CREATE TABLE [dbo].[VirtualGroups](
 	[GroupID] [int] NOT NULL,
 	[DistributionType] [int] NULL,
 	[BindDistributionToPrimary] [bit] NULL,
- CONSTRAINT [PK_VirtualGroups] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VirtualGroups] PRIMARY KEY CLUSTERED
 (
 	[VirtualGroupID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40424,7 +40424,7 @@ CREATE TABLE [dbo].[VirtualServices](
 	[VirtualServiceID] [int] IDENTITY(1,1) NOT NULL,
 	[ServerID] [int] NOT NULL,
 	[ServiceID] [int] NOT NULL,
- CONSTRAINT [PK_VirtualServices] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VirtualServices] PRIMARY KEY CLUSTERED
 (
 	[VirtualServiceID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -40457,14 +40457,14 @@ GO
 
 CREATE VIEW [dbo].[ContractsInvoicesDetailed]
 AS
-SELECT dbo.ecInvoice.InvoiceID, dbo.ecInvoice.ContractID, dbo.ecContracts.ResellerID, dbo.ecContracts.CustomerID, ISNULL(dbo.Users.Username, 
-dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.Status, dbo.ecInvoice.Created, dbo.ecInvoice.DueDate, dbo.ecInvoice.Total, dbo.ecInvoice.SubTotal, 
-dbo.ecInvoice.TaxAmount, dbo.ecInvoice.Currency, dbo.ecInvoice.InvoiceNumber, dbo.ecInvoice.TaxationID, dbo.ecCustomersPayments.PaymentID, 
-dbo.ecCustomersPayments.StatusID, dbo.ecCustomersPayments.TransactionID, (CASE WHEN dbo.ecCustomersPayments.PaymentID IS NOT NULL AND 
+SELECT dbo.ecInvoice.InvoiceID, dbo.ecInvoice.ContractID, dbo.ecContracts.ResellerID, dbo.ecContracts.CustomerID, ISNULL(dbo.Users.Username,
+dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.Status, dbo.ecInvoice.Created, dbo.ecInvoice.DueDate, dbo.ecInvoice.Total, dbo.ecInvoice.SubTotal,
+dbo.ecInvoice.TaxAmount, dbo.ecInvoice.Currency, dbo.ecInvoice.InvoiceNumber, dbo.ecInvoice.TaxationID, dbo.ecCustomersPayments.PaymentID,
+dbo.ecCustomersPayments.StatusID, dbo.ecCustomersPayments.TransactionID, (CASE WHEN dbo.ecCustomersPayments.PaymentID IS NOT NULL AND
 dbo.ecCustomersPayments.StatusID = 1 THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END) AS Paid
-FROM dbo.ecInvoice INNER JOIN 
-dbo.ecContracts ON dbo.ecInvoice.ContractID = dbo.ecContracts.ContractID LEFT OUTER JOIN 
-dbo.ecCustomersPayments ON dbo.ecInvoice.InvoiceID = dbo.ecCustomersPayments.InvoiceID LEFT OUTER JOIN 
+FROM dbo.ecInvoice INNER JOIN
+dbo.ecContracts ON dbo.ecInvoice.ContractID = dbo.ecContracts.ContractID LEFT OUTER JOIN
+dbo.ecCustomersPayments ON dbo.ecInvoice.InvoiceID = dbo.ecCustomersPayments.InvoiceID LEFT OUTER JOIN
 dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
 
 
@@ -40520,11 +40520,11 @@ GO
 
 CREATE VIEW [dbo].[ContractsServicesDetailed]
 AS
-SELECT dbo.ecService.ServiceID, ISNULL(dbo.Users.Username, dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.CustomerID, dbo.ecService.ContractID, 
-dbo.ecContracts.ResellerID, dbo.ecService.ServiceName, dbo.ecService.TypeID, dbo.ecService.Status, dbo.ecService.Created, dbo.ecService.Modified, 
+SELECT dbo.ecService.ServiceID, ISNULL(dbo.Users.Username, dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.CustomerID, dbo.ecService.ContractID,
+dbo.ecContracts.ResellerID, dbo.ecService.ServiceName, dbo.ecService.TypeID, dbo.ecService.Status, dbo.ecService.Created, dbo.ecService.Modified,
 dbo.ecService.ParentID
-FROM dbo.ecContracts INNER JOIN 
-dbo.ecService ON dbo.ecContracts.ContractID = dbo.ecService.ContractID LEFT OUTER JOIN 
+FROM dbo.ecContracts INNER JOIN
+dbo.ecService ON dbo.ecContracts.ContractID = dbo.ecService.ContractID LEFT OUTER JOIN
 dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
 
 
@@ -40579,13 +40579,13 @@ GO
 
 CREATE VIEW [dbo].[ServiceHandlersResponsesDetailed]
 AS
-SELECT     dbo.ecServiceHandlersResponses.ResponseID, dbo.ecServiceHandlersResponses.ServiceID, dbo.ecContracts.ResellerID, 
-                      dbo.ecServiceHandlersResponses.ContractID, dbo.ecServiceHandlersResponses.TextResponse, dbo.ecServiceHandlersResponses.Received, 
+SELECT     dbo.ecServiceHandlersResponses.ResponseID, dbo.ecServiceHandlersResponses.ServiceID, dbo.ecContracts.ResellerID,
+                      dbo.ecServiceHandlersResponses.ContractID, dbo.ecServiceHandlersResponses.TextResponse, dbo.ecServiceHandlersResponses.Received,
                       dbo.ecServiceHandlersResponses.ErrorMessage, dbo.ecPaymentMethods.MethodName, dbo.ecServiceHandlersResponses.InvoiceID
 FROM         dbo.ecContracts RIGHT OUTER JOIN
                       dbo.ecPaymentMethods INNER JOIN
                       dbo.ecSupportedPlugins ON dbo.ecPaymentMethods.PluginID = dbo.ecSupportedPlugins.PluginID RIGHT OUTER JOIN
-                      dbo.ecServiceHandlersResponses ON dbo.ecSupportedPlugins.UniqueID = dbo.ecServiceHandlersResponses.ServiceID ON 
+                      dbo.ecServiceHandlersResponses ON dbo.ecSupportedPlugins.UniqueID = dbo.ecServiceHandlersResponses.ServiceID ON
                       dbo.ecContracts.ContractID = dbo.ecServiceHandlersResponses.ContractID
 
 
@@ -40623,8 +40623,8 @@ GO
 
 CREATE VIEW [dbo].[UsersDetailed]
 AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
-                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
+SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email,
+                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName,
                       UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
                           (SELECT     COUNT(PackageID) AS Expr1
                             FROM          dbo.Packages AS P
@@ -41105,7 +41105,7 @@ INSERT [dbo].[AuditLogTasks] ([SourceName], [TaskName], [TaskDescription]) VALUE
 GO
 INSERT [dbo].[AuditLogTasks] ([SourceName], [TaskName], [TaskDescription]) VALUES (N'WEB_SITE', N'UPDATE_VDIR', N'Update virtual directory')
 GO
-SET IDENTITY_INSERT [dbo].[ecProductType] ON 
+SET IDENTITY_INSERT [dbo].[ecProductType] ON
 
 GO
 INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (1, N'Hosting Plan', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPlan, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageSvc, WebsitePanel.EnterpriseServer')
@@ -41130,7 +41130,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.2em; } 
+        .Summary H2 { font-size: 1.2em; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -41228,7 +41228,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.2em; } 
+        .Summary H2 { font-size: 1.2em; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -41311,7 +41311,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
 	.Summary A { color: ##0153A4; }
 	.Summary { font-family: Tahoma; font-size: 9pt; }
 	.Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-	.Summary H2 { font-size: 1.2em; } 
+	.Summary H2 { font-size: 1.2em; }
 	.Summary TABLE { border: solid 1px ##e5e5e5; }
 	.Summary TH,
 	.Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -41332,7 +41332,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
 
 <p>Hello #Customer["FirstName"]#,</p>
 
-<p>We''ve created this invoice for services you ordered. You can find this invoice details under your user account 
+<p>We''ve created this invoice for services you ordered. You can find this invoice details under your user account
 and below is the summary information.</p>
 
 <ad:if test="#isdefined("IsEmail") and isdefined("ExtraArgs")#">
@@ -41437,7 +41437,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
 
 Hello #Customer["FirstName"]#,
 
-We''ve created this invoice for services you ordered. You can find this invoice details under your user account 
+We''ve created this invoice for services you ordered. You can find this invoice details under your user account
 and below is the summary information.
 
 <ad:if test="#isdefined("IsEmail") and isdefined("ExtraArgs")#">
@@ -41505,7 +41505,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.2em; } 
+        .Summary H2 { font-size: 1.2em; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -41643,7 +41643,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.2em; } 
+        .Summary H2 { font-size: 1.2em; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -41726,7 +41726,7 @@ INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [Property
 GO
 INSERT [dbo].[ecStoreDefaultSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SystemSettings', N'SvcInvoiceThreshold', N'7')
 GO
-SET IDENTITY_INSERT [dbo].[ecSupportedPlugins] ON 
+SET IDENTITY_INSERT [dbo].[ecSupportedPlugins] ON
 
 GO
 INSERT [dbo].[ecSupportedPlugins] ([PluginID], [PluginName], [DisplayName], [PluginGroup], [TypeName], [Interactive], [SupportedItems], [UniqueID]) VALUES (1, N'AuthorizeNet', N'Authorize.Net', N'CC_GATEWAY', N'WebsitePanel.Ecommerce.EnterpriseServer.AuthorizeNetProvider, WebsitePanel.Plugins.AuthorizeNet', 0, N'American Express=Amex,Discover,Master Card=MasterCard,Visa', NULL)
@@ -41747,7 +41747,7 @@ INSERT [dbo].[ecSupportedPlugins] ([PluginID], [PluginName], [DisplayName], [Plu
 GO
 SET IDENTITY_INSERT [dbo].[ecSupportedPlugins] OFF
 GO
-SET IDENTITY_INSERT [dbo].[Packages] ON 
+SET IDENTITY_INSERT [dbo].[Packages] ON
 
 GO
 INSERT [dbo].[Packages] ([PackageID], [ParentPackageID], [UserID], [PackageName], [PackageComments], [ServerID], [StatusID], [PlanID], [PurchaseDate], [OverrideQuotas], [BandwidthUpdated]) VALUES (1, NULL, 1, N'System', N'', NULL, 1, NULL, CAST(0x00009DB500D45272 AS DateTime), 0, NULL)
@@ -42250,7 +42250,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (410, 1, 12, N'OS.AllowTenantCreateDomains', N'Allow Tenants to Create Top Level Domains', 1, 0, NULL, NULL)
 GO
-SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] ON 
+SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] ON
 
 GO
 INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (1, 1, 2, N'A', N'', N'[IP]', 0)
@@ -42331,7 +42331,7 @@ INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupContr
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (41, N'Lync', 23, NULL, 1)
 GO
-SET IDENTITY_INSERT [dbo].[Schedule] ON 
+SET IDENTITY_INSERT [dbo].[Schedule] ON
 
 GO
 INSERT [dbo].[Schedule] ([ScheduleID], [TaskID], [PackageID], [ScheduleName], [ScheduleTypeID], [Interval], [FromTime], [ToTime], [StartTime], [LastRun], [NextRun], [Enabled], [PriorityID], [HistoriesNumber], [MaxExecutionTime], [WeekMonthDay]) VALUES (1, N'SCHEDULE_TASK_CALCULATE_PACKAGES_DISKSPACE', 1, N'Calculate Disk Space', N'Daily', 0, CAST(0x00008EAC00C5C100 AS DateTime), CAST(0x00008EAC00C5C100 AS DateTime), CAST(0x00008EAC00CDFE60 AS DateTime), NULL, CAST(0x00009DB500F547F5 AS DateTime), 1, N'Normal', 7, 3600, 1)
@@ -43179,7 +43179,7 @@ INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) 
 GO
 INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpUsername', N'postmaster')
 GO
-SET IDENTITY_INSERT [dbo].[Users] ON 
+SET IDENTITY_INSERT [dbo].[Users] ON
 
 GO
 INSERT [dbo].[Users] ([UserID], [OwnerID], [RoleID], [StatusID], [IsDemo], [IsPeer], [Username], [Password], [FirstName], [LastName], [Email], [Created], [Changed], [Comments], [SecondaryEmail], [Address], [City], [State], [Country], [Zip], [PrimaryPhone], [SecondaryPhone], [Fax], [InstantMessenger], [HtmlMail], [CompanyName], [EcommerceEnabled], [AdditionalParams], [LoginStatusId], [FailedLogins], [SubscriberNumber]) VALUES (1, NULL, 1, 1, 0, 0, N'serveradmin', N'', N'Enterprise', N'Administrator', N'serveradmin@myhosting.com', CAST(0x00009DB500D45270 AS DateTime), CAST(0x00009DB500D45270 AS DateTime), N'', N'', N'', N'', N'', N'', N'', N'', N'', N'', N'', 1, NULL, 1, NULL, NULL, NULL, NULL)
@@ -43201,7 +43201,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -43395,7 +43395,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.2em; } 
+        .Summary H2 { font-size: 1.2em; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -44147,7 +44147,7 @@ The following web sites have been created under hosting space:
 You can access your web sites right now using their respective temporary URLs (instant aliases). Temporary URL is a sub-domain of the form http://yourdomain.com.providerdomain.com where &quot;yourdomain.com&quot; is your domain and &quot;providerdomain.com&quot; is the domain of your hosting provider.
 
 You can use the following Temporary URL for all your web sites:
-    
+
     http://YourDomain.com.#InstantAlias#
 </ad:if>
 
@@ -44158,11 +44158,11 @@ Sometimes it is required to know the physical location of the hosting space fold
 Hosting space folder is the folder where all hosting space files such as web sites content, web logs, data files, etc. are located.
 
 The root of your hosting space on our HDD is here:
-   
+
    #PackageRootFolder#
-   
+
 By default the root folder of any web site within your hosting space is built as following (you can change it anytime from the control panel):
-   
+
    #PackageRootFolder#\YourDomain.com\wwwroot
 
 </ad:if>
@@ -44181,13 +44181,13 @@ Your hosting space allows working with your files by FTP.
 You can use the following FTP server to access your space files remotely:
 
    ftp://#FtpIP#
-   
+
 Also, you can use the following domain names to access your FTP server:
 
    ftp://ftp.YourDomain.com
-   
+
 <ad:if test="#isnotempty(InstantAlias)#">During DNS propagation period (when domain name servers have been changed), similar to web sites, FTP server can be access with Temporary URL too:
-    
+
     ftp://ftp.YourDomain.com.#InstantAlias#
 </ad:if>
 
@@ -44215,11 +44215,11 @@ Maximum Number of Mailing Lists: <ad:NumericQuota quota="Mail.Lists" />
 SMTP/POP3 Server
 ----------------
 Below is the IP address of your POP3/SMTP/IMAP server. You can always access your mailbox(es) using this IP address instead of actual POP3/SMTP/IMAP servers name:
-   
+
    #MailRecords[0].ExternalIP#
 
 Also, you can use the following domain names to access SMTP/POP3 server from your favourite e-mail client software:
-   
+
    mail.YourDomain.com</td>
 
 <ad:if test="#isnotempty(InstantAlias)#">During DNS propagation period (when domain name servers have been changed), similar to web sites, SMTP/POP3 server can be access with temporary domain too:
@@ -44246,7 +44246,7 @@ Maximum Number of Databases: <ad:NumericQuota quota="MsSQL2000.Databases" />
 Maximum Number of Users: <ad:NumericQuota quota="MsSQL2000.Users" />
 
 In order to connect to SQL Server 2000 from Management Studio, Enterprise Manager, Query Analyzer or other client software you can use the following SQL Server address:
-    
+
     #MsSQL2000Address#</td>
 
 <ad:MsSqlConnectionStrings server="#MsSQL2000Address#" />
@@ -44258,7 +44258,7 @@ Maximum Number of Databases: <ad:NumericQuota quota="MsSQL2005.Databases" />
 Maximum Number of Users: <ad:NumericQuota quota="MsSQL2005.Users" />
 
 In order to connect to SQL Server 2005 from Management Studio, Enterprise Manager, Query Analyzer or other client software you can use the following SQL Server address:
-    
+
     #MsSQL2005Address#</td>
 
 <ad:MsSqlConnectionStrings server="#MsSQL2005Address#" />
@@ -44270,7 +44270,7 @@ Maximum Number of Databases: <ad:NumericQuota quota="MsSQL2008.Databases" />
 Maximum Number of Users: <ad:NumericQuota quota="MsSQL2008.Users" />
 
 In order to connect to SQL Server 2008 from Management Studio, Enterprise Manager, Query Analyzer or other client software you can use the following SQL Server address:
-    
+
     #MsSQL2008Address#</td>
 
 <ad:MsSqlConnectionStrings server="#MsSQL2008Address#" />
@@ -44283,7 +44283,7 @@ Maximum Number of Databases: <ad:NumericQuota quota="MySQL4.Databases" />
 Maximum Number of Users: <ad:NumericQuota quota="MySQL4.Users" />
 
 In order to connect to MySQL 4.x server you can use the following address:
-   
+
    #MySQL4Address#</td>
 </ad:if>
 
@@ -44293,7 +44293,7 @@ Maximum Number of Databases: <ad:NumericQuota quota="MySQL5.Databases" />
 Maximum Number of Users: <ad:NumericQuota quota="MySQL5.Users" />
 
 In order to connect to MySQL 5.x server you can use the following address:
-   
+
    #MySQL5Address#</td>
 </ad:if>
 
@@ -44343,7 +44343,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
         .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
-        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; }
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -44578,7 +44578,7 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[ecContracts] ADD  CONSTRAINT [UQ_ecContracts_ContractID] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ecContracts] ADD  CONSTRAINT [UQ_ecContracts_ContractID] UNIQUE NONCLUSTERED
 (
 	[ContractID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -44586,7 +44586,7 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[ecCustomersPayments] ADD  CONSTRAINT [IX_ecCustomersPayments] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ecCustomersPayments] ADD  CONSTRAINT [IX_ecCustomersPayments] UNIQUE NONCLUSTERED
 (
 	[TransactionID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -44604,7 +44604,7 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[ExchangeAccountEmailAddresses] ADD  CONSTRAINT [IX_ExchangeAccountEmailAddresses_UniqueEmail] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ExchangeAccountEmailAddresses] ADD  CONSTRAINT [IX_ExchangeAccountEmailAddresses_UniqueEmail] UNIQUE NONCLUSTERED
 (
 	[EmailAddress] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -44612,17 +44612,17 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [IX_ExchangeAccounts_UniqueAccountName] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [IX_ExchangeAccounts_UniqueAccountName] UNIQUE NONCLUSTERED
 (
 	[AccountName] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 GO
-ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD  CONSTRAINT [IX_ExchangeMailboxPlans] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD  CONSTRAINT [IX_ExchangeMailboxPlans] UNIQUE NONCLUSTERED
 (
 	[MailboxPlanId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 GO
-ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [IX_ExchangeOrganizationDomains_UniqueDomain] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [IX_ExchangeOrganizationDomains_UniqueDomain] UNIQUE NONCLUSTERED
 (
 	[DomainID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -44630,12 +44630,12 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[ExchangeOrganizations] ADD  CONSTRAINT [IX_ExchangeOrganizations_UniqueOrg] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD  CONSTRAINT [IX_ExchangeOrganizations_UniqueOrg] UNIQUE NONCLUSTERED
 (
 	[OrganizationID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 GO
-ALTER TABLE [dbo].[LyncUserPlans] ADD  CONSTRAINT [IX_LyncUserPlans] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[LyncUserPlans] ADD  CONSTRAINT [IX_LyncUserPlans] UNIQUE NONCLUSTERED
 (
 	[LyncUserPlanId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
@@ -44643,7 +44643,7 @@ GO
 SET ANSI_PADDING ON
 
 GO
-ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [IX_Users_Username] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[Users] ADD  CONSTRAINT [IX_Users_Username] UNIQUE NONCLUSTERED
 (
 	[Username] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)

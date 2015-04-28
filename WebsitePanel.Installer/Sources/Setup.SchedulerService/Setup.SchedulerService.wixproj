@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.7</ProductVersion>
+    <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>{ead7c528-ea3d-40e8-9688-9f1d8dc8d758}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>Websitepanel-SchedulerService</OutputName>

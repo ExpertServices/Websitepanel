@@ -906,7 +906,28 @@ namespace WebsitePanel.EnterpriseServer {
             object[] results = this.EndInvoke(asyncResult);
             return ((System.Data.DataSet)(results[0]));
         }
-        
+
+        /// <remarks/>
+        /// //TODO START
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetSearchObject", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public System.Data.DataSet GetSearchObject(int userId, string filterColumn, string filterValue, int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType)
+        {
+            object[] results = this.Invoke("GetSearchObject", new object[] {
+                        userId,
+                        filterColumn,
+                        filterValue,
+                        statusId,
+                        roleId,
+                        sortColumn,
+                        startRow,
+                        maximumRows,
+                        colType
+            });
+            return ((System.Data.DataSet)(results[0]));
+        }
+
+        //TODO END
+
         /// <remarks/>
         public void SearchServiceItemsPagedAsync(int userId, int itemTypeId, string filterValue, string sortColumn, int startRow, int maximumRows) {
             this.SearchServiceItemsPagedAsync(userId, itemTypeId, filterValue, sortColumn, startRow, maximumRows, null);

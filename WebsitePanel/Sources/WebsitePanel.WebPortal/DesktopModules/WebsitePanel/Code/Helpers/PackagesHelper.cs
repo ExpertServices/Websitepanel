@@ -36,6 +36,7 @@ using System.Web.Caching;
 
 using WebsitePanel.EnterpriseServer;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal
 {
@@ -243,6 +244,34 @@ namespace WebsitePanel.Portal
                 itemTypeId, "%" + filterValue + "%", sortColumn, startRowIndex, maximumRows);
             return dsServiceItemsPaged.Tables[1];
         }
+        #endregion
+
+        //TODO START
+        #region Service Items Paged Search
+        DataSet dsObjectItemsPaged;
+
+        public int SearchObjectItemsPagedCount(string filterColumn, string filterValue, string colType)
+        {
+            return (int)dsObjectItemsPaged.Tables[0].Rows[0][0];
+        }
+
+        public DataTable SearchObjectItemsPaged(int maximumRows, int startRowIndex, string sortColumn,
+            string filterColumn, string filterValue, string colType)
+        {
+            dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
+                String.Format("%{0}%", filterValue),
+                0, 0, sortColumn, startRowIndex, maximumRows, colType);
+            return dsObjectItemsPaged.Tables[2];
+        }
+
+        public DataTable SearchObjectTypes(string filterColumn, string filterValue, string sortColumn)
+        {
+            dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
+                String.Format("%{0}%", filterValue),
+                0, 0, sortColumn, 0, 0, "");
+            return dsObjectItemsPaged.Tables[1];
+        }
+        //TODO END
         #endregion
     }
 }

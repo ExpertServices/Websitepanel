@@ -88,6 +88,7 @@ extern "C" {
 #define IIS_CONFIG_LOCALSERVICE             L"LocalService"
 #define IIS_CONFIG_NETWORKSERVICE           L"NetworkService"
 #define IIS_CONFIG_SPECIFICUSER             L"SpecificUser"
+#define IIS_CONFIG_APPLICATIONPOOLIDENTITY  L"ApplicationPoolIdentity"
 #define IIS_CONFIG_USERNAME                 L"userName"
 #define IIS_CONFIG_PASSWORD                 L"password"
 #define IIS_CONFIG_CPU                      L"cpu"

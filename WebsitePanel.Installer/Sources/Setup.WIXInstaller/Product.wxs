@@ -1,421 +1,691 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?include Config.wxi?>
-  <Product Id="*" Name="WebsitePanel" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" 
-           UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
-
-    <Package InstallerVersion="200" Compressed="yes" />
-    <Media Id="1" EmbedCab="yes" Cabinet="websitepanel.cab" />
-
-    <Feature Id="ServerFeature" Title="Server" Level="1" ConfigurableDirectory="INSTALLSERVERFOLDER" AllowAdvertise="no"
-             Description="WebsitePanel Server is a set of services running on the remote server to be controlled. Server application should be reachable from Enterprise Server one.">
-      <ComponentGroupRef Id="ServerFiles" />
-    </Feature>
-    
-    <Feature Id="EnterpriseServerFeature" Title="Enterprise Server" Level="1" ConfigurableDirectory="INSTALLENTERPRISESERVERFOLDER" AllowAdvertise="no"
-             Description="Enterprise Server is the heart of WebsitePanel system. It includes all business logic of the application. Enterprise Server should have access to Server and be accessible from Portal applications.">
-      <ComponentGroupRef Id="EnterpriseServerFiles" />
-    </Feature>
-    
-    <Feature Id="PortalFeature" Title="Portal" Level="1" ConfigurableDirectory="INSTALLPORTALFOLDER" AllowAdvertise="no"
-             Description="WebsitePanel Portal is a control panel itself with user interface which allows managing user accounts, hosting spaces, web sites, FTP accounts, files, etc.">
-      <ComponentGroupRef Id="PortalFiles" />
-    </Feature>
-    
-    <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="INSTALLSERVICEFOLDER" AllowAdvertise="no"
-             Description="WebsitePanel scheduler Service">
-      <ComponentGroupRef Id="SchedulerServiceFiles" />
-    </Feature>
-
-    <Property Id="BannerBitmap">bannrbmp</Property>
-
-    <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
-    
-    <Upgrade Id="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
-    <UpgradeVersion
-      Minimum="1.0.0.0" Maximum="99.0.0.0"
-      Property="PREVIOUSVERSIONSINSTALLED"
-      IncludeMinimum="yes" IncludeMaximum="no" />
-    </Upgrade>
-
-    <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
-    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
-
-    <WixVariable Id ="BUILDESPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\EnterpriseServer" />
-    <WixVariable Id ="BUILDSPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server" />
-    <WixVariable Id ="BUILDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Portal" />
-
-    <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
-    
-    <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
-    
-    <Property Id="SERVERNAME" Value="localhost\SQLExpress" />
-    <Property Id="CONNECTIONSTRING" Value="1" />
-    <Property Id="DATABASENAME" Value="WebsitePanel" />
-    <Property Id="AUTHENTICATIONTYPE" Value="Windows Authentication" />
-    
-    <Binary Id="bannrbmp" SourceFile="bannrbmp.bmp" />
-    
-    <UI Id="CustomInstaller">
-      <UIRef Id="WixUI_Mondo" />
-
-      <Dialog Id="SWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="CustomizeDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="SUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server web settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
-        <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
-        <Control Type="Edit" Id="IPaddressEdit" Width="214" Height="15" X="34" Y="98" Property="SIP1" />
-        <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
-        <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="SPORT">
-        </Control>
-        <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
-        <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="SHOSTNAME" Hidden="no">
-        </Control>
-        <Control Type="Text" Id="HintLabel" Width="190" Height="8" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
-        <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
-        <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
-      </Dialog>
-      <Dialog Id="SUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="SWebDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="ServerPasswordDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server security settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
-        <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-        <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="SDOMAINNAME" />
-        <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
-        <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="142" Property="SUSERNAME">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="SPASSWORD" Hidden="no" Password="yes">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
-        <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="SCONFIRMPASSWORD" />
-        <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
-        <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="SCREATEADACOUNT" />
-      </Dialog>
-      <Dialog Id="ServerPasswordDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="SUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="ESWebDlg" Order="9">&amp;EnterpriseServerFeature=3</Publish>
-          <Publish Event="NewDialog" Value="DatabaseConnectionDlg" Order="8">&amp;SchedulerServiceFeature=3</Publish>
-          <Publish Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for this server." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Server Password" />
-        <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="110" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="110" Property="SERVERPASSWORD" />
-        <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="136" Text="Confirm password:" />
-        <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="136" Property="CONFIRMSERVERPASSWORD" Hidden="no" Password="yes" />
-        <Control Type="CheckBox" Id="ChangeServerPasswordCheckBox" Width="160" Height="17" X="52" Y="84" Property="CHANGESERVERAPASSWORD" Text="Reset Server Password" />
-        <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify a password which will be used to access this Server from the Enterprise Server component. Click Next to continue." />
-      </Dialog>
-
-      <Dialog Id="ESWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="ServerPasswordDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="ESUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server web settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
-        <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
-        <Control Type="Edit" Id="IPaddressEdit" Width="214" Height="15" X="34" Y="98" Property="ESIP1" />
-        <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
-        <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="ESPORT" />
-        <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
-        <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="ESHOSTNAME" Hidden="no" />
-        <Control Type="Text" Id="HintLabel" Width="190" Height="8" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
-        <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
-        <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
-      </Dialog>
-      <Dialog Id="ESUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="ESWebDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="ServerAdminPasswordDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server security settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
-        <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-        <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="ESDOMAINNAME" />
-        <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
-        <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="142" Property="ESUSERNAME">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="ESPASSWORD" Hidden="no" Password="yes">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
-        <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="ESCONFIRMPASSWORD" />
-        <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
-        <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="ESCREATEADACOUNT" />
-      </Dialog>
-      <Dialog Id="ServerAdminPasswordDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="ESUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="DatabaseConnectionDlg" Order="9">&amp;EnterpriseServerFeature=3</Publish>
-          <Publish Event="NewDialog" Value="DatabaseConnectionDlg" Order="8">&amp;SchedulerServiceFeature=3</Publish>
-          <Publish Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for the serveradmin account." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Administrator Password" />
-        <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="90" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="90" Property="SERVERADMINPASSWORD" />
-        <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="116" Text="Confirm password:" />
-        <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="116" Property="CONFIRMSERVERADMINPASSWORD" Hidden="no" Password="yes">
-        </Control>
-        <Control Type="CheckBox" Id="ChangeServeradminPasswordCheckBox" Width="160" Height="17" X="52" Y="64" Property="CHANGESERVERADMINPASSWORD" Text="Reset Serveradmin Password" />
-      </Dialog>
-
-      <Dialog Id="DatabaseConnectionDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="ServerAdminPasswordDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3</Publish>
-          <Publish Event="NewDialog" Value="VerifyReadyDlg" Order="6">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Configure WebsitePanel database connection string" />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Database connection string" />
-        <Control Type="Text" Id="ServerLabel" Width="50" Height="17" X="75" Y="68" Text="SQL Server:" />
-        <Control Type="Edit" Id="ServerEdit" Width="163" Height="15" X="142" Y="68" Property="SQLSERVERNAME" />
-        <Control Type="Text" Id="AuthenticationLabel" Width="70" Height="17" X="62" Y="94" Text="Authentication:" />
-        <Control Type="ComboBox" Id="AuthenticationCombo" Width="163" Height="16" X="142" Y="94" Property="SQLAUTHENTICATIONTYPE">
-          <ComboBox Property="SQLAUTHENTICATIONTYPE">
-            <ListItem Text="Windows Authentication" Value="Windows Authentication" />
-            <ListItem Text="SQL Server Authentication" Value="SQL Server Authentication" />
-          </ComboBox>
-        </Control>
-        <Control Type="Text" Id="LoginLabel" Width="50" Height="17" X="71" Y="120" Text="Login Name:" />
-        <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="120" Property="SQLLOGIN">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="80" Y="146" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="146" Property="SQLPASSWORD" Hidden="no" Password="yes">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="DatabaseLabel" Width="50" Height="17" X="80" Y="172" Text="Database:" />
-        <Control Type="Edit" Id="DatabaseEdit" Width="163" Height="15" X="142" Y="172" Property="SQLDATABASENAME" />
-      </Dialog>
-      <Dialog Id="ConnectionWarningDlg" Width="250" Height="85" Title="[ProductName] Setup" NoMinimize="yes">
-        <Control Id="Ok" Type="PushButton" X="184" Y="60" Width="56" Height="17" Text="Ok">
-          <Publish Event="EndDialog" Value="Return">1</Publish>
-        </Control>
-        <Control Id="Text" Type="Text" X="8" Y="8" Width="221" Height="30">
-          <Text>Connection not valid.</Text>
-        </Control>
-      </Dialog>
-
-      <Dialog Id="PWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="DatabaseConnectionDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="PUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal web settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
-        <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
-        <Control Type="Edit" Id="IPaddressEdit" Width="214" Height="15" X="34" Y="98" Property="PIP1" />
-        <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
-        <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="PPORT" />
-        <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
-        <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="PHOSTNAME" Hidden="no" />
-        <Control Type="Text" Id="HintLabel" Width="190" Height="8" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
-        <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
-        <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
-      </Dialog>
-      <Dialog Id="PUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="PWebDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="ESUrlDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal security settings." />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
-        <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-        <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PDOMAINNAME" />
-        <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
-        <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="142" Property="PUSERNAME">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
-        <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="PPASSWORD" Hidden="no" Password="yes">
-          <Condition Action="disable">AUTHENTICATIONTYPE = "Windows Authentication"</Condition>
-          <Condition Action="enable">NOT(AUTHENTICATIONTYPE = "Windows Authentication")</Condition>
-        </Control>
-        <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
-        <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="PCONFIRMPASSWORD" />
-        <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
-        <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="PCREATEADACOUNT" />
-      </Dialog>
-      <Dialog Id="ESUrlDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
-          <Publish Event="NewDialog" Value="PUserAccountDlg">1</Publish>
-        </Control>
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-        </Control>
-        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
-          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Enter the Enterprise Server URL" />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Enterprise Server URL" />
-        <Control Type="Text" Id="UrlLabel" Width="88" Height="17" X="50" Y="110" Text="Enterprise Server URL:" />
-        <Control Type="Edit" Id="ESUrlEdit" Width="163" Height="15" X="142" Y="110" Property="ESURL" />
-        <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify URL which will be used to access the Enterprise Server from the Portal. Click Next to continue." />
-      </Dialog>
-
-      <Dialog Id="FinishDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
-        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-          <Publish Event="NewDialog" Value="FinishDlg">1</Publish>
-        </Control>
-        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
-        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
-        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Setup complete" />
-        <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Click Finish to exit the wizard." />
-        <Control Type="ScrollableText" Id="Log" Width="360" Height="174" X="4" Y="52" Property="INSTLOG" />
-      </Dialog>
-
-
-      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="3">LicenseAccepted = "1"</Publish>
-
-      <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg" Order="3"></Publish>
-      <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="10">&amp;ServerFeature=3</Publish>
-      <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="9">&amp;EnterpriseServerFeature=3</Publish>
-      <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="8">&amp;SchedulerServiceFeature=3</Publish>
-      <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3</Publish>
-
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg">1</Publish>
-      
-      <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
-    </UI>
-    
-    <InstallExecuteSequence>
-      <Custom Action="PropertyFinalizeInstall" After='InstallValidate'/>
-      <Custom Action="FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
-      <RemoveExistingProducts After="InstallValidate" />
-      <Custom Action='FinalizeInstall' After='InstallFiles' >NOT Installed or REINSTALL</Custom>
-    </InstallExecuteSequence>
-    
-  </Product>
-    
-  <Fragment>
-    <CustomAction Id="CheckConnection" BinaryKey="CheckConnection.CA" DllEntry="CheckConnection" />
-    <Binary Id="CheckConnection.CA" SourceFile="bin\WebsitePanel.WIXInstaller.CA.dll" />
-  </Fragment>
-  
-  <Fragment>
-    <!-- immediate CA -->
-    <CustomAction Id='PropertyFinalizeInstall' Property='FinalizeInstall' Value='ConnectionString=[CONNECTIONSTRING];PreviousConnectionString=[PREVIOUSCONNECTIONSTRING];ServiceFolder=[SERVICEFOLDER];PreviousCryptoKey=[PREVIOUSCRYPTOKEY]' Return="check"/>
-
-    <!-- deferred CA -->
-    <CustomAction Id='FinalizeInstall' BinaryKey ='CheckConnection.CA' DllEntry='FinalizeInstall' Impersonate='no' Execute='deferred'  Return='check' HideTarget='yes'/>  
-    
-    <!--<CustomAction Id="FinalizeInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeInstall"  />-->        
-  </Fragment>
-  
-  <Fragment>
-    <CustomAction Id="PreInstallationAction" BinaryKey="CheckConnection.CA" DllEntry="PreInstallationAction" />
-    <CustomAction Id="FinalizeUnInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeUnInstall" />
-    <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
-    <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' />
-  </Fragment>
-  
-  <Fragment>
-      <Directory Id="TARGETDIR" Name="SourceDir">
-        <Directory Id="WEBSITEPANELDIR" Name="WebsitePanel">
-          <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
-          <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
-          <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
-          <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />        
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension"
+     xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+    <?include Config.Wxi?>
+    <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
+             UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
+        <!-- Use WIX_UPGRADE_DETECTED -->
+        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed."/>
+        <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WEBSITEPANELDIR" AllowAdvertise="no" Display="expand"
+                 Description="WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers to automate the provisioning of a full suite of services on Windows servers.">
+            <ComponentGroupRef Id="WebsitePanelFiles" />
+            <Feature Id="ServerFeature" Title="$(var.ServerTitle)" Level="1" ConfigurableDirectory="INSTALLSERVERFOLDER" AllowAdvertise="no"
+                     Description="$(var.ServerDescription)">
+                <ComponentGroupRef Id="ServerFiles" />
+            </Feature>
+            <Feature Id="EnterpriseServerFeature" Title="$(var.EServerTitle)" Level="1" ConfigurableDirectory="INSTALLENTERPRISESERVERFOLDER" AllowAdvertise="no"
+                     Description="$(var.ServerDescription)">
+                <ComponentGroupRef Id="EnterpriseServerFiles" />
+                <ComponentGroupRef Id="DatabaseInstallation"/>
+            </Feature>
+            <Feature Id="PortalFeature" Title="$(var.PortalTitle)" Level="1" ConfigurableDirectory="INSTALLPORTALFOLDER" AllowAdvertise="no"
+                     Description="$(var.PortalDescription)">
+                <ComponentGroupRef Id="PortalFiles" />
+            </Feature>
+            <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="INSTALLSERVICEFOLDER" AllowAdvertise="no" Description="WebsitePanel Scheduler Service">
+                <ComponentGroupRef Id="SchedulerServiceFiles" />
+            </Feature>
+            <Feature Id ="WDPortalFeature" Title="WebDAV Portal" Level="100" ConfigurableDirectory="INSTALLWEBDAVPORTALFOLDER" AllowAdvertise ="no"
+                     Description="WebsitePanel WebDAV Portal">
+                <ComponentGroupRef Id="WebDavPortalFiles"/>
+            </Feature>
+        </Feature>
+        <!--Destinations.-->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="WEBSITEPANELDIR" Name="WebsitePanel">
+                <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
+                <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
+                <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
+                <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />
+                <Directory Id="INSTALLWEBDAVPORTALFOLDER" Name="WebDavPortal"/>
+            </Directory>
         </Directory>
-      </Directory>
+        <EnsureTable Id="ComboBox"/>
+        <EnsureTable Id="ListView"/>
+        <UI Id="CustomInstaller">
+            <UIRef Id="WixUI_Mondo" />
+            <DialogRef Id="CustomVerifyReadyDlg"/>
+            <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
+            <Dialog Id="SWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server web settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
+                <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
+                <Control Type="ComboBox" Id="SERVER_IP_COMBO" Width="214" Height="15" X="34" Y="98" Property="PI_SERVER_IP">
+                    <ComboBox Property="PI_SERVER_IP" />
+                </Control>
+                <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
+                <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="PI_SERVER_PORT">
+                </Control>
+                <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
+                <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="PI_SERVER_HOST">
+                </Control>
+                <Control Type="Text" Id="HintLabel" Width="190" Height="16" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
+                <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
+                <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
+            </Dialog>
+            <Dialog Id="SUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server security settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
+                <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
+                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_SERVER_DOMAIN">
+                    <Condition Action="disable">NOT(PI_SERVER_CREATE_AD = "1")</Condition>
+                    <Condition Action="enable">PI_SERVER_CREATE_AD = "1"</Condition>
+                </Control>
+                <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
+                <Control Type="Edit" Id="LoginEdit" X="142" Y="142" Width="163" Height="15" Property="PI_SERVER_LOGIN" />
+                <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="PI_SERVER_PASSWORD" Password="yes" />
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="PI_SERVER_PASSWORD_CONFIRM" Password="yes" />
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
+                <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="PI_SERVER_CREATE_AD" CheckBoxValue="1" />
+                <Control Type="PushButton" Id="SelectUserButton" X="305" Y="142" Width="15" Height="15" Text="..." />
+            </Dialog>
+            <Dialog Id="ServerPasswordDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for this server." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Server Password" />
+                <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="110" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="110" Property="SERVER_ACCESS_PASSWORD" Password="yes" />
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="136" Text="Confirm password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="136" Property="SERVER_ACCESS_PASSWORD_CONFIRM" Password="yes" />
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify a password which will be used to access this Server from the Enterprise Server component. Click Next to continue." />
+            </Dialog>
+            <Dialog Id="ESWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server web settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
+                <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
+                <Control Type="ComboBox" Id="ESERVER_IP_COMBO" Width="214" Height="15" X="34" Y="98" Property="PI_ESERVER_IP">
+                    <ComboBox Property="PI_ESERVER_IP" />
+                </Control>
+                <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
+                <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="PI_ESERVER_PORT" />
+                <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
+                <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="PI_ESERVER_HOST" />
+                <Control Type="Text" Id="HintLabel" Width="190" Height="16" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
+                <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
+                <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
+            </Dialog>
+            <Dialog Id="ESUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server security settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
+                <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
+                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_ESERVER_DOMAIN">
+                    <Condition Action="disable">NOT(PI_ESERVER_CREATE_AD = "1")</Condition>
+                    <Condition Action="enable">PI_ESERVER_CREATE_AD = "1"</Condition>
+                </Control>
+                <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
+                <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="142" Property="PI_ESERVER_LOGIN"/>
+                <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="PI_ESERVER_PASSWORD" Password="yes"/>
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="PI_ESERVER_PASSWORD_CONFIRM" Password="yes"/>
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
+                <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="PI_ESERVER_CREATE_AD"  CheckBoxValue="1"/>
+                <Control Type="PushButton" Id="SelectUserButton" X="305" Y="142" Width="15" Height="15" Text="..." />
+            </Dialog>
+            <Dialog Id="ServerAdminPasswordDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for the serveradmin account." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Administrator Password" />
+                <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="90" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="90" Property="SERVERADMIN_PASSWORD" Password="yes"/>
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="116" Text="Confirm password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="116" Property="SERVERADMIN_PASSWORD_CONFIRM" Password="yes"/>
+            </Dialog>
+            <Dialog Id="DatabaseConnectionDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
+                    <Condition Action="disable">DB_CONN_CORRECT="0"</Condition>
+                    <Condition Action="enable">DB_CONN_CORRECT="1"</Condition>
+                </Control>
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Configure WebsitePanel database connection string" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Database connection string" />
+                <Control Type="Text" Id="ServerLabel" Width="50" Height="17" X="75" Y="68" Text="SQL Server:" />
+                <Control Type="ComboBox" Id="SqlServerCombo" Width="163" Height="15" X="142" Y="68" Property="DB_SERVER">
+                    <ComboBox Property="DB_SERVER">
+                        <ListItem Text="(local)" Value="localhost\SQLExpress"/>
+                    </ComboBox>
+                </Control>
+                <Control Type="Text" Id="AuthenticationLabel" Width="70" Height="17" X="62" Y="94" Text="Authentication:" />
+                <Control Type="ComboBox" Id="DB_AUTH_COMBO" Width="163" Height="16" X="142" Y="94" Property="DB_AUTH" ComboList="yes">
+                    <ComboBox Property="DB_AUTH">
+                        <ListItem Text="Windows Authentication" Value="Windows Authentication" />
+                        <ListItem Text="SQL Server Authentication" Value="SQL Server Authentication" />
+                    </ComboBox>
+                </Control>
+                <Control Type="Text" Id="LoginLabel" Width="50" Height="17" X="71" Y="120" Text="Login Name:" />
+                <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="120" Property="DB_LOGIN">
+                    <Condition Action="disable">DB_AUTH = "Windows Authentication"</Condition>
+                    <Condition Action="enable">NOT(DB_AUTH = "Windows Authentication")</Condition>
+                </Control>
+                <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="80" Y="146" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="146" Property="DB_PASSWORD" Hidden="no" Password="yes">
+                    <Condition Action="disable">DB_AUTH = "Windows Authentication"</Condition>
+                    <Condition Action="enable">NOT(DB_AUTH = "Windows Authentication")</Condition>
+                </Control>
+                <Control Type="Text" Id="DatabaseLabel" Width="50" Height="17" X="80" Y="172" Text="Database:" />
+                <Control Type="Edit" Id="DB_DATABASE_EDIT" Width="163" Height="15" X="142" Y="172" Property="DB_DATABASE">
+                    <Condition Action="disable">DB_CONN_CORRECT="0"</Condition>
+                    <Condition Action="enable">DB_CONN_CORRECT="1"</Condition>
+                </Control>
+                <Control Type="PushButton" Id="SelectDbButton" X="305" Y="172" Width="15" Height="15" Text="...">
+                    <Condition Action="disable">DB_CONN_CORRECT="0"</Condition>
+                    <Condition Action="enable">DB_CONN_CORRECT="1"</Condition>
+                </Control>
+                <Control Type="PushButton" Id ="CheckConnButton" X="160" Y="200" Width="64" Height="17" Text="Test connection" />
+            </Dialog>
+            <Dialog Id="ConnectionWarningDlg" Width="250" Height="85" Title="[ProductName] Setup" NoMinimize="yes">
+                <Control Id="Ok" Type="PushButton" X="184" Y="60" Width="56" Height="17" Text="Ok" Default="yes" Cancel="yes"/>
+                <Control Id="Text" Type="Text" X="8" Y="8" Width="221" Height="30">
+                    <Text>Connection not valid. [DB_CONN_MSG]</Text>
+                </Control>
+            </Dialog>
+            <Dialog Id="SelectDbDlg" Width="135" Height="55" Title="Select database" NoMinimize="yes">
+                <Control Type="ComboBox" Id ="DB_SELECT_COMBO" X="5" Y="10" Width="125" Height="17" ComboList="yes" Property="DB_SELECT">
+                    <ComboBox Property="DB_SELECT" />
+                </Control>
+                <Control Id="Ok" Type="PushButton" X="5" Y="30" Width="60" Height="17" Text="Ok" Default="no" Cancel="yes"/>
+                <Control Id="Cancel" Type="PushButton" X="70" Y="30" Width="60" Height="17" Text="Cancecl" Default="yes" Cancel="yes"/>
+            </Dialog>
+            <Dialog Id="PWebDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal web settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Web Settings" />
+                <Control Type="Text" Id="IPaddressLabel" Width="73" Height="15" X="38" Y="79" Text="IP address:" />
+                <Control Type="ComboBox" Id="PORTAL_IP_COMBO" Width="214" Height="15" X="34" Y="98" Property="PI_PORTAL_IP">
+                    <ComboBox Property="PI_PORTAL_IP" />
+                </Control>
+                <Control Type="Text" Id="PortLabel" Width="73" Height="15" X="259" Y="79" Text="Port:" />
+                <Control Type="Edit" Id="PortEdit" Width="46" Height="15" X="259" Y="98" Property="PI_PORTAL_PORT" />
+                <Control Type="Text" Id="HostnameLabel" Width="73" Height="15" X="38" Y="124" Text="Host name:" />
+                <Control Type="Edit" Id="HostnameEdit" Width="266" Height="15" X="34" Y="142" Property="PI_PORTAL_HOST" />
+                <Control Type="Text" Id="HintLabel" Width="190" Height="16" X="41" Y="165" Text="Example: www.contoso.com or panel.contoso.com" />
+                <Control Type="Text" Id="IntroLabel" Width="321" Height="30" X="26" Y="191" Text="Make sure the specified host name is pointed to this web site; otherwise you might not be able to access the application." />
+                <Control Type="GroupBox" Id="WebSiteSettingsGroup" Width="330" Height="124" X="22" Y="60" Text="Web Site Settings" />
+            </Dialog>
+            <Dialog Id="PUserAccountDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal security settings." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
+                <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
+                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_PORTAL_DOMAIN">
+                    <Condition Action="disable">NOT(PI_PORTAL_CREATE_AD = "1")</Condition>
+                    <Condition Action="enable">PI_PORTAL_CREATE_AD = "1"</Condition>
+                </Control>
+                <Control Type="Text" Id="UserLabel" Width="73" Height="15" X="58" Y="142" Text="User Name:" />
+                <Control Type="Edit" Id="LoginEdit" Width="163" Height="15" X="142" Y="142" Property="PI_PORTAL_LOGIN"/>
+                <Control Type="Text" Id="PasswordLabel" Width="73" Height="15" X="58" Y="169" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="169" Property="PI_PORTAL_PASSWORD" Password="yes"/>
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="73" Height="15" X="58" Y="195" Text="Confirm Password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="195" Property="PI_PORTAL_PASSWORD_CONFIRM" Password="yes"/>
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="30" X="15" Y="62" Text="Please specify a new Windows user account for the web site anonymous access and application pool identity." />
+                <Control Type="CheckBox" Id="CreateADAccountCheckBox" Width="202" Height="17" X="58" Y="90" Text="Create Active Directory account" Property="PI_PORTAL_CREATE_AD" CheckBoxValue="1" />
+                <Control Type="PushButton" Id="SelectUserButton" X="305" Y="142" Width="15" Height="15" Text="..." />
+            </Dialog>
+            <Dialog Id="ESUrlDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Enter the Enterprise Server URL" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Enterprise Server URL" />
+                <Control Type="Text" Id="UrlLabel" Width="88" Height="17" X="50" Y="110" Text="Enterprise Server URL:" />
+                <Control Type="Edit" Id="ESUrlEdit" Width="163" Height="15" X="142" Y="110" Property="PI_ESERVER_URL" />
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify URL which will be used to access the Enterprise Server from the Portal. Click Next to continue." />
+            </Dialog>
+            <Dialog Id="FinishDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Setup complete" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Click Finish to exit the wizard." />
+                <Control Type="ScrollableText" Id="Log" Width="360" Height="174" X="4" Y="52" Property="INSTLOG" />
+            </Dialog>
+            <Dialog Id="PrereqCheckDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" Disabled="yes">
+                    <Condition Action="enable">PI_PREREQ_OS="1" AND PI_PREREQ_IIS="1" AND PI_PREREQ_ASPNET="1"</Condition>
+                </Control>
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Prerequisities check" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Software requirements and system state checks" />
+                <Control Id="ReqGroupBox" Type="GroupBox" X="4" Y="49" Width="180" Height="175" Property="REQGROUP" Text="Requirements"/>
+                <Control Id="LogGroupBox" Type="GroupBox" X="186" Y="49" Width="180" Height="175" Property="LOGGROUP" Text="Check log"/>
+                <Control Id="ReqLogText" Type="Text" X="190" Y="60" Width="173" Height="159" Sunken="yes" Disabled="no" Property="REQLOG" Text="[PI_PREREQ_LOG]"/>
+                <Control Id="ReqCheckView" Type="ListView" X="9" Y="60" Width="173" Height="159" Property="REQCHECKLIST" Sunken="no" Disabled="no" IconSize="16">
+                    <ListView Property="REQCHECKLIST">
+                    </ListView>
+                </Control>
+            </Dialog>
+            <Dialog Id="ValidateDlg" Width="250" Height="85" Title="[ProductName] Setup" NoMinimize="yes">
+                <Control Id="Ok" Type="PushButton" X="184" Y="60" Width="56" Height="17" Text="Ok" Default="yes" Cancel="yes"/>
+                <Control Id="Text" Type="Text" X="8" Y="8" Width="221" Height="30">
+                    <Text>[VALIDATE_MSG]</Text>
+                </Control>
+            </Dialog>
+            <!--All events and actions in one place-->
+            <!--LicenseAgreementDlg-->
+            <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PrereqCheckDlg" Order="3">LicenseAccepted = "1"</Publish>
+            <!--PrereqCheckDlg-->
+            <Publish Dialog="PrereqCheckDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
+            <Publish Dialog="PrereqCheckDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg">1</Publish>
+            <Publish Dialog="PrereqCheckDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--CustomizeDlg-->
+            <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="PrereqCheckDlg" Order="3">1</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="12">&amp;ServerFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="11">&amp;EnterpriseServerFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="10">&amp;PortalFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="9">&amp;SchedulerServiceFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="8">&amp;WDPortalFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="7">1</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="DoAction" Value="CA_RecapListUI" Order="1">1</Publish>
+             <!--SWebDlg-->
+            <Publish Dialog="SWebDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg">1</Publish>
+            <Publish Dialog="SWebDlg" Control="Next" Event="NewDialog" Value="SUserAccountDlg">1</Publish>
+            <Publish Dialog="SWebDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--SUserAccountDlg-->
+            <Publish Dialog="SUserAccountDlg" Control="Back" Event="NewDialog" Value="SWebDlg">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg" Order="3">VALIDATE_OK="1"</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="Next" Event="DoAction" Value="CA_ServerValidateADUI" Order="1">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!-- AD User.-->
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Event="DoAction" Value="CA_DirectoryObjectPicker" Order="2">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_TYPES" Value="DSOP_SCOPE_TYPE_TARGET_COMPUTER|DSOP_SCOPE_TYPE_ENTERPRISE_DOMAIN" Order="1">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FLAGS" Value="DSOP_SCOPE_FLAG_STARTING_SCOPE|DSOP_SCOPE_FLAG_DEFAULT_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FILTER_FLAGS" Value="DSOP_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="DSOP_DOWNLEVEL_SCOPE_FILTER_FLAGS" Value="DSOP_DOWNLEVEL_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
+            <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
+            <!--ServerPasswordDlg-->
+            <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="SUserAccountDlg">1</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="7">&amp;EnterpriseServerFeature=3 AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="6">&amp;PortalFeature=3 AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="5">&amp;SchedulerServiceFeature=3 AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="4">&amp;WDPortalFeature=3 AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3">
+                <![CDATA[NOT(&EnterpriseServerFeature=3) AND NOT(&PortalFeature=3) AND NOT(&SchedulerServiceFeature=3) AND NOT(&WDPortalFeature=3) AND VALIDATE_OK = "1"]]>
+            </Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK = "0"</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="DoAction" Value="CA_ServerAccessValidateUI" Order="1">1</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--ESWebDlg-->
+            <Publish Dialog="ESWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]></Publish>
+            <Publish Dialog="ESWebDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
+            <Publish Dialog="ESWebDlg" Control="Next" Event="NewDialog" Value="ESUserAccountDlg" Order="2">1</Publish>
+            <Publish Dialog="ESWebDlg" Control="Next" Event="DoAction" Value="CA_SetEServerUrlUI" Order="1">1</Publish>
+            <Publish Dialog="ESWebDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--ESUserAccountDlg-->
+            <Publish Dialog="ESUserAccountDlg" Control="Back" Event="NewDialog" Value="ESWebDlg">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="3">VALIDATE_OK="1"</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="Next" Event="DoAction" Value="CA_EServerValidateADUI" Order="1">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                <!-- AD User.-->
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Event="DoAction" Value="CA_DirectoryObjectPicker" Order="2">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_TYPES" Value="DSOP_SCOPE_TYPE_TARGET_COMPUTER|DSOP_SCOPE_TYPE_ENTERPRISE_DOMAIN" Order="1">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FLAGS" Value="DSOP_SCOPE_FLAG_STARTING_SCOPE|DSOP_SCOPE_FLAG_DEFAULT_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FILTER_FLAGS" Value="DSOP_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="DSOP_DOWNLEVEL_SCOPE_FILTER_FLAGS" Value="DSOP_DOWNLEVEL_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
+            <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
+            <!--ServerAdminPasswordDlg-->
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ESUserAccountDlg">1</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[(&EnterpriseServerFeature=3 OR &SchedulerServiceFeature=3) AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="DoAction" Value="CA_ServerAdminValidateUI" Order="1">1</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--DatabaseConnectionDlg-->
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="4"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3 AND DB_CONN_CORRECT="1" AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="6">DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK = "0"</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="DoAction" Value="CA_DatabaseConnectionValidateUI" Order="1">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="CheckConnButton" Event="SpawnDialog" Value="ConnectionWarningDlg" Order="4">DB_CONN_CORRECT = "0"</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="CheckConnButton" Property="DB_CONN_CORRECT" Value="[DB_CONN_CORRECT]" Order="3">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="CheckConnButton" Event ="DoAction" Value="CA_DbListUI" Order="2">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="CheckConnButton" Event="DoAction" Value="CA_CheckConnectionUI" Order="1">1</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="SelectDbButton" Event="SpawnDialog" Value="SelectDbDlg" Order="1">1</Publish>
+            <!--ConnectionWarningDlg-->
+            <Publish Dialog="ConnectionWarningDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
+            <!--SelectDbDlg-->
+            <Publish Dialog="SelectDbDlg" Control="Ok" Event="EndDialog" Value="Return" Order="2">1</Publish>
+            <Publish Dialog="SelectDbDlg" Control="Ok" Property="DB_DATABASE" Value="[DB_SELECT]" Order="1">1</Publish>
+            <Publish Dialog="SelectDbDlg" Control="Cancel" Event="EndDialog" Value="Return">1</Publish>
+            <!--PWebDlg-->
+            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]></Publish>
+            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
+            <Publish Dialog="PWebDlg" Control="Next" Event="NewDialog" Value="PUserAccountDlg">1</Publish>
+            <Publish Dialog="PWebDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--PUserAccountDlg-->
+            <Publish Dialog="PUserAccountDlg" Control="Back" Event="NewDialog" Value="PWebDlg">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="4"><![CDATA[NOT(&EnterpriseServerFeature=3) AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="DoAction" Value="CA_PortalValidateADUI" Order="1">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                <!-- AD User.-->
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Event="DoAction" Value="CA_DirectoryObjectPicker" Order="2">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_TYPES" Value="DSOP_SCOPE_TYPE_TARGET_COMPUTER|DSOP_SCOPE_TYPE_ENTERPRISE_DOMAIN" Order="1">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FLAGS" Value="DSOP_SCOPE_FLAG_STARTING_SCOPE|DSOP_SCOPE_FLAG_DEFAULT_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="DSOP_SCOPE_FILTER_FLAGS" Value="DSOP_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="DSOP_DOWNLEVEL_SCOPE_FILTER_FLAGS" Value="DSOP_DOWNLEVEL_FILTER_USERS" Order="1">1</Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
+            <!--ESUrlDlg-->
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg">1</Publish>
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="2"><![CDATA[&SchedulerServiceFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
+            <Publish Dialog="ESUrlDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--CustomVerifyReadyDlg-->
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&SchedulerServiceFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="15"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="14"><![CDATA[&PortalFeature=3 AND &EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="13"><![CDATA[&EnterpriseServerFeature=3 AND &PortalFeature<>3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="12"><![CDATA[&ServerFeature=3 AND &EnterpriseServerFeature<>3 AND &PortalFeature<>3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
+            <!--FinishDlg-->
+            <Publish Dialog="FinishDlg" Control="Next" Event="NewDialog" Value="FinishDlg">1</Publish>
+            <!--ValidateDlg-->
+            <Publish Dialog="ValidateDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
+        </UI>
+        <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
+        <Binary Id="Assembly_CA" SourceFile="bin\WebsitePanel.WIXInstaller.CA.dll" />
+        <Binary Id="MsiExt.ActiveDirectory" SourceFile="..\..\..\tools\msiext\CustomActions\ActiveDirectory.dll" />
+        <Binary Id="MsiExt.DataSource" SourceFile="..\..\..\tools\msiext\CustomActions\DataSource.dll" />
+        <Binary Id="bannrbmp" SourceFile="bannrbmp.bmp" />
+        <Binary Id="passmark" SourceFile="passmark.ico" />
+        <Binary Id="failmark" SourceFile="failmark.ico" />
+        <Binary Id="InstallDB" SourceFile="$(var.PROJECTPATH)\Database\wix_install_db.sql" />
+        <Binary Id="UpdateDB" SourceFile="$(var.PROJECTPATH)\Database\wix_update_db.sql" />
+        <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
+        <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
+        <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+        <WixVariable Id="BUILDESPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\EnterpriseServer" />
+        <WixVariable Id="BUILDSPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server" />
+        <WixVariable Id="BUILDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Portal" />
+        <WixVariable Id="BUILDWDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\WebDavPortal" />
+        <!--Add/Remove props. Public properties should be always in CAPS.-->
+        <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
+        <!--UI props.-->
+        <Property Id="BannerBitmap">bannrbmp</Property>
+        <!--SQL props.-->
+        <Property Id="DB_SERVER" Secure="yes" Value="localhost\SQLExpress" />
+        <Property Id="DB_CONN" Secure="yes" />
+        <Property Id="DB_DATABASE" Secure="yes" />
+        <Property Id="DB_AUTH" Secure="yes" Value="Windows Authentication" />
+        <Property Id="DB_LOGIN" Secure="yes" />
+        <Property Id="DB_PASSWORD" Secure="yes" />
+        <Property Id="DB_CONN_CORRECT" Secure="yes" Value="0" />
+        <Property Id="DB_CONN_MSG" Secure="yes" />
+        <Property Id="DB_SELECT" Secure="yes" />
+        <!--Prerequisities props.-->
+        <!--Possible values: Passed(y), Fail(n).-->
+        <Property Id="PI_PREREQ_OS" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_OS_TITLE" Value="Operating System" />
+        <Property Id="PI_PREREQ_ASPNET" Secure="yes" Value="0"/>
+        <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
+        <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_IIS_TITLE" Value="Web Server (IIS)" />
+        <Property Id="PI_PREREQ_WP_SERVER" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_WP_SERVER_TITLE" Value="WebsitePanel Server" />
+        <Property Id="PI_PREREQ_WP_ESERVER" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_WP_ESERVER_TITLE" Value="WebsitePanel Enterprise Server" />
+        <Property Id="PI_PREREQ_WP_PORTAL" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_WP_PORTAL_TITLE" Value="WebsitePanel Portal" />
+        <Property Id="PI_PREREQ_WP_WDPORTAL" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_WP_WDPORTAL_TITLE" Value="WebsitePanel WebDav Portal" />
+        <!--IP, PORT, HOSTNAME for each component. Default values.-->
+        <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
+        <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
+        <Property Id="PI_SERVER_HOST" Secure="yes" />
+        <Property Id="PI_SERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_SERVER_PASSWORD" Secure="yes" />
+        <Property Id="PI_SERVER_PASSWORD_CONFIRM" Secure="yes" />
+        <Property Id="PI_SERVER_DOMAIN" Secure="yes" />
+        <Property Id="PI_SERVER_CREATE_AD" Secure="yes" />
+
+        <Property Id="PI_ESERVER_IP" Secure="yes" Value="127.0.0.1" />
+        <Property Id="PI_ESERVER_PORT" Secure="yes" Value="9002" />
+        <Property Id="PI_ESERVER_HOST" Secure="yes" />
+        <Property Id="PI_ESERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_ESERVER_PASSWORD" Secure="yes" />
+        <Property Id="PI_ESERVER_PASSWORD_CONFIRM" Secure="yes" />
+        <Property Id="PI_ESERVER_DOMAIN" Secure="yes" />
+        <Property Id="PI_ESERVER_CREATE_AD" Secure="yes" />
+        <Property Id="PI_ESERVER_URL" Secure="yes" />
+
+        <Property Id="PI_PORTAL_IP" Secure="yes" Value="127.0.0.1" />
+        <Property Id="PI_PORTAL_PORT" Secure="yes" Value="9001" />
+        <Property Id="PI_PORTAL_HOST" Secure="yes" />
+        <Property Id="PI_PORTAL_LOGIN" Secure="yes" />
+        <Property Id="PI_PORTAL_PASSWORD" Secure="yes" />
+        <Property Id="PI_PORTAL_PASSWORD_CONFIRM" Secure="yes" />
+        <Property Id="PI_PORTAL_DOMAIN" Secure="yes" />
+        <Property Id="PI_PORTAL_CREATE_AD" Secure="yes"/>
+        <!---->
+        <Property Id="CUSTOM_INSTALL_TEXT" Secure="yes" />
+        <Property Id="PI_PREREQ_LOG" Secure="yes" />
+        <!---->
+        <Property Id="SERVER_ACCESS_PASSWORD" Secure="yes" />
+        <Property Id="SERVER_ACCESS_PASSWORD_CONFIRM" Secure="yes" />
+        <!---->
+        <Property Id="SERVERADMIN_PASSWORD" Secure="yes" />
+        <Property Id="SERVERADMIN_PASSWORD_CONFIRM" Secure="yes" />
+        <!---->
+        <Property Id="VALIDATE_OK" Secure="yes" Value="0" />
+        <Property Id="VALIDATE_MSG" Secure="yes" />
+        <Property Id ="WSP_ROOT" Secure="yes">
+            <RegistrySearch Id='Search_WSP_ROOT' Root='HKCU' Key='SOFTWARE\[ProductName]' Name='Root' Type='raw' />
+        </Property>
+        <!--CustomActions.-->
+      <!--  <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
+        <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' /> -->
+        <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" />
+      <!--  <CustomAction Id='CA_PropertyFinalizeInstall' Property='CA_FinalizeInstall' Value='ConnectionString=[CONNECTIONSTRING];PreviousConnectionString=[PREVIOUSCONNECTIONSTRING];ServiceFolder=[SERVICEFOLDER];PreviousCryptoKey=[PREVIOUSCRYPTOKEY]' Return="check"/> -->
+        <CustomAction Id="CA_PropertyFinalizeInstall" Property="CA_FinalizeInstall" Value="" Return="check"/>
+        <CustomAction Id="CA_FinalizeInstall" BinaryKey ="Assembly_CA" DllEntry="FinalizeInstall" Impersonate="no" Execute="deferred"  Return="check" HideTarget="yes"/>
+        <CustomAction Id="CA_PreInstallationAction" BinaryKey="Assembly_CA" DllEntry="PreInstallationAction" />
+        <CustomAction Id="CA_FinalizeUnInstall" BinaryKey="Assembly_CA" DllEntry="FinalizeUnInstall" />
+        <CustomAction Id="CA_PrereqCheck" BinaryKey="Assembly_CA" DllEntry="PrereqCheck" />
+        <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" />
+        <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" />
+        <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" />
+        <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" />
+        <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" />
+        <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" />
+        <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" />
+        <CustomAction Id="CA_ServerAdminValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAdminValidateUI" />
+        <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" />
+        <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" />
+        <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" />
+
+        <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" />
+
+        <CustomAction Id="CA_SetSqlDmoListLocal" Property="SQLDMO_LIST_LOCAL" Value="(local)" Execute="immediate" />
+        <CustomAction Id="CA_SetSqlDmoListIndex" Property="SQLDMO_LIST_INDEX" Value="2" Execute="immediate" />
+        <CustomAction Id="CA_SetSqlDmoListProperty" Property="SQLDMO_LIST_PROPERTY" Value="DB_SERVER" Execute="immediate" />
+        <CustomAction Id="CA_SetSqlDmoListType" Property="SQLDMO_LIST_TYPE" Value="ComboBox" Execute="immediate" />
+        <CustomAction Id="CA_SQLDMO_ListAvailableSQLServers" BinaryKey="MsiExt.DataSource"  DllEntry="SQLDMO_ListAvailableSQLServers" />
+
+        <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
+
+        <!--Run corresponding install scripts.-->
+        <!--Server.-->
+        <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLSERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
+        <!--EServer.-->
+        <CustomAction Id="CA_PropertyOnEServerInstall" Property="CA_OnEServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterpriseserver;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLENTERPRISESERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnEServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnEServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
+        <!--Portal.-->
+        <CustomAction Id="CA_PropertyOnPortalInstall" Property="CA_OnPortalInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLPORTALFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnPortalInstall" BinaryKey ="Assembly_CA" DllEntry="OnPortalInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
+        <!--Run corresponding uninstall scripts.-->
+        <CustomAction Id="CA_PropertyOnServerRemove" Property="CA_OnServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=server;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnServerRemove" BinaryKey="Assembly_CA" DllEntry="OnServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyOnEServerRemove" Property="CA_OnEServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterpriseserver;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnEServerRemove" BinaryKey="Assembly_CA" DllEntry="OnEServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyOnPortalRemove" Property="CA_OnPortalRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=portal;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnPortalRemove" BinaryKey="Assembly_CA" DllEntry="OnPortalRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <!---->
+        <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_ROOT]">WSP_ROOT</SetProperty>
+        <!--Exe sequence.-->
+        <InstallExecuteSequence>
+            <!--<Custom Action="CA_PropertyFinalizeInstall" After='InstallValidate'/>
+            <Custom Action="CA_FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+            <Custom Action="CA_FinalizeInstall" After="InstallFiles" >NOT Installed or REINSTALL</Custom>-->
+            <!--First Install. [Installed] property not used here because we distinguish per feature basis.-->
+            <Custom Action="CA_PropertyOnServerInstall" After="InstallValidate"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnServerInstall" After="InstallFiles"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnEServerInstall" After="InstallValidate"><![CDATA[(&EnterpriseServerFeature=3) AND NOT(!EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnEServerInstall" After="InstallODBC"><![CDATA[(&EnterpriseServerFeature=3) AND NOT(!EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnPortalInstall" After="InstallValidate"><![CDATA[(&PortalFeature=3) AND NOT(!PortalFeature=3)]]></Custom>
+            <Custom Action="CA_OnPortalInstall" After="InstallFiles"><![CDATA[(&PortalFeature=3) AND NOT(!PortalFeature=3)]]></Custom>
+            <!--Complete Remove.-->
+            <Custom Action="CA_PropertyOnServerRemove" After="InstallInitialize"><![CDATA[(&ServerFeature=2) AND (!ServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnServerRemove" After="CA_PropertyOnServerRemove"><![CDATA[(&ServerFeature=2) AND (!ServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnEServerRemove" After="InstallInitialize"><![CDATA[(&EnterpriseServerFeature=2) AND (!EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnEServerRemove" Before="StopServices"><![CDATA[(&EnterpriseServerFeature=2) AND (!EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnPortalRemove" After="InstallInitialize"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
+            <Custom Action="CA_OnPortalRemove" After="CA_PropertyOnPortalRemove"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
+        </InstallExecuteSequence>
+        <InstallUISequence>
+            <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
+            <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
+            <Custom Action="CA_FillIpListUI" After="CostInitialize" />
+            <Custom Action="CA_SqlServerListUI" After="CostInitialize" />
+        </InstallUISequence>
+        <SetProperty Id="PI_ESERVER_URL" Value="http://[PI_ESERVER_IP]:[PI_ESERVER_PORT]/" Before="CostInitialize" />
+    </Product>
+    <Fragment>
+        <ComponentGroup Id="DatabaseInstallation">
+            <ComponentRef Id="InstallDatabaseSql"/>
+            <ComponentRef Id="InstallDatabaseWin"/>
+            <ComponentRef Id="UpdateDatabaseSql"/>
+            <ComponentRef Id="UpdateDatabaseWin"/>
+        </ComponentGroup>
+        <DirectoryRef Id="INSTALLENTERPRISESERVERFOLDER">
+            <Component Id="InstallDatabaseSql" Guid="{81FB6008-A445-464F-8A0E-2EE076027FF3}">
+                <CreateFolder />
+                <Condition>(NOT Installed OR NOT WIX_UPGRADE_DETECTED) AND NOT(DB_AUTH = "Windows Authentication")</Condition>
+                <util:User Id="SqlUser" Name="[DB_LOGIN]" Password="[DB_PASSWORD]" CreateUser="no" />
+                <sql:SqlDatabase Id="SqlDatabaseInstallSql" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
+                                 DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
+                                 Server="[DB_SERVER]"
+                                 Database="[DB_DATABASE]"
+                                 User="SqlUser">
+                    <sql:SqlScript Id="SqlInstallScriptSql" ExecuteOnInstall="yes" BinaryKey="InstallDB" Sequence="1"/>
+                </sql:SqlDatabase>
+            </Component>
+            <Component Id="UpdateDatabaseSql" Guid="{089C02F9-D598-435E-8DA9-FC8AED00495C}">
+                <Condition>NOT (Remove="ALL") AND NOT(DB_AUTH = "Windows Authentication")</Condition>
+                <CreateFolder />
+                <sql:SqlString  Id="SqlVersionUpdateSql" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
+                                                           BEGIN
+	                                                           INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
+                                                           END"
+                                                    SqlDb="SqlDatabaseInstallWin" Sequence="2"  User="SqlUser"
+                                                    ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+                <sql:SqlScript Id="SqlUpdateScriptSql" BinaryKey="UpdateDB" SqlDb="SqlDatabaseInstallSql" Sequence="3" User="SqlUser"
+                               ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+            </Component>
+            <Component Id="InstallDatabaseWin" Guid="{C50FC58C-3EF3-452D-BA9B-C9513B4D941A}">
+                <CreateFolder />
+                <Condition>(NOT Installed OR NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication")</Condition>
+                <sql:SqlDatabase Id="SqlDatabaseInstallWin" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
+                                 DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
+                                 Server="[DB_SERVER]"
+                                 Database="[DB_DATABASE]">
+                    <sql:SqlScript Id="SqlInstallScriptWin" ExecuteOnInstall="yes" BinaryKey="InstallDB" Sequence="10"/>
+                </sql:SqlDatabase>
+            </Component>
+            <Component Id="UpdateDatabaseWin" Guid="{A2770B5C-DA46-4125-950F-73A640EB312B}">
+                <Condition>NOT (Remove="ALL") AND (DB_AUTH = "Windows Authentication")</Condition>
+                <CreateFolder />
+                <sql:SqlString  Id="SqlVersionUpdateWin" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
+                                                           BEGIN
+	                                                           INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
+                                                           END"
+                                                    SqlDb="SqlDatabaseInstallWin" Sequence="11"  ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+                <sql:SqlScript Id="SqlUpdateScriptWin" BinaryKey="UpdateDB" SqlDb="SqlDatabaseInstallWin" Sequence="12"
+                                   ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no" />
+            </Component>
+        </DirectoryRef>
     </Fragment>
-  
+    <Fragment>
+        <ComponentGroup Id="WebsitePanelFiles">
+            <Component Id ="comp_WebsitePanel_config" Directory="WEBSITEPANELDIR" Guid="{28CD1ADB-562C-4E38-A3B6-325D3A2718B1}">
+                <File Id="file_WebsitePanel_config" KeyPath="yes" Source="WebsitePanel.config" />
+            </Component>
+            <Component Directory="WEBSITEPANELDIR">
+                <RegistryValue Root='HKCU' Key='SOFTWARE\[ProductName]'
+                                           Name='Root' Value='[WEBSITEPANELDIR]'
+                                           Type='string' />                
+            </Component>
+        </ComponentGroup>
+    </Fragment>
 </Wix>

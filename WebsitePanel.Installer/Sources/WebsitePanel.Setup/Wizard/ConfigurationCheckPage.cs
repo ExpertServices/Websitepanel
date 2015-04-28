@@ -127,13 +127,13 @@ namespace WebsitePanel.Setup
 					switch (check.CheckType)
 					{
 						case CheckTypes.OperationSystem:
-							status = CheckOS(out details);
+							status = CheckOS(check.SetupVariables, out details);
 							break;
 						case CheckTypes.IISVersion:
-							status = CheckIISVersion(out details);
+							status = CheckIISVersion(check.SetupVariables, out details);
 							break;
 						case CheckTypes.ASPNET:
-							status = CheckASPNET(out details);
+							status = CheckASPNET(check.SetupVariables, out details);
 							break;
 						case CheckTypes.WPServer:
 							status = CheckWPServer(check.SetupVariables, out details);
@@ -221,7 +221,7 @@ namespace WebsitePanel.Setup
 
 		}
 
-		private CheckStatuses CheckOS(out string details)
+		internal static CheckStatuses CheckOS(SetupVariables setupVariables, out string details)
 		{
 			details = string.Empty;
 			try
@@ -237,6 +237,7 @@ namespace WebsitePanel.Setup
                     version == OS.WindowsVersion.WindowsServer2008 ||
                     version == OS.WindowsVersion.WindowsServer2008R2 ||
                     version == OS.WindowsVersion.WindowsServer2012 ||
+                    version == OS.WindowsVersion.WindowsServer2012R2 ||
                     version == OS.WindowsVersion.WindowsVista ||
                     version == OS.WindowsVersion.Windows7 ||
                     version == OS.WindowsVersion.Windows8 ))
@@ -260,20 +261,20 @@ namespace WebsitePanel.Setup
 				return CheckStatuses.Error;
 			}
 		}
-		private CheckStatuses CheckIISVersion(out string details)
+        internal static CheckStatuses CheckIISVersion(SetupVariables setupVariables, out string details)
 		{
 			details = string.Empty;
 			try
 			{
-				details = string.Format("IIS {0}", SetupVariables.IISVersion.ToString(2));
-				if (SetupVariables.IISVersion.Major == 6 &&
+                details = string.Format("IIS {0}", setupVariables.IISVersion.ToString(2));
+                if (setupVariables.IISVersion.Major == 6 &&
 					Utils.IsWin64() && Utils.IIS32Enabled())
 				{
 					details += " (32-bit mode)";
 				}
 
 				Log.WriteInfo(string.Format("IIS check: {0}", details));
-				if (SetupVariables.IISVersion.Major < 6)
+                if (setupVariables.IISVersion.Major < 6)
 				{
 					details = "IIS 6.0 or greater required.";
 					Log.WriteError(string.Format("IIS check: {0}", details), null);
@@ -291,26 +292,26 @@ namespace WebsitePanel.Setup
 			}
 		}
 
-		private CheckStatuses CheckASPNET(out string details)
+		internal static CheckStatuses CheckASPNET(SetupVariables setupVariables, out string details)
 		{
 			details = "ASP.NET 4.0 is installed.";
 			CheckStatuses ret = CheckStatuses.Success;
 			try
 			{
 				// IIS 6
-				if (SetupVariables.IISVersion.Major == 6)
+                if (setupVariables.IISVersion.Major == 6)
 				{
 					//
-					if (Utils.CheckAspNet40Registered(SetupVariables) == false)
+                    if (Utils.CheckAspNet40Registered(setupVariables) == false)
 					{
 						// Register ASP.NET 4.0
-						Utils.RegisterAspNet40(SetupVariables);
+                        Utils.RegisterAspNet40(setupVariables);
 						//
 						ret = CheckStatuses.Warning;
 						details = AspNet40HasBeenInstalledMessage;
 					}
 					// Enable ASP.NET 4.0 Web Server Extension if it is prohibited
-					if (Utils.GetAspNetWebExtensionStatus_Iis6(SetupVariables) == WebExtensionStatus.Prohibited)
+                    if (Utils.GetAspNetWebExtensionStatus_Iis6(setupVariables) == WebExtensionStatus.Prohibited)
 					{
 						Utils.EnableAspNetWebExtension_Iis6();
 					}
@@ -331,10 +332,10 @@ namespace WebsitePanel.Setup
                         return CheckStatuses.Error;
                     }
 					// Register ASP.NET 4.0
-					if (Utils.CheckAspNet40Registered(SetupVariables) == false)
+                    if (Utils.CheckAspNet40Registered(setupVariables) == false)
 					{
 						// Register ASP.NET 4.0
-						Utils.RegisterAspNet40(SetupVariables);
+                        Utils.RegisterAspNet40(setupVariables);
 						//
 						ret = CheckStatuses.Warning;
 						details = AspNet40HasBeenInstalledMessage;
@@ -359,17 +360,17 @@ namespace WebsitePanel.Setup
 			}
 		}
 
-		private CheckStatuses CheckIIS32Mode(out string details)
+        internal static CheckStatuses CheckIIS32Mode(SetupVariables setupVariables, out string details)
 		{
 			details = string.Empty;
-			CheckStatuses ret = CheckIISVersion(out details);
+			CheckStatuses ret = CheckIISVersion(setupVariables, out details);
 			if (ret == CheckStatuses.Error)
 				return ret;
 
 			try
 			{
 				//IIS 6
-				if (SetupVariables.IISVersion.Major == 6)
+				if (setupVariables.IISVersion.Major == 6)
 				{
 					//x64
 					if (Utils.IsWin64())

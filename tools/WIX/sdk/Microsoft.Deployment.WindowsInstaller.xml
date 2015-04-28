@@ -907,6 +907,7 @@
             <item>v0 - Binary Stream</item>
             <item>g? - Temporary string (?=0-255)</item>
             <item>j? - Temporary integer (?=0,1,2,4)</item>
+            <item>O0 - Temporary object (stream)</item>
             <item>l? - Localizable string, variable length (?=1-255)</item>
             <item>l0 - Localizable string, variable length</item>
             </list>
@@ -7378,6 +7379,31 @@
             Win32 MSI API:
             <a href="http://msdn.microsoft.com/library/en-us/msi/setup/msiviewgetcolumninfo.asp">MsiViewGetColumnInfo</a>
             </p></remarks>
+        </member>
+        <member name="T:Microsoft.Tools.WindowsInstallerXml.WixDistribution">
+            <summary>
+            Distribution specific strings.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Tools.WindowsInstallerXml.WixDistribution.NewsUrl">
+            <summary>
+            News URL for the distribution.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Tools.WindowsInstallerXml.WixDistribution.ShortProduct">
+            <summary>
+            Short product name for the distribution.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Tools.WindowsInstallerXml.WixDistribution.SupportUrl">
+            <summary>
+            Support URL for the distribution.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Tools.WindowsInstallerXml.WixDistribution.TelemetryUrlFormat">
+            <summary>
+            Telemetry URL format for the distribution.
+            </summary>
         </member>
     </members>
 </doc>

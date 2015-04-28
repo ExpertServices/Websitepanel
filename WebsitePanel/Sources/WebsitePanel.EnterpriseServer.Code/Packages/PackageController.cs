@@ -317,6 +317,15 @@ namespace WebsitePanel.EnterpriseServer
                 sortColumn, startRow, maximumRows);
         }
 
+        //TODO START
+        public static DataSet GetSearchObject(int userId, string filterColumn, string filterValue,
+            int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType)
+        {
+            return DataProvider.GetSearchObject(SecurityContext.User.UserId, userId,
+                filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, false);
+        }
+        //TODO END
+
         public static DataSet GetPackageQuotas(int packageId)
         {
             return DataProvider.GetPackageQuotas(SecurityContext.User.UserId, packageId);

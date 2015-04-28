@@ -11,7 +11,10 @@
   <xs:annotation>
     <xs:documentation>
             Schema for describing Windows Installer database files (.msi/.msm/.pcp).
-        </xs:documentation>
+    </xs:documentation>
+    <xs:appinfo>
+      <xse:main />
+    </xs:appinfo>
   </xs:annotation>
   <xs:import namespace="http://www.w3.org/1999/xhtml" />
   <xs:element name="Wix">
@@ -70,6 +73,7 @@
     </xs:annotation>
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="ApprovedExeForElevation" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="Log" minOccurs="0" maxOccurs="1" />
         <xs:element ref="Catalog" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="BootstrapperApplication" minOccurs="0" maxOccurs="1" />
@@ -249,6 +253,46 @@
           </xs:documentation>
         </xs:annotation>
       </xs:anyAttribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ApprovedExeForElevation">
+    <xs:annotation>
+      <xs:documentation>Provides information about an .exe so that the BA can request the engine to run it elevated from any secure location.</xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Bundle" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Id" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>The identifier of the ApprovedExeForElevation element.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Key" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The key path.
+            For security purposes, the root key will be HKLM and Variables are not supported.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Value" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The value name.
+            For security purposes, Variables are not supported.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="Win64" type="YesNoTypeUnion">
+        <xs:annotation>
+          <xs:documentation>
+            Instructs the search to look in the 64-bit registry when the value is 'yes'.
+            When the value is 'no', the search looks in the 32-bit registry.
+            The default value is 'no'.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="Log">
@@ -542,7 +586,6 @@
         <xs:element ref="SlipstreamMsp" />
         <xs:element ref="Payload" />
         <xs:element ref="PayloadGroupRef" />
-        <xs:element ref="RemotePayload" />
         <xs:any namespace="##other" processContents="lax">
           <xs:annotation>
             <xs:documentation>
@@ -617,7 +660,6 @@
         <xs:element ref="MsiProperty" />
         <xs:element ref="Payload" />
         <xs:element ref="PayloadGroupRef" />
-        <xs:element ref="RemotePayload" />
         <xs:any namespace="##other" processContents="lax">
           <xs:annotation>
             <xs:documentation>
@@ -874,9 +916,9 @@
         <xs:documentation>A condition to evaluate before installing the package. The package will only be installed if the condition evaluates to true. If the condition evaluates to false and the bundle is being installed, repaired, or modified, the package will be uninstalled.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="Cache" type="YesNoTypeUnion">
+    <xs:attribute name="Cache" type="YesNoAlwaysTypeUnion">
       <xs:annotation>
-        <xs:documentation>Whether to cache the package.</xs:documentation>
+        <xs:documentation>Whether to cache the package. The default is "yes".</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="CacheId" type="xs:string">
@@ -899,7 +941,7 @@
         <xs:documentation>
           Specifies the description to place in the bootstrapper application data manifest for the package. By default, ExePackages
           use the FileName field from the version information, MsiPackages use the ARPCOMMENTS property, and MspPackages use
-          the Description patch metadata property. Other package types must use this attribute to define a desciption in the
+          the Description patch metadata property. Other package types must use this attribute to define a description in the
           bootstrapper application data manifest.
         </xs:documentation>
       </xs:annotation>
@@ -932,7 +974,7 @@
       <xs:annotation>
         <xs:documentation>
             Specifies whether the package must succeed for the chain to continue. The default "yes"
-            inidicates that if the package fails then the chain will fail and rollback or stop. If
+            indicates that if the package fails then the chain will fail and rollback or stop. If
             "no" is specified then the chain will continue even if the package reports failure.
         </xs:documentation>
       </xs:annotation>
@@ -945,10 +987,12 @@
     <xs:attribute name="SuppressSignatureVerification" type="YesNoTypeUnion">
       <xs:annotation>
         <xs:documentation>
-          By default, a Bundle will use a package's Authenticode signature to verify the contents. If the package does not
-          have an Authenticode signature then the Bundle will use a hash of the package instead. Set this attribute to "yes"
-          to suppress the default behavior and force the Bundle to always use the hash of the package even when the package
-          is signed.
+          By default, a Bundle will use the hash of a package to verify its contents. If this attribute is explicitly set to "no"
+          and the package is signed with an Authenticode signature the Bundle will verify the contents of the package using the
+          signature instead. Therefore, the default for this attribute could be considered to be "yes". It is unusual for "yes" to
+          be the default of an attribute. In this case, the default was changed in WiX v3.9 after experiencing real world issues
+          with Windows verifying Authenticode signatures. Since the Authenticode signatures are no more secure than hashing the
+          packages directly, the default was changed.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
@@ -1201,9 +1245,6 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
-      <xs:choice minOccurs="0" maxOccurs="1">
-        <xs:element ref="RemotePayload" />
-      </xs:choice>
       <xs:attribute name="Id" type="xs:string">
         <xs:annotation>
           <xs:documentation>The identifier of Payload element.</xs:documentation>
@@ -1289,16 +1330,11 @@
   </xs:element>
   <xs:element name="RemotePayload">
     <xs:annotation>
-      <xs:documentation>Describes a information about a remote file payload that is not available at the time of building the bundle.  
+      <xs:documentation>Describes information about a remote file payload that is not available at the time of building the bundle.  
       The parent must specify DownloadUrl and must not specify SourceFile when using this element.</xs:documentation>
       <xs:appinfo>
-        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="BootstrapperApplication" />
         <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="ExePackage" />
-        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MsiPackage" />
-        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MspPackage" />
         <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="MsuPackage" />
-        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="UX" />
-        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Payload" />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -1314,7 +1350,7 @@
       </xs:attribute>
       <xs:attribute name="Description" type="xs:string" use="required">
         <xs:annotation>
-          <xs:documentation>Description of the file from version resouces.</xs:documentation>
+          <xs:documentation>Description of the file from version resources.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="Hash" type="HexType" use="required">
@@ -1397,7 +1433,7 @@
       </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code page by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code page by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
         </xse:remarks>
       </xs:appinfo>
     </xs:annotation>
@@ -1510,7 +1546,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
         </xse:remarks>
       </xs:appinfo>
     </xs:annotation>
@@ -1850,7 +1886,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
           <html:p>The ClientPatchId attribute allows you to specify an easily referenced identity that you can use in product authoring. This identity prefixes properties added by WiX to a patch transform, such as <html:i>ClientPatchId</html:i>.PatchCode and <html:i>ClientPatchId</html:i>.AllowRemoval. If the patch code GUID is auto-generated you could not reference any properties using this auto-generated prefix.</html:p>
           <html:p>For example, if you were planning to ship a patch referred to as "QFE1" and needed to write your own registry values for Add/Remove Programs in product authoring such as the UninstallString for this patch, you could author a RegistryValue with the name UninstallString and the value <html:code><html:nobr>[SystemFolder]msiexec.exe</html:nobr> /package [ProductCode] /uninstall [QFE1.PatchCode]</html:code>. In your patch authoring you would then set ClientPatchId to "QFE1" and WiX will add the QFE1.PatchCode property to the patch transform when the patch is created. If the Id attribute specified the patch code to be generated automatically, you could not reference the <html:i>prefix</html:i>.PatchCode property as shown above.</html:p>
           <html:p>The summary information is automatically populated from attribute values of the Patch element including the code page. If you want to override some of these summary information properties or use a different code page for the summary information itself, author the PatchInformation element.</html:p>
@@ -2153,6 +2189,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="All" minOccurs="0" />
           <xs:element ref="BinaryRef" minOccurs="0" maxOccurs="unbounded" />
           <xs:element ref="ComponentRef" minOccurs="0" maxOccurs="unbounded" />
           <xs:element ref="CustomActionRef" minOccurs="0" maxOccurs="unbounded" />
@@ -2268,7 +2305,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
         </xse:remarks>
       </xs:appinfo>
     </xs:annotation>
@@ -2291,17 +2328,17 @@
       </xs:attribute>
       <xs:attribute name="AllowMajorVersionMismatches" type="YesNoTypeUnion">
         <xs:annotation>
-          <xs:documentation>Use this to set whether the major versions between the upgrade and target images match. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">AllowProductVersionMajorMismatches</html:a> for more information.</xs:documentation>
+          <xs:documentation>Use this to set whether the major versions between the upgrade and target images match. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">AllowProductVersionMajorMismatches</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="AllowProductCodeMismatches" type="YesNoTypeUnion">
         <xs:annotation>
-          <xs:documentation>Use this to set whether the product code between the upgrade and target images match. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">AllowProductCodeMismatches</html:a> for more information.</xs:documentation>
+          <xs:documentation>Use this to set whether the product code between the upgrade and target images match. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">AllowProductCodeMismatches</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="CleanWorkingFolder" type="YesNoTypeUnion">
         <xs:annotation>
-          <xs:documentation>Use this to set whether Patchwiz should clean the temp folder when finished. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">DontRemoveTempFolderWhenFinished</html:a> for more information.	</xs:documentation>
+          <xs:documentation>Use this to set whether Patchwiz should clean the temp folder when finished. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">DontRemoveTempFolderWhenFinished</html:a> for more information.	</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="Codepage" type="xs:string">
@@ -2311,22 +2348,22 @@
       </xs:attribute>
       <xs:attribute name="OutputPath" type="xs:string">
         <xs:annotation>
-          <xs:documentation>The full path, including file name, of the patch package file that is to be generated. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">PatchOutputPath</html:a> for more information.</xs:documentation>
+          <xs:documentation>The full path, including file name, of the patch package file that is to be generated. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">PatchOutputPath</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="SourceList" type="xs:string">
         <xs:annotation>
-          <xs:documentation>Used to locate the .msp file for the patch if the cached copy is unavailable. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">PatchSourceList</html:a> for more information.</xs:documentation>
+          <xs:documentation>Used to locate the .msp file for the patch if the cached copy is unavailable. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">PatchSourceList</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="SymbolFlags" type="xs:int">
         <xs:annotation>
-          <xs:documentation>An 8-digit hex integer representing the combination of patch symbol usage flags to use when creating a binary file patch. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">ApiPatchingSymbolFlags</html:a> for more information.</xs:documentation>
+          <xs:documentation>An 8-digit hex integer representing the combination of patch symbol usage flags to use when creating a binary file patch. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">ApiPatchingSymbolFlags</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="WholeFilesOnly" type="YesNoTypeUnion">
         <xs:annotation>
-          <xs:documentation>Use this to set whether changing files should be included in their entirety. See <html:a href="http://msdn2.microsoft.com/library/aa370890.aspx" target="_blank">IncludeWholeFilesOnly</html:a> for more information.</xs:documentation>
+          <xs:documentation>Use this to set whether changing files should be included in their entirety. See <html:a href="http://msdn.microsoft.com/library/aa370890.aspx" target="_blank">IncludeWholeFilesOnly</html:a> for more information.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -2336,7 +2373,7 @@
       <xs:documentation>Properties about the patch to be placed in the Summary Information Stream.  These are visible from COM through the IStream interface, and these properties can be seen on the package in Explorer.</xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
         </xse:remarks>
       </xs:appinfo>
     </xs:annotation>
@@ -2931,7 +2968,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
-          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>
+          <html:p>You can specify any valid Windows code by by integer like 1252, or by web name like Windows-1252. See <html:a href="~/overview/codepage.html">Code Pages</html:a> for more information.</html:p>
         </xse:remarks>
       </xs:appinfo>
     </xs:annotation>
@@ -3065,38 +3102,46 @@
             <xs:enumeration value="x86">
               <xs:annotation>
                 <xs:documentation>
-                                    Set this value to declare that the package is an x86 package.
-                                </xs:documentation>
+                    Set this value to declare that the package is an x86 package.
+                </xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="ia64">
               <xs:annotation>
                 <xs:documentation>
-                                    Set this value to declare that the package is an ia64 package.
-                                    This value requires that the InstallerVersion property be set to 200 or greater.
-                                </xs:documentation>
+                    Set this value to declare that the package is an ia64 package.
+                    This value requires that the InstallerVersion property be set to 200 or greater.
+                </xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="x64">
               <xs:annotation>
                 <xs:documentation>
-                                    Set this value to declare that the package is an x64 package.
-                                    This value requires that the InstallerVersion property be set to 200 or greater.
-                                </xs:documentation>
+                    Set this value to declare that the package is an x64 package.
+                    This value requires that the InstallerVersion property be set to 200 or greater.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="arm">
+              <xs:annotation>
+                <xs:documentation>
+                  Set this value to declare that the package is an arm package.
+                  This value requires that the InstallerVersion property be set to 500 or greater.
+                </xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="intel">
               <xs:annotation>
                 <xs:documentation>
-                                    This value has been deprecated. Use "x86" instead.
-                                </xs:documentation>
+                    This value has been deprecated. Use "x86" instead.
+                </xs:documentation>
               </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="intel64">
               <xs:annotation>
                 <xs:documentation>
-                                    This value has been deprecated. Use "ia64" instead.
-                                </xs:documentation>
+                    This value has been deprecated. Use "ia64" instead.
+                </xs:documentation>
               </xs:annotation>
             </xs:enumeration>
           </xs:restriction>
@@ -3105,10 +3150,10 @@
       <xs:attribute name="ReadOnly" type="YesNoDefaultTypeUnion">
         <xs:annotation>
           <xs:documentation>
-                        The value of this attribute conveys whether the package should be opened as read-only.
-                        A database editing tool should not modify a read-only enforced database and should
-                        issue a warning at attempts to modify a read-only recommended database.
-                    </xs:documentation>
+            The value of this attribute conveys whether the package should be opened as read-only.
+            A database editing tool should not modify a read-only enforced database and should
+            issue a warning at attempts to modify a read-only recommended database.
+          </xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="ShortNames" type="YesNoTypeUnion">
@@ -3539,7 +3584,7 @@
         <xse:seeAlso ref="RegistrySearch" />
         <xse:msiRef table="DrLocator" href="http://msdn.microsoft.com/library/aa368331.aspx" />
         <xse:msiRef table="Signature" href="http://msdn.microsoft.com/library/aa371853.aspx" />
-        <xse:howtoRef href="check_the_version_number.htm">How To: Check the version number of a file during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/check_the_version_number.html">How To: Check the version number of a file during installation</xse:howtoRef>
         <xse:remarks>
           <html:a>When the parent DirectorySearch/@Depth attribute is greater than 0, the FileSearch/@Id attribute must be absent or the same as the parent DirectorySearch/@Id attribute value, unless the parent DirectorySearch/@AssignToProperty attribute value is 'yes'.</html:a>
         </xse:remarks>
@@ -3645,9 +3690,9 @@
         <xse:seeAlso ref="RegistrySearch" />
         <xse:msiRef table="DrLocator" href="http://msdn.microsoft.com/library/aa368331.aspx" />
         <xse:msiRef table="Signature" href="http://msdn.microsoft.com/library/aa371853.aspx" />
-        <xse:howtoRef href="check_the_version_number.htm">How To: Check the version number of a file during installation</xse:howtoRef>
-        <xse:howtoRef href="directorysearchref.htm">How To: Reference another DirectorySearch element</xse:howtoRef>
-        <xse:howtoRef href="parentdirectorysearch.htm">How To: Get the parent directory of a file search</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/check_the_version_number.html">How To: Check the version number of a file during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/directorysearchref.html">How To: Reference another DirectorySearch element</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/parentdirectorysearch.html">How To: Get the parent directory of a file search</xse:howtoRef>
         <xse:remarks>
           <html:p>Use the AssignToProperty attribute to search for a file but set the outer property to the directory containing the file. When this attribute is set to 'yes', you may only nest a FileSearch element with a unique Id or define no child element.</html:p>
           <html:a>When the parent DirectorySearch/@Depth attribute is greater than 0, the FileSearch/@Id attribute must be absent or the same as the parent DirectorySearch/@Id attribute value, unless the parent DirectorySearch/@AssignToProperty attribute value is 'yes'.</html:a>
@@ -3692,7 +3737,7 @@
         <xse:seeAlso ref="ComponentSearch" />
         <xse:seeAlso ref="IniFileSearch" />
         <xse:seeAlso ref="RegistrySearch" />
-        <xse:howtoRef href="directorysearchref.htm">How To: Reference another DirectorySearch element</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/directorysearchref.html">How To: Reference another DirectorySearch element</xse:howtoRef>
         <xse:remarks>
           <html:p>A reference to another DirectorySearch element must reference the same Id, the same Parent Id, and the same Path. If any of these attribute values are different you must instead use a DirectorySearch element.</html:p>
         </xse:remarks>
@@ -3870,7 +3915,7 @@
         <xse:seeAlso ref="IniFileSearch" />
         <xse:msiRef table="RegLocator" href="http://msdn.microsoft.com/library/aa371171.aspx" />
         <xse:msiRef table="Signature" href="http://msdn.microsoft.com/library/aa371853.aspx" />
-        <xse:howtoRef href="read_a_registry_entry.htm">How To: Read a registry entry during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/read_a_registry_entry.html">How To: Read a registry entry during installation</xse:howtoRef>
         <xse:remarks>
           <html:p>
                         When the Type attribute value is 'directory' the registry value must specify the path to a directory excluding the file name.
@@ -3975,7 +4020,12 @@
       </xs:attribute>
       <xs:attribute name="Win64" type="YesNoTypeUnion">
         <xs:annotation>
-          <xs:documentation>Instructs the search to look in the 64-bit registry when the value is 'yes'. When the value is 'no', the search looks in the 32-bit registry. The default value depends on the value of the Package/@Platform attribute: if the @Platform attribute value is 'x86', the default @Win64 attribute value is 'no'; otherwise, the default value is 'yes'.</xs:documentation>
+          <xs:documentation>Instructs the search to look in the 64-bit registry when the value is 'yes'. When the value is 'no', the search looks in the 32-bit registry.
+          The default value is based on the platform set by the -arch switch to candle.exe
+          or the InstallerPlatform property in a .wixproj MSBuild project: 
+          For x86 and ARM, the default value is 'no'. 
+          For x64 and IA64, the default value is 'yes'.
+          </xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -4052,7 +4102,7 @@
       <xs:appinfo>
         <xse:seeAlso ref="PropertyRef" />
         <xse:msiRef table="Property" href="http://msdn.microsoft.com/library/aa370908.aspx" />
-        <xse:howtoRef href="check_the_version_number.htm">How To: Check the version number of a file during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/check_the_version_number.html">How To: Check the version number of a file during installation</xse:howtoRef>
       </xs:appinfo>
       <xs:documentation>Property value for a Product or Module.</xs:documentation>
     </xs:annotation>
@@ -4134,7 +4184,7 @@
     <xs:annotation>
       <xs:appinfo>
         <xse:seeAlso ref="Property" />
-        <xse:howtoRef href="check_for_dotnet.htm">How To: Check for .NET Framework versions</xse:howtoRef>
+        <xse:howtoRef href="redistributables_and_install_checks/check_for_dotnet.html">How To: Check for .NET Framework versions</xse:howtoRef>
       </xs:appinfo>
       <xs:documentation>Reference to a Property value.</xs:documentation>
     </xs:annotation>
@@ -4161,7 +4211,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="Shortcut" href="http://msdn.microsoft.com/library/aa371847.aspx" />
-        <xse:howtoRef href="create_start_menu_shortcut.htm">How To: Create a shortcut on the Start Menu</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/create_start_menu_shortcut.html">How To: Create a shortcut on the Start Menu</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -4625,7 +4675,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="File" href="http://msdn.microsoft.com/library/aa368596.aspx" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -4892,7 +4942,7 @@
       </xs:attribute>
       <xs:attribute name="Source" type="xs:string">
         <xs:annotation>
-          <xs:documentation>Specifies the path to the File in the build process. Overrides default source path set by parent directories and Name attribute. This attribute must be set if no source information can be gathered from parent directories. For more information, see <html:a href="specifying_source_files.htm">Specifying source files</html:a>.</xs:documentation>
+          <xs:documentation>Specifies the path to the File in the build process. Overrides default source path set by parent directories and Name attribute. This attribute must be set if no source information can be gathered from parent directories. For more information, see <html:a href="~/howtos/general/specifying_source_files.html">Specifying source files</html:a>.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="src" type="xs:string">
@@ -4956,8 +5006,8 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="Registry" href="http://msdn.microsoft.com/library/aa371168.aspx" />
-        <xse:howtoRef href="read_a_registry_entry.htm">How To: Read a registry entry during installation</xse:howtoRef>
-        <xse:howtoRef href="write_a_registry_entry.htm">How To: Write a registry entry during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/read_a_registry_entry.html">How To: Read a registry entry during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/write_a_registry_entry.html">How To: Write a registry entry during installation</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -5075,7 +5125,7 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="Registry" href="http://msdn.microsoft.com/library/aa371168.aspx" />
-        <xse:howtoRef href="write_a_registry_entry.htm">How To: Write a registry entry during installation</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/write_a_registry_entry.html">How To: Write a registry entry during installation</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType mixed="true">
@@ -6594,7 +6644,7 @@
   <xs:element name="ServiceInstall">
     <xs:annotation>
       <xs:documentation>
-                Adds and removes services for parent Component.
+                Adds services for parent Component.  Use the ServiceControl element to remove services.
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="ServiceInstall" href="http://msdn.microsoft.com/library/aa371637.aspx" />
@@ -6615,7 +6665,7 @@
         </xs:element>
         <xs:element ref="ServiceDependency">
           <xs:annotation>
-            <xs:documentation>ordered list of dependencies when installing services</xs:documentation>
+            <xs:documentation>Ordered list of dependencies when installing services.</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element ref="ServiceConfig" />
@@ -6649,7 +6699,7 @@
       </xs:attribute>
       <xs:attribute name="Type" use="required">
         <xs:annotation>
-          <xs:documentation>The Windows Installer does not currently support kernelDriver or systemDriver</xs:documentation>
+          <xs:documentation>The Windows Installer does not currently support kernelDriver or systemDriver.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:NMTOKEN">
@@ -7196,8 +7246,8 @@
         <xse:msiRef table="ControlCondition" href="http://msdn.microsoft.com/library/aa368035.aspx" />
         <xse:msiRef table="Condition" href="http://msdn.microsoft.com/library/aa368014.aspx" />
         <xse:msiRef table="LaunchCondition" href="http://msdn.microsoft.com/library/aa369752.aspx" />
-        <xse:howtoRef href="block_install_on_os.htm">How To: Block installation based on OS version</xse:howtoRef>
-        <xse:howtoRef href="check_the_version_number.htm">How To: Check the version number of a file during installation</xse:howtoRef>
+        <xse:howtoRef href="redistributables_and_install_checks/block_install_on_os.html">How To: Block installation based on OS version</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/check_the_version_number.html">How To: Check the version number of a file during installation</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -7338,7 +7388,7 @@
         <xse:msiRef table="Component" href="http://msdn.microsoft.com/library/aa368007.aspx" />
         <xse:msiRef table="Condition" href="http://msdn.microsoft.com/library/aa368014.aspx" />
         <xse:msiRef table="Directory" href="http://msdn.microsoft.com/library/aa368295.aspx" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -7579,10 +7629,13 @@
         <xs:annotation>
           <xs:documentation>
                         Set this attribute to 'yes' to mark this as a 64-bit component. This attribute facilitates
-                        the installation of packages that include both 32-bit and 64-bit components.  If this bit
-                        is not set, the component is registered as a 32-bit component.  If this is a 64-bit
-                        component replacing a 32-bit component, set this bit and assign a new GUID in the Guid attribute.
-                    </xs:documentation>
+                        the installation of packages that include both 32-bit and 64-bit components.  If this is a 64-bit
+                        component replacing a 32-bit component, set this attribute to 'yes' and assign a new GUID in the Guid attribute.
+          The default value is based on the platform set by the -arch switch to candle.exe
+          or the InstallerPlatform property in a .wixproj MSBuild project: 
+          For x86 and ARM, the default value is 'no'. 
+          For x64 and IA64, the default value is 'yes'.
+          </xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:anyAttribute namespace="##other" processContents="lax">
@@ -7634,7 +7687,7 @@
         <xs:annotation>
           <xs:documentation>
             Used to set the default file system source for child Component elements. For more information, see 
-            <html:a href="specifying_source_files.htm">Specifying source files</html:a>.
+            <html:a href="~/howtos/general/specifying_source_files.html">Specifying source files</html:a>.
           </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -7685,6 +7738,17 @@
       </xs:anyAttribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="All">
+    <xs:annotation>
+      <xs:documentation>Used only for PatchFamilies to include all changes between the baseline and upgraded packages in a patch.</xs:documentation>
+      <xs:appinfo>
+        <xse:remarks>
+          <html:p>Warning: this is intended for testing purposes only. Shipping a patch with all changes negates the benefits of using patch families for including only specific changes.</html:p>
+          <html:p>Because changing the ProductCode is not supported in a patch, the ProductCode property is automatically removed from the transform.</html:p>
+        </xse:remarks>
+      </xs:appinfo>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="BinaryRef">
     <xs:annotation>
       <xs:documentation>Used only for PatchFamilies to include only a binary table entry in a patch.</xs:documentation>
@@ -7730,7 +7794,7 @@
       <xs:documentation>Create a reference to a Feature element in another Fragment.</xs:documentation>
       <xs:appinfo>
         <xse:seeAlso ref="Component" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -7767,7 +7831,7 @@
     <xs:annotation>
       <xs:appinfo>
         <xse:seeAlso ref="MergeRef" />
-        <xse:howtoRef href="install_vcredist.htm">How To: Install the Visual C++ Redistributable with your installer</xse:howtoRef>
+        <xse:howtoRef href="redistributables_and_install_checks/install_vcredist.html">How To: Install the Visual C++ Redistributable with your installer</xse:howtoRef>
       </xs:appinfo>
       <xs:documentation>Merge directive to bring in a merge module that will be redirected to the parent directory.</xs:documentation>
     </xs:annotation>
@@ -7820,7 +7884,7 @@
     <xs:annotation>
       <xs:appinfo>
         <xse:seeAlso ref="Merge" />
-        <xse:howtoRef href="install_vcredist.htm">How To: Install the Visual C++ Redistributable with your installer</xse:howtoRef>
+        <xse:howtoRef href="redistributables_and_install_checks/install_vcredist.html">How To: Install the Visual C++ Redistributable with your installer</xse:howtoRef>
       </xs:appinfo>
       <xs:documentation>Merge reference to connect a Merge Module to parent Feature</xs:documentation>
     </xs:annotation>
@@ -7868,7 +7932,7 @@
       <xs:appinfo>
         <xse:seeAlso ref="DirectoryRef" />
         <xse:msiRef table="Directory" href="http://msdn.microsoft.com/library/aa368295.aspx" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -7895,11 +7959,11 @@
         <xs:annotation>
           <xs:documentation>
                         The Component Guid Generation Seed is a guid that must be used when a Component with the generate guid directive ("*")
-                        is not rooted in a standard Windows Installer directory (for example, ProgramFilesFolder or CommonFilesFolder, etc).
+                        is not rooted in a standard Windows Installer directory (for example, ProgramFilesFolder or CommonFilesFolder).
                         It is recommended that this attribute be avoided and that developers install their Components under standard
                         directories with unique names instead (for example, "ProgramFilesFolder\Company Name Product Name Version"). It is
                         important to note that once a directory is assigned a Component Guid Generation Seed the value must not change until
-                        the directory name changes.
+                        (and must be changed when) the path to that directory, including itself and all parent directories, changes.
                     </xs:documentation>
         </xs:annotation>
       </xs:attribute>
@@ -7915,7 +7979,7 @@
       </xs:attribute>
       <xs:attribute name="FileSource" type="xs:string">
         <xs:annotation>
-          <xs:documentation>Used to set the file system source for this directory's child elements. For more information, see <html:a href="specifying_source_files.htm">Specifying source files</html:a>.</xs:documentation>
+          <xs:documentation>Used to set the file system source for this directory's child elements. For more information, see <html:a href="~/howtos/general/specifying_source_files.html">Specifying source files</html:a>.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="LongName" type="LongFileNameType">
@@ -7939,7 +8003,7 @@
 
                         Do not specify this attribute (or the LongName attribute) if this directory represents
                         the same directory as the parent (see the Windows Installer SDK's
-                        <html:a href="http://msdn2.microsoft.com/library/Aa368295.aspx" target="_blank">Directory table</html:a>
+                        <html:a href="http://msdn.microsoft.com/library/Aa368295.aspx" target="_blank">Directory table</html:a>
                         topic for more information about the "." operator).
 
                         In prior versions of the WiX toolset, this attribute specified the short directory name.
@@ -8010,7 +8074,7 @@
       <xs:documentation>Create a reference to a Directory element in another Fragment.</xs:documentation>
       <xs:appinfo>
         <xse:seeAlso ref="Directory" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -8044,7 +8108,7 @@
       </xs:attribute>
       <xs:attribute name="FileSource" type="xs:string">
         <xs:annotation>
-          <xs:documentation>Used to set the file system source for this DirectoryRef's child elements. For more information, see <html:a href="specifying_source_files.htm">Specifying source files</html:a>.</xs:documentation>
+          <xs:documentation>Used to set the file system source for this DirectoryRef's child elements. For more information, see <html:a href="~/howtos/general/specifying_source_files.html">Specifying source files</html:a>.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="src" type="xs:string">
@@ -8095,7 +8159,7 @@
           </xs:attribute>
           <xs:attribute name="Property" type="xs:string" use="required">
             <xs:annotation>
-              <xs:documentation>When the FindRelatedProducts action detects a related product installed on the system, it appends the product code to the property specified in this field.  Windows Installer documentation for the <html:a href="http://msdn2.microsoft.com/library/aa372379.aspx" target="_blank">Upgrade table</html:a> states that the property specified in this field must be a public property and must be added to the <html:a href="http://msdn2.microsoft.com/library/aa371571.aspx" target="_blank">SecureCustomProperties</html:a> property.  WiX automatically appends the property specified in this field to the SecureCustomProperties property when creating an MSI.  Each UpgradeVersion must have a unique Property value.  After the FindRelatedProducts action is run, the value of this property is a list of product codes, separated by semicolons (;), detected on the system.</xs:documentation>
+              <xs:documentation>When the FindRelatedProducts action detects a related product installed on the system, it appends the product code to the property specified in this field.  Windows Installer documentation for the <html:a href="http://msdn.microsoft.com/library/aa372379.aspx" target="_blank">Upgrade table</html:a> states that the property specified in this field must be a public property and must be added to the <html:a href="http://msdn.microsoft.com/library/aa371571.aspx" target="_blank">SecureCustomProperties</html:a> property.  WiX automatically appends the property specified in this field to the SecureCustomProperties property when creating an MSI.  Each UpgradeVersion must have a unique Property value.  After the FindRelatedProducts action is run, the value of this property is a list of product codes, separated by semicolons (;), detected on the system.</xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute name="MigrateFeatures" type="YesNoTypeUnion">
@@ -8177,7 +8241,7 @@
       <xs:appinfo>
         <xse:seeAlso ref="FeatureRef" />
         <xse:msiRef table="Feature" href="http://msdn.microsoft.com/library/aa368585.aspx" />
-        <xse:howtoRef href="add_a_file.htm">How To: Add a file to your installer</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/add_a_file.html">How To: Add a file to your installer</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -8679,6 +8743,20 @@
                     </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+      <xs:attribute name="MaximumCabinetSizeForLargeFileSplitting" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>
+                        Maximum size of cabinet files in megabytes for large files. This attribute is used for packaging 
+                        files that are larger than MaximumUncompressedMediaSize into smaller cabinets. If cabinet size 
+                        exceed this value, then setting this attribute will cause the file to be split into multiple 
+                        cabinets of this maximum size. For simply controlling cabinet size without file splitting use 
+                        MaximumUncompressedMediaSize attribute. Setting this attribute will disable smart cabbing feature 
+                        for this Fragment / Product. Setting WIX_MCSLFS environment variable can be used to override this 
+                        value. Minimum allowed value of this attribute is 20 MB. Maximum allowed value and the Default 
+                        value of this attribute is 2048 MB (2 GB).
+                    </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="IgnoreModularization">
@@ -8998,7 +9076,11 @@
               <xs:documentation>
                                 Specifies that a script custom action targets a 64-bit platform. Valid only when used with
                                 the Script, VBScriptCall, and JScriptCall attributes.
-                            </xs:documentation>
+          The default value is based on the platform set by the -arch switch to candle.exe
+          or the InstallerPlatform property in a .wixproj MSBuild project: 
+          For x86 and ARM, the default value is 'no'. 
+          For x64 and IA64, the default value is 'yes'.
+              </xs:documentation>
             </xs:annotation>
           </xs:attribute>
           <xs:attribute name="TerminalServerAware" type="YesNoTypeUnion">
@@ -10681,8 +10763,8 @@
             </xs:documentation>
       <xs:appinfo>
         <xse:msiRef table="Icon" href="http://msdn.microsoft.com/library/aa369210.aspx" />
-        <xse:howtoRef href="configure_arp_appearance.htm">How To: Set your installer's icon in Add/Remove Programs</xse:howtoRef>
-        <xse:howtoRef href="create_start_menu_shortcut.htm">How To: Create a shortcut on the Start Menu</xse:howtoRef>
+        <xse:howtoRef href="ui_and_localization/configure_arp_appearance.html">How To: Set your installer's icon in Add/Remove Programs</xse:howtoRef>
+        <xse:howtoRef href="files_and_registry/create_start_menu_shortcut.html">How To: Create a shortcut on the Start Menu</xse:howtoRef>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -11193,7 +11275,7 @@
       </xs:attribute>
       <xs:attribute name="Text" type="xs:string">
         <xs:annotation>
-          <xs:documentation>A localizable string used to set the initial text contained in a control. This attribute can contain a formatted string that is processed at install time to insert the values of properties using [PropertyName] syntax. Also supported are environment variables, file installation paths, and component installation directories; see <html:a href="http://msdn2.microsoft.com/library/aa368609.aspx" target="_blank">Formatted</html:a> for details.</xs:documentation>
+          <xs:documentation>A localizable string used to set the initial text contained in a control. This attribute can contain a formatted string that is processed at install time to insert the values of properties using [PropertyName] syntax. Also supported are environment variables, file installation paths, and component installation directories; see <html:a href="http://msdn.microsoft.com/library/aa368609.aspx" target="_blank">Formatted</html:a> for details.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
       <xs:attribute name="Help" type="xs:string">
@@ -12306,7 +12388,7 @@
                     </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-      <xs:attribute name="ProductCode" type="xs:string" use="required">
+      <xs:attribute name="ProductCode" type="AutogenGuid" use="required">
         <xs:annotation>
           <xs:documentation>The ProductCode for this instance.</xs:documentation>
         </xs:annotation>
@@ -12314,6 +12396,11 @@
       <xs:attribute name="ProductName" type="xs:string">
         <xs:annotation>
           <xs:documentation>The ProductName for this instance.</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="UpgradeCode" type="Guid">
+        <xs:annotation>
+          <xs:documentation>The UpgradeCode for this instance.</xs:documentation>
         </xs:annotation>
       </xs:attribute>
     </xs:complexType>
@@ -12776,6 +12863,22 @@
     </xs:annotation>
     <xs:restriction base="xs:NMTOKEN">
       <xs:enumeration value="default" />
+      <xs:enumeration value="no" />
+      <xs:enumeration value="yes" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="YesNoAlwaysTypeUnion">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "always", "yes", or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:union memberTypes="YesNoAlwaysType PreprocessorVariables"/>
+  </xs:simpleType>
+  <xs:simpleType name="YesNoAlwaysType">
+    <xs:annotation>
+      <xs:documentation>Values of this type will either be "always", "yes", or "no".</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="always" />
       <xs:enumeration value="no" />
       <xs:enumeration value="yes" />
     </xs:restriction>

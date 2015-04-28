@@ -67,37 +67,21 @@ namespace WebsitePanel.Setup.Actions
 			{
 				OnInstallProgressChanged(LogStartInstallMessage, 0);
 				Log.WriteStart(LogStartInstallMessage);
-
-				var file = Path.Combine(vars.InstallationFolder, vars.ConfigurationFile);
-				vars.CryptoKey = Utils.GetRandomString(20);
-
-				// load file
-				string content = string.Empty;
-				using (StreamReader reader = new StreamReader(file))
-				{
-					content = reader.ReadToEnd();
-				}
-
-				// expand variables
-				content = Utils.ReplaceScriptVariable(content, "installer.cryptokey", vars.CryptoKey);
-				//
-				Log.WriteInfo(String.Format("The following cryptographic key has been generated: '{0}'", vars.CryptoKey));
-
-				// save file
-				using (StreamWriter writer = new StreamWriter(file))
-				{
-					writer.Write(content);
-				}
-				//update log
+                var file = Path.Combine(vars.InstallationFolder, vars.ConfigurationFile);
+                vars.CryptoKey = Utils.GetRandomString(20);
+                var Xml = new XmlDocument();
+                Xml.Load(file);
+                var CryptoNode = Xml.SelectSingleNode("configuration/appSettings/add[@key='WebsitePanel.CryptoKey']") as XmlElement;
+                if (CryptoNode != null)
+                    CryptoNode.SetAttribute("value", vars.CryptoKey);
+                Xml.Save(file);
 				Log.WriteEnd(LogEndInstallMessage);
 			}
 			catch (Exception ex)
 			{
 				if (Utils.IsThreadAbortException(ex))
 					return;
-				//
 				Log.WriteError("Update web.config error", ex);
-				//
 				throw;
 			}
 		}
@@ -116,6 +100,10 @@ namespace WebsitePanel.Setup.Actions
                 Begin(LogStartInstallMessage);
 
                 Log.WriteStart(LogStartInstallMessage);
+
+                var ServiceName = Global.Parameters.SchedulerServiceName;
+                var ServiceFile = Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName);
+
                 Log.WriteInfo(String.Format("Scheduler Service Name: \"{0}\"", Global.Parameters.SchedulerServiceName));
 
                 if (ServiceController.GetServices().Any(s => s.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
@@ -125,8 +113,13 @@ namespace WebsitePanel.Setup.Actions
                     return;
                 }
 
-                ManagedInstallerClass.InstallHelper(new[] { "/i", Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName) });
+                ManagedInstallerClass.InstallHelper(new[] { "/i /LogFile=\"\" ", ServiceFile });
                 Utils.StartService(Global.Parameters.SchedulerServiceName);
+
+                AppConfig.EnsureComponentConfig(vars.ComponentId);
+                AppConfig.SetComponentSettingStringValue(vars.ComponentId, "ServiceName", ServiceName);
+                AppConfig.SetComponentSettingStringValue(vars.ComponentId, "ServiceFile", ServiceFile);
+                AppConfig.SaveConfiguration();
             }
             catch (Exception ex)
             {
@@ -166,7 +159,7 @@ namespace WebsitePanel.Setup.Actions
         {
             if (ServiceController.GetServices().Any(s => s.ServiceName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
             {
-                ManagedInstallerClass.InstallHelper(new[] { "/u", Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName) });
+                ManagedInstallerClass.InstallHelper(new[] { "/u /LogFile=\"\" ", Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName) });
             }
         }
     }
@@ -397,25 +390,14 @@ namespace WebsitePanel.Setup.Actions
 		void IInstallAction.Run(SetupVariables vars)
 		{
 			Log.WriteStart("Updating web.config file (connection string)");
-			//
 			var file = Path.Combine(vars.InstallationFolder, vars.ConfigurationFile);
-			//
-			var content = String.Empty;
-			// load file
-			using (StreamReader reader = new StreamReader(file))
-			{
-				content = reader.ReadToEnd();
-			}
-			// Build connection string
 			vars.ConnectionString = String.Format(vars.ConnectionString, vars.DatabaseServer, vars.Database, vars.Database, vars.DatabaseUserPassword);
-			// Expand variables
-			content = Utils.ReplaceScriptVariable(content, "installer.connectionstring", vars.ConnectionString);
-			// Save file
-			using (StreamWriter writer = new StreamWriter(file))
-			{
-				writer.Write(content);
-			}
-			//
+            var Xml = new XmlDocument();            
+            Xml.Load(file);
+            var ConnNode = Xml.SelectSingleNode("configuration/connectionStrings/add[@name='EnterpriseServer']") as XmlElement;            
+            if(ConnNode != null)
+                ConnNode.SetAttribute("connectionString", vars.ConnectionString);
+            Xml.Save(file);
 			Log.WriteEnd(String.Format("Updated {0} file", vars.ConfigurationFile));
 		}
 	}
@@ -509,10 +491,11 @@ namespace WebsitePanel.Setup.Actions
 	{
 		void IInstallAction.Run(SetupVariables vars)
 		{
+            Log.WriteStart("SaveEntServerConfigSettingsAction");
 			AppConfig.EnsureComponentConfig(vars.ComponentId);
 			//
 			AppConfig.SetComponentSettingStringValue(vars.ComponentId, "Database", vars.Database);
-			AppConfig.SetComponentSettingBooleanValue(vars.ComponentId, "NewDatabase", true);
+			AppConfig.SetComponentSettingBooleanValue(vars.ComponentId, "NewDatabase", vars.CreateDatabase);
 			//
 			AppConfig.SetComponentSettingStringValue(vars.ComponentId, "DatabaseUser", vars.Database);
 			AppConfig.SetComponentSettingBooleanValue(vars.ComponentId, "NewDatabaseUser", vars.NewDatabaseUser);
@@ -523,6 +506,7 @@ namespace WebsitePanel.Setup.Actions
 			AppConfig.SetComponentSettingStringValue(vars.ComponentId, Global.Parameters.CryptoKey, vars.CryptoKey);
 			//
 			AppConfig.SaveConfiguration();
+            Log.WriteEnd("SaveEntServerConfigSettingsAction");
 		}
 	}
 

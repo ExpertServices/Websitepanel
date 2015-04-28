@@ -32,10 +32,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <AddPdb Include="$(OutputPath)*.pdb" />
+  </ItemGroup>
+  <PropertyGroup>
+    <IntermediateOutputPath Condition=" '$(PlatformName)' == 'AnyCPU' ">$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+    <IntermediateOutputPath Condition=" '$(PlatformName)' != 'AnyCPU' ">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <CustomActionContents>$(IntermediateOutputPath)$(AssemblyName).pdb;@(AddPdb)</CustomActionContents>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +59,12 @@
     <Reference Include="Microsoft.Deployment.WindowsInstaller" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\InMemoryStringLogListener.cs" />
+    <Compile Include="Common\Tool.cs" />
+    <Compile Include="Common\Prop.cs" />
+    <Compile Include="Common\Util\IListCtrl.cs" />
+    <Compile Include="Common\WiXLogListener.cs" />
+    <Compile Include="Common\YesNo.cs" />
     <Compile Include="CustomAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomAction.config" />
@@ -52,6 +73,10 @@
     <ProjectReference Include="..\WebsitePanel.Setup\WebsitePanel.Setup.csproj">
       <Project>{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}</Project>
       <Name>WebsitePanel.Setup</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Installer.Core\WebsitePanel.Installer.Core.csproj">
+      <Project>{0E4A3F5B-0BB1-4F63-863D-7B0182B378CF}</Project>
+      <Name>WebsitePanel.Installer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

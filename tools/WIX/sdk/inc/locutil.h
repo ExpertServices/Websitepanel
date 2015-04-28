@@ -106,6 +106,15 @@ HRESULT DAPI LocGetControl(
     __out LOC_CONTROL** ppLocControl
     );
 
+/********************************************************************
+ LocGetString - returns a string's localization information
+*******************************************************************/
+extern "C" HRESULT DAPI LocGetString(
+    __in const WIX_LOCALIZATION* pWixLoc,
+    __in_z LPCWSTR wzId,
+    __out LOC_STRING** ppLocString
+    );
+
 #ifdef __cplusplus
 }
 #endif

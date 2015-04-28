@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>3.7</ProductVersion>
+    <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>f963a4af-cc72-4512-b636-829345c35318</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>WebsitePanelInstaller</OutputName>
