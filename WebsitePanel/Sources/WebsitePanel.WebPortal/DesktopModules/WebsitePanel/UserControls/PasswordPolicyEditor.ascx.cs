@@ -64,6 +64,8 @@ namespace WebsitePanel.Portal
                 sb.Append(chkLockOutSettigns.Checked.ToString()).Append(";");
                 sb.Append(chkPasswordComplexity.Checked.ToString()).Append(";");
 
+                sb.Append(txtMaxPasswordAge.Text).Append(";");
+
                 return sb.ToString();
             }
             set
@@ -79,6 +81,7 @@ namespace WebsitePanel.Portal
                     txtMinimumSymbols.Text = "0";
                     txtLockedOut.Text = "3";
                     chkPasswordComplexity.Checked = true;
+                    txtMaxPasswordAge.Text = "42";
                 }
                 else
                 {
@@ -100,6 +103,8 @@ namespace WebsitePanel.Portal
                         txtResetAccountLockout.Text = GetValueSafe(parts, 10, "0");
                         chkLockOutSettigns.Checked = GetValueSafe(parts, 11, false) && ShowLockoutSettings;
                         chkPasswordComplexity.Checked = GetValueSafe(parts, 12, true);
+
+                        txtMaxPasswordAge.Text = GetValueSafe(parts, 13, "42");
                     }
                     catch
                     {
@@ -155,15 +160,19 @@ namespace WebsitePanel.Portal
 
         public static T GetValueSafe<T>(string[] array, int index, T defaultValue)
         {
-            if (array.Length > index)
+            try
             {
-                if (string.IsNullOrEmpty(array[index]))
+                if (array.Length > index)
                 {
-                    return defaultValue;
-                }
+                    if (string.IsNullOrEmpty(array[index]))
+                    {
+                        return defaultValue;
+                    }
 
-                return (T)Convert.ChangeType(array[index], typeof(T));
+                    return (T)Convert.ChangeType(array[index], typeof(T));
+                }
             }
+            catch{}
 
             return defaultValue;
         }

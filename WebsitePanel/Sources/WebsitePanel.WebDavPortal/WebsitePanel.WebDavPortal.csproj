@@ -489,6 +489,7 @@
     <Content Include="Views\Account\PasswordResetEmailSent.cshtml" />
     <Content Include="Views\Account\PasswordResetSms.cshtml" />
     <Content Include="Views\Account\PasswordResetFinalStep.cshtml" />
+    <Content Include="Views\Account\PasswordSuccessfullyChanged.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

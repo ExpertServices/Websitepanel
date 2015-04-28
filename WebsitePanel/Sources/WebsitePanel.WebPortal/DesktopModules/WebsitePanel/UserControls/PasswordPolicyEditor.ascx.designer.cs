@@ -148,6 +148,42 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.RegularExpressionValidator valCorrectEnforcePasswordHistory;
         
         /// <summary>
+        /// lblMaxPasswordAge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMaxPasswordAge;
+        
+        /// <summary>
+        /// txtMaxPasswordAge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMaxPasswordAge;
+        
+        /// <summary>
+        /// valRequireMaxPasswordAge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireMaxPasswordAge;
+        
+        /// <summary>
+        /// valCorrectMaxPasswordAge control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator valCorrectMaxPasswordAge;
+        
+        /// <summary>
         /// RowChkLockOutSettigns control.
         /// </summary>
         /// <remarks>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -59,6 +60,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             txtResetAccountLockout.Text = PasswordPolicyEditor.GetValueSafe(parts, 10, "0");
             chkLockOutSettigns.Checked = PasswordPolicyEditor.GetValueSafe(parts, 11, false);
             chkPasswordComplexity.Checked = PasswordPolicyEditor.GetValueSafe(parts, 12, true);
+
+            txtMaxPasswordAge.Text = PasswordPolicyEditor.GetValueSafe(parts, 13, "42");
         }
 
         private void BindSettings(OrganizationPasswordSettings settings)
@@ -75,6 +78,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             txtResetAccountLockout.Text = settings.ResetAccountLockoutCounterAfter.ToString();
             chkLockOutSettigns.Checked = settings.LockoutSettingsEnabled;
             chkPasswordComplexity.Checked = settings.PasswordComplexityEnabled;
+
+            txtMaxPasswordAge.Text = settings.MaxPasswordAge.ToString();
         }
 
         private OrganizationPasswordSettings GetSettings()
@@ -93,6 +98,8 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             settings.LockoutSettingsEnabled = chkLockOutSettigns.Checked;
             settings.PasswordComplexityEnabled =chkPasswordComplexity.Checked;
+
+            settings.MaxPasswordAge = Utils.ParseInt(txtMaxPasswordAge.Text, 42);
 
             return settings;
         }

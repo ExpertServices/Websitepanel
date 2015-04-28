@@ -1994,7 +1994,8 @@ namespace WebsitePanel.EnterpriseServer
                             AccountLockoutDuration = GetValueSafe(parts, 9, 0),
                             ResetAccountLockoutCounterAfter = GetValueSafe(parts, 10, 0),
                             LockoutSettingsEnabled = GetValueSafe(parts, 11, false),
-                            PasswordComplexityEnabled = GetValueSafe(parts, 11, true),
+                            PasswordComplexityEnabled = GetValueSafe(parts, 12, true),
+                            MaxPasswordAge = GetValueSafe(parts, 13, 42),
                         };
 
 
