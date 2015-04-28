@@ -364,7 +364,7 @@
     <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
       <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
     </Compile>
-    <Compile>
+    <Compile Include="SearchObject.ascx">
       <DependentUpon>SearchObject.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
