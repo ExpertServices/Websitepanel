@@ -70,7 +70,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems) tabsList.Add(CreateTab("mailbox_mailflow", "Tab.Mailflow"));
             if (!hideItems) tabsList.Add(CreateTab("mailbox_permissions", "Tab.Permissions"));
 
-            string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
+            string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false, " ");
             if (!string.IsNullOrEmpty(instructions))
                 tabsList.Add(CreateTab("mailbox_setup", "Tab.Setup"));
 

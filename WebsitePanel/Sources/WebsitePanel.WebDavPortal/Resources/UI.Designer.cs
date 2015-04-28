@@ -61,6 +61,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        public static string Account {
+            get {
+                return ResourceManager.GetString("Account", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
         public static string Actions {
@@ -120,6 +129,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Bytes {
             get {
                 return ResourceManager.GetString("Bytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can now access your {0}..
+        /// </summary>
+        public static string CanAccessYourFormat {
+            get {
+                return ResourceManager.GetString("CanAccessYourFormat", resourceCulture);
             }
         }
         
@@ -534,6 +552,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string NewPassword {
             get {
                 return ResourceManager.GetString("NewPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your new password has been set..
+        /// </summary>
+        public static string NewPasswordBeenSet {
+            get {
+                return ResourceManager.GetString("NewPasswordBeenSet", resourceCulture);
             }
         }
         

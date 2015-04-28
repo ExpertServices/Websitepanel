@@ -49,6 +49,12 @@ namespace WebsitePanel.WebDavPortal
                 );
 
             routes.MapRoute(
+                name: AccountRouteNames.PasswordResetSuccess,
+                url: "account/password-reset/success",
+                defaults: new { controller = "Account", action = "PasswordSuccessfullyChanged" }
+                );
+
+            routes.MapRoute(
                 name: AccountRouteNames.PasswordChange,
                 url: "account/profile/password-change",
                 defaults: new { controller = "Account", action = "PasswordChange" }

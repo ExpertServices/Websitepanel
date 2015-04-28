@@ -315,9 +315,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
+        public string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string passwordResetUrl)
         {
-            return ExchangeServerController.GetMailboxSetupInstructions(itemId, accountId, pmm, emailMode, signup);
+            return ExchangeServerController.GetMailboxSetupInstructions(itemId, accountId, pmm, emailMode, signup, passwordResetUrl);
         }
 
         [WebMethod]

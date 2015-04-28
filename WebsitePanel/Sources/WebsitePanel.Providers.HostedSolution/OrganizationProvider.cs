@@ -740,7 +740,8 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("MinPasswordLength", settings.MinimumLength);
             cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
             cmd.Parameters.Add("ComplexityEnabled", false);
-            cmd.Parameters.Add("ReversibleEncryptionEnabled", false); 
+            cmd.Parameters.Add("ReversibleEncryptionEnabled", false);
+            cmd.Parameters.Add("MaxPasswordAge", new TimeSpan(settings.MaxPasswordAge * 24, 0, 0));
             
             if (settings.LockoutSettingsEnabled)
             {
@@ -777,6 +778,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
             cmd.Parameters.Add("ComplexityEnabled", false);
             cmd.Parameters.Add("ReversibleEncryptionEnabled", false);
+            cmd.Parameters.Add("MaxPasswordAge", new TimeSpan(settings.MaxPasswordAge*24, 0, 0));
 
             if (settings.LockoutSettingsEnabled)
             {
