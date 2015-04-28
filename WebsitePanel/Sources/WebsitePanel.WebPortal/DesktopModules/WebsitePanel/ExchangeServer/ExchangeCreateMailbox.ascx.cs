@@ -51,7 +51,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindPasswordSettings();
 
-                string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
+                string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false, " ");
                 if (!string.IsNullOrEmpty(instructions))
                 {
                     chkSendInstructions.Checked = chkSendInstructions.Visible = sendInstructionEmail.Visible = true;
