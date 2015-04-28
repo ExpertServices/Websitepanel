@@ -139,6 +139,27 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@recursive", recursive));
         }
 
+        //TODO START
+        public static DataSet GetSearchObject(int actorId, int userId, string filterColumn, string filterValue,
+           int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, bool recursive)
+        {
+            return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetSearchObject",
+                new SqlParameter("@actorId", actorId),
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
+                new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
+                new SqlParameter("@statusId", statusId),
+                new SqlParameter("@roleId", roleId),
+                new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
+                new SqlParameter("@startRow", startRow),
+                new SqlParameter("@maximumRows", maximumRows),
+                new SqlParameter("@recursive", recursive),
+                new SqlParameter("@ColType", colType));
+        }
+
+        //TODO END
+
         public static DataSet GetUsersSummary(int actorId, int userId)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,

@@ -5,7 +5,6 @@
 <%@ Register Src="UserOrganization.ascx" TagName="UserOrganization" TagPrefix="wsp" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
-<script src="/JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
 <script src="/JavaScript/chosen.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">

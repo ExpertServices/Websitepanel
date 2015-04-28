@@ -153,6 +153,7 @@
     <Compile Include="Code\Framework\ISchedulerTaskView.cs" />
     <Compile Include="Code\Framework\WebPortalPageTitleProvider.cs" />
     <Compile Include="Code\Framework\WebPortalThemeProvider.cs" />
+    <Compile Include="Code\Helpers\AjaxHandler.cs" />
     <Compile Include="Code\Helpers\AppInstallerHelpers.cs" />
     <Compile Include="Code\Framework\WebsitePanelControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -338,9 +339,37 @@
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
+   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
       <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchObject.ascx.cs">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.designer.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SearchObject.ascx">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchObject.ascx.designer.cs">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.cs">
       <DependentUpon>Connect.aspx</DependentUpon>
@@ -4880,7 +4909,10 @@
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
+    <Content Include="SearchObject.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
+
+    <Content Include="SearchObject.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
     <Content Include="SettingsUserPasswordResetLetter.ascx" />
     <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
@@ -5195,6 +5227,8 @@
     </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
+
+    <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
     <Content Include="VPS\UserControls\App_LocalResources\Generation.ascx.resx">
       <SubType>Designer</SubType>

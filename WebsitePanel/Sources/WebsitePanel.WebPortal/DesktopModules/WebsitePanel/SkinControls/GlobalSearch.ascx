@@ -1,54 +1,87 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="GlobalSearch.ascx.cs" Inherits="WebsitePanel.Portal.SkinControls.GlobalSearch" %>
+
+<style>
+    .ui-menu-item a {white-space: nowrap; }
+</style>
+
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function () {
+        $("#<%= tbSearch.ClientID %>").autocomplete({
+            zIndex: 100,
+            source: function(request, response) {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    url: "AjaxHandler.ashx",
+                    success: function(data)
+                    {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.TextSearch + " [" + item.FullType + "]",
+                                code: item
+                            };
+                        }));
+                    }
+                })
+            },
+            select: function (event, ui) {
+                var item = ui.item;
+                $("#<%= tbSearchColumnType.ClientID %>").val(item.code.ColumnType);
+                $("#<%= tbSearchFullType.ClientID %>").val(item.code.FullType);
+                $("#<%= tbSearchText.ClientID %>").val(item.code.TextSearch);
+            }
+        });
+    });//]]>
+</script>
+
 <asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
-<table cellpadding="0" cellspacing="0" align="right">
-    <tr>
-        <td align="left">
-            <asp:DataList ID="dlTabs" runat="server" RepeatDirection="Horizontal"
-                OnSelectedIndexChanged="dlTabs_SelectedIndexChanged" RepeatLayout="Table">
-                <ItemStyle Wrap="false" VerticalAlign="Top" />
-                <ItemTemplate>
-                    <asp:LinkButton ID="lnkTab" runat="server" CommandName="select"
-                        CausesValidation="false" CssClass="SearchMethod">
-                        <%# Eval("Name") %>
-                    </asp:LinkButton>
-                </ItemTemplate>
-                <SelectedItemStyle Wrap="false" />
-                <SelectedItemTemplate>
-                    <table cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="SearchMethodSide" valign="top"></td>
-                            <td class="SearchMethodSelected" valign="top"><%# Eval("Name")%></td>
-                            <td class="SearchMethodSide" valign="top"></td>
-                        </tr>
-                    </table>
-                </SelectedItemTemplate>
-            </asp:DataList>
-        </td>
-    </tr>
-    <tr>
-        <td align="left" class="SearchQuery">
-            <asp:MultiView ID="tabs" runat="server" ActiveViewIndex="0">
-                <asp:View ID="tabSearchUsers" runat="server">
-                    <asp:Panel ID="pnlSearchUsers" runat="server" DefaultButton="btnSearchUsers">
-                        <asp:DropDownList ID="ddlUserFields" runat="server" resourcekey="ddlUserFields" CssClass="NormalTextBox" Width="150px" style="vertical-align: middle;">
-                            <asp:ListItem Value="Username">Username</asp:ListItem>
-                            <asp:ListItem Value="Email">Email</asp:ListItem>
-                            <asp:ListItem Value="FullName">FullName</asp:ListItem>
-                            <asp:ListItem Value="CompanyName">CompanyName</asp:ListItem>
-                        </asp:DropDownList><asp:TextBox ID="txtUsersQuery" runat="server" CssClass="NormalTextBox" Width="120px" style="vertical-align: middle;"></asp:TextBox><asp:ImageButton ID="btnSearchUsers" runat="server" SkinID="SearchButton" OnClick="btnSearchUsers_Click" CausesValidation="false" style="vertical-align: middle;" />
-                    </asp:Panel>
-                </asp:View>
-                <asp:View ID="tabSearchSpaces" runat="server">
-                    <asp:Panel ID="pnlSearchSpaces" runat="server" DefaultButton="btnSearchSpaces">
-                        <asp:DropDownList ID="ddlItemType" runat="server" Width="150px" CssClass="NormalTextBox" style="vertical-align: middle;">
-                        </asp:DropDownList><asp:TextBox ID="txtSpacesQuery" runat="server" CssClass="NormalTextBox" Width="120px" style="vertical-align: middle;"></asp:TextBox><asp:ImageButton ID="btnSearchSpaces" runat="server" SkinID="SearchButton" OnClick="btnSearchSpaces_Click" CausesValidation="false" style="vertical-align: middle;" />
-                    </asp:Panel>
-                </asp:View>
-            </asp:MultiView>
-        </td>
-    </tr>
-</table>
+        <table cellpadding="0" cellspacing="0" align="right">
+            <tr>
+                <td align="left" class="SearchQuery">
+                    <div class="ui-widget">
+                        <asp:TextBox
+                            ID="tbSearch"
+                            runat="server"
+                            CssClass="NormalTextBox"
+                            Width="120px"
+                            style="vertical-align: middle; z-index: 100;"
+                        >
+                        </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbSearchColumnType"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbSearchFullType"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbSearchText"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
 
+                        <asp:ImageButton
+                            ID="ImageButton1"
+                            runat="server"
+                            SkinID="SearchButton"
+                            OnClick="btnSearchObject_Click"
+                            CausesValidation="false"
+                            style="vertical-align: middle;"
+                        />                 
+                    </div>
+                </td>
+            </tr>
+        </table>
     </ContentTemplate>
 </asp:UpdatePanel>
