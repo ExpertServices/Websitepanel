@@ -10720,7 +10720,7 @@ GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchObject')
 DROP PROCEDURE GetSearchObject
-
+GO
 CREATE PROCEDURE [dbo].[GetSearchObject]
 (
 	@ActorID int,
