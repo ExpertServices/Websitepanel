@@ -339,32 +339,11 @@
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
     </Compile>
-   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
+    <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
       <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="SearchObject.ascx.cs">
-      <DependentUpon>SearchObject.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-   <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.designer.cs">
-      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.cs">
-      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
-      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
-      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
-      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="SearchObject.ascx">
       <DependentUpon>SearchObject.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -4911,7 +4890,6 @@
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="SearchObject.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
-
     <Content Include="SearchObject.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
     <Content Include="SettingsUserPasswordResetLetter.ascx" />
@@ -5227,7 +5205,6 @@
     </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
-
     <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
     <Content Include="VPS\UserControls\App_LocalResources\Generation.ascx.resx">
