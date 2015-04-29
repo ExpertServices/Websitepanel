@@ -332,9 +332,6 @@
     <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
       <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\VpsMenuControl.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="VpsMenu.ascx.cs">
       <DependentUpon>VpsMenu.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

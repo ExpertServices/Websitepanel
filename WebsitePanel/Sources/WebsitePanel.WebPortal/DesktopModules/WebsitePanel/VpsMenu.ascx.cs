@@ -27,16 +27,18 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.WebPortal;
-using WebsitePanel.Portal.UserControls;
 
 
 namespace WebsitePanel.Portal
 {
-    public partial class VpsMenu : VpsMenuControl
+    public partial class VpsMenu : WebsitePanelModuleBase
     {
         private const string PID_SPACE_VPS = "SpaceVPS2012";
 
@@ -123,7 +125,11 @@ namespace WebsitePanel.Portal
             MenuItem item = new MenuItem();
 
             item.Text = GetLocalizedString("Text." + text);
-            item.NavigateUrl = PortalUtils.EditUrl("ItemID", ItemID.ToString(), key, "SpaceID=" + PackageId);
+            var hostModule = GetAllControlsOfType<WebsitePanelModuleBase>(this.Page);
+            if (hostModule.Count > 0)
+            {
+                item.NavigateUrl = hostModule.LastOrDefault().EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), key); // PortalUtils.EditUrl("ItemID", ItemID.ToString(), key, "SpaceID=" + PackageId);
+            }
 
             //if (img == null)
             //    item.ImageUrl = PortalUtils.GetThemedIcon("Icons/tool_48.png");
@@ -131,6 +137,23 @@ namespace WebsitePanel.Portal
             //    item.ImageUrl = PortalUtils.GetThemedIcon(img);
 
             return item;
+        }
+
+        public static List<T> GetAllControlsOfType<T>(Control parent) where T : Control
+        {
+            var result = new List<T>();
+            foreach (Control control in parent.Controls)
+            {
+                if (control is T)
+                {
+                    result.Add((T) control);
+                }
+                if (control.HasControls())
+                {
+                    result.AddRange(GetAllControlsOfType<T>(control));
+                }
+            }
+            return result;
         }
 
     }

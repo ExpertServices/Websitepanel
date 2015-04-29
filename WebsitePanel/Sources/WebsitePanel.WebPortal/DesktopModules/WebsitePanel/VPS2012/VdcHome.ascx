@@ -13,8 +13,8 @@
                     
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
 
-                    <div class="FormButtonsBarClean">
-                        <div class="FormButtonsBarCleanLeft">
+                    <div class="FormButtonsBar">
+                        <div class="Left">
                             <asp:Button ID="btnCreate" runat="server" meta:resourcekey="btnCreate"
                                 Text="Create VPS" CssClass="Button1" CausesValidation="False" 
                                 onclick="btnCreate_Click" />
@@ -22,7 +22,7 @@
                                 Text="Import VPS" CssClass="Button1" CausesValidation="False" 
                                 onclick="btnImport_Click" />
                         </div>
-                        <div class="FormButtonsBarCleanRight">
+                        <div class="Right">
                             <wsp:SearchBox ID="searchBox" runat="server" />
                         </div>
                     </div>
