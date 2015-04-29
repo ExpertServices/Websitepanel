@@ -34,10 +34,6 @@
 
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-                    <asp:Image ID="imgIcon" SkinID="Servers48" runat="server" />
-                    <wsp:FormTitle ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Replication" />
-                </div>
                 <div class="FormBody">
                     <wsp:ServerTabs ID="tabs" runat="server" SelectedTab="vps_replication" />
                     <wsp:SimpleMessageBox ID="messageBox" runat="server" />
@@ -45,9 +41,9 @@
                     <asp:ValidationSummary ID="validatorsSummary" runat="server"
                         ValidationGroup="Vps" ShowMessageBox="True" ShowSummary="False" />
 
-                    <wsp:CollapsiblePanel ID="secReplicationDetails" runat="server" Visible="False"
-                        TargetControlID="ReplicationDetailsPanel" meta:ResourceKey="secReplicationDetails" Text="Health"></wsp:CollapsiblePanel>
-                    <asp:Panel ID="ReplicationDetailsPanel" runat="server" Height="0" Style="overflow: hidden; padding: 10px; width: 750px;">
+                    <%--<wsp:CollapsiblePanel ID="secReplicationDetails" runat="server" Visible="False"
+                        TargetControlID="ReplicationDetailsPanel" meta:ResourceKey="secReplicationDetails" Text="Health"></wsp:CollapsiblePanel> Height="0" Style="overflow: hidden; padding: 10px; width: 750px;"--%>
+                    <asp:Panel ID="ReplicationDetailsPanel" runat="server" Visible="False" Style="padding: 10px;">
                         <asp:Localize ID="locHealth" runat="server" meta:resourcekey="locHealth" Text="Health:"></asp:Localize>
                         <asp:Label ID="labHealth" runat="server"></asp:Label>
                         <asp:Button ID="btnDetailInfo" runat="server" CausesValidation="false" CssClass="ActionButtonRename"
