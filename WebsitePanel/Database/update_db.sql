@@ -10733,7 +10733,8 @@ CREATE PROCEDURE [dbo].[GetSearchObject]
 	@StartRow int,
 	@MaximumRows int = 0,
 	@Recursive bit,
-	@ColType nvarchar(50) = ''
+	@ColType nvarchar(50) = '',
+	@FillType nvarchar(50) = ''
 )
 AS
 
