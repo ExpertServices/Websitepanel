@@ -98,10 +98,27 @@ namespace WebsitePanel.Portal
 
         protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
         {
-            Response.Redirect(NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
-                PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
-                "FilterColumn=" + ddlFilterColumn.SelectedValue,
-                "FilterValue=" + Server.UrlEncode(FilterValue)));
+            if (tbObjectId.Text.Length > 0)
+            {
+                Response.Redirect(PortalUtils.GetUserHomePageUrl(Int32.Parse(tbObjectId.Text)));
+            }
+            else
+            {
+                String strText = tbSearchText.Text;
+                if (strText.Length > 0)
+                {
+                    Response.Redirect(NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "FilterColumn=" + ddlFilterColumn.SelectedValue,
+                        "FilterValue=" + Server.UrlEncode(FilterValue)));
+                }
+                else
+                {
+                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "Query=" + Server.UrlEncode(tbSearch.Text),"FullType=Users"));
+                }
+            }
         }
     }
 }

@@ -44,6 +44,13 @@ namespace WebsitePanel.Portal.SkinControls
 {
     public partial class GlobalSearch : WebsitePanelControlBase
     {
+        const string TYPE_WEBSITE = "WebSite";
+        const string TYPE_DOMAIN = "Domain";
+        const string TYPE_ORGANIZATION = "Organization";
+        const string PID_SPACE_WEBSITES = "SpaceWebSites";
+        const string PID_SPACE_DIMAINS = "SpaceDomains";
+        const string PID_SPACE_EXCHANGESERVER = "SpaceExchangeServer";
+
         class Tab
         {
             int index;
@@ -115,6 +122,41 @@ namespace WebsitePanel.Portal.SkinControls
                 "ItemTypeID=" + ddlItemType.SelectedValue)); */
         }
 
+        public string GetItemPageUrl(string fullType, string itemType, int itemId, int spaceId)
+        {
+            string res = "";
+            if (fullType.Equals("Users"))
+            {
+                res = PortalUtils.GetUserHomePageUrl(itemId);
+            }
+            else
+            {
+                switch (itemType)
+                {
+                    case TYPE_WEBSITE:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_WEBSITES, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=websites");
+                        break;
+                    case TYPE_DOMAIN:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_DIMAINS, "DomainID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=domains");
+                        break;
+                    case TYPE_ORGANIZATION:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=ExchangeServer");
+                        break;
+                    default:
+                        res = PortalUtils.GetSpaceHomePageUrl(itemId);
+                        break;
+                }
+            }
+
+            return res;
+        }
+
         //TODO START
         protected void btnSearchObject_Click(object sender, EventArgs e)
         {
@@ -125,25 +167,46 @@ namespace WebsitePanel.Portal.SkinControls
             {
                 if (strFullType == "Users")
                 {
-                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
-                       PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
-                        "Query=" + Server.UrlEncode(strText),
-                        "Criteria=" + Server.UrlEncode(strColumnType)
-                    ));
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(PortalUtils.GetUserHomePageUrl(Int32.Parse(tbObjectId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
+                           PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText),
+                            "Criteria=" + Server.UrlEncode(strColumnType)
+                        ));
+                    }
                 }
                 else if (strFullType == "Space")
                 {
-                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
-                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
-                        "Query=" + Server.UrlEncode(strText),
-                        "Criteria=" + Server.UrlEncode(strColumnType)
-                    ));
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(GetItemPageUrl(strFullType,tbSearchColumnType.Text,Int32.Parse(tbObjectId.Text),Int32.Parse(tbPackageId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
+                            PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText),
+                            "Criteria=" + Server.UrlEncode(strColumnType)
+                        ));
+                    }
                 }
                 else
                 {
-                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
-                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
-                        "Query=" + Server.UrlEncode(strText)));
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(GetItemPageUrl(strFullType, tbSearchColumnType.Text, Int32.Parse(tbObjectId.Text), Int32.Parse(tbPackageId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                            PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText)));
+                    }
                 }
             }
             else

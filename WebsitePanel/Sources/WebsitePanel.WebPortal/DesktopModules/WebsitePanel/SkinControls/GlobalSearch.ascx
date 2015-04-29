@@ -6,6 +6,14 @@
 
 <script type="text/javascript">
     //<![CDATA[
+    $("#<%= tbSearch.ClientID %>").keypress(function (e) {
+        if (e.keyCode != 13) { // VK_RETURN
+            $("#<%= tbSearchText.ClientID %>").val('');
+            $("#<%= tbObjectId.ClientID %>").val('');
+            $("#<%= tbPackageId.ClientID %>").val('');
+        }
+    });
+
     $(document).ready(function () {
         $("#<%= tbSearch.ClientID %>").autocomplete({
             zIndex: 100,
@@ -33,12 +41,15 @@
                 $("#<%= tbSearchColumnType.ClientID %>").val(item.code.ColumnType);
                 $("#<%= tbSearchFullType.ClientID %>").val(item.code.FullType);
                 $("#<%= tbSearchText.ClientID %>").val(item.code.TextSearch);
+                $("#<%= tbObjectId.ClientID %>").val(item.code.ItemID);
+                $("#<%= tbPackageId.ClientID %>").val(item.code.PackageID);
+                $("#<%= ImageButton1.ClientID %>").trigger("click");
             }
         });
     });//]]>
 </script>
 
-<asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
+<asp:Panel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
         <table cellpadding="0" cellspacing="0" align="right">
             <tr>
@@ -70,6 +81,18 @@
                             type="hidden"
                         >
                         </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbObjectId"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbPackageId"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
 
                         <asp:ImageButton
                             ID="ImageButton1"
@@ -84,4 +107,4 @@
             </tr>
         </table>
     </ContentTemplate>
-</asp:UpdatePanel>
+</asp:Panel>

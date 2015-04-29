@@ -10733,7 +10733,8 @@ CREATE PROCEDURE [dbo].[GetSearchObject]
 	@StartRow int,
 	@MaximumRows int = 0,
 	@Recursive bit,
-	@ColType nvarchar(50) = ''
+	@ColType nvarchar(50) = '',
+	@FillType nvarchar(50) = ''
 )
 AS
 
@@ -10923,7 +10924,11 @@ IF @SortColumn <> '' AND @SortColumn IS NOT NULL
 SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
 SET @sqlReturn = @sqlReturn + '
 SELECT COUNT(ItemID) FROM @ItemsReturn;
-SELECT DISTINCT(ColumnType) FROM @ItemsReturn;
+SELECT DISTINCT(ColumnType) FROM @ItemsReturn WHERE (1 = 1) ';
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
+SET @sqlReturn = @sqlReturn + '; ';
+SET @sqlReturn = @sqlReturn + '
 SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID
 FROM @ItemsReturn AS IR WHERE (1 = 1)
 '
@@ -10934,6 +10939,9 @@ SET @sqlReturn = @sqlReturn + ' AND IR.ItemPosition BETWEEN @StartRow AND @EndRo
 IF @ColType <> ''
 SET @sqlReturn = @sqlReturn + ' AND ColumnType in ( ' + @ColType + ' ) ';
 
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
+
 exec sp_executesql @sqlReturn, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curSpaceValue cursor, @curUsersValue cursor',
 @StartRow, @MaximumRows, @FilterValue, @curSpace, @curUsers
 
@@ -10942,3 +10950,4 @@ DEALLOCATE @curSpace
 CLOSE @curUsers
 DEALLOCATE @curUsers
 RETURN
+
