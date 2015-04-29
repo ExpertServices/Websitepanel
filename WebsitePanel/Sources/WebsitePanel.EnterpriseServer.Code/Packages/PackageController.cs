@@ -319,10 +319,10 @@ namespace WebsitePanel.EnterpriseServer
 
         //TODO START
         public static DataSet GetSearchObject(int userId, string filterColumn, string filterValue,
-            int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType)
+            int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType)
         {
             return DataProvider.GetSearchObject(SecurityContext.User.UserId, userId,
-                filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, false);
+                filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, fullType, false);
         }
         //TODO END
 

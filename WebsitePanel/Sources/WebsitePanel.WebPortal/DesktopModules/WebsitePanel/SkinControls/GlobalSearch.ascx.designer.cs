@@ -19,7 +19,7 @@ namespace WebsitePanel.Portal.SkinControls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updatePanelUsers;
+        protected global::System.Web.UI.WebControls.Panel updatePanelUsers;
         
         /// <summary>
         /// tbSearch control.

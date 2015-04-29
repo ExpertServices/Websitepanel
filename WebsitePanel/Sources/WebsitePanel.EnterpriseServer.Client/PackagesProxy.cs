@@ -910,7 +910,7 @@ namespace WebsitePanel.EnterpriseServer {
         /// <remarks/>
         /// //TODO START
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetSearchObject", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public System.Data.DataSet GetSearchObject(int userId, string filterColumn, string filterValue, int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType)
+        public System.Data.DataSet GetSearchObject(int userId, string filterColumn, string filterValue, int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType)
         {
             object[] results = this.Invoke("GetSearchObject", new object[] {
                         userId,
@@ -921,7 +921,8 @@ namespace WebsitePanel.EnterpriseServer {
                         sortColumn,
                         startRow,
                         maximumRows,
-                        colType
+                        colType,
+                        fullType
             });
             return ((System.Data.DataSet)(results[0]));
         }

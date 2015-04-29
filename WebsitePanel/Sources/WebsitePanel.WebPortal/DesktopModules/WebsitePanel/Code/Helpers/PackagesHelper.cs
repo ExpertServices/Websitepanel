@@ -250,25 +250,25 @@ namespace WebsitePanel.Portal
         #region Service Items Paged Search
         DataSet dsObjectItemsPaged;
 
-        public int SearchObjectItemsPagedCount(string filterColumn, string filterValue, string colType)
+        public int SearchObjectItemsPagedCount(string filterColumn, string filterValue, string fullType, string colType)
         {
             return (int)dsObjectItemsPaged.Tables[0].Rows[0][0];
         }
 
         public DataTable SearchObjectItemsPaged(int maximumRows, int startRowIndex, string sortColumn,
-            string filterColumn, string filterValue, string colType)
+            string filterColumn, string filterValue, string colType, string fullType)
         {
             dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
                 String.Format("%{0}%", filterValue),
-                0, 0, sortColumn, startRowIndex, maximumRows, colType);
+                0, 0, sortColumn, startRowIndex, maximumRows, colType, fullType);
             return dsObjectItemsPaged.Tables[2];
         }
 
-        public DataTable SearchObjectTypes(string filterColumn, string filterValue, string sortColumn)
+        public DataTable SearchObjectTypes(string filterColumn, string filterValue, string fullType, string sortColumn)
         {
             dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
                 String.Format("%{0}%", filterValue),
-                0, 0, sortColumn, 0, 0, "");
+                0, 0, sortColumn, 0, 0, "",fullType);
             return dsObjectItemsPaged.Tables[1];
         }
         //TODO END

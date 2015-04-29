@@ -3,8 +3,12 @@
 <script type="text/javascript">
     //<![CDATA[
     $(document).ready(function () {
-        $("#tbSearch").keypress(function () {
-            $("#tbSearchText").val('');
+        $("#tbSearch").keypress(function (e) {
+            if (e.keyCode != 13) { // VK_RETURN
+                $("#tbSearchText").val('');
+                $("#tbObjectId").val('');
+                $("#tbPackageId").val('');
+            }
         });
 
         $("#tbSearch").autocomplete({
@@ -15,14 +19,14 @@
                     dataType: "json",
                     data: {
                         term: request.term,
-                        fullType: '',
-                        columnType: "'" + $("#ddlFilterColumn").val() + "'"
+                        fullType: 'Users'
+//                        columnType: "'" + $("#ddlFilterColumn").val() + "'"
                     },
                     url: "AjaxHandler.ashx",
                     success: function (data) {
                         response($.map(data, function (item) {
                             return {
-                                label: item.TextSearch,
+                                label: item.TextSearch + " [" + item.ColumnType + "]",
                                 code: item
                             };
                         }));
@@ -34,6 +38,9 @@
                 $("#ddlFilterColumn").val(item.code.ColumnType);
                 $("#tbSearchFullType").val(item.code.FullType);
                 $("#tbSearchText").val(item.code.TextSearch);
+                $("#tbObjectId").val(item.code.ItemID);
+                $("#tbPackageId").val(item.code.PackageID);
+                $("#<%= cmdSearch.ClientID %>").trigger("click");
             }
         });
     });//]]>
@@ -45,7 +52,7 @@
    <table>
         <tr>
             <td>
-                <asp:DropDownList ClientIDMode="Static" ID="ddlFilterColumn" runat="server" CssClass="NormalTextBox" resourcekey="ddlFilterColumn">
+                <asp:DropDownList ClientIDMode="Static" ID="ddlFilterColumn" runat="server" CssClass="NormalTextBox" resourcekey="ddlFilterColumn" style="display:none">
                 </asp:DropDownList>
             </td>
             <td>
@@ -76,7 +83,20 @@
                                     type="hidden"
                                 >
                                 </asp:TextBox>
-
+                                <asp:TextBox
+                                    ID="tbObjectId"
+                                    ClientIDMode="Static"
+                                    runat="server"
+                                    type="hidden"
+                                >
+                                </asp:TextBox>
+                                <asp:TextBox
+                                    ID="tbPackageId"
+                                    ClientIDMode="Static"
+                                    runat="server"
+                                    type="hidden"
+                                >
+                                </asp:TextBox>
                                 <asp:ImageButton
                                     ID="cmdSearch"
                                     runat="server"

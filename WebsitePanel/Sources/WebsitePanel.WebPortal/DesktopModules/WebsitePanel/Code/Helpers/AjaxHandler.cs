@@ -47,19 +47,22 @@ namespace WebsitePanel.WebPortal
             {
                 DataSet dsObjectItems = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, null,
                     String.Format("%{0}%", filterValue),
-                   0, 0, "", 0, 100, columnType);
+                   0, 0, "", 0, 100, columnType,fullType);
                 DataTable dt = dsObjectItems.Tables[2];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
                 for (int i = 0; i < dt.Rows.Count; ++i)
                 {
                     DataRow row = dt.Rows[i];
-                    Dictionary<string, string> obj = new Dictionary<string, string>();
-                    obj["ColumnType"] = row["ColumnType"].ToString();
-                    obj["TextSearch"] = row["TextSearch"].ToString();
-                    obj["ItemID"] = row["ItemID"].ToString();
-                    obj["PackageID"] = row["PackageID"].ToString();
-                    obj["FullType"] = row["FullType"].ToString();
-                    dataList.Add(obj);
+                    if ((fullType == null) || (fullType.Length == 0) || (fullType == row["FullType"].ToString()))
+                    {
+                        Dictionary<string, string> obj = new Dictionary<string, string>();
+                        obj["ColumnType"] = row["ColumnType"].ToString();
+                        obj["TextSearch"] = row["TextSearch"].ToString();
+                        obj["ItemID"] = row["ItemID"].ToString();
+                        obj["PackageID"] = row["PackageID"].ToString();
+                        obj["FullType"] = row["FullType"].ToString();
+                        dataList.Add(obj);
+                    }
                 }
 
                 var jsonSerialiser = new JavaScriptSerializer();

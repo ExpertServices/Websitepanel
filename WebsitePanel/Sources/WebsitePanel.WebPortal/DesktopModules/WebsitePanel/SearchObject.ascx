@@ -91,6 +91,7 @@
     <SelectParameters>
         <asp:QueryStringParameter Name="filterColumn" QueryStringField="Criteria" />
         <asp:QueryStringParameter Name="filterValue" QueryStringField="Query" />
+        <asp:QueryStringParameter Name="fullType" QueryStringField="FullType" />
     </SelectParameters>
 </asp:ObjectDataSource>
 
@@ -99,6 +100,7 @@
     <SelectParameters>
         <asp:QueryStringParameter Name="filterColumn" QueryStringField="Criteria" />
         <asp:QueryStringParameter Name="filterValue" QueryStringField="Query" />
+        <asp:QueryStringParameter Name="fullType" QueryStringField="FullType" />
     </SelectParameters>
 </asp:ObjectDataSource>
 

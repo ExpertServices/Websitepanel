@@ -4890,7 +4890,6 @@
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="SearchObject.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
-    <Content Include="SearchObject.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
     <Content Include="SettingsUserPasswordResetLetter.ascx" />
     <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />

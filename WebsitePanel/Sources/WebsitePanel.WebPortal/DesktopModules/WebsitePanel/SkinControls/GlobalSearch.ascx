@@ -6,10 +6,12 @@
 
 <script type="text/javascript">
     //<![CDATA[
-    $("#<%= tbSearch.ClientID %>").keypress(function () {
-        $("#<%= tbSearchText.ClientID %>").val('');
-        $("#<%= tbObjectId.ClientID %>").val('');
-        $("#<%= tbPackageId.ClientID %>").val('');
+    $("#<%= tbSearch.ClientID %>").keypress(function (e) {
+        if (e.keyCode != 13) { // VK_RETURN
+            $("#<%= tbSearchText.ClientID %>").val('');
+            $("#<%= tbObjectId.ClientID %>").val('');
+            $("#<%= tbPackageId.ClientID %>").val('');
+        }
     });
 
     $(document).ready(function () {
@@ -41,12 +43,13 @@
                 $("#<%= tbSearchText.ClientID %>").val(item.code.TextSearch);
                 $("#<%= tbObjectId.ClientID %>").val(item.code.ItemID);
                 $("#<%= tbPackageId.ClientID %>").val(item.code.PackageID);
+                $("#<%= ImageButton1.ClientID %>").trigger("click");
             }
         });
     });//]]>
 </script>
 
-<asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
+<asp:Panel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
         <table cellpadding="0" cellspacing="0" align="right">
             <tr>
@@ -104,4 +107,4 @@
             </tr>
         </table>
     </ContentTemplate>
-</asp:UpdatePanel>
+</asp:Panel>
