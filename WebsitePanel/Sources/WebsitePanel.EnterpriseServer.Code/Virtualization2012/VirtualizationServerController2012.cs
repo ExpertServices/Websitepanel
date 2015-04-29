@@ -557,7 +557,7 @@ namespace WebsitePanel.EnterpriseServer
                 try
                 {
                     // asynchronous process starts here
-                    CreateServerAsyncWorker worker = new CreateServerAsyncWorker();
+                    CreateServerAsyncWorker2012 worker = new CreateServerAsyncWorker2012();
 
                     worker.TaskId = vm.CurrentTaskId; // async task ID
                     worker.ThreadUserId = SecurityContext.User.UserId;

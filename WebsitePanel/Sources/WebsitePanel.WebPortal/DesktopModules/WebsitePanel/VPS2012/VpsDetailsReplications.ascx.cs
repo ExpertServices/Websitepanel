@@ -179,7 +179,7 @@ namespace WebsitePanel.Portal.VPS2012
                 }
 
                 // Details
-                secReplicationDetails.Visible = ReplicationDetailsPanel.Visible = vmReplica != null;
+                /*secReplicationDetails.Visible = */ ReplicationDetailsPanel.Visible = vmReplica != null;
 
                 // Pause buttons
                 if (vm.ReplicationState == ReplicationState.Suspended)
@@ -209,7 +209,8 @@ namespace WebsitePanel.Portal.VPS2012
             labDetailsHealthDetails.Text = vmReplicaInfo.HealthDetails;
 
             // statistic
-            StatisticCollapsiblePanel.Text += ToReadableString(vmReplicaInfo.ToTime - vmReplicaInfo.FromTime);
+            StatisticCollapsiblePanel.Text = GetLocalizedString("secStatisticPanel.Text") +
+                                             ToReadableString(vmReplicaInfo.ToTime - vmReplicaInfo.FromTime);
             labFromTime.Text = vmReplicaInfo.FromTime.ToString(DateFormat);
             labToTime.Text = vmReplicaInfo.ToTime.ToString(DateFormat);
             labAverageSize.Text = vmReplicaInfo.AverageSize;

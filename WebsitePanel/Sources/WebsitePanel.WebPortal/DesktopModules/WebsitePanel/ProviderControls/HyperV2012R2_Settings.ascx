@@ -92,16 +92,6 @@
                     Text="*" meta:resourcekey="DvdLibraryPathValidator" Display="Dynamic" SetFocusOnError="true" />
             </td>
 	    </tr>
-        <tr>
-		    <td class="SubHead" style="width:200px;">
-		        <asp:Localize ID="locReplicaPath" runat="server" meta:resourcekey="locReplicaPath" Text="Path to Replications:"></asp:Localize>
-		    </td>
-		    <td>
-                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtReplicaPath"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="ReplicaPathValidator" runat="server" ControlToValidate="txtReplicaPath"
-                    Text="*" meta:resourcekey="ReplicaPathValidator" Display="Dynamic" SetFocusOnError="true" />
-            </td>
-	    </tr>
 	 </table>
 </fieldset>
 <br />
@@ -189,9 +179,19 @@
             <td class="SubHead" style="padding-left: 20px;" colspan="2">
                 <table cellpadding="2" cellspacing="0" style="margin: 10px;">
                     <tr>
+                        <td style="width: 200px;">
+                            <asp:Localize ID="locReplicaPath" runat="server" meta:resourcekey="locReplicaPath" Text="Path to Replications:"></asp:Localize>
+                        </td>
+                        <td>
+                            <asp:TextBox Width="300px" CssClass="NormalTextBox" runat="server" ID="txtReplicaPath"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="ReplicaPathValidator" runat="server" ControlToValidate="txtReplicaPath"
+                                Text="*" meta:resourcekey="ReplicaPathValidator" Display="Dynamic" SetFocusOnError="true" />
+                        </td>
+                    </tr>
+                    <tr>
                         <td style="width: 200px">
                             <asp:Localize ID="locCertThumbnail" runat="server" meta:resourcekey="locCertThumbnail" Text="SSL Certificate Thumbnail:"></asp:Localize>
-                           </td>
+                        </td>
                         <td> 
                             <asp:DropDownList ID="ddlCertThumbnail" runat="server" Width="500px"></asp:DropDownList>
                             <asp:TextBox Width="400px" CssClass="NormalTextBox" runat="server" ID="txtCertThumbnail"></asp:TextBox>
