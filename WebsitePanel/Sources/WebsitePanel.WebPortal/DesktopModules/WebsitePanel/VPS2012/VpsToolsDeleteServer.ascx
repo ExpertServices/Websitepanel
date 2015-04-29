@@ -9,23 +9,8 @@
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="imgIcon" SkinID="DeleteServer48" runat="server" />
-				    <wsp:FormTitle ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Delete Server" />
-			    </div>
 			    <div class="FormBody">
 			        <wsp:ServerTabs id="tabs" runat="server" />	
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />

@@ -7,23 +7,8 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="vdc_permissions" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="imgIcon" SkinID="Server48" runat="server" />
-				    <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="User Permissions"></asp:Localize>
-			    </div>
 			    <div class="FormBody">
     			
 			        <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -116,6 +101,3 @@
 			    </div>
 		    </div>
 	    </div>
-    	
-    </div>
-</div>

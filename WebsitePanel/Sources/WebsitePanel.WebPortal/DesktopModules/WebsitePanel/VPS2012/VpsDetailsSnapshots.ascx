@@ -9,23 +9,8 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
-			    <div class="Title">
-				    <asp:Image ID="imgIcon" SkinID="Snapshot48" runat="server" />
-				    <wsp:FormTitle ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Snapshots" />
-			    </div>
 			    <div class="FormBody">
 			        <wsp:ServerTabs id="tabs" runat="server" SelectedTab="vps_snapshots" />	
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -70,19 +55,19 @@
 				                </p>
 				                <ul class="ActionButtons">
 				                    <li>
-				                        <asp:LinkButton ID="btnApply" runat="server" CausesValidation="false" CssClass="ActionButtonApplySnapshot"
+				                        <asp:LinkButton ID="btnApply" runat="server" CausesValidation="false" CssClass="ActionButtonApplySnapshot2012"
 				                            meta:resourcekey="btnApply" Text="Apply" onclick="btnApply_Click"></asp:LinkButton>
 				                    </li>
 				                    <li>
-				                        <asp:LinkButton ID="btnRename" runat="server" CausesValidation="false" CssClass="ActionButtonRename"
+				                        <asp:LinkButton ID="btnRename" runat="server" CausesValidation="false" CssClass="ActionButtonRename2012"
 				                            meta:resourcekey="btnRename" Text="Rename"></asp:LinkButton>
 				                    </li>
 				                    <li>
-				                        <asp:LinkButton ID="btnDelete" runat="server" CausesValidation="false" CssClass="ActionButtonDeleteSnapshot"
+				                        <asp:LinkButton ID="btnDelete" runat="server" CausesValidation="false" CssClass="ActionButtonDeleteSnapshot2012"
 				                            meta:resourcekey="btnDelete" Text="Delete" onclick="btnDelete_Click"></asp:LinkButton>
 				                    </li>
 				                    <li>
-				                        <asp:LinkButton ID="btnDeleteSubtree" runat="server" CausesValidation="false" CssClass="ActionButtonDeleteSnapshotTree"
+				                        <asp:LinkButton ID="btnDeleteSubtree" runat="server" CausesValidation="false" CssClass="ActionButtonDeleteSnapshotTree2012"
 				                            meta:resourcekey="btnDeleteSubtree" Text="Delete subtree" 
                                             onclick="btnDeleteSubtree_Click"></asp:LinkButton>
 				                    </li>
@@ -93,11 +78,7 @@
 				    
 			    </div>
 		    </div>
-
 	    </div>
-    	
-    </div>
-</div>
 
 <asp:Panel ID="RenamePanel" runat="server" CssClass="Popup" style="display:none;">
 	<table class="Popup-Header" cellpadding="0" cellspacing="0">
