@@ -37,6 +37,16 @@
             <asp:RegularExpressionValidator ID="valCorrectEnforcePasswordHistory" runat="server" ControlToValidate="txtEnforcePasswordHistory" meta:resourcekey="valCorrectEnforcePasswordHistory"
                 Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator></td>
     </tr>
+    <tr>
+        <td class="Normal" style="width:150px;"><asp:Label ID="lblMaxPasswordAge" runat="server"
+            meta:resourcekey="lblMaxPasswordAge" Text="Max Password Age (days):"></asp:Label></td>
+        <td class="Normal">
+            <asp:TextBox ID="txtMaxPasswordAge" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="valRequireMaxPasswordAge" runat="server" ControlToValidate="txtMaxPasswordAge" meta:resourcekey="valRequireMaxPasswordAge"
+                ErrorMessage="*" ValidationGroup="SettingsEditor" Display="Dynamic"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valCorrectMaxPasswordAge" runat="server" ControlToValidate="txtMaxPasswordAge" meta:resourcekey="valCorrectMaxPasswordAge"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator></td>
+    </tr>
     <tr id="RowChkLockOutSettigns" runat="server">
         <td colspan="2" class="NormalBold">
             <asp:CheckBox id="chkLockOutSettigns" runat="server" meta:resourcekey="chkLockOutSettigns" 

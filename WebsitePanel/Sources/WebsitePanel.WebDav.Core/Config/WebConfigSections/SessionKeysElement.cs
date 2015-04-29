@@ -12,7 +12,7 @@ namespace WebsitePanel.WebDav.Core.Config.WebConfigSections
         public const string WebDavManagerKey = "WebDavManagerSessionKey";
         public const string UserGroupsKey = "UserGroupsKey";
         public const string WebDavRootFolderPermissionsKey = "WebDavRootFolderPermissionsKey";
-        public const string PassswordResetSmsKey = "PassswordResetSmsKey";
+        public const string PasswordResetSmsKey = "PasswordResetSmsKey";
         public const string ResourseRenderCountKey = "ResourseRenderCountSessionKey";
         public const string ItemIdSessionKey = "ItemId";
         public const string OwaEditFoldersSessionKey = "OwaEditFoldersSession";

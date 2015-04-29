@@ -2564,7 +2564,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
+        public static string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string passwordResetUrl)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -2589,12 +2589,11 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty(body))
                 return null;
 
-            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body);
+            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
             return user.HtmlMail ? result : result.Replace("\n", "<br/>");
         }
 
-        private static string EvaluateMailboxTemplate(int itemId, int accountId,
-            bool pmm, bool emailMode, bool signup, string template)
+        private static string EvaluateMailboxTemplate(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string template, string passwordResetUrl)
         {
             Hashtable items = new Hashtable();
 
@@ -2616,7 +2615,10 @@ namespace WebsitePanel.EnterpriseServer
             items["AccountDomain"] = account.PrimaryEmailAddress.Substring(account.PrimaryEmailAddress.IndexOf("@") + 1);
             items["DefaultDomain"] = org.DefaultDomain;
 
-            var passwordResetUrl = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId);
+            Guid token;
+
+            passwordResetUrl = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId, out token, string.Empty, passwordResetUrl);
+
             if (!string.IsNullOrEmpty(passwordResetUrl))
             {
                 items["PswResetUrl"] = passwordResetUrl;
@@ -2694,8 +2696,8 @@ namespace WebsitePanel.EnterpriseServer
             if (to == null)
                 to = user.Email;
 
-            subject = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, subject);
-            body = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, body);
+            subject = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, subject, string.Empty);
+            body = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, body, string.Empty);
 
             // send message
             return MailHelper.SendMessage(from, to, cc, subject, body, priority, isHtml);

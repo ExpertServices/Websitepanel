@@ -207,7 +207,7 @@ namespace WebsitePanel.Portal.VPS2012
             btn.Command = command;
             btn.Style = String.Format(
                 "background: transparent url({0}) left center no-repeat;",
-                PortalUtils.GetThemedImage(String.Format("VPS/{0}", icon)));
+                PortalUtils.GetThemedImage(String.Format("VPS2012/{0}", icon)));
 
             string localizedText = GetLocalizedString("Command." + command);
             btn.Text = localizedText != null ? localizedText : command;

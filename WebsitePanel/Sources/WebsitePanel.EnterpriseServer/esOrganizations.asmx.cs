@@ -93,7 +93,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public SystemSettings GetWebDavSystemSettings()
         {
-           return OrganizationController.GetWebDavSystemSettings();
+            return OrganizationController.GetWebDavSystemSettings();
         }
 
         [WebMethod]
@@ -185,7 +185,27 @@ namespace WebsitePanel.EnterpriseServer
             OrganizationController.SetDefaultOrganization(newDefaultOrganizationId, currentDefaultOrganizationId);
         }
 
-        #endregion
+        [WebMethod]
+        public OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId)
+        {
+            return OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+        }
+
+        [WebMethod]
+        public ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason, string phoneTo = null)
+        {
+           return  OrganizationController.SendResetUserPasswordLinkSms(itemId, accountId, reason, phoneTo);
+        }
+
+
+        [WebMethod]
+        public ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
+        {
+            return OrganizationController.SendResetUserPasswordPincodeSms(token, phoneTo);
+        }
+
+
+    #endregion
 
         #region Domains
 
@@ -336,9 +356,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
         {
-            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo);
+            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo, finalStep);
         }
 
         #endregion

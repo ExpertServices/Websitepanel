@@ -61,6 +61,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        public static string Account {
+            get {
+                return ResourceManager.GetString("Account", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Actions.
         /// </summary>
         public static string Actions {
@@ -120,6 +129,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Bytes {
             get {
                 return ResourceManager.GetString("Bytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can now access your {0}..
+        /// </summary>
+        public static string CanAccessYourFormat {
+            get {
+                return ResourceManager.GetString("CanAccessYourFormat", resourceCulture);
             }
         }
         
@@ -538,6 +556,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your new password has been set..
+        /// </summary>
+        public static string NewPasswordBeenSet {
+            get {
+                return ResourceManager.GetString("NewPasswordBeenSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm password.
         /// </summary>
         public static string NewPasswordConfirmation {
@@ -624,6 +651,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string PasswordExpirationFormat {
             get {
                 return ResourceManager.GetString("PasswordExpirationFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password never expires. If you want to change password then please click {0}..
+        /// </summary>
+        public static string PasswordNeverExpiresFormat {
+            get {
+                return ResourceManager.GetString("PasswordNeverExpiresFormat", resourceCulture);
             }
         }
         

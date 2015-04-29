@@ -73,6 +73,7 @@
 	</PropertyGroup>
 
 	<Target Name="RestorePackages">
+	    <Exec Command="$(TrunkFolder)\Sources\.nuget\NuGet.exe restore $(TrunkFolder)\Sources\WebsitePanel.EnterpriseServer.sln" />
 	    <Exec Command="$(TrunkFolder)\Sources\.nuget\NuGet.exe restore $(TrunkFolder)\Sources\WebsitePanel.WebPortal.sln" />
 	</Target>
 

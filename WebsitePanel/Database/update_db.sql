@@ -10031,6 +10031,37 @@ UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterTextBo
 GO
 
 
+
+
+DECLARE @UserPasswordResetSMSBody nvarchar(2500)
+
+Set @UserPasswordResetSMSBody = N'Password reset link:
+#passwordResetLink#
+'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetLinkSmsBody', @UserPasswordResetSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody'
+GO
+
+
+DECLARE @UserPasswordPincodeSMSBody nvarchar(2500)
+
+Set @UserPasswordPincodeSMSBody = N'
+Your password reset pincode:
+#passwordResetPincode#'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetPincodeSmsBody', @UserPasswordPincodeSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordPincodeSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody'
+GO
+
 -- Exchange setup EMAIL TEMPLATE
 
 
@@ -10690,7 +10721,6 @@ GO
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchObject')
 DROP PROCEDURE GetSearchObject
 GO
-
 CREATE PROCEDURE [dbo].[GetSearchObject]
 (
 	@ActorID int,

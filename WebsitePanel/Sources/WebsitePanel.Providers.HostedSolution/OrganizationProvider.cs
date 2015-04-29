@@ -740,7 +740,8 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("MinPasswordLength", settings.MinimumLength);
             cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
             cmd.Parameters.Add("ComplexityEnabled", false);
-            cmd.Parameters.Add("ReversibleEncryptionEnabled", false); 
+            cmd.Parameters.Add("ReversibleEncryptionEnabled", false);
+            cmd.Parameters.Add("MaxPasswordAge", new TimeSpan(settings.MaxPasswordAge * 24, 0, 0));
             
             if (settings.LockoutSettingsEnabled)
             {
@@ -777,6 +778,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("PasswordHistoryCount", settings.EnforcePasswordHistory);
             cmd.Parameters.Add("ComplexityEnabled", false);
             cmd.Parameters.Add("ReversibleEncryptionEnabled", false);
+            cmd.Parameters.Add("MaxPasswordAge", new TimeSpan(settings.MaxPasswordAge*24, 0, 0));
 
             if (settings.LockoutSettingsEnabled)
             {
@@ -1008,9 +1010,29 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
             retUser.UserMustChangePassword = GetUserMustChangePassword(entry);
 
+            return retUser;
+        }
+
+        public OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("GetOrganizationUserWithExtraData");
+            HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(loginName))
+                throw new ArgumentNullException("loginName");
+
             var psoName = FormOrganizationPSOName(organizationId);
 
+            string path = GetUserPath(organizationId, loginName);
+
+            OrganizationUser retUser = GetUser(organizationId, path);
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
             retUser.PasswordExpirationDateTime = GetPasswordExpirationDate(psoName, entry);
+
+            HostedSolutionLog.LogEnd("GetOrganizationUserWithExtraData");
 
             return retUser;
         }

@@ -102,5 +102,7 @@ namespace WebsitePanel.Providers.HostedSolution
         void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings);
 
         bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null);
+
+        OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId);
     }
 }

@@ -32,17 +32,6 @@
     }
 </style>
 
-<div id="VpsContainer">
-    <div class="Module">
-
-	    <div class="Header">
-		    <wsp:Breadcrumb id="breadcrumb" runat="server" />
-	    </div>
-    	
-	    <div class="Left">
-		    <wsp:Menu id="menu" runat="server" SelectedItem="" />
-	    </div>
-    	
 	    <div class="Content">
 		    <div class="Center">
 			    <div class="Title">
@@ -205,9 +194,6 @@
             </div>
 
         </div>
-    	
-    </div>
-</div>
 
 <asp:Panel ID="DetailsPanel" runat="server" CssClass="Popup" style="display:none;">
 	<table class="Popup-Header" cellpadding="0" cellspacing="0">

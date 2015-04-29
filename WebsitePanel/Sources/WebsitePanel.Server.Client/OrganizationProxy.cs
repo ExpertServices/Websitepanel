@@ -98,6 +98,8 @@ namespace WebsitePanel.Providers.HostedSolution {
         
         private System.Threading.SendOrPostCallback CheckPhoneNumberIsInUseOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetOrganizationUserWithExtraDataOperationCompleted;
+        
         /// <remarks/>
         public Organizations() {
             this.Url = "http://localhost:9003/Organizations.asmx";
@@ -195,6 +197,9 @@ namespace WebsitePanel.Providers.HostedSolution {
         
         /// <remarks/>
         public event CheckPhoneNumberIsInUseCompletedEventHandler CheckPhoneNumberIsInUseCompleted;
+        
+        /// <remarks/>
+        public event GetOrganizationUserWithExtraDataCompletedEventHandler GetOrganizationUserWithExtraDataCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1774,6 +1779,51 @@ namespace WebsitePanel.Providers.HostedSolution {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationUserWithExtraData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId) {
+            object[] results = this.Invoke("GetOrganizationUserWithExtraData", new object[] {
+                        loginName,
+                        organizationId});
+            return ((OrganizationUser)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetOrganizationUserWithExtraData(string loginName, string organizationId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetOrganizationUserWithExtraData", new object[] {
+                        loginName,
+                        organizationId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public OrganizationUser EndGetOrganizationUserWithExtraData(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((OrganizationUser)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationUserWithExtraDataAsync(string loginName, string organizationId) {
+            this.GetOrganizationUserWithExtraDataAsync(loginName, organizationId, null);
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationUserWithExtraDataAsync(string loginName, string organizationId, object userState) {
+            if ((this.GetOrganizationUserWithExtraDataOperationCompleted == null)) {
+                this.GetOrganizationUserWithExtraDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetOrganizationUserWithExtraDataOperationCompleted);
+            }
+            this.InvokeAsync("GetOrganizationUserWithExtraData", new object[] {
+                        loginName,
+                        organizationId}, this.GetOrganizationUserWithExtraDataOperationCompleted, userState);
+        }
+        
+        private void OnGetOrganizationUserWithExtraDataOperationCompleted(object arg) {
+            if ((this.GetOrganizationUserWithExtraDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetOrganizationUserWithExtraDataCompleted(this, new GetOrganizationUserWithExtraDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2185,6 +2235,32 @@ namespace WebsitePanel.Providers.HostedSolution {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetOrganizationUserWithExtraDataCompletedEventHandler(object sender, GetOrganizationUserWithExtraDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetOrganizationUserWithExtraDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetOrganizationUserWithExtraDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public OrganizationUser Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((OrganizationUser)(this.results[0]));
             }
         }
     }

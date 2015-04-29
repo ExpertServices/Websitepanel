@@ -332,6 +332,13 @@
     <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
       <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
     </Compile>
+    <Compile Include="VpsMenu.ascx.cs">
+      <DependentUpon>VpsMenu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VpsMenu.ascx.designer.cs">
+      <DependentUpon>VpsMenu.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
       <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4887,6 +4894,7 @@
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
+    <Content Include="VpsMenu.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
     <Content Include="SearchObject.ascx" />
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
@@ -5006,6 +5014,9 @@
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
     <Content Include="App_LocalResources\SettingsUserPasswordResetLetter.ascx.resx" />
+    <Content Include="App_LocalResources\VpsMenu.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />

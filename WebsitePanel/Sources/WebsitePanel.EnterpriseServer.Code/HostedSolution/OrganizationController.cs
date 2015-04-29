@@ -30,10 +30,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Data;
+using System.Globalization;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
 using WebsitePanel.EnterpriseServer.Extensions;
@@ -1560,6 +1563,173 @@ namespace WebsitePanel.EnterpriseServer
             return expiredUsersDb;
         }
 
+        public static ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason,
+            string phoneTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_SMS",
+                itemId);
+
+            try
+            {
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+
+                user.ItemId = itemId;
+
+                if (string.IsNullOrEmpty(phoneTo))
+                {
+                    phoneTo = user.MobilePhone;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId,
+                    UserSettings.USER_PASSWORD_RESET_LETTER);
+
+
+                string body = settings["PasswordResetLinkSmsBody"];
+
+                var pincode = GeneratePincode();
+                Guid token;
+
+                var items = new Hashtable();
+
+                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId, out token, pincode);
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("Reason : " + reason);
+                TaskManager.Write("SmsTo : " + phoneTo);
+
+                // send Sms message
+                var response = SendSms(phoneTo, body);
+
+                if (response.RestException != null)
+                {
+                    throw new Exception(response.RestException.Message);
+                }
+
+                SetAccessTokenResponse(token, pincode);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
+        public static ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_SMS_PINCODE");
+
+            try
+            {
+                var accessToken = OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+
+                if (accessToken == null)
+                {
+                    throw new Exception(string.Format("Access token not found"));
+                }
+
+                // load organization
+                Organization org = GetOrganization(accessToken.ItemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found"));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(accessToken.ItemId,
+                    accessToken.AccountId);
+
+                if (string.IsNullOrEmpty(phoneTo))
+                {
+                    phoneTo = user.MobilePhone;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_RESET_LETTER);
+
+                string body = settings["PasswordResetPincodeSmsBody"];
+
+                var items = new Hashtable();
+
+                var pincode = GeneratePincode();
+
+                items["passwordResetPincode"] = pincode;
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("SmsTo : " + phoneTo);
+
+                // send Sms message
+                var response = SendSms(phoneTo, body);
+
+                if (response.RestException != null)
+                {
+                    throw new Exception(response.RestException.Message);
+                }
+
+                SetAccessTokenResponse(token, pincode);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
+        private static string GeneratePincode()
+        {
+            var random = new Random(Guid.NewGuid().GetHashCode());
+
+            return random.Next(10000, 99999).ToString(CultureInfo.InvariantCulture);
+        }
+
+        private static SMSMessage SendSms(string to, string body)
+        {
+            SystemSettings settings = SystemController.GetSystemSettingsInternal(SystemSettings.TWILIO_SETTINGS, false);
+
+            if (settings == null)
+            {
+                throw new Exception("Twilio settings are not set");
+            }
+
+            string accountSid = settings.GetValueOrDefault(SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty);
+            string authToken = settings.GetValueOrDefault(SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty);
+            string phoneFrom = settings.GetValueOrDefault(SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty);
+
+            if (string.IsNullOrEmpty(accountSid) || string.IsNullOrEmpty(accountSid) || string.IsNullOrEmpty(accountSid))
+            {
+                throw new Exception("Twilio settings are not set (System settings)");
+            }
+
+            var client = new TwilioRestClient(accountSid, authToken);
+
+            return client.SendSmsMessage(phoneFrom, to, body);
+        }
+
         /// <summary>
         /// Send reset user password email
         /// </summary>
@@ -1567,7 +1737,8 @@ namespace WebsitePanel.EnterpriseServer
         /// <param name="accountId">User Id</param>
         /// <param name="reason">Reason why reset email is sent.</param>
         /// <param name="mailTo">Optional, if null accountID user PrimaryEmailAddress will be used</param>
-        public static void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo = null)
+        /// <param name="finalStep">Url direction</param>
+        public static void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
         {
             // load organization
             Organization org = GetOrganization(itemId);
@@ -1581,11 +1752,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
             UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
-            OrganizationUser user = OrganizationController.GetAccount(itemId, accountId);
+            OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
 
-            OrganizationUser settings = orgProxy.GetUserGeneralSettings(user.AccountName, org.OrganizationId);
-
-            user.PasswordExpirationDateTime = settings.PasswordExpirationDateTime;
+            user.ItemId = itemId;
 
             if (string.IsNullOrEmpty(mailTo))
             {
@@ -1596,16 +1765,16 @@ namespace WebsitePanel.EnterpriseServer
 
             var logoUrl = generalSettings != null ? generalSettings.OrganizationLogoUrl : string.Empty;
 
-            SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_RESET_LETTER, "USER_PASSWORD_RESET_LETTER");
+            SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_RESET_LETTER, "USER_PASSWORD_RESET_LETTER", finalStep);
         }
 
         public static void SendUserExpirationPasswordEmail(UserInfo owner, OrganizationUser user, string reason,
             string mailTo, string logoUrl)
         {
-            SendUserPasswordEmail(owner, user, reason, user.PrimaryEmailAddress, logoUrl, UserSettings.USER_PASSWORD_EXPIRATION_LETTER, "USER_PASSWORD_EXPIRATION_LETTER");
+            SendUserPasswordEmail(owner, user, reason, user.PrimaryEmailAddress, logoUrl, UserSettings.USER_PASSWORD_EXPIRATION_LETTER, "USER_PASSWORD_EXPIRATION_LETTER", false);
         }
 
-        public static void SendUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason,  string mailTo, string logoUrl, string settingsName, string taskName)
+        public static void SendUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason, string mailTo, string logoUrl, string settingsName, string taskName, bool finalStep)
         {
             UserSettings settings = UserController.GetUserSettings(owner.UserId,
                 settingsName);
@@ -1632,13 +1801,22 @@ namespace WebsitePanel.EnterpriseServer
                     priority = (MailPriority) Enum.Parse(typeof (MailPriority), settings["Priority"], true);
                 }
 
+                Guid token;
+
+                string pincode = finalStep ? GeneratePincode() :  null;
+
                 Hashtable items = new Hashtable();
 
                 items["user"] = user;
                 items["logoUrl"] = logoUrl;
-                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId);
+                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId, out token, pincode);
 
                 body = PackageController.EvaluateTemplate(body, items);
+
+                if (finalStep)
+                {
+                    SetAccessTokenResponse(token, pincode);
+                }
 
                 TaskManager.Write("Organization ID : " + user.ItemId);
                 TaskManager.Write("Account : " + user.DisplayName);
@@ -1657,6 +1835,8 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+
 
         public static AccessToken GetAccessToken(Guid accessToken, AccessTokenTypes type)
         {
@@ -1678,23 +1858,38 @@ namespace WebsitePanel.EnterpriseServer
             return SystemController.GetSystemSettingsInternal(SystemSettings.WEBDAV_PORTAL_SETTINGS, false);
         }
 
-        public static string GenerateUserPasswordResetLink(int itemId, int accountId)
+        public static string GenerateUserPasswordResetLink(int itemId, int accountId, out Guid tokenGuid, string pincode = null, string resetUrl = null)
         {
-            string passwordResetUrlFormat = "account/password-reset/step-2";
-
             var settings = GetWebDavSystemSettings();
+            tokenGuid = new Guid();
 
-            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) ||!settings.Contains("WebdavPortalUrl"))
+            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false) || !settings.Contains("WebdavPortalUrl"))
             {
                 return string.Empty;
             }
+
+            if (string.IsNullOrEmpty(resetUrl) == false)
+            {
+                return resetUrl;
+            }
+
+            string passwordResetUrlFormat = string.IsNullOrEmpty(pincode) ? "account/password-reset/step-2" : "account/password-reset/step-final";
 
             var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
 
             var token = CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset);
 
-            return webdavPortalUrl.Append(passwordResetUrlFormat)
-                .Append(token.AccessTokenGuid.ToString("n")).ToString();
+            tokenGuid = token.AccessTokenGuid;
+
+            var resultUrl = webdavPortalUrl.Append(passwordResetUrlFormat)
+                .Append(token.AccessTokenGuid.ToString("n"));
+
+            if (string.IsNullOrEmpty(pincode) == false)
+            {
+                resultUrl = resultUrl.Append(pincode);
+            }
+
+            return resultUrl.ToString();
         }
 
         private static AccessToken CreateAccessToken(int itemId, int accountId, AccessTokenTypes type)
@@ -1804,7 +1999,8 @@ namespace WebsitePanel.EnterpriseServer
                             AccountLockoutDuration = GetValueSafe(parts, 9, 0),
                             ResetAccountLockoutCounterAfter = GetValueSafe(parts, 10, 0),
                             LockoutSettingsEnabled = GetValueSafe(parts, 11, false),
-                            PasswordComplexityEnabled = GetValueSafe(parts, 11, true),
+                            PasswordComplexityEnabled = GetValueSafe(parts, 12, true),
+                            MaxPasswordAge = GetValueSafe(parts, 13, 42),
                         };
 
 
@@ -2664,6 +2860,50 @@ namespace WebsitePanel.EnterpriseServer
             {
                 //TaskManager.CompleteTask();
             }
+
+            return (account);
+        }
+
+        public static OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId)
+        {
+            OrganizationUser account = null;
+            Organization org = null;
+
+            try
+            {
+                // load organization
+                org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                // load account
+                account = GetAccount(itemId, accountId);
+            }
+            catch (Exception) { }
+
+            try
+            {
+                // get mailbox settings
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+                string accountName = GetAccountName(account.AccountName);
+
+
+                OrganizationUser retUser = orgProxy.GetOrganizationUserWithExtraData(accountName, org.OrganizationId);
+                retUser.AccountId = accountId;
+                retUser.AccountName = account.AccountName;
+                retUser.PrimaryEmailAddress = account.PrimaryEmailAddress;
+                retUser.AccountType = account.AccountType;
+                retUser.CrmUserId = CRMController.GetCrmUserId(accountId);
+                retUser.IsOCSUser = DataProvider.CheckOCSUserExists(accountId);
+                retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
+                retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
+                retUser.SubscriberNumber = account.SubscriberNumber;
+                retUser.LevelId = account.LevelId;
+                retUser.IsVIP = account.IsVIP;
+
+                return retUser;
+            }
+            catch { }
 
             return (account);
         }

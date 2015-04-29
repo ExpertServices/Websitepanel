@@ -283,6 +283,78 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtWebdavPortalUrl;
         
         /// <summary>
+        /// TwilioSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel TwilioSettings;
+        
+        /// <summary>
+        /// PanelTwilioSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelTwilioSettings;
+        
+        /// <summary>
+        /// lblAccountSid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblAccountSid;
+        
+        /// <summary>
+        /// txtAccountSid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtAccountSid;
+        
+        /// <summary>
+        /// lblAuthToken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblAuthToken;
+        
+        /// <summary>
+        /// txtAuthToken control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtAuthToken;
+        
+        /// <summary>
+        /// lblPhoneFrom control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblPhoneFrom;
+        
+        /// <summary>
+        /// txtPhoneFrom control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPhoneFrom;
+        
+        /// <summary>
         /// btnSaveSettings control.
         /// </summary>
         /// <remarks>

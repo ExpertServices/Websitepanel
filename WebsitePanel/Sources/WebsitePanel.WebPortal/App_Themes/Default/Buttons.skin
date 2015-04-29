@@ -42,3 +42,4 @@ Default skin template. The following skins are provided as examples only.
 
 
 <asp:ImageButton SkinID="VpsDelete" runat="server" ImageUrl="Images/VPS/delete.png" ImageAlign="AbsMiddle"  Width="16" Height="16"/>
+<asp:ImageButton SkinID="VpsDelete2012" runat="server" ImageUrl="Images/VPS2012/delete.png" ImageAlign="AbsMiddle"  Width="16" Height="16"/>

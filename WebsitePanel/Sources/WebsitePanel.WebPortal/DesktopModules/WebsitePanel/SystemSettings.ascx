@@ -98,6 +98,24 @@
 			</tr>
 		</table>
     </asp:Panel>
+    
+    <wsp:CollapsiblePanel ID="TwilioSettings" runat="server" TargetControlID="PanelTwilioSettings" meta:resourcekey="TwilioSettings" Text="Webdav Portal" />
+    <asp:Panel ID="PanelTwilioSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblAccountSid" runat="server" meta:resourcekey="lblAccountSid" />
+				<td><asp:TextBox runat="server" ID="txtAccountSid" Width="450px" /></td>
+			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblAuthToken" runat="server" meta:resourcekey="lblAuthToken" />
+				<td><asp:TextBox runat="server" ID="txtAuthToken" Width="450px" /></td>
+			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblPhoneFrom" runat="server" meta:resourcekey="lblPhoneFrom" />
+				<td><asp:TextBox runat="server" ID="txtPhoneFrom" Width="450px" /></td>
+			</tr>
+		</table>
+    </asp:Panel>
 </div>
 <div class="FormFooter">
 	<asp:Button runat="server" ID="btnSaveSettings" meta:resourcekey="btnSaveSettings" 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using log4net;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Interfaces.Services;
@@ -9,10 +10,12 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
     public class SmsAuthenticationService : ISmsAuthenticationService
     {
         private ISmsDistributionService _smsService;
+        private readonly ILog Log;
 
         public SmsAuthenticationService(ISmsDistributionService smsService)
         {
             _smsService = smsService;
+            Log = LogManager.GetLogger(this.GetType());
         }
 
         public bool VerifyResponse( Guid token, string response)

@@ -47,6 +47,14 @@ namespace WebsitePanel.EnterpriseServer
         public const string PACKAGE_DISPLAY_SETTINGS = "PackageDisplaySettings";
         public const string RDS_SETTINGS = "RdsSettings";
         public const string WEBDAV_PORTAL_SETTINGS = "WebdavPortalSettings";
+        public const string TWILIO_SETTINGS = "TwilioSettings";
+
+
+        //Keys
+        public const string TWILIO_ACCOUNTSID_KEY = "TwilioAccountSid";
+        public const string TWILIO_AUTHTOKEN_KEY = "TwilioAuthToken";
+        public const string TWILIO_PHONEFROM_KEY = "TwilioPhoneFrom";
+
         public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPswResetEnabled";
 
         // key to access to wpi main & custom feed in wpi settings

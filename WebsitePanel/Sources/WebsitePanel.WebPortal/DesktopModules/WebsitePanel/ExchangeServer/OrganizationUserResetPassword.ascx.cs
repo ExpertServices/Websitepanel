@@ -26,6 +26,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             litDisplayName.Text = PortalAntiXSS.Encode(user.DisplayName);
 
             txtEmailAddress.Text = user.PrimaryEmailAddress;
+
+            txtMobile.Text = user.MobilePhone;
         }
 
         protected void btnResetPassoword_Click(object sender, EventArgs e)
@@ -35,11 +37,31 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             }
 
-            ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID,PanelRequest.AccountID, txtReason.Text, txtEmailAddress.Text);
+            if (rbtnEmail.Checked)
+            {
+                ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID,PanelRequest.AccountID, txtReason.Text, txtEmailAddress.Text, true);
+            }
+            else
+            {
+               var result = ES.Services.Organizations.SendResetUserPasswordLinkSms(PanelRequest.ItemID, PanelRequest.AccountID, txtReason.Text, txtMobile.Text);
+
+                if (!result.IsSuccess)
+                {
+                    ShowErrorMessage("SEND_USER_PASSWORD_RESET_SMS");
+
+                    return;
+                }
+            }
 
             Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
                 (PanelRequest.Context == "Mailbox") ? "mailboxes" : "users",
                 "SpaceID=" + PanelSecurity.PackageId));
+        }
+
+        protected void SendToGroupCheckedChanged(object sender, EventArgs e)
+        {
+            EmailRow.Visible = rbtnEmail.Checked;
+            MobileRow.Visible = !rbtnEmail.Checked;
         }
     }
 }
