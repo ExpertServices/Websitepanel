@@ -92,10 +92,15 @@
 					<asp:CheckBox ID="chkEnablePasswordReset" runat="server" Text="Yes" meta:resourcekey="chkEnablePasswordReset" />
 				</td>
 			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblPasswordResetLinkLifeSpan" runat="server" meta:resourcekey="lblPasswordResetLinkLifeSpan" />
+				<td><asp:TextBox runat="server" ID="txtPasswordResetLinkLifeSpan" Width="450px" /></td>
+			</tr>
 			<tr>
 				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblWebdavPortalUrl" runat="server" meta:resourcekey="lblWebdavPortalUrl" />
 				<td><asp:TextBox runat="server" ID="txtWebdavPortalUrl" Width="450px" /></td>
 			</tr>
+            
 		</table>
     </asp:Panel>
     

@@ -655,6 +655,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password must meet the following requirements:.
+        /// </summary>
+        public static string PasswordFollowingRequirements {
+            get {
+                return ResourceManager.GetString("PasswordFollowingRequirements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password never expires. If you want to change password then please click {0}..
         /// </summary>
         public static string PasswordNeverExpiresFormat {
@@ -912,6 +921,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are changing password for &apos;{0}&apos; account..
+        /// </summary>
+        public static string YouRChangingPswForFormat {
+            get {
+                return ResourceManager.GetString("YouRChangingPswForFormat", resourceCulture);
             }
         }
         

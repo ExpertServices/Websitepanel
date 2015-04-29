@@ -1877,7 +1877,9 @@ namespace WebsitePanel.EnterpriseServer
 
             var webdavPortalUrl = new Uri(settings["WebdavPortalUrl"]);
 
-            var token = CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset);
+            var hours = settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN, 1);
+
+            var token = CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset, hours);
 
             tokenGuid = token.AccessTokenGuid;
 
@@ -1892,7 +1894,7 @@ namespace WebsitePanel.EnterpriseServer
             return resultUrl.ToString();
         }
 
-        private static AccessToken CreateAccessToken(int itemId, int accountId, AccessTokenTypes type)
+        private static AccessToken CreateAccessToken(int itemId, int accountId, AccessTokenTypes type, int hours)
         {
             var token = new AccessToken
             {
@@ -1900,7 +1902,7 @@ namespace WebsitePanel.EnterpriseServer
                 ItemId = itemId,
                 AccountId = accountId,
                 TokenType = type,
-                ExpirationDate = DateTime.Now.AddHours(12)
+                ExpirationDate = DateTime.Now.AddHours(hours)
             };
 
             token.Id = DataProvider.AddAccessToken(token);
@@ -2890,6 +2892,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 OrganizationUser retUser = orgProxy.GetOrganizationUserWithExtraData(accountName, org.OrganizationId);
                 retUser.AccountId = accountId;
+                retUser.ItemId = itemId;
                 retUser.AccountName = account.AccountName;
                 retUser.PrimaryEmailAddress = account.PrimaryEmailAddress;
                 retUser.AccountType = account.AccountType;
