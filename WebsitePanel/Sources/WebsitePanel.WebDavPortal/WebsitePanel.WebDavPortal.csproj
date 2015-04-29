@@ -198,6 +198,7 @@
     <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\Account\PasswordChangeModel.cs" />
     <Compile Include="Models\Account\PasswordResetEmailModel.cs" />
+    <Compile Include="Models\Account\PasswordResetFinalStepModel.cs" />
     <Compile Include="Models\Account\PasswordResetSmsModel.cs" />
     <Compile Include="Models\Account\UserProfile.cs" />
     <Compile Include="Models\Common\AjaxModel.cs" />
@@ -510,6 +511,7 @@
     <EmbeddedResource Include="Resources\Messages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\UI.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

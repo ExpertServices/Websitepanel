@@ -405,4 +405,10 @@
   <data name="NewPasswordBeenSet" xml:space="preserve">
     <value>Your new password has been set.</value>
   </data>
+  <data name="PasswordFollowingRequirements" xml:space="preserve">
+    <value>Password must meet the following requirements:</value>
+  </data>
+  <data name="YouRChangingPswForFormat" xml:space="preserve">
+    <value>You are changing password for '{0}' account.</value>
+  </data>
 </root>

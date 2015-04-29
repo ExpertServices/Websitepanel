@@ -265,6 +265,24 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.CheckBox chkEnablePasswordReset;
         
         /// <summary>
+        /// lblPasswordResetLinkLifeSpan control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblPasswordResetLinkLifeSpan;
+        
+        /// <summary>
+        /// txtPasswordResetLinkLifeSpan control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPasswordResetLinkLifeSpan;
+        
+        /// <summary>
         /// lblWebdavPortalUrl control.
         /// </summary>
         /// <remarks>

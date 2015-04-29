@@ -39,17 +39,62 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (rbtnEmail.Checked)
             {
-                ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID,PanelRequest.AccountID, txtReason.Text, txtEmailAddress.Text, true);
+                ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID, PanelRequest.AccountID,
+                    txtReason.Text, txtEmailAddress.Text, true);
             }
             else
             {
-               var result = ES.Services.Organizations.SendResetUserPasswordLinkSms(PanelRequest.ItemID, PanelRequest.AccountID, txtReason.Text, txtMobile.Text);
+                var result = ES.Services.Organizations.SendResetUserPasswordLinkSms(PanelRequest.ItemID,
+                    PanelRequest.AccountID, txtReason.Text, txtMobile.Text);
 
                 if (!result.IsSuccess)
                 {
                     ShowErrorMessage("SEND_USER_PASSWORD_RESET_SMS");
 
                     return;
+                }
+
+                if (chkDontSaveAsMobile.Checked == false)
+                {
+                    OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
+                        PanelRequest.AccountID);
+
+                    ES.Services.Organizations.SetUserGeneralSettings(
+                        PanelRequest.ItemID, PanelRequest.AccountID,
+                        user.DisplayName,
+                        string.Empty,
+                        false,
+                        user.Disabled,
+                        user.Locked,
+
+                        user.FirstName,
+                        user.Initials,
+                        user.LastName,
+
+                        user.Address,
+                        user.City,
+                        user.State,
+                        user.Zip,
+                        user.Country,
+
+                        user.JobTitle,
+                        user.Company,
+                        user.Department,
+                        user.Office,
+                        user.Manager == null ? null : user.Manager.AccountName,
+
+                        user.BusinessPhone,
+                        user.Fax,
+                        user.HomePhone,
+                        txtMobile.Text,
+                        user.Pager,
+                        user.WebPage,
+                        user.Notes,
+                        user.ExternalEmail,
+                        user.SubscriberNumber,
+                        user.LevelId,
+                        user.IsVIP,
+                        user.UserMustChangePassword);
                 }
             }
 

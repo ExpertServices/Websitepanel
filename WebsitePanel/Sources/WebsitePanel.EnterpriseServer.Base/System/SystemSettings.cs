@@ -56,6 +56,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string TWILIO_PHONEFROM_KEY = "TwilioPhoneFrom";
 
         public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPswResetEnabled";
+        public const string WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN = "WebdavPswdResetLinkLifeSpan";
 
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";

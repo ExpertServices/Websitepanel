@@ -192,4 +192,7 @@
   <data name="TwilioSettings.Text" xml:space="preserve">
     <value>Twilio</value>
   </data>
+  <data name="lblPasswordResetLinkLifeSpan.Text" xml:space="preserve">
+    <value>Password Reset Link Life Span (hours):</value>
+  </data>
 </root>

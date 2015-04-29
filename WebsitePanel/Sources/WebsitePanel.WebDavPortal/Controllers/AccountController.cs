@@ -267,15 +267,21 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return result;
             }
 
+            var tokenEntity = WspContext.Services.Organizations.GetPasswordresetAccessToken(token);
+            var account = WspContext.Services.Organizations.GetUserGeneralSettings(tokenEntity.ItemId,
+                tokenEntity.AccountId);
 
-            var model = new PasswordEditor();
+            var model = new PasswordResetFinalStepModel();
+
+            model.PasswordEditor.Settings = WspContext.Services.Organizations.GetOrganizationPasswordSettings(tokenEntity.ItemId);
+            model.Login = account.UserPrincipalName;
 
             return View(model);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult PasswordResetFinalStep(Guid token, string pincode, PasswordEditor model)
+        public ActionResult PasswordResetFinalStep(Guid token, string pincode, PasswordResetFinalStepModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -293,11 +299,9 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             WspContext.Services.Organizations.SetUserPassword(
                     tokenEntity.ItemId, tokenEntity.AccountId,
-                    model.NewPassword);
+                    model.PasswordEditor.NewPassword);
 
             WspContext.Services.Organizations.DeletePasswordresetAccessToken(token);
-
-            AddMessage(MessageType.Success, Resources.Messages.PasswordSuccessfullyChanged);
 
             return RedirectToRoute(AccountRouteNames.PasswordResetSuccess);
         }

@@ -576,6 +576,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 if (span != null)
                 {
+                    if (span.Value.Duration() == new TimeSpan().Duration())
+                    {
+                        return TimeSpan.MaxValue;
+                    }
+
                     return span.Value;
                 }
             }
@@ -679,14 +684,19 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (!FineGrainedPasswordPolicyExist(runspace, psoName))
                 {
                     CreateFineGrainedPasswordPolicy(runspace, organizationId, psoName, settings);
-
-                    string groupPath = GetGroupPath(organizationId);
-
-                    SetFineGrainedPasswordPolicySubject(runspace, groupPath, psoName);
                 }
                 else
                 {
                     UpdateFineGrainedPasswordPolicy(runspace, psoName, settings);
+                }
+
+                string groupPath = GetGroupPath(organizationId);
+
+                SetFineGrainedPasswordPolicySubject(runspace, groupPath, psoName);
+
+                if (settings.MaxPasswordAge == 0)
+                {
+                    SetPasswordNeverExpiresInFineGrainedPasswordPolicy(runspace, psoName);
                 }
             }
             catch (Exception ex)
@@ -704,6 +714,24 @@ namespace WebsitePanel.Providers.HostedSolution
         private string FormOrganizationPSOName(string organizationId)
         {
             return string.Format("{0}-PSO", organizationId);
+        }
+
+        private void SetPasswordNeverExpiresInFineGrainedPasswordPolicy(Runspace runspace, string psoName)
+        {
+            var psoObject = GetFineGrainedPasswordPolicy(runspace, psoName);
+
+            var distinguishedName = GetPSObjectProperty(psoObject, "DistinguishedName") as string;
+
+            var cmd = new Command("Set-ADObject");
+            cmd.Parameters.Add("Identity", distinguishedName);
+
+            var hashTable = new Hashtable();
+
+            hashTable.Add("msDS-MaximumPasswordAge", "-9223372036854775808");
+
+            cmd.Parameters.Add("Replace", hashTable);
+
+            ExecuteShellCommand(runspace, cmd);
         }
 
         private bool FineGrainedPasswordPolicyExist(Runspace runspace, string psoName)
@@ -759,12 +787,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
             var cmd = new Command("Add-ADFineGrainedPasswordPolicySubject");
             cmd.Parameters.Add("Identity", psoName);
-            cmd.Parameters.Add("Subjects", entry.Properties[ADAttributes.SAMAccountName].Value.ToString());
+            cmd.Parameters.Add("Subjects", entry.Properties[ADAttributes.DistinguishedName].Value.ToString());
 
             ExecuteShellCommand(runspace, cmd);
 
             cmd = new Command("Set-ADGroup");
-            cmd.Parameters.Add("Identity", entry.Properties[ADAttributes.SAMAccountName].Value.ToString());
+            cmd.Parameters.Add("Identity", entry.Properties[ADAttributes.DistinguishedName].Value.ToString());
             cmd.Parameters.Add("GroupScope", "Global");
 
             ExecuteShellCommand(runspace, cmd);
