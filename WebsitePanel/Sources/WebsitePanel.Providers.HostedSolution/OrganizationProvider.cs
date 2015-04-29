@@ -693,6 +693,11 @@ namespace WebsitePanel.Providers.HostedSolution
                 string groupPath = GetGroupPath(organizationId);
 
                 SetFineGrainedPasswordPolicySubject(runspace, groupPath, psoName);
+
+                if (settings.MaxPasswordAge == 0)
+                {
+                    SetPasswordNeverExpiresInFineGrainedPasswordPolicy(runspace, psoName);
+                }
             }
             catch (Exception ex)
             {
@@ -709,6 +714,24 @@ namespace WebsitePanel.Providers.HostedSolution
         private string FormOrganizationPSOName(string organizationId)
         {
             return string.Format("{0}-PSO", organizationId);
+        }
+
+        private void SetPasswordNeverExpiresInFineGrainedPasswordPolicy(Runspace runspace, string psoName)
+        {
+            var psoObject = GetFineGrainedPasswordPolicy(runspace, psoName);
+
+            var distinguishedName = GetPSObjectProperty(psoObject, "DistinguishedName") as string;
+
+            var cmd = new Command("Set-ADObject");
+            cmd.Parameters.Add("Identity", distinguishedName);
+
+            var hashTable = new Hashtable();
+
+            hashTable.Add("msDS-MaximumPasswordAge", "-9223372036854775808");
+
+            cmd.Parameters.Add("Replace", hashTable);
+
+            ExecuteShellCommand(runspace, cmd);
         }
 
         private bool FineGrainedPasswordPolicyExist(Runspace runspace, string psoName)
