@@ -1654,15 +1654,14 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
-                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(accessToken.ItemId,
-                    accessToken.AccountId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(accessToken.ItemId, accessToken.AccountId);
 
                 if (string.IsNullOrEmpty(phoneTo))
                 {
                     phoneTo = user.MobilePhone;
                 }
 
-                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_RESET_LETTER);
+                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_RESET_PINCODE_LETTER);
 
                 string body = settings["PasswordResetPincodeSmsBody"];
 
@@ -1687,6 +1686,90 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 SetAccessTokenResponse(token, pincode);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
+        public static ResultObject SendResetUserPasswordPincodeEmail(Guid token, string mailTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_EMAIL_PINCODE");
+
+            try
+            {
+                var accessToken = OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+
+                if (accessToken == null)
+                {
+                    throw new Exception(string.Format("Access token not found"));
+                }
+
+                // load organization
+                Organization org = GetOrganization(accessToken.ItemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found"));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(accessToken.ItemId, accessToken.AccountId);
+
+                if (string.IsNullOrEmpty(mailTo))
+                {
+                    mailTo = user.PrimaryEmailAddress;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_RESET_PINCODE_LETTER);
+
+                var generalSettings = OrganizationController.GetOrganizationGeneralSettings(accessToken.ItemId);
+
+                var logoUrl = generalSettings != null ? generalSettings.OrganizationLogoUrl : string.Empty;
+
+                if (string.IsNullOrEmpty(logoUrl))
+                {
+                    logoUrl = settings["LogoUrl"];
+                }
+
+                string from = settings["From"];
+
+                string subject = settings["Subject"];
+                string body = owner.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
+                bool isHtml = owner.HtmlMail;
+
+                MailPriority priority = MailPriority.Normal;
+
+                if (!String.IsNullOrEmpty(settings["Priority"]))
+                {
+                    priority = (MailPriority)Enum.Parse(typeof(MailPriority), settings["Priority"], true);
+                }
+
+                string pincode = GeneratePincode() ;
+
+                Hashtable items = new Hashtable();
+
+                items["user"] = user;
+                items["logoUrl"] = logoUrl;
+                items["passwordResetPincode"] = pincode;
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                    SetAccessTokenResponse(token, pincode);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("MailTo : " + mailTo);
+
+                // send mail message
+                MailHelper.SendMessage(from, mailTo, null, subject, body, priority, isHtml);
             }
             catch (Exception ex)
             {
@@ -1892,6 +1975,20 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return resultUrl.ToString();
+        }
+
+        public static AccessToken CreatePasswordResetAccessToken(int itemId, int accountId)
+        {
+            var settings = GetWebDavSystemSettings();
+
+            if (settings == null || !settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY, false))
+            {
+                return null;
+            }
+
+            var hours = settings.GetValueOrDefault(SystemSettings.WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN, 1);
+
+            return CreateAccessToken(itemId, accountId, AccessTokenTypes.PasswrodReset, hours);
         }
 
         private static AccessToken CreateAccessToken(int itemId, int accountId, AccessTokenTypes type, int hours)

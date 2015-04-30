@@ -1,4 +1,6 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SettingsUserPasswordResetLetter.ascx.cs" Inherits="WebsitePanel.Portal.SettingsUserPasswordResetLetter" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SettingsUserPasswordResetPincodeLetter.ascx.cs" Inherits="WebsitePanel.Portal.SettingsUserPasswordResetPincodeLetter" %>
+
+
 
 
 <table>
@@ -43,11 +45,11 @@
 	</tr>
 
     <tr>
-		<td class="SubHead" colspan="2"><br /><br /><asp:Label ID="lblPasswordResetLinkSmsBody" runat="server" meta:resourcekey="lblPasswordResetLinkSmsBody" Text="Password Reset Link Sms Body:"></asp:Label></td>
+		<td class="SubHead" colspan="2"><br /><br /><asp:Label ID="lblPasswordResetPincodeSmsBody" runat="server" meta:resourcekey="lblPasswordResetPincodeSmsBody" Text="Password Reset Link Pincode Body:"></asp:Label></td>
 	</tr>
 	<tr>
 		<td class="Normal" colspan="2">
-			<asp:TextBox ID="txtBodyPasswordResetLinkSmsBody" runat="server" Rows="15" TextMode="MultiLine" Width="680px" CssClass="NormalTextBox" Wrap="false"></asp:TextBox></td>
+			<asp:TextBox ID="txtPasswordResetPincodeSmsBody" runat="server" Rows="15" TextMode="MultiLine" Width="680px" CssClass="NormalTextBox" Wrap="false"></asp:TextBox></td>
 	</tr>
     
 </table>

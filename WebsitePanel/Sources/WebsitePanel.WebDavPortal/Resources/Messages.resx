@@ -151,7 +151,7 @@
     <value>A message was sent to your email address. Please check your email for further instructions.</value>
   </data>
   <data name="PasswordResetSmsHintFormat" xml:space="preserve">
-    <value>Please enter the verification code we sent to your phone. If you didn't receive a code, you can {0}.</value>
+    <value>Please enter the verification code we sent to you. If you didn't receive a code, you can {0}.</value>
   </data>
   <data name="PasswordResetUserReason" xml:space="preserve">
     <value>Webdav portal user request.</value>
@@ -167,6 +167,12 @@
   </data>
   <data name="PhoneNumberInvalid" xml:space="preserve">
     <value>Phone number is invalid</value>
+  </data>
+  <data name="PincodeEmailWasNotSent" xml:space="preserve">
+    <value>Pincode was not sent to your email address.</value>
+  </data>
+  <data name="PincodeEmailWasSent" xml:space="preserve">
+    <value>Pincode was sent to your email address.</value>
   </data>
   <data name="Required" xml:space="preserve">
     <value>{0} field is required</value>
