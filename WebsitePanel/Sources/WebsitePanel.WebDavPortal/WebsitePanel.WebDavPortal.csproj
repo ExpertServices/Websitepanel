@@ -196,10 +196,12 @@
     <Compile Include="Mapping\Profiles\Webdav\ResourceTableItemProfile.cs" />
     <Compile Include="ModelBinders\DataTables\JqueryDataTableModelBinder.cs" />
     <Compile Include="Models\AccountModel.cs" />
+    <Compile Include="Models\Account\Enums\PincodeSendMethod.cs" />
     <Compile Include="Models\Account\PasswordChangeModel.cs" />
-    <Compile Include="Models\Account\PasswordResetEmailModel.cs" />
+    <Compile Include="Models\Account\PasswordResetLoginModel.cs" />
     <Compile Include="Models\Account\PasswordResetFinalStepModel.cs" />
-    <Compile Include="Models\Account\PasswordResetSmsModel.cs" />
+    <Compile Include="Models\Account\PasswordResetPincodeSendOptionsModel.cs" />
+    <Compile Include="Models\Account\PasswordResetPincodeModel.cs" />
     <Compile Include="Models\Account\UserProfile.cs" />
     <Compile Include="Models\Common\AjaxModel.cs" />
     <Compile Include="Models\Common\DataTable\JqueryDataTableBaseEntity.cs" />
@@ -486,11 +488,12 @@
     <Content Include="Views\Shared\EditorTemplates\CountrySelector.cshtml" />
     <Content Include="Views\Account\PasswordChange.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\PasswordEditor.cshtml" />
-    <Content Include="Views\Account\PasswordResetEmail.cshtml" />
+    <Content Include="Views\Account\PasswordResetLogin.cshtml" />
     <Content Include="Views\Account\PasswordResetEmailSent.cshtml" />
-    <Content Include="Views\Account\PasswordResetSms.cshtml" />
+    <Content Include="Views\Account\PasswordResetPincode.cshtml" />
     <Content Include="Views\Account\PasswordResetFinalStep.cshtml" />
     <Content Include="Views\Account\PasswordSuccessfullyChanged.cshtml" />
+    <Content Include="Views\Account\PasswordResetPincodeSendOptions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\FileSystem\Enums\" />

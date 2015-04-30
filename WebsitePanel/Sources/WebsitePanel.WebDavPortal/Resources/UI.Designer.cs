@@ -700,6 +700,15 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pincode.
+        /// </summary>
+        public static string Pincode {
+            get {
+                return ResourceManager.GetString("Pincode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please wait....
         /// </summary>
         public static string PleaseWaitWithDots {
@@ -808,11 +817,29 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        public static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Send email.
         /// </summary>
         public static string SendEmail {
             get {
                 return ResourceManager.GetString("SendEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When you click the send button below, a Password Reset PIN will be sent to your Cell Phone or Email Address..
+        /// </summary>
+        public static string SendPincodeTo {
+            get {
+                return ResourceManager.GetString("SendPincodeTo", resourceCulture);
             }
         }
         

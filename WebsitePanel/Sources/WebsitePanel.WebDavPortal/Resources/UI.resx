@@ -411,4 +411,13 @@
   <data name="YouRChangingPswForFormat" xml:space="preserve">
     <value>You are changing password for '{0}' account.</value>
   </data>
+  <data name="Pincode" xml:space="preserve">
+    <value>Pincode</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="SendPincodeTo" xml:space="preserve">
+    <value>When you click the send button below, a Password Reset PIN will be sent to your Cell Phone or Email Address.</value>
+  </data>
 </root>

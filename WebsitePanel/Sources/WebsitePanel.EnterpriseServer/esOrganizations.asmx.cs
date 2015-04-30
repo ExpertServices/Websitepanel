@@ -204,6 +204,12 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.SendResetUserPasswordPincodeSms(token, phoneTo);
         }
 
+        [WebMethod]
+        public ResultObject SendResetUserPasswordPincodeEmail(Guid token, string mailTo = null)
+        {
+            return OrganizationController.SendResetUserPasswordPincodeEmail(token, mailTo);
+        }
+
 
     #endregion
 
@@ -359,6 +365,12 @@ namespace WebsitePanel.EnterpriseServer
         public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
         {
             OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo, finalStep);
+        }
+
+        [WebMethod]
+        public AccessToken CreatePasswordResetAccessToken(int itemId, int accountId)
+        {
+            return OrganizationController.CreatePasswordResetAccessToken(itemId, accountId);
         }
 
         #endregion
