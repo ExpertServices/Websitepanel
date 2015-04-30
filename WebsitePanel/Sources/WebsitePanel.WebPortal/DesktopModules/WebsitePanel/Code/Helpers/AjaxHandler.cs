@@ -16,6 +16,14 @@ namespace WebsitePanel.WebPortal
             String filterValue = context.Request.Params["term"];
             String fullType = context.Request.Params["fullType"];
             String columnType = context.Request.Params["columnType"];
+            String numResults = context.Request.Params["itemCount"];
+            int iNumResults = 15;
+            if ((numResults != null) && (numResults.Length > 0))
+            {
+                int num = Int32.Parse(numResults);
+                if (num > 0)
+                    iNumResults = num;
+            }
 
             if (fullType == "Spaces")
             {
@@ -23,7 +31,7 @@ namespace WebsitePanel.WebPortal
                 int itemType = Int32.Parse(strItemType);
                 DataSet dsObjectItems = ES.Services.Packages.SearchServiceItemsPaged(PanelSecurity.EffectiveUserId, itemType,
                     String.Format("%{0}%", filterValue),
-                   "",0, 15);
+                   "", 0, iNumResults);
                 DataTable dt = dsObjectItems.Tables[1];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
                 for (int i = 0; i < dt.Rows.Count; ++i)
@@ -47,7 +55,7 @@ namespace WebsitePanel.WebPortal
             {
                 DataSet dsObjectItems = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, null,
                     String.Format("%{0}%", filterValue),
-                   0, 0, "", 0, 15, columnType,fullType);
+                   0, 0, "", 0, iNumResults, columnType, fullType);
                 DataTable dt = dsObjectItems.Tables[2];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
                 for (int i = 0; i < dt.Rows.Count; ++i)
