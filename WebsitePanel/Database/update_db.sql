@@ -10848,7 +10848,7 @@ SET @sqlSpace = '
 		SI.ItemID as ItemID,
 		SI.ItemName as TextSearch,
 		STYPE.DisplayName as ColumnType,
-		SI.ItemName as FullType,
+		STYPE.DisplayName as FullType,
 		SI.PackageID as PackageID
 	FROM @ItemsService AS I
 	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID

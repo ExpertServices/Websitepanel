@@ -61,16 +61,13 @@ namespace WebsitePanel.WebPortal
                 for (int i = 0; i < dt.Rows.Count; ++i)
                 {
                     DataRow row = dt.Rows[i];
-                    if ((fullType == null) || (fullType.Length == 0) || (fullType == row["FullType"].ToString()))
-                    {
-                        Dictionary<string, string> obj = new Dictionary<string, string>();
-                        obj["ColumnType"] = row["ColumnType"].ToString();
-                        obj["TextSearch"] = row["TextSearch"].ToString();
-                        obj["ItemID"] = row["ItemID"].ToString();
-                        obj["PackageID"] = row["PackageID"].ToString();
-                        obj["FullType"] = row["FullType"].ToString();
-                        dataList.Add(obj);
-                    }
+                    Dictionary<string, string> obj = new Dictionary<string, string>();
+                    obj["ColumnType"] = row["ColumnType"].ToString();
+                    obj["TextSearch"] = row["TextSearch"].ToString();
+                    obj["ItemID"] = row["ItemID"].ToString();
+                    obj["PackageID"] = row["PackageID"].ToString();
+                    obj["FullType"] = row["FullType"].ToString();
+                    dataList.Add(obj);
                 }
 
                 var jsonSerialiser = new JavaScriptSerializer();
