@@ -75,6 +75,16 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
             }
         }
 
+        public string AccountIdKey
+        {
+            get
+            {
+                SessionKeysElement sessionKey =
+                    _sessionKeys.FirstOrDefault(x => x.Key == SessionKeysElement.AccountIdKey);
+                return sessionKey != null ? sessionKey.Value : null;
+            }
+        }
+
         public string ResourseRenderCount
         {
             get

@@ -16,6 +16,7 @@ namespace WebsitePanel.WebDav.Core.Config.WebConfigSections
         public const string ResourseRenderCountKey = "ResourseRenderCountSessionKey";
         public const string ItemIdSessionKey = "ItemId";
         public const string OwaEditFoldersSessionKey = "OwaEditFoldersSession";
+        public const string AccountIdKey = "AccountIdKey";
 
         [ConfigurationProperty(KeyKey, IsKey = true, IsRequired = true)]
         public string Key

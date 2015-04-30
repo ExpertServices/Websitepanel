@@ -10,7 +10,7 @@
 namespace WebsitePanel.Portal {
     
     
-    public partial class SettingsUserPasswordResetLetter {
+    public partial class SettingsUserPasswordResetPincodeLetter {
         
         /// <summary>
         /// lblFrom control.
@@ -121,21 +121,21 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtTextBody;
         
         /// <summary>
-        /// lblPasswordResetLinkSmsBody control.
+        /// lblPasswordResetPincodeSmsBody control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPasswordResetLinkSmsBody;
+        protected global::System.Web.UI.WebControls.Label lblPasswordResetPincodeSmsBody;
         
         /// <summary>
-        /// txtBodyPasswordResetLinkSmsBody control.
+        /// txtPasswordResetPincodeSmsBody control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtBodyPasswordResetLinkSmsBody;
+        protected global::System.Web.UI.WebControls.TextBox txtPasswordResetPincodeSmsBody;
     }
 }

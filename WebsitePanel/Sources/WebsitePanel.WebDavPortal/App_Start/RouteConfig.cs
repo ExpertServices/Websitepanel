@@ -25,21 +25,21 @@ namespace WebsitePanel.WebDavPortal
                 );
 
             routes.MapRoute(
-                name: AccountRouteNames.PasswordResetEmail,
+                name: AccountRouteNames.PasswordResetLogin,
                 url: "account/password-reset/step-1",
-                defaults: new { controller = "Account", action = "PasswordResetEmail" }
+                defaults: new { controller = "Account", action = "PasswordResetLogin" }
                 );
 
             routes.MapRoute(
-                name: AccountRouteNames.PasswordResetSms,
+                name: AccountRouteNames.PasswordResetPincodeSendOptions,
                 url: "account/password-reset/step-2/{token}",
-                defaults: new { controller = "Account", action = "PasswordResetSms" }
+                defaults: new { controller = "Account", action = "PasswordResetPincodeSendOptions" }
                 );
 
             routes.MapRoute(
-                name: AccountRouteNames.PasswordResetSendSms,
-                url: "account/password-reset/send-new-sms/{token}",
-                defaults: new { controller = "Account", action = "PasswordResetSendSms" }
+                name: AccountRouteNames.PasswordResetPincode,
+                url: "account/password-reset/step-3/{token}",
+                defaults: new { controller = "Account", action = "PasswordResetPincode" }
                 );
 
             routes.MapRoute(

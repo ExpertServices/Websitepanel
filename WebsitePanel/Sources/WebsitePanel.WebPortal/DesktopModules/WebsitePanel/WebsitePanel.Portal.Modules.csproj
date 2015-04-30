@@ -350,12 +350,19 @@
       <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="SettingsUserPasswordResetPincodeLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetPincodeLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="SearchObject.ascx.cs">
       <DependentUpon>SearchObject.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="SearchObject.ascx.designer.cs">
       <DependentUpon>SearchObject.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetPincodeLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetPincodeLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.cs">
       <DependentUpon>Connect.aspx</DependentUpon>
@@ -4900,6 +4907,7 @@
     <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
     <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
     <Content Include="SettingsUserPasswordResetLetter.ascx" />
+    <Content Include="SettingsUserPasswordResetPincodeLetter.ascx" />
     <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
     <Content Include="VPS2012\RemoteDesktop\msrdp.cab" />
     <Content Include="VPS2012\TestVirtualMachineTemplate.aspx" />
@@ -5014,6 +5022,7 @@
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
     <Content Include="App_LocalResources\SettingsUserPasswordResetLetter.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordResetPincodeLetter.ascx.resx" />
     <Content Include="App_LocalResources\VpsMenu.ascx.resx">
       <SubType>Designer</SubType>
     </Content>

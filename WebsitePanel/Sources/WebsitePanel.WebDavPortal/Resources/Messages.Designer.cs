@@ -160,7 +160,7 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please enter the verification code we sent to your phone. If you didn&apos;t receive a code, you can {0}..
+        ///   Looks up a localized string similar to Please enter the verification code we sent to you. If you didn&apos;t receive a code, you can {0}..
         /// </summary>
         public static string PasswordResetSmsHintFormat {
             get {
@@ -210,6 +210,24 @@ namespace WebsitePanel.WebDavPortal.Resources {
         public static string PhoneNumberInvalid {
             get {
                 return ResourceManager.GetString("PhoneNumberInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pincode was not sent to your email address..
+        /// </summary>
+        public static string PincodeEmailWasNotSent {
+            get {
+                return ResourceManager.GetString("PincodeEmailWasNotSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pincode was sent to your email address..
+        /// </summary>
+        public static string PincodeEmailWasSent {
+            get {
+                return ResourceManager.GetString("PincodeEmailWasSent", resourceCulture);
             }
         }
         

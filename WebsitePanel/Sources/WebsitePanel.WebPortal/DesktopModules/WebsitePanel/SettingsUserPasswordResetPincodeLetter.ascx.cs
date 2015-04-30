@@ -8,7 +8,7 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal
 {
-    public partial class SettingsUserPasswordResetLetter : WebsitePanelControlBase, IUserSettingsEditorControl
+    public partial class SettingsUserPasswordResetPincodeLetter : WebsitePanelControlBase, IUserSettingsEditorControl
     {
         public void BindSettings(UserSettings settings)
         {
@@ -19,7 +19,7 @@ namespace WebsitePanel.Portal
             txtTextBody.Text = settings["TextBody"];
             txtLogoUrl.Text = settings["LogoUrl"];
 
-            txtBodyPasswordResetLinkSmsBody.Text = settings["PasswordResetLinkSmsBody"];
+            txtPasswordResetPincodeSmsBody.Text = settings["PasswordResetPincodeSmsBody"];
         }
 
         public void SaveSettings(UserSettings settings)
@@ -31,7 +31,7 @@ namespace WebsitePanel.Portal
             settings["TextBody"] = txtTextBody.Text;
             settings["LogoUrl"] = txtLogoUrl.Text;
 
-            settings["PasswordResetLinkSmsBody"]= txtBodyPasswordResetLinkSmsBody.Text;
+            settings["PasswordResetPincodeSmsBody"] = txtPasswordResetPincodeSmsBody.Text;
         }
     }
 }
