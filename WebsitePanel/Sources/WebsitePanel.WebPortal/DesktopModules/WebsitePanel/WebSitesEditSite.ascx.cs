@@ -204,9 +204,25 @@ namespace WebsitePanel.Portal
                 bool generalIPExists = ipsGeneral.Any() && !string.IsNullOrEmpty(ipsGeneral[0].ExternalIP);
                 if (generalIPExists)
                 {
-                    lblSharedIP.Text = string.Format("({0})", ipsGeneral[0].ExternalIP); 
+                    lblSharedIP.Text = string.Format("({0})", ipsGeneral[0].ExternalIP);
                 }
-                lblSharedIP.Visible = generalIPExists;
+                else
+                {
+                    string[] settings = ES.Services.Servers.GetServiceSettings(site.ServiceId);
+                    foreach (string setting in settings)
+                    {
+                        int idx = setting.IndexOf('=');
+                        string option = setting.Substring(0, idx);
+                        if (String.Compare(option, "publicsharedip", true) == 0)
+                        {
+                            string res = setting.Substring(idx + 1);
+                            if (!String.IsNullOrEmpty(res))
+                                lblSharedIP.Text = string.Format("({0})", res);
+                            break;
+                        }
+                    }
+                }
+                lblSharedIP.Visible = !String.IsNullOrEmpty(lblSharedIP.Text);
             }
 
             dedicatedIP.Visible = site.IsDedicatedIP;
