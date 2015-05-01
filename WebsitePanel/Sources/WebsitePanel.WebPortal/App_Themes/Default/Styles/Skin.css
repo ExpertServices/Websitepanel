@@ -124,7 +124,7 @@ table.BorderFillBox td .Brick {padding:0; line-height:normal; margin-bottom:9px;
 .GridFooter {clear:both; font-size:8pt; color:#888; padding:8px 5px; border:1px solid #ddd; margin:10px 0 20px 0;}
 .GridFooter img {vertical-align:-2px !important;}
 .FormBody fieldset {padding:5px 10px 10px 10px; border:1px solid #ccc; margin-top:10px;}
-.PreviewArea {background:#f0ad4e; padding:15px; margin:20px; color:#fff; font-size:14px;}
+.PreviewArea {background:#f0ad4e; padding:15px; margin:20px; color:#000; font-size:14px;}
 .HostingPlanGroup .Header {clear:both; background:#aa73c1; color:#fff; height:30px !important; line-height:30px;}
 .HostingPlanGroup .Header span {font-size:inherit; line-height:inherit;}
 .HostingPlanGroup .Header .Left {float:left; font-weight:bold;}
