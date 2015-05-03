@@ -10933,10 +10933,17 @@ DECLARE @ItemsReturn TABLE
 	)
 INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)	
 SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
-FROM @ItemsAll AS IA'
+FROM @ItemsAll AS IA WHERE (1 = 1) '
+
+
+IF @ColType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.ColumnType in ( ' + @ColType + ' ) ';
+
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
 
 IF @FilterValue <> ''
-SET @sqlReturn = @sqlReturn + ' WHERE IA.' + @FilterColumn + ' LIKE @FilterValue '
+SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
 
 IF @SortColumn <> '' AND @SortColumn IS NOT NULL
 SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
@@ -10953,12 +10960,6 @@ FROM @ItemsReturn AS IR WHERE (1 = 1)
 
 IF  @MaximumRows > 0
 SET @sqlReturn = @sqlReturn + ' AND IR.ItemPosition BETWEEN @StartRow AND @EndRow';
-
-IF @ColType <> ''
-SET @sqlReturn = @sqlReturn + ' AND ColumnType in ( ' + @ColType + ' ) ';
-
-IF @FullType <> ''
-SET @sqlReturn = @sqlReturn + ' AND IR.FullType = ''' + @FullType + '''';
 
 exec sp_executesql @sqlReturn, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curSpaceValue cursor, @curUsersValue cursor',
 @StartRow, @MaximumRows, @FilterValue, @curSpace, @curUsers
