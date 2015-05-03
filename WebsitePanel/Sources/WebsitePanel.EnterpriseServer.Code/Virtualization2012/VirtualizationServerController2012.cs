@@ -42,6 +42,7 @@ using System.Net.Mail;
 using System.Diagnostics;
 ﻿using System.Linq;
 ﻿using System.Net;
+﻿using WebsitePanel.EnterpriseServer.Code.Virtualization2012;
 ﻿using WebsitePanel.Providers.Virtualization2012;
 
 namespace WebsitePanel.EnterpriseServer
@@ -377,24 +378,24 @@ namespace WebsitePanel.EnterpriseServer
                         quotaResults.Add(VirtualizationErrorCodes.QUOTA_NOT_IN_DYNAMIC_RAM);
                 }
 
-                CheckListsQuota(cntx, quotaResults, Quotas.VPS2012_SERVERS_NUMBER, VirtualizationErrorCodes.QUOTA_EXCEEDED_SERVERS_NUMBER);
+                QuotaHelper.CheckListsQuota(cntx, quotaResults, Quotas.VPS2012_SERVERS_NUMBER, VirtualizationErrorCodes.QUOTA_EXCEEDED_SERVERS_NUMBER);
 
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
+                QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
+                QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
+                QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
+                QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
 
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_DVD_ENABLED, dvdInstalled, VirtualizationErrorCodes.QUOTA_EXCEEDED_DVD_ENABLED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_BOOT_CD_ALLOWED, bootFromCD, VirtualizationErrorCodes.QUOTA_EXCEEDED_CD_ALLOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_DVD_ENABLED, dvdInstalled, VirtualizationErrorCodes.QUOTA_EXCEEDED_DVD_ENABLED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_BOOT_CD_ALLOWED, bootFromCD, VirtualizationErrorCodes.QUOTA_EXCEEDED_CD_ALLOWED);
 
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_START_SHUTDOWN_ALLOWED, startShutdownAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_START_SHUTDOWN_ALLOWED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PAUSE_RESUME_ALLOWED, pauseResumeAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_PAUSE_RESUME_ALLOWED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REBOOT_ALLOWED, rebootAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REBOOT_ALLOWED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_RESET_ALOWED, resetAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_RESET_ALOWED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REINSTALL_ALLOWED, reinstallAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REINSTALL_ALLOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_START_SHUTDOWN_ALLOWED, startShutdownAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_START_SHUTDOWN_ALLOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PAUSE_RESUME_ALLOWED, pauseResumeAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_PAUSE_RESUME_ALLOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REBOOT_ALLOWED, rebootAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REBOOT_ALLOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_RESET_ALOWED, resetAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_RESET_ALOWED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REINSTALL_ALLOWED, reinstallAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REINSTALL_ALLOWED);
 
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED, externalNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_EXTERNAL_NETWORK_ENABLED);
-                CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_NETWORK_ENABLED, privateNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_NETWORK_ENABLED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED, externalNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_EXTERNAL_NETWORK_ENABLED);
+                QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_NETWORK_ENABLED, privateNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_NETWORK_ENABLED);
 
                 // check external addresses number
                 if (!randomExternalAddresses && externalAddresses != null)
@@ -407,7 +408,7 @@ namespace WebsitePanel.EnterpriseServer
                 // check private addresses number
                 if (!randomPrivateAddresses && privateAddresses != null)
                     privateAddressesNumber = privateAddresses.Length;
-                CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_IP_ADDRESSES_NUMBER, privateAddressesNumber, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_ADDRESSES_NUMBER);
+                QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_IP_ADDRESSES_NUMBER, privateAddressesNumber, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_ADDRESSES_NUMBER);
 
                 // check management network parameters
                 NetworkAdapterDetails manageNic = GetManagementNetworkDetails(packageId);
@@ -1107,58 +1108,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // complete task
                 TaskManager.CompleteTask();
-            }
-        }
-
-        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, long currentVal, long val, string messageKey)
-        {
-            CheckQuotaValue(cntx, errors, quotaName, currentVal, val, messageKey);
-        }
-        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, int currentVal, int val, string messageKey)
-        {
-            CheckQuotaValue(cntx, errors, quotaName, Convert.ToInt64(currentVal), Convert.ToInt64(val), messageKey);
-        }
-
-        private static void CheckNumericQuota(PackageContext cntx, List<string> errors, string quotaName, int val, string messageKey)
-        {
-            CheckQuotaValue(cntx, errors, quotaName, 0, val, messageKey);
-        }
-
-        private static void CheckBooleanQuota(PackageContext cntx, List<string> errors, string quotaName, bool val, string messageKey)
-        {
-            CheckQuotaValue(cntx, errors, quotaName, 0, val ? 1 : 0, messageKey);
-        }
-
-        private static void CheckListsQuota(PackageContext cntx, List<string> errors, string quotaName, string messageKey)
-        {
-            CheckQuotaValue(cntx, errors, quotaName, 0, -1, messageKey);
-        }
-
-        private static void CheckQuotaValue(PackageContext cntx, List<string> errors, string quotaName, long currentVal, long val, string messageKey)
-        {
-            if (!cntx.Quotas.ContainsKey(quotaName))
-                return;
-
-            QuotaValueInfo quota = cntx.Quotas[quotaName];
-
-            if(val == -1 && quota.QuotaExhausted) // check if quota already reached
-            {
-                errors.Add(messageKey + ":" + quota.QuotaAllocatedValue);
-            }
-            else if(quota.QuotaAllocatedValue == -1)
-                return; // unlimited
-            else if (quota.QuotaTypeId == 1 && val == 1 && quota.QuotaAllocatedValue == 0) // bool quota
-                errors.Add(messageKey);
-            else if (quota.QuotaTypeId == 2)
-            {
-                long maxValue = quota.QuotaAllocatedValue - quota.QuotaUsedValue + currentVal;
-                if(val > maxValue)
-                    errors.Add(messageKey + ":" + maxValue);
-            }
-            else if (quota.QuotaTypeId == 3 && val > quota.QuotaAllocatedValue)
-            {
-                int maxValue = quota.QuotaAllocatedValue;
-                errors.Add(messageKey + ":" + maxValue);
             }
         }
 
@@ -2005,22 +1954,22 @@ namespace WebsitePanel.EnterpriseServer
                     quotaResults.Add(VirtualizationErrorCodes.QUOTA_NOT_IN_DYNAMIC_RAM);
             }
 
-            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
-            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, currentRam, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
-            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, vm.HddSize, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
-            CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
-
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_DVD_ENABLED, dvdInstalled, VirtualizationErrorCodes.QUOTA_EXCEEDED_DVD_ENABLED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_BOOT_CD_ALLOWED, bootFromCD, VirtualizationErrorCodes.QUOTA_EXCEEDED_CD_ALLOWED);
-
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_START_SHUTDOWN_ALLOWED, startShutdownAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_START_SHUTDOWN_ALLOWED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PAUSE_RESUME_ALLOWED, pauseResumeAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_PAUSE_RESUME_ALLOWED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REBOOT_ALLOWED, rebootAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REBOOT_ALLOWED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_RESET_ALOWED, resetAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_RESET_ALOWED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REINSTALL_ALLOWED, reinstallAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REINSTALL_ALLOWED);
-
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED, externalNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_EXTERNAL_NETWORK_ENABLED);
-            CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_NETWORK_ENABLED, privateNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_NETWORK_ENABLED);
+            QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_CPU_NUMBER, cpuCores, VirtualizationErrorCodes.QUOTA_EXCEEDED_CPU);
+            QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_RAM, currentRam, newRam, VirtualizationErrorCodes.QUOTA_EXCEEDED_RAM);
+            QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_HDD, vm.HddSize, hddGB, VirtualizationErrorCodes.QUOTA_EXCEEDED_HDD);
+            QuotaHelper.CheckNumericQuota(cntx, quotaResults, Quotas.VPS2012_SNAPSHOTS_NUMBER, snapshots, VirtualizationErrorCodes.QUOTA_EXCEEDED_SNAPSHOTS);
+            
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_DVD_ENABLED, dvdInstalled, VirtualizationErrorCodes.QUOTA_EXCEEDED_DVD_ENABLED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_BOOT_CD_ALLOWED, bootFromCD, VirtualizationErrorCodes.QUOTA_EXCEEDED_CD_ALLOWED);
+            
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_START_SHUTDOWN_ALLOWED, startShutdownAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_START_SHUTDOWN_ALLOWED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PAUSE_RESUME_ALLOWED, pauseResumeAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_PAUSE_RESUME_ALLOWED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REBOOT_ALLOWED, rebootAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REBOOT_ALLOWED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_RESET_ALOWED, resetAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_RESET_ALOWED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_REINSTALL_ALLOWED, reinstallAllowed, VirtualizationErrorCodes.QUOTA_EXCEEDED_REINSTALL_ALLOWED);
+            
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_EXTERNAL_NETWORK_ENABLED, externalNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_EXTERNAL_NETWORK_ENABLED);
+            QuotaHelper.CheckBooleanQuota(cntx, quotaResults, Quotas.VPS2012_PRIVATE_NETWORK_ENABLED, privateNetworkEnabled, VirtualizationErrorCodes.QUOTA_EXCEEDED_PRIVATE_NETWORK_ENABLED);
 
             // check acceptable values
             if (ramMB <= 0)
@@ -3639,9 +3588,7 @@ namespace WebsitePanel.EnterpriseServer
         
         private static VirtualizationServer2012 GetVirtualizationProxy(int serviceId)
         {
-            VirtualizationServer2012 ws = new VirtualizationServer2012();
-            ServiceProviderProxy.Init(ws, serviceId);
-            return ws;
+            return VirtualizationHelper.GetVirtualizationProxy(serviceId);
         }
 
         public static VirtualMachine GetVirtualMachineByItemId(int itemId)
@@ -3790,15 +3737,22 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StartTask("VPS2012", "SetVmReplication");
 
             ResultObject result = new ResultObject();
+
+
             try
             {
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+
+                // Check Quotas
+                ReplicationHelper.CheckReplicationQuota(vm.PackageId, ref result);
+                if (result.ErrorCodes.Count > 0)
+                    return result;
+
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
 
                 // Get replica server
-                var replicaServerInfo = GetReplicaInfoForService(vm.ServiceId, ref result);
-                if (result.ErrorCodes.Count > 0)
-                    return result;
+                var replicaServerInfo = ReplicationHelper.GetReplicaInfoForService(vm.ServiceId, ref result);
+                if (result.ErrorCodes.Count > 0) return result;
 
                 // We should use enable replication or set replication?
                 var vmReplica = vs.GetReplication(vm.VirtualMachineId);
@@ -3831,10 +3785,15 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+
+                // Check Quotas
+                ReplicationHelper.CheckReplicationQuota(vm.PackageId, ref result);
+                if (result.ErrorCodes.Count > 0) return result;
+
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
                 vs.DisableVmReplication(vm.VirtualMachineId);
 
-                CleanUpReplicaServer(vm);
+                ReplicationHelper.CleanUpReplicaServer(vm);
 
                 result.IsSuccess = true;
             }
@@ -3851,6 +3810,11 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+
+                // Check Quotas
+                ReplicationHelper.CheckReplicationQuota(vm.PackageId, ref result);
+                if (result.ErrorCodes.Count > 0) return result;
+
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
                 vs.PauseReplication(vm.VirtualMachineId);
 
@@ -3869,6 +3833,11 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 VirtualMachine vm = GetVirtualMachineByItemId(itemId);
+
+                // Check Quotas
+                ReplicationHelper.CheckReplicationQuota(vm.PackageId, ref result);
+                if (result.ErrorCodes.Count > 0) return result;
+
                 VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
                 vs.ResumeReplication(vm.VirtualMachineId);
 
@@ -3880,74 +3849,6 @@ namespace WebsitePanel.EnterpriseServer
             }
             return result; 
         }
-
-        #region Private methods
-
-        private static void CleanUpReplicaServer(VirtualMachine originalVm)
-        {
-            try
-            {
-                ResultObject result = new ResultObject();
-
-                // Get replica server
-                var replicaServer = GetReplicaForService(originalVm.ServiceId, ref result);
-
-                // Clean up replica server
-                var replicaVm = replicaServer.GetVirtualMachines().FirstOrDefault(m => m.Name == originalVm.Name);
-                if (replicaVm != null)
-                {
-                    replicaServer.DisableVmReplication(replicaVm.VirtualMachineId);
-                    replicaServer.ShutDownVirtualMachine(replicaVm.VirtualMachineId, true, "ReplicaDelete");
-                    replicaServer.DeleteVirtualMachine(replicaVm.VirtualMachineId);
-                }
-            }
-            catch { /* skip */ }
-        }
-
-        private static ReplicationServerInfo GetReplicaInfoForService(int serviceId, ref ResultObject result)
-        {
-            // Get service id of replica server
-            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
-            string replicaServiceId = vsSesstings["ReplicaServerId"];
-
-            if (string.IsNullOrEmpty(replicaServiceId))
-            {
-                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
-                return null;
-            }
-
-            // get replica server info for replica service id
-            VirtualizationServer2012 vsReplica = GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
-            StringDictionary vsReplicaSesstings = ServerController.GetServiceSettings(Convert.ToInt32(replicaServiceId));
-            string computerName = vsReplicaSesstings["ServerName"];
-            var replicaServerInfo = vsReplica.GetReplicaServer(computerName);
-
-            if (!replicaServerInfo.Enabled)
-            {
-                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
-                return null;
-            }
-
-            return replicaServerInfo;
-        }
-
-        private static VirtualizationServer2012 GetReplicaForService(int serviceId, ref ResultObject result)
-        {
-            // Get service id of replica server
-            StringDictionary vsSesstings = ServerController.GetServiceSettings(serviceId);
-            string replicaServiceId = vsSesstings["ReplicaServerId"];
-
-            if (string.IsNullOrEmpty(replicaServiceId))
-            {
-                result.ErrorCodes.Add(VirtualizationErrorCodes.NO_REPLICA_SERVER_ERROR);
-                return null;
-            }
-
-            // get replica server for replica service id
-            return GetVirtualizationProxy(Convert.ToInt32(replicaServiceId));
-        }
-
-        #endregion
 
         #endregion
     }

@@ -134,7 +134,12 @@ namespace WebsitePanel.Portal.VPS2012.UserControls
                 tabsList.Add(CreateTab("vps_network", "Tab.Network"));
 
             if (VirtualMachines2012Helper.IsReplicationEnabled(PanelSecurity.PackageId) && !createError)
-                tabsList.Add(CreateTab("vps_replication", "Tab.Replication"));
+            {
+                if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED))
+                {
+                    tabsList.Add(CreateTab("vps_replication", "Tab.Replication"));
+                }
+            }
 
             //tabsList.Add(CreateTab("vps_permissions", "Tab.Permissions"));
             //tabsList.Add(CreateTab("vps_tools", "Tab.Tools"));

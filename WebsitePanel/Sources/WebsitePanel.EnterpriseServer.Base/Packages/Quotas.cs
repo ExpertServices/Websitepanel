@@ -223,6 +223,7 @@ order by rg.groupOrder
         public const string VPS2012_RESET_ALOWED = "VPS2012.ResetAlowed";		// Allow user to Reset VPS
         public const string VPS2012_REINSTALL_ALLOWED = "VPS2012.ReinstallAllowed";		// Allow user to Re-install VPS
         public const string VPS2012_BANDWIDTH = "VPS2012.Bandwidth";		// Monthly bandwidth, GB
+        public const string VPS2012_REPLICATION_ENABLED = "VPS2012.ReplicationEnabled";
 
 		public const string VPSForPC_SERVERS_NUMBER = "VPSForPC.ServersNumber";		// Number of VPS
 		public const string VPSForPC_MANAGING_ALLOWED = "VPSForPC.ManagingAllowed";		// Allow user to create VPS

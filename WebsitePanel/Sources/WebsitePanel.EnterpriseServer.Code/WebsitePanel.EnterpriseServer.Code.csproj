@@ -185,6 +185,9 @@
     <Compile Include="Users\UserAsyncWorker.cs" />
     <Compile Include="Users\UserController.cs" />
     <Compile Include="Virtualization2012\CreateServerAsyncWorker2012.cs" />
+    <Compile Include="Virtualization2012\Helpers\QuotaHelper.cs" />
+    <Compile Include="Virtualization2012\Helpers\ReplicationHelper.cs" />
+    <Compile Include="Virtualization2012\Helpers\VirtualizationHelper.cs" />
     <Compile Include="Virtualization2012\VirtualizationServerController2012.cs" />
     <Compile Include="VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
     <Compile Include="VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
