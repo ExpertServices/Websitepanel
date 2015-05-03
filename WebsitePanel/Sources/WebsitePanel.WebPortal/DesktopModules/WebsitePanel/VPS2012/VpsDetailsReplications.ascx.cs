@@ -33,7 +33,8 @@ using System.Collections.Generic;
 ﻿using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using WebsitePanel.Providers.Common;
+﻿using WebsitePanel.EnterpriseServer;
+﻿using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.VPS2012
@@ -46,6 +47,13 @@ namespace WebsitePanel.Portal.VPS2012
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED))
+            {
+                ShowErrorMessage("VPS_QUOTA_REPLICATION_ENABLED");
+                ReplicationPanel.Visible = false;
+                return;
+            }
+
             if (!IsPostBack)
             {
                 Bind();
