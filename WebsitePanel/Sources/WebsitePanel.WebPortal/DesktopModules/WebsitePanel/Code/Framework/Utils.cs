@@ -46,7 +46,7 @@ namespace WebsitePanel.Portal
     /// <summary>
     /// Summary description for Utils.
     /// </summary
-    public class Utils
+    public static class Utils
     {
         public const string ModuleName = "WebsitePanel";
 
@@ -326,6 +326,23 @@ namespace WebsitePanel.Portal
 
             var idn = new IdnMapping();
             return idn.GetAscii(domainName);
+        }
+
+        public static List<T> GetCheckboxValuesFromGrid<T>(GridView gridView, string checkboxName)
+        {
+            // Get checked users
+            var userIds = new List<T>();
+
+            foreach (GridViewRow gvr in gridView.Rows)
+            {
+                if (((CheckBox)gvr.FindControl(checkboxName)).Checked)
+                {
+                    string userId = gridView.DataKeys[gvr.DataItemIndex % gridView.PageSize].Value.ToString();
+                    userIds.Add((T)Convert.ChangeType(userId, typeof(T)));
+                }
+            }
+
+            return userIds;
         }
     }
 }

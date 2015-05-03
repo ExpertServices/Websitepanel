@@ -969,13 +969,13 @@ namespace WebsitePanel.Import.Enterprise
 		{
 			return DataProvider.AddExchangeAccount(itemId, (int)accountType,
 				accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-				mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword),0, string.Empty);
+				mailboxManagerActions.ToString(), samAccountName,0, string.Empty);
 		}
 
 		private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string samAccountName, string accountPassword)
 		{
 			return DataProvider.AddExchangeAccount(itemId, (int)ExchangeAccountType.User, accountName, displayName, email, false, string.Empty,
-                                            samAccountName, CryptoUtils.Encrypt(accountPassword), 0 , string.Empty);
+                                            samAccountName, 0 , string.Empty);
 
 		}
 
@@ -996,7 +996,7 @@ namespace WebsitePanel.Import.Enterprise
                 mailEnabledPublicFolder, 
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword), mailboxPlanId , -1, string.Empty, false);
+                mailboxPlanId , -1, string.Empty, false);
         }
 	}
 }

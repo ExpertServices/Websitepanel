@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
@@ -40,29 +41,89 @@ namespace WebsitePanel.Portal.RDS
         
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.Module = Module;        
+
             if (!IsPostBack)
-            {
+            {                
+                BindQuota();
                 var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
 
-                locCName.Text = collection.Name;
-
+                foreach (var user in collectionUsers)
+                {
+                    if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                    {
+                        user.IsVIP = true;
+                    }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
+                }
+                
+                litCollectionName.Text = collection.DisplayName;
                 users.SetUsers(collectionUsers);
             }
+        }
+
+        private void BindQuota()
+        {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            usersQuota.QuotaUsedValue = stats.CreatedRdsUsers;
+            usersQuota.QuotaValue = stats.AllocatedRdsUsers;
+
+            if (stats.AllocatedUsers != -1)
+            {
+                usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+            }
+            
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
+            {
+                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
+                users.ButtonAddEnabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
+            }
+        }
+
+        private bool SaveRdsUsers()
+        {
+            try
+            {
+                ES.Services.RDS.SetUsersToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, users.GetUsers());                
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid)
-                return;
-            try
             {
-                ES.Services.RDS.SetUsersToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, users.GetUsers());
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                return;
             }
-            catch(Exception ex) { }
+
+            SaveRdsUsers();
+            BindQuota();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            if (SaveRdsUsers())
+            {
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
+            }
         }
     }
 }

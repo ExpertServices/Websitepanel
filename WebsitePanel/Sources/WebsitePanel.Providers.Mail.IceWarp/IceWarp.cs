@@ -31,23 +31,23 @@ using System.IO;
 using System.Net.Mail;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
-using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
 
 namespace WebsitePanel.Providers.Mail
 {
-    public class IceWarp : HostingServiceProviderBase, IMailServer
+    public class IceWarp : HostingServiceProviderBase, IMailServer, IDisposable
     {
         protected const string API_PROGID = "IceWarpServer.APIObject";
         protected const string DOMAIN_PROGID = "IceWarpServer.DomainObject";
         protected const string ACCOUNT_PROGID = "IceWarpServer.AccountObject";
-        
+
         private dynamic _currentApiObject = null;
 
-        #region IceWarp Enums
+        #region Protected Enums
 
         protected enum IceWarpErrorCode
         {
@@ -110,8 +110,8 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                var adresses = ((object) apiObject.GetProperty("C_System_Services_BindIPAddress"));
-                return adresses == null ? "" : adresses.ToString().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+                var adresses = ((object)apiObject.GetProperty("C_System_Services_BindIPAddress"));
+                return adresses == null ? "" : adresses.ToString().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
             }
         }
 
@@ -120,7 +120,7 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToBoolean((object) apiObject.GetProperty("C_Accounts_Global_Domains_UseDiskQuota"));
+                return Convert.ToBoolean((object)apiObject.GetProperty("C_Accounts_Global_Domains_UseDiskQuota"));
             }
         }
 
@@ -129,7 +129,7 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToBoolean((object) apiObject.GetProperty("C_Accounts_Global_Domains_UseDomainLimits"));
+                return Convert.ToBoolean((object)apiObject.GetProperty("C_Accounts_Global_Domains_UseDomainLimits"));
             }
         }
 
@@ -138,7 +138,7 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToBoolean((object) apiObject.GetProperty("C_Accounts_Global_Domains_UseUserLimits"));
+                return Convert.ToBoolean((object)apiObject.GetProperty("C_Accounts_Global_Domains_UseUserLimits"));
             }
         }
 
@@ -147,7 +147,7 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToBoolean((object) apiObject.GetProperty("C_Accounts_Global_Domains_OverrideGlobal"));
+                return Convert.ToBoolean((object)apiObject.GetProperty("C_Accounts_Global_Domains_OverrideGlobal"));
             }
         }
 
@@ -156,16 +156,16 @@ namespace WebsitePanel.Providers.Mail
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToInt32((object) apiObject.GetProperty("C_Mail_SMTP_Delivery_MaxMsgSize"))/1024/1024;
+                return Convert.ToInt32((object)apiObject.GetProperty("C_Mail_SMTP_Delivery_MaxMsgSize")) / 1024 / 1024;
             }
         }
-                
+
         protected int WarnMailboxUsage
         {
             get
             {
                 var apiObject = GetApiObject();
-                return Convert.ToInt32((object)apiObject.GetProperty("C_Accounts_Global_Domains_WarnMailboxUsage"));                
+                return Convert.ToInt32((object)apiObject.GetProperty("C_Accounts_Global_Domains_WarnMailboxUsage"));
             }
         }
 
@@ -177,13 +177,15 @@ namespace WebsitePanel.Providers.Mail
                 return Convert.ToInt32((object)apiObject.GetProperty("C_Accounts_Global_Domains_WarnDomainSize"));
             }
         }
-        
+
 
         private void SaveApiSetting(dynamic apiObject)
         {
             if (!apiObject.Save())
             {
-                throw new Exception("Cannot save Api Object: " + GetErrorMessage(apiObject.LastErr));
+                var ex = new Exception("Cannot save Api Object: " + GetErrorMessage(apiObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
 
@@ -193,7 +195,7 @@ namespace WebsitePanel.Providers.Mail
 
         protected static string GetErrorMessage(int errorCode)
         {
-            switch ((IceWarpErrorCode) errorCode)
+            switch ((IceWarpErrorCode)errorCode)
             {
                 case IceWarpErrorCode.S_OK:
                     return "OK";
@@ -247,6 +249,11 @@ namespace WebsitePanel.Providers.Mail
             }
         }
 
+        protected void DisposeObject(object obj)
+        {
+            Marshal.FinalReleaseComObject(obj);
+        }
+
         protected dynamic GetApiObject()
         {
             if (_currentApiObject != null) return _currentApiObject;
@@ -298,7 +305,7 @@ namespace WebsitePanel.Providers.Mail
             var obj = GetAccountObject();
             if (!obj.Open(accountName))
             {
-                throw new Exception("Cannot open account " + accountName + ": " + GetErrorMessage(obj.LastErr));
+                Log.WriteWarning(string.Format("Cannot open account {0}: {1}", accountName, GetErrorMessage(obj.LastErr)));
             }
 
             return obj;
@@ -308,7 +315,9 @@ namespace WebsitePanel.Providers.Mail
         {
             if (!domain.Save())
             {
-                throw new ArgumentException("Could not save domain:" + GetErrorMessage(domain.LastErr));
+                var ex = new Exception("Could not save domain:" + GetErrorMessage(domain.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
 
@@ -316,10 +325,11 @@ namespace WebsitePanel.Providers.Mail
         {
             if (!account.Save())
             {
-                throw new ArgumentException("Could not save " + accountTypeName + ":" + GetErrorMessage(account.LastErr));
+                var ex = new Exception(string.Format("Could not save {0}: {1}", accountTypeName, GetErrorMessage(account.LastErr)));
+                Log.WriteError(ex);
+                throw ex;
             }
         }
-
 
         protected string GetEmailUser(string email)
         {
@@ -382,6 +392,8 @@ namespace WebsitePanel.Providers.Mail
                 }
             }
 
+            DisposeObject(accountObject);
+
             return mailAccounts.ToArray();
         }
 
@@ -395,7 +407,7 @@ namespace WebsitePanel.Providers.Mail
             apiObject.SetProperty("C_Accounts_Global_Domains_WarnMailboxUsage", ProviderSettings["WarnMailboxUsage"]);
             apiObject.SetProperty("C_Accounts_Global_Domains_WarnDomainSize", ProviderSettings["WarnDomainSize"]);
 
-            apiObject.SetProperty("C_Mail_SMTP_Delivery_MaxMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"])*1024*1024);
+            apiObject.SetProperty("C_Mail_SMTP_Delivery_MaxMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"]) * 1024 * 1024);
             apiObject.SetProperty("C_Mail_SMTP_Delivery_LimitMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"]) > 0);
 
             SaveApiSetting(apiObject);
@@ -403,11 +415,11 @@ namespace WebsitePanel.Providers.Mail
 
         #endregion
 
- 		#region IHostingServiceProvier methods
+        #region IHostingServiceProvier methods
 
-		public override SettingPair[] GetProviderDefaultSettings()
-		{
-            var settings = new []
+        public override SettingPair[] GetProviderDefaultSettings()
+        {
+            var settings = new[]
             {
                 new SettingPair("UseDomainDiskQuota", UseDomainDiskQuota.ToString()), 
                 new SettingPair("UseDomainLimits", UseDomainLimits.ToString()), 
@@ -419,8 +431,8 @@ namespace WebsitePanel.Providers.Mail
                 new SettingPair("ServerIpAddress", BindIpAddress)
             };
 
-			return settings;
-		}
+            return settings;
+        }
 
         public override string[] Install()
         {
@@ -429,25 +441,25 @@ namespace WebsitePanel.Providers.Mail
         }
 
         public override void ChangeServiceItemsState(ServiceProviderItem[] items, bool enabled)
-		{
-		    foreach (var item in items.OfType<MailDomain>())
-		    {
-		        try
-		        {
-		            // enable/disable mail domain
-		            if (DomainExists(item.Name))
-		            {
-		                var mailDomain = GetDomain(item.Name);
-		                mailDomain.Enabled = enabled;
-		                UpdateDomain(mailDomain);
-		            }
-		        }
-		        catch (Exception ex)
-		        {
-		            Log.WriteError(String.Format("Error switching '{0}' IceWarp domain", item.Name), ex);
-		        }
-		    }
-		}
+        {
+            foreach (var item in items.OfType<MailDomain>())
+            {
+                try
+                {
+                    // enable/disable mail domain
+                    if (DomainExists(item.Name))
+                    {
+                        var mailDomain = GetDomain(item.Name);
+                        mailDomain.Enabled = enabled;
+                        UpdateDomain(mailDomain);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteError(String.Format("Error switching '{0}' IceWarp domain", item.Name), ex);
+                }
+            }
+        }
 
         public override void DeleteServiceItems(ServiceProviderItem[] items)
         {
@@ -466,64 +478,69 @@ namespace WebsitePanel.Providers.Mail
         }
 
         public override ServiceProviderItemDiskSpace[] GetServiceItemsDiskSpace(ServiceProviderItem[] items)
-		{
-			var itemsDiskspace = new List<ServiceProviderItemDiskSpace>();
+        {
+            var itemsDiskspace = new List<ServiceProviderItemDiskSpace>();
+            
+            var accountObject = GetAccountObject();
 
-			// update items with diskspace
-			foreach (var item in items.OfType<MailAccount>())
-			{
-			    try
-			    {
-			        Log.WriteStart(String.Format("Calculating mail account '{0}' size", item.Name));
-			        // calculate disk space
-			        var accountObject = GetAccountObject(item.Name);
-			        var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize"));
+            // update items with diskspace
+            foreach (var item in items.OfType<MailAccount>())
+            {
+                try
+                {
+                    Log.WriteStart(String.Format("Calculating mail account '{0}' size", item.Name));
+                    // calculate disk space
+                    accountObject.Open(item.Name);
+                    var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize")) * 1024;
 
-                    var diskspace = new ServiceProviderItemDiskSpace {ItemId = item.Id, DiskSpace = size};
-			        itemsDiskspace.Add(diskspace);
-			        Log.WriteEnd(String.Format("Calculating mail account '{0}' size", item.Name));
-			    }
-			    catch (Exception ex)
-			    {
-			        Log.WriteError(ex);
-			    }
-			}
-			return itemsDiskspace.ToArray();
-		}
+                    var diskspace = new ServiceProviderItemDiskSpace { ItemId = item.Id, DiskSpace = size };
+                    itemsDiskspace.Add(diskspace);
 
-		public override ServiceProviderItemBandwidth[] GetServiceItemsBandwidth(ServiceProviderItem[] items, DateTime since)
-		{
-			var itemsBandwidth = new ServiceProviderItemBandwidth[items.Length];
+                    Log.WriteEnd(String.Format("Calculating mail account '{0}' size", item.Name));
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteError(ex);
+                }
+            }
 
-			// update items with diskspace
-			for (int i = 0; i < items.Length; i++)
-			{
-				ServiceProviderItem item = items[i];
+            DisposeObject(accountObject);
 
-				// create new bandwidth object
-				itemsBandwidth[i] = new ServiceProviderItemBandwidth
-				{
-				    ItemId = item.Id, 
+            return itemsDiskspace.ToArray();
+        }
+
+        public override ServiceProviderItemBandwidth[] GetServiceItemsBandwidth(ServiceProviderItem[] items, DateTime since)
+        {
+            var itemsBandwidth = new ServiceProviderItemBandwidth[items.Length];
+
+            // update items with bandwidth
+            for (var i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+
+                // create new bandwidth object
+                itemsBandwidth[i] = new ServiceProviderItemBandwidth
+                {
+                    ItemId = item.Id,
                     Days = new DailyStatistics[0]
-				};
+                };
 
-			    if (item is MailDomain)
-				{
-					try
-					{
-						// get daily statistics
-						itemsBandwidth[i].Days = GetDailyStatistics(since, item.Name);
-					}
-					catch (Exception ex)
-					{
-						Log.WriteError(ex);
-						System.Diagnostics.Debug.WriteLine(ex);
-					}
-				}
-			}
+                if (!(item is MailDomain)) continue;
 
-			return itemsBandwidth;
-		}
+                try
+                {
+                    // get daily statistics
+                    itemsBandwidth[i].Days = GetDailyStatistics(since, item.Name);
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteError(ex);
+                    System.Diagnostics.Debug.WriteLine(ex);
+                }
+            }
+
+            return itemsBandwidth;
+        }
 
         public DailyStatistics[] GetDailyStatistics(DateTime since, string maildomainName)
         {
@@ -544,7 +561,7 @@ namespace WebsitePanel.Providers.Mail
 
                     var ms = new MemoryStream(statsBuffer);
                     var reader = new StreamReader(ms);
-                    while (reader.Peek() != -1)
+                    while (reader.Peek() > -1)
                     {
                         var line = reader.ReadLine();
                         var fields = line.Split(',');
@@ -561,11 +578,11 @@ namespace WebsitePanel.Providers.Mail
                             case '*':
                                 var dailyStats = new DailyStatistics
                                 {
-                                    Year = date.Year, 
-                                    Month = date.Month, 
-                                    Day = date.Day, 
-                                    BytesSent = line[mailSentField], 
-                                    BytesReceived = line[mailReceivedField]
+                                    Year = date.Year,
+                                    Month = date.Month,
+                                    Day = date.Day,
+                                    BytesSent = Convert.ToInt64(fields[mailSentField]) * 1024,
+                                    BytesReceived = Convert.ToInt64(fields[mailReceivedField]) * 1024
                                 };
                                 days.Add(dailyStats);
                                 continue;
@@ -614,7 +631,7 @@ namespace WebsitePanel.Providers.Mail
 
             // Checking for version 10.4.0 (released 2012-03-21) or newer
             // This version introduced L_ListFile_Contents, G_ListFile_Contents and M_ListFileContents that is the latest API variable used by this provider
-            var split = version.Split(new[] {'.'});
+            var split = version.Split(new[] { '.' });
             var majorVersion = Convert.ToInt32(split[0]);
             var minVersion = Convert.ToInt32(split[1]);
 
@@ -632,31 +649,33 @@ namespace WebsitePanel.Providers.Mail
         public string[] GetDomains()
         {
             var api = GetApiObject();
-            return api.GetDomainList().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+            return api.GetDomainList().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public MailDomain GetDomain(string domainName)
         {
-            var domain = GetDomainObject(domainName);
+            var domainObject = GetDomainObject(domainName);
 
             var mailDomain = new MailDomain
             {
-                Name = domain.Name,
-                PostmasterAccount = domain.GetProperty("D_AdminEmail"),
-                CatchAllAccount = domain.GetProperty("D_UnknownForwardTo"),
-                Enabled = Convert.ToBoolean((object) domain.GetProperty("D_DisableLogin")),
-                MaxDomainSizeInMB = Convert.ToInt32((object) domain.GetProperty("D_DiskQuota"))/1024,
-                MaxDomainUsers = Convert.ToInt32((object) domain.GetProperty("D_AccountNumber")),
-                MegaByteSendLimit = Convert.ToInt32((object) domain.GetProperty("D_VolumeLimit"))/1024,
-                NumberSendLimit = Convert.ToInt32((object) domain.GetProperty("D_NumberLimit")),
-                DefaultUserQuotaInMB = Convert.ToInt32((object) domain.GetProperty("D_UserMailbox"))/1024,
-                DefaultUserMaxMessageSizeMegaByte = Convert.ToInt32((object) domain.GetProperty("D_UserMsg"))/1024,
-                DefaultUserMegaByteSendLimit = Convert.ToInt32((object) domain.GetProperty("D_UserMB")),
-                DefaultUserNumberSendLimit = Convert.ToInt32((object) domain.GetProperty("D_UserNumber")),
+                Name = domainObject.Name,
+                PostmasterAccount = domainObject.GetProperty("D_AdminEmail"),
+                CatchAllAccount = domainObject.GetProperty("D_UnknownForwardTo"),
+                Enabled = Convert.ToBoolean((object)domainObject.GetProperty("D_DisableLogin")),
+                MaxDomainSizeInMB = Convert.ToInt32((object)domainObject.GetProperty("D_DiskQuota")) / 1024,
+                MaxDomainUsers = Convert.ToInt32((object)domainObject.GetProperty("D_AccountNumber")),
+                MegaByteSendLimit = Convert.ToInt32((object)domainObject.GetProperty("D_VolumeLimit")) / 1024,
+                NumberSendLimit = Convert.ToInt32((object)domainObject.GetProperty("D_NumberLimit")),
+                DefaultUserQuotaInMB = Convert.ToInt32((object)domainObject.GetProperty("D_UserMailbox")) / 1024,
+                DefaultUserMaxMessageSizeMegaByte = Convert.ToInt32((object)domainObject.GetProperty("D_UserMsg")) / 1024,
+                DefaultUserMegaByteSendLimit = Convert.ToInt32((object)domainObject.GetProperty("D_UserMB")),
+                DefaultUserNumberSendLimit = Convert.ToInt32((object)domainObject.GetProperty("D_UserNumber")),
                 UseDomainDiskQuota = Convert.ToBoolean(ProviderSettings["UseDomainDiskQuota"]),
                 UseDomainLimits = Convert.ToBoolean(ProviderSettings["UseDomainLimits"]),
                 UseUserLimits = Convert.ToBoolean(ProviderSettings["UseUserLimits"])
             };
+
+            DisposeObject(domainObject);
 
             return mailDomain;
         }
@@ -665,17 +684,23 @@ namespace WebsitePanel.Providers.Mail
         {
             if (string.IsNullOrWhiteSpace(domain.Name))
             {
-                throw new ArgumentNullException("domain.Name");
+                var ex = new Exception("Cannot create domain with empty domain name", new ArgumentNullException("domain.Name"));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             var domainObject = GetDomainObject();
 
             if (!domainObject.New(domain.Name))
             {
-                throw new ApplicationException("Failed to create domain: " + GetErrorMessage(domainObject.LastErr));
+                var ex = new Exception("Failed to create domain: " + GetErrorMessage(domainObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             SaveDomain(domainObject);
+
+            DisposeObject(domainObject);
 
             UpdateDomain(domain);
         }
@@ -698,32 +723,41 @@ namespace WebsitePanel.Providers.Mail
             }
 
             domainObject.SetProperty("D_DisableLogin", !domain.Enabled);
-            domainObject.SetProperty("D_DiskQuota", domain.MaxDomainSizeInMB*1024);
+            domainObject.SetProperty("D_DiskQuota", domain.MaxDomainSizeInMB * 1024);
             domainObject.SetProperty("D_AccountNumber", domain.MaxDomainUsers);
-            domainObject.SetProperty("D_VolumeLimit", domain.MegaByteSendLimit*1024);
+            domainObject.SetProperty("D_VolumeLimit", domain.MegaByteSendLimit * 1024);
             domainObject.SetProperty("D_NumberLimit", domain.NumberSendLimit);
 
-            domainObject.SetProperty("D_UserMailbox", domain.DefaultUserQuotaInMB*1024);
-            domainObject.SetProperty("D_UserMsg", domain.DefaultUserMaxMessageSizeMegaByte*1024);
+            domainObject.SetProperty("D_UserMailbox", domain.DefaultUserQuotaInMB * 1024);
+            domainObject.SetProperty("D_UserMsg", domain.DefaultUserMaxMessageSizeMegaByte * 1024);
             domainObject.SetProperty("D_UserMB", domain.DefaultUserMegaByteSendLimit);
             domainObject.SetProperty("D_UserNumber", domain.DefaultUserNumberSendLimit);
 
             SaveDomain(domainObject);
+
+            DisposeObject(domainObject);
         }
 
         public void DeleteDomain(string domainName)
         {
+            if (!DomainExists(domainName))
+            {
+                return;
+            }
+
             var domainObject = GetDomainObject(domainName);
 
-            if (domainObject.Delete())
+            if (!domainObject.Delete())
             {
-                throw new Exception("Could not delete domain");
+                Log.WriteError("Could not delete domain" + GetErrorMessage(domainObject.LastErr), null);
             }
+
+            DisposeObject(domainObject);
         }
 
         #endregion
 
-        #region Domain alieses
+        #region Domain aliases
 
         public bool DomainAliasExists(string domainName, string aliasName)
         {
@@ -734,7 +768,11 @@ namespace WebsitePanel.Providers.Mail
 
             var domainObject = GetDomainObject(aliasName);
 
-            return Convert.ToInt32((object) domainObject.GetProperty("D_Type")) == 2 && string.Compare(domainObject.GetProperty("D_DomainValue").ToString(), domainName, true) == 0;
+            var result = Convert.ToInt32((object)domainObject.GetProperty("D_Type")) == 2 && string.Compare(domainObject.GetProperty("D_DomainValue").ToString(), domainName, true) == 0;
+
+            DisposeObject(domainObject);
+
+            return result;
         }
 
         public string[] GetDomainAliases(string domainName)
@@ -759,13 +797,15 @@ namespace WebsitePanel.Providers.Mail
 
         public void AddDomainAlias(string domainName, string aliasName)
         {
-            var mailDomain = new MailDomain {Name = aliasName};
+            var mailDomain = new MailDomain { Name = aliasName };
             CreateDomain(mailDomain);
             var domainObject = GetDomainObject(aliasName);
 
             domainObject.SetProperty("D_Type", 2);
             domainObject.SetProperty("D_DomainValue", domainName);
             SaveDomain(domainObject);
+
+            DisposeObject(domainObject);
         }
 
         public void DeleteDomainAlias(string domainName, string aliasName)
@@ -781,7 +821,11 @@ namespace WebsitePanel.Providers.Mail
         {
             var accountObject = GetAccountObject();
 
-            return accountObject.Open(mailboxName) && Convert.ToInt32((object) accountObject.GetProperty("U_Type")) == (int) IceWarpAccountType.User;
+            var result = accountObject.Open(mailboxName) && Convert.ToInt32((object)accountObject.GetProperty("U_Type")) == (int)IceWarpAccountType.User;
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         protected class IceWarpResponderContent
@@ -827,35 +871,35 @@ namespace WebsitePanel.Providers.Mail
             return result;
         }
 
-        protected static MailAccount CreateMailAccountFromAccountObject(dynamic accountObject)
+        protected MailAccount CreateMailAccountFromAccountObject(dynamic accountObject)
         {
             var mailAccount = new MailAccount
             {
                 Name = accountObject.EmailAddress,
                 FullName = accountObject.GetProperty("U_Name"),
-                Enabled = Convert.ToInt32((object) accountObject.GetProperty("U_AccountDisabled")) == 0,
-                ForwardingEnabled = !string.IsNullOrWhiteSpace(accountObject.GetProperty("U_ForwardTo")) || string.IsNullOrWhiteSpace(accountObject.GetProperty("U_RemoteAddress")) && Convert.ToBoolean((object) accountObject.GetProperty("U_UseRemoteAddress")),
-                IsDomainAdmin = Convert.ToBoolean((object) accountObject.GetProperty("U_DomainAdmin")),
-                MaxMailboxSize = Convert.ToInt32((object) accountObject.GetProperty("U_MaxBoxSize"))/1024,
+                Enabled = Convert.ToInt32((object)accountObject.GetProperty("U_AccountDisabled")) == 0,
+                ForwardingEnabled = !string.IsNullOrWhiteSpace(accountObject.GetProperty("U_ForwardTo")) || string.IsNullOrWhiteSpace(accountObject.GetProperty("U_RemoteAddress")) && Convert.ToBoolean((object)accountObject.GetProperty("U_UseRemoteAddress")),
+                IsDomainAdmin = Convert.ToBoolean((object)accountObject.GetProperty("U_DomainAdmin")),
+                MaxMailboxSize = Convert.ToBoolean((object)accountObject.GetProperty("U_MaxBox")) ? Convert.ToInt32((object)accountObject.GetProperty("U_MaxBoxSize")) / 1024 : 0,
                 Password = accountObject.GetProperty("U_Password"),
-                ResponderEnabled = Convert.ToInt32((object) accountObject.GetProperty("U_Respond")) > 0,
-                QuotaUsed = Convert.ToInt64((object) accountObject.GetProperty("U_MailBoxSize")),
-                MaxMessageSizeMegaByte = Convert.ToInt32((object) accountObject.GetProperty("U_MaxMessageSize"))/1024,
-                MegaByteSendLimit = Convert.ToInt32((object) accountObject.GetProperty("U_MegabyteSendLimit")),
-                NumberSendLimit = Convert.ToInt32((object) accountObject.GetProperty("U_NumberSendLimit")),
-                DeleteOlder = Convert.ToBoolean((object) accountObject.GetProperty("U_DeleteOlder")),
-                DeleteOlderDays = Convert.ToInt32((object) accountObject.GetProperty("U_DeleteOlderDays")),
-                ForwardOlder = Convert.ToBoolean((object) accountObject.GetProperty("U_ForwardOlder")),
-                ForwardOlderDays = Convert.ToInt32((object) accountObject.GetProperty("U_ForwardOlderDays")),
+                ResponderEnabled = Convert.ToInt32((object)accountObject.GetProperty("U_Respond")) > 0,
+                QuotaUsed = Convert.ToInt64((object)accountObject.GetProperty("U_MailBoxSize")),
+                MaxMessageSizeMegaByte = Convert.ToInt32((object)accountObject.GetProperty("U_MaxMessageSize")) / 1024,
+                MegaByteSendLimit = Convert.ToInt32((object)accountObject.GetProperty("U_MegabyteSendLimit")),
+                NumberSendLimit = Convert.ToInt32((object)accountObject.GetProperty("U_NumberSendLimit")),
+                DeleteOlder = Convert.ToBoolean((object)accountObject.GetProperty("U_DeleteOlder")),
+                DeleteOlderDays = Convert.ToInt32((object)accountObject.GetProperty("U_DeleteOlderDays")),
+                ForwardOlder = Convert.ToBoolean((object)accountObject.GetProperty("U_ForwardOlder")),
+                ForwardOlderDays = Convert.ToInt32((object)accountObject.GetProperty("U_ForwardOlderDays")),
                 ForwardOlderTo = accountObject.GetProperty("U_ForwardOlderTo"),
-                IceWarpAccountState = Convert.ToInt32((object) accountObject.GetProperty("U_AccountDisabled")),
-                IceWarpAccountType = Convert.ToInt32((object) accountObject.GetProperty("U_AccountType")),
-                IceWarpRespondType = Convert.ToInt32((object) accountObject.GetProperty("U_Respond"))
+                IceWarpAccountState = Convert.ToInt32((object)accountObject.GetProperty("U_AccountDisabled")),
+                IceWarpAccountType = Convert.ToInt32((object)accountObject.GetProperty("U_AccountType")),
+                IceWarpRespondType = Convert.ToInt32((object)accountObject.GetProperty("U_Respond"))
             };
 
             if (mailAccount.ForwardingEnabled)
             {
-                mailAccount.ForwardingAddresses = new string[] {accountObject.GetProperty("U_ForwardTo") + accountObject.GetProperty("U_RemoteAddress")};
+                mailAccount.ForwardingAddresses = new string[] { accountObject.GetProperty("U_ForwardTo") + accountObject.GetProperty("U_RemoteAddress") };
                 mailAccount.DeleteOnForward = Convert.ToInt32(accountObject.GetProperty("U_UseRemoteAddress")) == 1;
                 mailAccount.RetainLocalCopy = !mailAccount.DeleteOnForward;
             }
@@ -876,7 +920,7 @@ namespace WebsitePanel.Providers.Mail
                     mailAccount.RespondTo = respondTo;
                 }
 
-                mailAccount.RespondPeriodInDays = Convert.ToInt32((object) accountObject.GetProperty("U_RespondPeriod"));
+                mailAccount.RespondPeriodInDays = Convert.ToInt32((object)accountObject.GetProperty("U_RespondPeriod"));
                 var responderContent = ParseResponderContent(accountObject.GetProperty("U_ResponderContent"));
                 mailAccount.ResponderMessage = responderContent.Content;
                 mailAccount.ResponderSubject = responderContent.Subject;
@@ -894,7 +938,11 @@ namespace WebsitePanel.Providers.Mail
         public MailAccount GetAccount(string mailboxName)
         {
             var accountObject = GetAccountObject(mailboxName);
-            return CreateMailAccountFromAccountObject(accountObject);
+            var account = CreateMailAccountFromAccountObject(accountObject);
+
+            DisposeObject(accountObject);
+
+            return account;
         }
 
         public void CreateAccount(MailAccount mailbox)
@@ -904,15 +952,19 @@ namespace WebsitePanel.Providers.Mail
             var emailParts = new MailAddress(mailbox.Name);
             if (!accountObject.CanCreateMailbox(emailParts.User, emailParts.User, mailbox.Password, emailParts.Host))
             {
-                throw new Exception("Cannot create account: " + GetErrorMessage(accountObject.LastErr));
+                var ex = new Exception("Cannot create account because of password policy in IceWarp server, invalid username, alias or domain. Check if the password policy is different in IceWarp and WSP. Also perhaps your IceWarp diallows username in password?");
+                Log.WriteError(ex);
+                throw ex;
             }
 
             if (accountObject.New(mailbox.Name))
             {
+                accountObject.SetProperty("U_Password", mailbox.Password);
                 accountObject.Save();
+                UpdateAccount(mailbox);
             }
 
-            UpdateAccount(mailbox);
+            DisposeObject(accountObject);
         }
 
         public void UpdateAccount(MailAccount mailbox)
@@ -922,9 +974,15 @@ namespace WebsitePanel.Providers.Mail
             accountObject.SetProperty("U_Name", mailbox.FullName);
             accountObject.SetProperty("U_AccountDisabled", mailbox.IceWarpAccountState);
             accountObject.SetProperty("U_DomainAdmin", mailbox.IsDomainAdmin);
-            accountObject.SetProperty("U_Password", mailbox.Password);
-            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize);
-            accountObject.SetProperty("U_MaxMessageSize", mailbox.MaxMessageSizeMegaByte*1024);
+
+            if (mailbox.ChangePassword)
+            {
+                accountObject.SetProperty("U_Password", mailbox.Password);
+            }
+
+            accountObject.SetProperty("U_MaxBoxSize", mailbox.MaxMailboxSize * 1024);
+            accountObject.SetProperty("U_MaxBox", mailbox.MaxMailboxSize > 0 ? "1" : "0");
+            accountObject.SetProperty("U_MaxMessageSize", mailbox.MaxMessageSizeMegaByte * 1024);
             accountObject.SetProperty("U_MegabyteSendLimit", mailbox.MegaByteSendLimit);
             accountObject.SetProperty("U_NumberSendLimit", mailbox.NumberSendLimit);
             accountObject.SetProperty("U_AccountType", mailbox.IceWarpAccountType);
@@ -984,15 +1042,24 @@ namespace WebsitePanel.Providers.Mail
             }
 
             SaveAccount(accountObject);
+
+            DisposeObject(accountObject);
         }
 
         public void DeleteAccount(string mailboxName)
         {
+            if (!AccountExists(mailboxName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(mailboxName);
             if (!accountObject.Delete())
             {
-                throw new Exception("Cannot delete account: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete account: " + GetErrorMessage(accountObject.LastErr), null);
             }
+
+            DisposeObject(accountObject);
         }
 
         #endregion
@@ -1003,7 +1070,11 @@ namespace WebsitePanel.Providers.Mail
         {
             var accountObject = GetAccountObject();
 
-            return accountObject.Open(mailAliasName);
+            var result = accountObject.Open(mailAliasName);
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         protected IEnumerable<string> GetAliasListFromAccountObject(dynamic accountObject)
@@ -1035,11 +1106,13 @@ namespace WebsitePanel.Providers.Mail
                 {
                     var forwardTo = GetForwardToAddressFromAccountObject(accountObject);
                     var aliases = GetAliasListFromAccountObject(accountObject) as IEnumerable<string>;
-                    aliasList.AddRange(aliases.Where(a => a != forwardTo).Select(alias => new MailAlias {Name = alias + "@" + domainName, ForwardTo = forwardTo + "@" + domainName}));
+                    aliasList.AddRange(aliases.Where(a => a + "@" + domainName != forwardTo).Select(alias => new MailAlias { Name = alias + "@" + domainName, ForwardTo = forwardTo }));
                 }
 
                 accountObject.FindDone();
             }
+
+            DisposeObject(accountObject);
 
             return aliasList.ToArray();
         }
@@ -1050,7 +1123,11 @@ namespace WebsitePanel.Providers.Mail
 
             var forwardTo = GetForwardToAddressFromAccountObject(accountObject);
 
-            return new MailAlias {ForwardTo = forwardTo, Name = mailAliasName};
+            var result = new MailAlias { ForwardTo = forwardTo, Name = mailAliasName };
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         public void CreateMailAlias(MailAlias mailAlias)
@@ -1060,23 +1137,25 @@ namespace WebsitePanel.Providers.Mail
             {
                 mailAlias.ForwardingEnabled = true;
                 mailAlias.DeleteOnForward = true;
-                mailAlias.ForwardingAddresses = new[] {mailAlias.ForwardTo};
+                mailAlias.ForwardingAddresses = new[] { mailAlias.ForwardTo };
                 mailAlias.Password = GetRandomPassword();
                 CreateAccount(mailAlias);
             }
-                // else open account and add alias to list
+            // else open account and add alias to list
             else
             {
-                var accountOject = GetAccountObject(mailAlias.ForwardTo);
-                var aliases = GetAliasListFromAccountObject(accountOject).ToList();
+                var accountObject = GetAccountObject(mailAlias.ForwardTo);
+                var aliases = ((IEnumerable<string>)GetAliasListFromAccountObject(accountObject)).ToList();
                 aliases.Add(GetEmailUser(mailAlias.Name));
-                accountOject.SetProperty("U_EmailAlias", string.Join(";", aliases));
+                accountObject.SetProperty("U_EmailAlias", string.Join(";", aliases));
 
-                SaveAccount(accountOject, "account when creating mail alias");
+                SaveAccount(accountObject, "account when creating mail alias");
+
+                DisposeObject(accountObject);
             }
         }
 
-        private string GetRandowChars(string chars, int length)
+        private static string GetRandowChars(string chars, int length)
         {
             var random = new Random();
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
@@ -1090,8 +1169,8 @@ namespace WebsitePanel.Providers.Mail
             var nonAlphaNum = apiObject.GetProperty("C_Accounts_Policies_Pass_NonAlphaNum");
             var alpha = apiObject.GetProperty("C_Accounts_Policies_Pass_Alpha");
 
-            return System.Web.Security.Membership.GeneratePassword(minLength, nonAlphaNum) + 
-                GetRandowChars("0123456789", digits)+
+            return System.Web.Security.Membership.GeneratePassword(minLength, nonAlphaNum) +
+                GetRandowChars("0123456789", digits) +
                 GetRandowChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", alpha);
         }
 
@@ -1116,11 +1195,13 @@ namespace WebsitePanel.Providers.Mail
                 accountObject.SetProperty("U_EmailAlias", string.Join(";", otherAliases));
                 SaveAccount(accountObject, "account during alias delete");
             }
-                // If no other aliases, this should be an account with a remote address and then we should delete the account
+            // If no other aliases, this should be an account with a remote address and then we should delete the account
             else
             {
                 DeleteAccount(mailAliasName);
             }
+
+            DisposeObject(accountObject);
         }
 
         #endregion
@@ -1131,7 +1212,11 @@ namespace WebsitePanel.Providers.Mail
         {
             var accountObject = GetAccountObject();
 
-            return accountObject.Open(groupName) && Convert.ToInt32(accountObject.GetProperty("U_Type")) == 7;
+            var result = accountObject.Open(groupName) && (IceWarpAccountType)Enum.Parse(typeof(IceWarpAccountType), ((object)accountObject.GetProperty("U_Type")).ToString()) == IceWarpAccountType.UserGroup;
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         public MailGroup[] GetGroups(string domainName)
@@ -1144,7 +1229,7 @@ namespace WebsitePanel.Providers.Mail
             var mailGroup = new MailGroup
             {
                 Name = accountObject.EmailAddress,
-                Enabled = Convert.ToInt32((object) accountObject.GetProperty("U_AccountDisabled")) == 0,
+                Enabled = Convert.ToInt32((object)accountObject.GetProperty("U_AccountDisabled")) == 0,
                 GroupName = accountObject.GetProperty("G_Name"),
                 Members = ((IEnumerable<string>)SplitFileContents(accountObject, "G_ListFile_Contents")).ToArray()
             };
@@ -1155,7 +1240,11 @@ namespace WebsitePanel.Providers.Mail
         public MailGroup GetGroup(string groupName)
         {
             var accountObject = GetAccountObject(groupName);
-            return CreateMailGroupFromAccountObject(accountObject);
+            var result = CreateMailGroupFromAccountObject(accountObject);
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         public void CreateGroup(MailGroup @group)
@@ -1164,16 +1253,18 @@ namespace WebsitePanel.Providers.Mail
 
             if (accountObject.New(group.Name))
             {
-                accountObject.SetProperty("U_Type", 7);
+                accountObject.SetProperty("U_Type", IceWarpAccountType.UserGroup);
                 accountObject.SetProperty("G_GroupwareMailDelivery", false);
                 SaveAccount(accountObject, "group account");
             }
             else
             {
-                throw new ApplicationException("Failed to create group: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Failed to create group: " + GetErrorMessage(accountObject.LastErr), null);
             }
 
             UpdateGroup(group);
+
+            DisposeObject(accountObject);
         }
 
         public void UpdateGroup(MailGroup @group)
@@ -1185,15 +1276,24 @@ namespace WebsitePanel.Providers.Mail
             accountObject.SetProperty("G_ListFile_Contents", string.Join("\n", group.Members));
 
             SaveAccount(accountObject, "group");
+
+            DisposeObject(accountObject);
         }
 
         public void DeleteGroup(string groupName)
         {
+            if (!GroupExists(groupName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(groupName);
             if (!accountObject.Delete())
             {
-                throw new Exception("Cannot delete group: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete group: " + GetErrorMessage(accountObject.LastErr), null);
             }
+
+            DisposeObject(accountObject);
         }
 
         #endregion
@@ -1204,7 +1304,11 @@ namespace WebsitePanel.Providers.Mail
         {
             var accountObject = GetAccountObject();
 
-            return accountObject.Open(maillistName) && (IceWarpAccountType) Enum.Parse(typeof (IceWarpAccountType), ((object) accountObject.GetProperty("U_Type")).ToString()) == IceWarpAccountType.MailingList;
+            var result = accountObject.Open(maillistName) && (IceWarpAccountType)Enum.Parse(typeof(IceWarpAccountType), ((object)accountObject.GetProperty("U_Type")).ToString()) == IceWarpAccountType.MailingList;
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         public MailList[] GetLists(string domainName)
@@ -1214,8 +1318,8 @@ namespace WebsitePanel.Providers.Mail
 
         protected IEnumerable<string> SplitStringProperty(dynamic accountObject, string propertyName, char separator)
         {
-            var value = (object) accountObject.GetProperty(propertyName);
-            return value == null ? new String[] {} : value.ToString().Split(new[] {separator}, StringSplitOptions.RemoveEmptyEntries);
+            var value = (object)accountObject.GetProperty(propertyName);
+            return value == null ? new String[] { } : value.ToString().Split(new[] { separator }, StringSplitOptions.RemoveEmptyEntries);
         }
 
         protected IEnumerable<string> SplitFileContents(dynamic accountObject, string propertyName)
@@ -1236,43 +1340,43 @@ namespace WebsitePanel.Providers.Mail
                 Name = accountObject.EmailAddress,
                 Description = accountObject.GetProperty("M_Name"),
                 ModeratorAddress = accountObject.GetProperty("M_OwnerAddress"),
-                MembersSource = (IceWarpListMembersSource) Enum.Parse(typeof (IceWarpListMembersSource), ((object) accountObject.GetProperty("M_SendAllLists")).ToString()),
-                Members = ((IEnumerable<string>)SplitFileContents(accountObject, "M_ListFile_Contents")).Select(m => m.TrimEnd(new[] {';', '0', '1', '2'})).ToArray(),
-                SetReceipientsToToHeader = Convert.ToBoolean((object) accountObject.GetProperty("M_SeparateTo")),
+                MembersSource = (IceWarpListMembersSource)Enum.Parse(typeof(IceWarpListMembersSource), ((object)accountObject.GetProperty("M_SendAllLists")).ToString()),
+                Members = ((IEnumerable<string>)SplitFileContents(accountObject, "M_ListFile_Contents")).Select(m => m.TrimEnd(new[] { ';', '0', '1', '2' })).ToArray(),
+                SetReceipientsToToHeader = Convert.ToBoolean((object)accountObject.GetProperty("M_SeparateTo")),
                 SubjectPrefix = accountObject.GetProperty("M_AddToSubject"),
-                Originator = (IceWarpListOriginator) Enum.Parse(typeof (IceWarpListOriginator), ((object) accountObject.GetProperty("M_ListSender")).ToString()),
-                PostingMode = Convert.ToBoolean((object) accountObject.GetProperty("M_MembersOnly")) ? PostingMode.MembersCanPost : PostingMode.AnyoneCanPost,
-                PasswordProtection = (PasswordProtection) Enum.Parse(typeof (PasswordProtection), ((object) accountObject.GetProperty("M_Moderated")).ToString()),
+                Originator = (IceWarpListOriginator)Enum.Parse(typeof(IceWarpListOriginator), ((object)accountObject.GetProperty("M_ListSender")).ToString()),
+                PostingMode = Convert.ToBoolean((object)accountObject.GetProperty("M_MembersOnly")) ? PostingMode.MembersCanPost : PostingMode.AnyoneCanPost,
+                PasswordProtection = (PasswordProtection)Enum.Parse(typeof(PasswordProtection), ((object)accountObject.GetProperty("M_Moderated")).ToString()),
                 Password = accountObject.GetProperty("M_ModeratedPassword"),
-                DefaultRights = (IceWarpListDefaultRights) Enum.Parse(typeof (IceWarpListDefaultRights), ((object) accountObject.GetProperty("M_DefaultRights")).ToString()),
-                MaxMessageSizeEnabled = Convert.ToBoolean((object) accountObject.GetProperty("M_MaxList")),
-                MaxMessageSize = Convert.ToInt32((object) accountObject.GetProperty("M_MaxListSize")),
-                MaxMembers = Convert.ToInt32((object) accountObject.GetProperty("M_MaxMembers")),
-                SendToSender = Convert.ToBoolean((object) accountObject.GetProperty("M_SendToSender")),
-                DigestMode = Convert.ToBoolean((object) accountObject.GetProperty("M_DigestConfirmed")),
-                MaxMessagesPerMinute = Convert.ToInt32((object) accountObject.GetProperty("M_ListBatch")),
-                SendSubscribe = Convert.ToBoolean((object) accountObject.GetProperty("M_NotifyJoin")),
-                SendUnsubscribe = Convert.ToBoolean((object) accountObject.GetProperty("M_NotifyLeave")),
+                DefaultRights = (IceWarpListDefaultRights)Enum.Parse(typeof(IceWarpListDefaultRights), ((object)accountObject.GetProperty("M_DefaultRights")).ToString()),
+                MaxMessageSizeEnabled = Convert.ToBoolean((object)accountObject.GetProperty("M_MaxList")),
+                MaxMessageSize = Convert.ToInt32((object)accountObject.GetProperty("M_MaxListSize")),
+                MaxMembers = Convert.ToInt32((object)accountObject.GetProperty("M_MaxMembers")),
+                SendToSender = Convert.ToBoolean((object)accountObject.GetProperty("M_SendToSender")),
+                DigestMode = Convert.ToBoolean((object)accountObject.GetProperty("M_DigestConfirmed")),
+                MaxMessagesPerMinute = Convert.ToInt32((object)accountObject.GetProperty("M_ListBatch")),
+                SendSubscribe = Convert.ToBoolean((object)accountObject.GetProperty("M_NotifyJoin")),
+                SendUnsubscribe = Convert.ToBoolean((object)accountObject.GetProperty("M_NotifyLeave")),
 
                 // From list server account
-                ConfirmSubscription = (IceWarpListConfirmSubscription) Enum.Parse(typeof (IceWarpListConfirmSubscription), ((object) listServerAccountObject.GetProperty("L_DigestConfirmed")).ToString()),
-                CommandsInSubject = Convert.ToBoolean((object) listServerAccountObject.GetProperty("L_ListSubject")),
-                DisableSubscribecommand = !Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_JoinR")),
-                AllowUnsubscribe = Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_LeaveR")),
-                DisableListcommand = !Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_ListsR")),
-                DisableWhichCommand = !Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_WhichR")),
-                DisableReviewCommand = !Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_ReviewR")),
-                DisableVacationCommand = !Convert.ToBoolean((object) listServerAccountObject.GetProperty("M_VacationR")),
-                Moderated = Convert.ToBoolean((object) listServerAccountObject.GetProperty("L_Moderated")),
+                ConfirmSubscription = (IceWarpListConfirmSubscription)Enum.Parse(typeof(IceWarpListConfirmSubscription), ((object)listServerAccountObject.GetProperty("L_DigestConfirmed")).ToString()),
+                CommandsInSubject = Convert.ToBoolean((object)listServerAccountObject.GetProperty("L_ListSubject")),
+                DisableSubscribecommand = !Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_JoinR")),
+                AllowUnsubscribe = Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_LeaveR")),
+                DisableListcommand = !Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_ListsR")),
+                DisableWhichCommand = !Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_WhichR")),
+                DisableReviewCommand = !Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_ReviewR")),
+                DisableVacationCommand = !Convert.ToBoolean((object)listServerAccountObject.GetProperty("M_VacationR")),
+                Moderated = Convert.ToBoolean((object)listServerAccountObject.GetProperty("L_Moderated")),
                 CommandPassword = listServerAccountObject.GetProperty("L_ModeratedPassword"),
-                SuppressCommandResponses = Convert.ToBoolean((object) listServerAccountObject.GetProperty("L_MaxList"))
+                SuppressCommandResponses = Convert.ToBoolean((object)listServerAccountObject.GetProperty("L_MaxList"))
             };
 
 
             // This is how I get values for from and replyto header values. TODO: There must be a better way, but I don't see the pattern right now...
-            var ss = Convert.ToInt32((object) accountObject.GetProperty("M_SetSender"));
-            var sv = Convert.ToInt32((object) accountObject.GetProperty("M_SetValue"));
-            var vm = Convert.ToBoolean((object) accountObject.GetProperty("M_ValueMode"));
+            var ss = Convert.ToInt32((object)accountObject.GetProperty("M_SetSender"));
+            var sv = Convert.ToInt32((object)accountObject.GetProperty("M_SetValue"));
+            var vm = Convert.ToBoolean((object)accountObject.GetProperty("M_ValueMode"));
             var value = accountObject.GetProperty("M_HeaderValue");
 
             switch (ss)
@@ -1337,27 +1441,37 @@ namespace WebsitePanel.Providers.Mail
                     break;
             }
 
+            DisposeObject(listServerAccountObject);
+
             return mailList;
         }
 
         public MailList GetList(string maillistName)
         {
             var accountObject = GetAccountObject(maillistName);
-            return CreateMailListFromAccountObject(accountObject);
+            var result = CreateMailListFromAccountObject(accountObject);
+
+            DisposeObject(accountObject);
+
+            return result;
         }
 
         public void CreateList(MailList maillist)
         {
             if (string.IsNullOrWhiteSpace(maillist.Name))
             {
-                throw new ArgumentNullException("maillist.Name");
+                var ex = new ArgumentNullException("maillist.Name", "Cannot create list with empty name");
+                Log.WriteError(ex);
+                throw ex;
             }
 
             var accountObject = GetAccountObject();
 
             if (!accountObject.New(maillist.Name))
             {
-                throw new ApplicationException("Failed to create mailing list: " + GetErrorMessage(accountObject.LastErr));
+                var ex = new Exception("Failed to create mailing list: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError(ex);
+                throw ex;
             }
 
             accountObject.SetProperty("U_Type", IceWarpAccountType.MailingList);
@@ -1365,6 +1479,8 @@ namespace WebsitePanel.Providers.Mail
             SaveAccount(accountObject, "mailing list");
 
             UpdateList(maillist);
+
+            DisposeObject(accountObject);
         }
 
         protected dynamic FindMatchingListServerAccount(string mailingListName, bool createListServerAccountIfNeeded)
@@ -1400,7 +1516,9 @@ namespace WebsitePanel.Providers.Mail
                 // Create list server account    
                 if (!listServerAccountObject.New("srv" + mailingListName))
                 {
-                    throw new Exception("Cannot create listserver account to associate with mailing list." + GetErrorMessage(listServerAccountObject.LastErr));
+                    var ex = new Exception("Cannot create listserver account to associate with mailing list." + GetErrorMessage(listServerAccountObject.LastErr));
+                    Log.WriteError(ex);
+                    throw ex;
                 }
 
                 listServerAccountObject.SetProperty("U_Type", IceWarpAccountType.ListServer);
@@ -1523,11 +1641,16 @@ namespace WebsitePanel.Providers.Mail
             listServerAccountObject.SetProperty("L_ListSender", maillist.Originator);
             listServerAccountObject.SetProperty("L_MaxList", maillist.SuppressCommandResponses);
 
-            SaveAccount(accountObject, "listserver account associated with mailing list");
+            SaveAccount(listServerAccountObject, "listserver account associated with mailing list");
         }
 
         public void DeleteList(string maillistName)
         {
+            if (!ListExists(maillistName))
+            {
+                return;
+            }
+
             var accountObject = GetAccountObject(maillistName);
             var listServerAccountObject = FindMatchingListServerAccount(maillistName, false);
 
@@ -1545,7 +1668,9 @@ namespace WebsitePanel.Providers.Mail
                 {
                     if (!listServerAccountObject.Delete())
                     {
-                        throw new Exception("Deleted mail list, but list server account remains: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        var ex = new Exception("Deleted mail list, but list server account remains: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        Log.WriteError(ex);
+                        throw ex;
                     }
                 }
                 else
@@ -1553,16 +1678,26 @@ namespace WebsitePanel.Providers.Mail
                     listServerAccountObject.SetProperty("L_ListFile_Contents", string.Join("\n", lists.Remove(maillistName)));
                     if (!listServerAccountObject.Save())
                     {
-                        throw new Exception("Deleted mail list, but associated list server account could not be updated: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        var ex = new Exception("Deleted mail list, but associated list server account could not be updated: " + GetErrorMessage(listServerAccountObject.LastErr));
+                        Log.WriteError(ex);
+                        throw ex;
                     }
                 }
             }
             else
             {
-                throw new Exception("Cannot delete mail list: " + GetErrorMessage(accountObject.LastErr));
+                Log.WriteError("Cannot delete mail list: " + GetErrorMessage(accountObject.LastErr), null);
             }
+
+            DisposeObject(accountObject);
+            DisposeObject(listServerAccountObject);
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            Marshal.FinalReleaseComObject(_currentApiObject);
+        }
     }
 }

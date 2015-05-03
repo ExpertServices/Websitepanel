@@ -40,18 +40,57 @@ namespace WebsitePanel.Portal.RDS
     {        
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.Module = Module;
+
             if (!IsPostBack)
+            {                
+                var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                var applications = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
+                var remoteApp = applications.Where(x => x.Alias.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var organizationUsers = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+                var applicationUsers = ES.Services.RDS.GetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp);
+
+                litCollectionName.Text = collection.Name;                
+                txtApplicationName.Text = remoteApp.DisplayName;
+                //var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Contains(x.AccountName));
+                var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Select(a => a.Split('\\').Last().ToLower()).Contains(x.SamAccountName.Split('\\').Last().ToLower()));
+                var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+                foreach(var user in remoteAppUsers)
+                {
+                    if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                    {
+                        user.IsVIP = true;
+                    }
+                    else
+                    {
+                        user.IsVIP = false;
+                    }
+                }
+
+                users.SetUsers(remoteAppUsers.ToArray());
+            }
+        }
+
+        private bool SaveApplicationUsers()
+        {
+            try
             {
                 var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
                 var applications = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
-                var remoteApp = applications.Where(x => x.DisplayName.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-                var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
-                var applicationUsers = ES.Services.RDS.GetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp);
-
-                locCName.Text = collection.Name;
-
-                users.SetUsers(collectionUsers.Where(x => applicationUsers.Contains(x.SamAccountName)).ToArray());
+                var remoteApp = applications.Where(x => x.Alias.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                remoteApp.DisplayName = txtApplicationName.Text;
+                //ES.Services.RDS.SetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp, users.GetUsers().Select(x => x.AccountName).ToArray());
+                ES.Services.RDS.SetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp, users.GetUsers().Select(x => x.SamAccountName.Split('\\').Last()).ToArray());
             }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("REMOTEAPPUSERS_NOT_UPDATED", ex);
+
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -61,18 +100,25 @@ namespace WebsitePanel.Portal.RDS
                 return;
             }
 
-            try
-            {
-                var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-                var applications = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
-                var remoteApp = applications.Where(x => x.DisplayName.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-                ES.Services.RDS.SetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp, users.GetUsers().Select(x => x.AccountName).ToArray());
+            SaveApplicationUsers();            
+        }
 
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            if (SaveApplicationUsers())
+            {
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
             }
-            catch (Exception)
-            {
-            }
+        }
+
+        protected void btnExit_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps", "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID));
         }
     }
 }

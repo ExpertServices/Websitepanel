@@ -138,11 +138,20 @@
   <data name="btnDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="btnServerInfoCancel.OnClientClick" xml:space="preserve">
+    <value>CloseProgressDialog();</value>
+  </data>
+  <data name="btnServerInfoCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="gvPopupServerName.HeaderText" xml:space="preserve">
     <value>Server Name</value>
   </data>
   <data name="gvPopupServers.EmptyDataText" xml:space="preserve">
     <value>No servers found.</value>
+  </data>
+  <data name="gvPopupStatus.HeaderText" xml:space="preserve">
+    <value>Status</value>
   </data>
   <data name="gvServerName.HeaderText" xml:space="preserve">
     <value>Server Name</value>
@@ -152,5 +161,29 @@
   </data>
   <data name="headerAddServers.Text" xml:space="preserve">
     <value>Enabled Servers</value>
+  </data>
+  <data name="headerServerInfo.Text" xml:space="preserve">
+    <value>Server Info</value>
+  </data>
+  <data name="lbRestart.Text" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="lbShutdown.Text" xml:space="preserve">
+    <value>Shut Down</value>
+  </data>
+  <data name="lbViewInfo.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Getting Server Info ...');</value>
+  </data>
+  <data name="lbViewInfo.Text" xml:space="preserve">
+    <value>View Info</value>
+  </data>
+  <data name="locFreeSpace.Text" xml:space="preserve">
+    <value>Free Space:</value>
+  </data>
+  <data name="locSize.Text" xml:space="preserve">
+    <value>Size:</value>
+  </data>
+  <data name="locVolumeName.Text" xml:space="preserve">
+    <value>Volume Name:</value>
   </data>
 </root>

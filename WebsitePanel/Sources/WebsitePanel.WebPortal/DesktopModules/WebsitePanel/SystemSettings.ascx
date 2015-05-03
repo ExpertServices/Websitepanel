@@ -70,6 +70,52 @@
 			</tr>
 		</table>
 	</asp:Panel>
+
+    <wsp:CollapsiblePanel ID="RdsSettings" runat="server" TargetControlID="PanelRdsSettings" meta:resourcekey="RdsSettings" Text="RDS" />
+    <asp:Panel ID="PanelRdsSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblRdsController" runat="server" meta:resourcekey="lblRdsController" />
+				<td style="width:200px;">
+                    <asp:DropDownList ID="ddlRdsController" runat="server" CssClass="HugeTextBox200"/>
+                </td>
+			</tr>
+		</table>
+    </asp:Panel>
+    
+    <wsp:CollapsiblePanel ID="WebdavPortalSettings" runat="server" TargetControlID="PanelWebdavPortalSettings" meta:resourcekey="WebdavPortalSettings" Text="Webdav Portal" />
+    <asp:Panel ID="PanelWebdavPortalSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+            <tr>
+				<td class="SubHead"><asp:Localize ID="locEnablePasswordReset" runat="server" meta:resourcekey="locEnablePasswordReset" /></td>
+				<td class="Normal">
+					<asp:CheckBox ID="chkEnablePasswordReset" runat="server" Text="Yes" meta:resourcekey="chkEnablePasswordReset" />
+				</td>
+			</tr>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblWebdavPortalUrl" runat="server" meta:resourcekey="lblWebdavPortalUrl" />
+				<td><asp:TextBox runat="server" ID="txtWebdavPortalUrl" Width="450px" /></td>
+			</tr>
+		</table>
+    </asp:Panel>
+    
+    <wsp:CollapsiblePanel ID="TwilioSettings" runat="server" TargetControlID="PanelTwilioSettings" meta:resourcekey="TwilioSettings" Text="Webdav Portal" />
+    <asp:Panel ID="PanelTwilioSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblAccountSid" runat="server" meta:resourcekey="lblAccountSid" />
+				<td><asp:TextBox runat="server" ID="txtAccountSid" Width="450px" /></td>
+			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblAuthToken" runat="server" meta:resourcekey="lblAuthToken" />
+				<td><asp:TextBox runat="server" ID="txtAuthToken" Width="450px" /></td>
+			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblPhoneFrom" runat="server" meta:resourcekey="lblPhoneFrom" />
+				<td><asp:TextBox runat="server" ID="txtPhoneFrom" Width="450px" /></td>
+			</tr>
+		</table>
+    </asp:Panel>
 </div>
 <div class="FormFooter">
 	<asp:Button runat="server" ID="btnSaveSettings" meta:resourcekey="btnSaveSettings" 

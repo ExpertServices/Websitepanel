@@ -60,13 +60,23 @@ namespace WebsitePanel.Portal
         {
             get
             {
-                string val = txtFilterValue.Text.Trim();
+                string val = tbSearchText.Text.Trim();
+                string valText = tbSearch.Text.Trim();
+                if (valText.Length == 0)
+                    val = valText;
+                if (val.Length == 0)
+                    val = tbSearch.Text.Trim();
                 val = val.Replace("%", "");
                 return "%" + val + "%";
             }
             set
             {
-                txtFilterValue.Text = value;
+                if (value != null)
+                {
+                    value = value.Replace("%", "");
+                    tbSearch.Text = value;
+                    tbSearchText.Text = value;
+                }
             }
         }
 
@@ -83,7 +93,32 @@ namespace WebsitePanel.Portal
         public override void Focus()
         {
             base.Focus();
-            txtFilterValue.Focus();
+            tbSearch.Focus();
+        }
+
+        protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
+        {
+            if (tbObjectId.Text.Length > 0)
+            {
+                Response.Redirect(PortalUtils.GetUserHomePageUrl(Int32.Parse(tbObjectId.Text)));
+            }
+            else
+            {
+                String strText = tbSearchText.Text;
+                if (strText.Length > 0)
+                {
+                    Response.Redirect(NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "FilterColumn=" + ddlFilterColumn.SelectedValue,
+                        "FilterValue=" + Server.UrlEncode(FilterValue)));
+                }
+                else
+                {
+                    Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                        PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                        "Query=" + Server.UrlEncode(tbSearch.Text),"FullType=Users"));
+                }
+            }
         }
     }
 }

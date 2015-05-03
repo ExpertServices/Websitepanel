@@ -141,6 +141,9 @@
   <data name="lnkVps.Text" xml:space="preserve">
     <value>Virtual Private Servers</value>
   </data>
+  <data name="lnkVps2012.Text" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
   <data name="lnkVpsForPC.Text" xml:space="preserve">
     <value>Virtual Private Servers for Private Cloud</value>
   </data>

@@ -24,6 +24,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,6 +79,10 @@
       <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -103,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Containers\Default\VPS2012.ascx" />
     <Content Include="App_Containers\Default\VPSForPC.ascx" />
     <Content Include="App_Themes\Default\Icons\activesync_policy_48.png" />
     <Content Include="App_Themes\Default\Icons\advancedstatistics_48.png" />
@@ -114,6 +121,7 @@
     <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_storage_settings_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\deleted_user_48.png" />
     <Content Include="App_Themes\Default\Icons\disclaimers_48.png" />
     <Content Include="App_Themes\Default\Icons\domains_48.png" />
     <Content Include="App_Themes\Default\Icons\enterprisestorage_drive_maps_48.png" />
@@ -151,19 +159,36 @@
     <Content Include="App_Themes\Default\Icons\webapplicationsgallery_48.png" />
     <Content Include="App_Themes\Default\Icons\webipaddresses_48.png" />
     <Content Include="App_Themes\Default\Icons\websites_48.png" />
+    <Content Include="App_Themes\Default\Images\apply_16.png" />
+    <Content Include="App_Themes\Default\Images\apply_24.png" />
     <Content Include="App_Themes\Default\Images\Exchange\blank16.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\bottom_bg_sh.gif" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
     <Content Include="App_Themes\Default\Images\Exchange\enabled.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\home24.png" />
     <Content Include="App_Themes\Default\Images\Exchange\locked.png" />
     <Content Include="App_Themes\Default\Images\Exchange\lync16.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\main_bg_sh.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\module_footer_sh.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\module_header_sh.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\net_drive16.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\net_drive48.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\shared_16.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\spaces16.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\spaces48.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\vip_user_16.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
+    <Content Include="App_Themes\Default\Images\home_16_blk.png" />
+    <Content Include="App_Themes\Default\Images\home_24.png" />
     <Content Include="App_Themes\Default\Images\lync16.png" />
     <Content Include="App_Themes\Default\Images\lync48.png" />
     <Content Include="App_Themes\Default\Images\lyncfederationdomains48.png" />
     <Content Include="App_Themes\Default\Images\lyncuser.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplan48.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplanadd48.png" />
+    <Content Include="App_Themes\Default\Images\restart_24.png" />
+    <Content Include="App_Themes\Default\Images\signout_24.png" />
     <Content Include="App_Themes\Default\Images\spaces16.png" />
     <Content Include="App_Themes\Default\Images\spaces48.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
@@ -173,7 +198,9 @@
     <Content Include="App_Themes\Default\Images\VPS\event_log_icon.png" />
     <Content Include="App_Themes\Default\Images\VPS\icon-home-botbar-cloud.png" />
     <Content Include="App_Themes\Default\Images\VPS\monitoring_icon.png" />
+    <Content Include="App_Themes\Default\Styles\chosen.min.css" />
     <Content Include="App_Themes\Default\Styles\images\buttons.gif" />
+    <Content Include="App_Themes\Default\Styles\images\chosen-sprite.png" />
     <Content Include="App_Themes\Default\Styles\images\header_bg.gif" />
     <Content Include="App_Themes\Default\Images\shield.png" />
     <Content Include="App_Themes\Default\Styles\images\loading.gif" />
@@ -193,6 +220,24 @@
     <Content Include="App_Themes\Default\Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="App_Themes\Default\Styles\jquery-ui-1.8.9.css" />
     <Content Include="App_Themes\Default\Styles\jquery.window.css" />
+    <Content Include="bin\AjaxControlToolkit.dll" />
+    <Content Include="bin\AntiXssLibrary.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.Common.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.ProcessingObjectModel.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.WebForms.dll" />
+    <Content Include="bin\Microsoft.Web.Services3.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Client.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Client.pdb" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.dll" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.pdb" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.dll" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.pdb" />
+    <Content Include="bin\WebsitePanel.Providers.Base.dll" />
+    <Content Include="bin\WebsitePanel.Providers.Base.pdb" />
+    <Content Include="bin\WebsitePanel.WebPortal.dll" />
+    <Content Include="bin\WebsitePanel.WebPortal.pdb" />
     <Content Include="Error.htm" />
     <Content Include="JavaScript\jquery-1.4.4.min.js" />
     <Content Include="JavaScript\jquery-ui-1.8.9.min.js" />
@@ -273,7 +318,10 @@
     <Content Include="App_Data\SiteSettings.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\ESModule_ControlsHierarchy.config" />
+    <Content Include="App_Data\ESModule_ControlsHierarchy.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="AjaxHandler.ashx" />
     <None Include="App_Data\SupportedThemes.config" />
     <None Include="App_Data\Countries.config" />
     <None Include="App_Data\CountryStates.config" />
@@ -292,6 +340,10 @@
     <Content Include="App_Themes\Default\Common.skin" />
     <Content Include="App_Themes\Default\DataBoundControls.skin" />
     <Content Include="App_Themes\Default\Icons.skin" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.dll.config" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.dll.config" />
+    <Content Include="bin\WebsitePanel.WebPortal.dll.config" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\TopPane.ascx" />
@@ -801,5 +853,12 @@
         <DestinationRelativePath>bin\%(Filename)%(Extension)</DestinationRelativePath>
       </FilesForPackagingFromProject>
     </ItemGroup>
+  </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
 </Project>

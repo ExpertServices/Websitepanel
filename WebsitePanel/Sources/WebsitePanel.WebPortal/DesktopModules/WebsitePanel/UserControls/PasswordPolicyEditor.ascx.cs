@@ -42,6 +42,8 @@ namespace WebsitePanel.Portal
 {
     public partial class PasswordPolicyEditor : WebsitePanelControlBase
     {
+        public bool ShowLockoutSettings { get; set; }
+
         public string Value
         {
             get
@@ -55,6 +57,14 @@ namespace WebsitePanel.Portal
                 sb.Append(txtMinimumSymbols.Text).Append(";");
                 sb.Append(chkNotEqualUsername.Checked.ToString()).Append(";");
                 sb.Append(txtLockedOut.Text).Append(";");
+
+                sb.Append(txtEnforcePasswordHistory.Text).Append(";");
+                sb.Append(txtAccountLockoutDuration.Text).Append(";");
+                sb.Append(txtResetAccountLockout.Text).Append(";");
+                sb.Append(chkLockOutSettigns.Checked.ToString()).Append(";");
+                sb.Append(chkPasswordComplexity.Checked.ToString()).Append(";");
+
+                sb.Append(txtMaxPasswordAge.Text).Append(";");
 
                 return sb.ToString();
             }
@@ -70,6 +80,8 @@ namespace WebsitePanel.Portal
                     txtMinimumNumbers.Text = "0";
                     txtMinimumSymbols.Text = "0";
                     txtLockedOut.Text = "3";
+                    chkPasswordComplexity.Checked = true;
+                    txtMaxPasswordAge.Text = "42";
                 }
                 else
                 {
@@ -85,8 +97,19 @@ namespace WebsitePanel.Portal
                         txtMinimumSymbols.Text = parts[5];
                         chkNotEqualUsername.Checked = Utils.ParseBool(parts[6], false);
                         txtLockedOut.Text = parts[7];
+
+                        txtEnforcePasswordHistory.Text = GetValueSafe(parts, 8, "0");
+                        txtAccountLockoutDuration.Text = GetValueSafe(parts, 9, "0");
+                        txtResetAccountLockout.Text = GetValueSafe(parts, 10, "0");
+                        chkLockOutSettigns.Checked = GetValueSafe(parts, 11, false) && ShowLockoutSettings;
+                        chkPasswordComplexity.Checked = GetValueSafe(parts, 12, true);
+
+                        txtMaxPasswordAge.Text = GetValueSafe(parts, 13, "42");
                     }
-                    catch { /* skip */ }
+                    catch
+                    {
+                        /* skip */
+                    }
                 }
                 ToggleControls();
             }
@@ -99,11 +122,60 @@ namespace WebsitePanel.Portal
         private void ToggleControls()
         {
             PolicyTable.Visible = chkEnabled.Checked;
+
+            ToggleLockOutSettignsControls();
+            TogglePasswordCompelxitySettignsControls();
+
+            RowChkLockOutSettigns.Visible = ShowLockoutSettings;
         }
 
         protected void chkEnabled_CheckedChanged(object sender, EventArgs e)
         {
             ToggleControls();
         }
+
+        private void ToggleLockOutSettignsControls()
+        {
+            RowAccountLockoutDuration.Visible = chkLockOutSettigns.Checked;
+            RowLockedOut.Visible = chkLockOutSettigns.Checked;
+            RowResetAccountLockout.Visible = chkLockOutSettigns.Checked;
+        }
+
+        private void TogglePasswordCompelxitySettignsControls()
+        {
+            RowMinimumUppercase.Visible = chkPasswordComplexity.Checked;
+            RowMinimumNumbers.Visible = chkPasswordComplexity.Checked;
+            RowMinimumSymbols.Visible = chkPasswordComplexity.Checked;
+        }
+
+        protected void chkLockOutSettigns_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleLockOutSettignsControls();
+        }
+
+        protected void chkPasswordComplexity_CheckedChanged(object sender, EventArgs e)
+        {
+            TogglePasswordCompelxitySettignsControls();
+        }
+
+        public static T GetValueSafe<T>(string[] array, int index, T defaultValue)
+        {
+            try
+            {
+                if (array.Length > index)
+                {
+                    if (string.IsNullOrEmpty(array[index]))
+                    {
+                        return defaultValue;
+                    }
+
+                    return (T)Convert.ChangeType(array[index], typeof(T));
+                }
+            }
+            catch{}
+
+            return defaultValue;
+        }
+
     }
 }

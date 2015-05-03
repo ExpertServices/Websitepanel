@@ -26,7 +26,7 @@
 .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover a, .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover span {}
 .TopMenu ul.AspNet-Menu li ul li {margin: 0px; width: 100%;}
 /*.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul:before {width:0; height:0; position:absolute; content:" "; top:-8px; left:50%; margin-left:-8px; border-style:solid; border-width:0 8px 8px 8px; border-color:transparent transparent #fff transparent;}*/
-.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul {position: absolute; top: 100%; left: 0; z-index: 1000; float: left; min-width: 160px; padding: 5px 10px 5px 0; margin: -10px 0 0 0; list-style: none; font-size: 14px; background-color: #FFF; border: 1px solid #CCC; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 0; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); background-clip: padding-box;}
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul {position: absolute; top: 100%; left: 0; z-index: 1000; float: left; min-width: 180px; padding: 5px 10px 5px 0; margin: -10px 0 0 0; list-style: none; font-size: 14px; background-color: #FFF; border: 1px solid #CCC; border: 1px solid rgba(0, 0, 0, 0.15); border-radius: 0; -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); background-clip: padding-box;}
 .LeftMenu {font-size: 8pt;}
 .LeftMenu ul {background-color: #D1E9FF;}
 .LeftMenu ul.AspNet-Menu {width: 190px;}

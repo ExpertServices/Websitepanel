@@ -95,8 +95,11 @@ namespace WebsitePanel.Portal.UserControls
                 PrepareBlackBerryMenuRoot(items);
 
             //SharePoint menu group;
-            if (Cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 PrepareSharePointMenuRoot(items);
+
+            if (Cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                PrepareSharePointEnterpriseMenuRoot(items);
 
             //CRM Menu
             if (Cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
@@ -169,11 +172,17 @@ namespace WebsitePanel.Portal.UserControls
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, Cntx))
                     items.Add(CreateMenuItem("DomainNames", "org_domains"));
             }
+            
             if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, Cntx))
                 items.Add(CreateMenuItem("Users", "users", @"Icons/user_48.png"));
 
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, Cntx))
+                items.Add(CreateMenuItem("DeletedUsers", "deleted_users", @"Icons/deleted_user_48.png"));
+
             if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, Cntx))
                 items.Add(CreateMenuItem("SecurityGroups", "secur_groups", @"Icons/group_48.png"));
+
+            items.Add(CreateMenuItem("PasswordPolicy", "organization_settings_password_settings", @"Icons/user_48.png"));
         }
 
         private void PrepareExchangeMenuRoot(MenuItemCollection items)
@@ -363,7 +372,7 @@ namespace WebsitePanel.Portal.UserControls
             }
             else
             {
-                MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointGroup"), "", "", null);
+                MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointFoundationServerGroup"), "", "", null);
 
                 item.Selectable = false;
 
@@ -377,14 +386,42 @@ namespace WebsitePanel.Portal.UserControls
         }
 
         private void PrepareSharePointMenu(MenuItemCollection spItems)
-        {
+        {                        
             spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
-
-            //if (ShortMenu) return;
-
             spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
             spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
+
+
+        private void PrepareSharePointEnterpriseMenuRoot(MenuItemCollection items)
+        {
+            if (ShortMenu)
+            {
+                PrepareSharePointEnterpriseMenu(items);
+            }
+            else
+            {
+                MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointEnterpriseServerGroup"), "", "", null);
+
+                item.Selectable = false;
+
+                PrepareSharePointEnterpriseMenu(item.ChildItems);
+
+                if (item.ChildItems.Count > 0)
+                {
+                    items.Add(item);
+                }
+            }
+        }
+
+
+        private void PrepareSharePointEnterpriseMenu(MenuItemCollection spItems)
+        {
+            spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_enterprise_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
+            spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_enterprise_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_enterprise_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
+        }
+
 
         private void PrepareOCSMenuRoot(MenuItemCollection items)
         {
@@ -472,13 +509,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareEnterpriseStorageMenu(MenuItemCollection enterpriseStorageItems)
         {
-            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));
-
-            //if (ShortMenu) return;
-
-            if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
-                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
-
+            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));            
         }
 
         private void PrepareRDSMenuRoot(MenuItemCollection items)
@@ -507,7 +538,14 @@ namespace WebsitePanel.Portal.UserControls
             rdsItems.Add(CreateMenuItem("RDSCollections", "rds_collections", null));
 
             if (Utils.CheckQouta(Quotas.RDS_SERVERS, Cntx) && (PanelSecurity.LoggedUser.Role != UserRole.User))
-            rdsItems.Add(CreateMenuItem("RDSServers", "rds_servers", null));
+            {
+                rdsItems.Add(CreateMenuItem("RDSServers", "rds_servers", null));
+            }
+
+            if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
+            {
+                rdsItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
+            }
         }
 
         private MenuItem CreateMenuItem(string text, string key)
@@ -520,8 +558,7 @@ namespace WebsitePanel.Portal.UserControls
             MenuItem item = new MenuItem();
 
             item.Text = GetLocalizedString("Text." + text);
-            item.NavigateUrl = PortalUtils.EditUrl("ItemID", ItemID.ToString(), key,
-                "SpaceID=" + PackageId);
+            item.NavigateUrl = PortalUtils.EditUrl("ItemID", ItemID.ToString(), key, "SpaceID=" + PackageId);
 
             if (ShowImg)
             {

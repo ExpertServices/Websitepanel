@@ -37,13 +37,15 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public RdsCollection()
         {
             Servers = new List<RdsServer>();
+            Settings = new RdsCollectionSettings();
         }
 
         public int Id { get; set; }
         public int ItemId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string DisplayName { get; set; }
         public List<RdsServer> Servers { get; set; }
-
+        public RdsCollectionSettings Settings { get; set; }
     }
 }

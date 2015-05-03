@@ -488,7 +488,7 @@ namespace WebsitePanel.Providers.Virtualization
             return vm;
         }
 
-        private void UpdateVirtualMachineGeneralSettings(string vmId, ManagementObject objVM, int cpuCores, int ramMB, bool bootFromCD, bool numLockEnabled)
+        private void UpdateVirtualMachineGeneralSettings(string vmId, ManagementObject objVM, int cpuCores, long ramMB, bool bootFromCD, bool numLockEnabled)
         {
             // request management service
             ManagementObject objVmsvc = GetVirtualSystemManagementService();
@@ -1989,10 +1989,10 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
                 #region Stop
                 else if (!started &&
-                    (vps.State == VirtualMachineState.Started
+                    (vps.State == VirtualMachineState.Running
                     || vps.State == VirtualMachineState.Paused))
                 {
-                    if (vps.State == VirtualMachineState.Started)
+                    if (vps.State == VirtualMachineState.Running)
                     {
                         // try to shutdown the system
                         ReturnCode code = ShutDownVirtualMachine(vm.VirtualMachineId, true, "Virtual Machine has been suspended from WebsitePanel");

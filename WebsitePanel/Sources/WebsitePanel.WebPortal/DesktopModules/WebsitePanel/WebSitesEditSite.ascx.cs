@@ -69,7 +69,7 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "webman", ResourceKey = "Tab.WebManagement", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebManagement" },
             new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" },
 		};
-
+        protected string SharedIdAddres { get; set; }
 		private int PackageId
 		{
 			get { return (int)ViewState["PackageId"]; }
@@ -198,6 +198,32 @@ namespace WebsitePanel.Portal
             {
                 litIPAddress.Text = site.SiteIPAddress;
             }
+            else
+            {
+                IPAddressInfo[] ipsGeneral = ES.Services.Servers.GetIPAddresses(IPAddressPool.General, PanelRequest.ServerId);
+                bool generalIPExists = ipsGeneral.Any() && !string.IsNullOrEmpty(ipsGeneral[0].ExternalIP);
+                if (generalIPExists)
+                {
+                    lblSharedIP.Text = string.Format("({0})", ipsGeneral[0].ExternalIP);
+                }
+                else
+                {
+                    string[] settings = ES.Services.Servers.GetServiceSettings(site.ServiceId);
+                    foreach (string setting in settings)
+                    {
+                        int idx = setting.IndexOf('=');
+                        string option = setting.Substring(0, idx);
+                        if (String.Compare(option, "publicsharedip", true) == 0)
+                        {
+                            string res = setting.Substring(idx + 1);
+                            if (!String.IsNullOrEmpty(res))
+                                lblSharedIP.Text = string.Format("({0})", res);
+                            break;
+                        }
+                    }
+                }
+                lblSharedIP.Visible = !String.IsNullOrEmpty(lblSharedIP.Text);
+            }
 
             dedicatedIP.Visible = site.IsDedicatedIP;
             sharedIP.Visible = !site.IsDedicatedIP;
@@ -238,7 +264,19 @@ namespace WebsitePanel.Portal
 				if (site.ColdFusionVersion.Equals("9"))
 					litCFUnavailable.Text = "ColdFusion 9.x is installed";
 				litCFUnavailable.Visible = true;
+				
+				if (site.ColdFusionVersion.Equals("10"))
+					litCFUnavailable.Text = "ColdFusion 10.x is installed";
+				litCFUnavailable.Visible = true;				
+				
+				if (site.ColdFusionVersion.Equals("11"))
+					litCFUnavailable.Text = "ColdFusion 11.x is installed";
+				litCFUnavailable.Visible = true;
 
+				if (site.ColdFusionVersion.Equals("12"))
+					litCFUnavailable.Text = "ColdFusion 12.x is installed";
+				litCFUnavailable.Visible = true;
+				
 			}
 
 			if (!PackagesHelper.CheckGroupQuotaEnabled(PackageId, ResourceGroups.Web, Quotas.WEB_CFVIRTUALDIRS))
@@ -300,7 +338,7 @@ namespace WebsitePanel.Portal
             // AppPool
             AppPoolState appPoolState = ES.Services.WebServers.GetAppPoolState(PanelRequest.ItemID);
             BindAppPoolState(appPoolState);
-
+            
 			// bind pointers
 			BindPointers();
 

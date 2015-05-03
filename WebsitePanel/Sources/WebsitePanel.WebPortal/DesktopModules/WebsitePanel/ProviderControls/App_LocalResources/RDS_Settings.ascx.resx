@@ -126,4 +126,25 @@
   <data name="ServerNameColumn.HeaderText" xml:space="preserve">
     <value>Server Name</value>
   </data>
+  <data name="lblPFXInstallPassword.Text" xml:space="preserve">
+    <value>Certificate Password:</value>
+  </data>
+  <data name="secCertificateSettings.Text" xml:space="preserve">
+    <value>SSL Certificate</value>
+  </data>
+  <data name="lblSelectFile.Text" xml:space="preserve">
+    <value>Select Certificate:</value>
+  </data>
+  <data name="lblExpiryDate.Text" xml:space="preserve">
+    <value>Expiry Date:</value>
+  </data>
+  <data name="lblIssuedBy.Text" xml:space="preserve">
+    <value>Issued By:</value>
+  </data>
+  <data name="lblSanName.Text" xml:space="preserve">
+    <value>SAN Name:</value>
+  </data>
+  <data name="lblComputersRootOU.Text" xml:space="preserve">
+    <value>Computers Root OU:</value>
+  </data>
 </root>

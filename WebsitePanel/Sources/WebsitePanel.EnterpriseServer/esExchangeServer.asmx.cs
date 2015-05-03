@@ -315,9 +315,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
+        public string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string passwordResetUrl)
         {
-            return ExchangeServerController.GetMailboxSetupInstructions(itemId, accountId, pmm, emailMode, signup);
+            return ExchangeServerController.GetMailboxSetupInstructions(itemId, accountId, pmm, emailMode, signup, passwordResetUrl);
         }
 
         [WebMethod]
@@ -342,6 +342,18 @@ namespace WebsitePanel.EnterpriseServer
         public int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts)
         {
             return ExchangeServerController.SetMailboxPermissions(itemId, accountId, sendAsaccounts, fullAccessAcounts);
+        }
+
+        [WebMethod]
+        public int ExportMailBox(int itemId, int accountId, string path)
+        {
+            return ExchangeServerController.ExportMailBox(itemId, accountId, path);
+        }
+
+        [WebMethod]
+        public int SetDeletedMailbox(int itemId, int accountId)
+        {
+            return ExchangeServerController.SetDeletedMailbox(itemId, accountId);
         }
 
 

@@ -31,6 +31,7 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using WebsitePanel.Providers.Common;
 using System.Text;
+using WebsitePanel.Portal.Code.Helpers;
 
 namespace WebsitePanel.Portal
 {
@@ -44,6 +45,8 @@ namespace WebsitePanel.Portal
                 // page size
                 gvIPAddresses.PageSize = UsersHelper.GetDisplayItemsPerPage();
                 ddlItemsPerPage.SelectedValue = gvIPAddresses.PageSize.ToString();
+
+                gvIPAddresses.PageIndex = PageIndex;
 
                 // pool
                 if (!String.IsNullOrEmpty(PanelRequest.PoolId))
@@ -69,6 +72,7 @@ namespace WebsitePanel.Portal
             bool vps = ddlPools.SelectedIndex > 1;
             gvIPAddresses.Columns[3].Visible = vps;
         }
+
         protected void odsIPAddresses_Selected(object sender, ObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -84,10 +88,23 @@ namespace WebsitePanel.Portal
             return PortalUtils.GetSpaceHomePageUrl(spaceId);
         }
 
+        public string GetReturnUrl()
+        {
+            var returnUrl = Request.Url.AddParameter("Page", gvIPAddresses.PageIndex.ToString());
+            return Uri.EscapeDataString("~" + returnUrl.PathAndQuery);
+        }
+
+        public int PageIndex
+        {
+            get
+            {
+                return PanelRequest.GetInt("Page", 0);
+            }
+        }
 
         protected void btnAddItem_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("PoolID", ddlPools.SelectedValue, "add_ip"), true);
+            Response.Redirect(EditUrl("PoolID", ddlPools.SelectedValue, "add_ip", "ReturnUrl=" + GetReturnUrl()), true);
         }
 
         protected void ddlItemsPerPage_SelectedIndexChanged(object sender, EventArgs e)

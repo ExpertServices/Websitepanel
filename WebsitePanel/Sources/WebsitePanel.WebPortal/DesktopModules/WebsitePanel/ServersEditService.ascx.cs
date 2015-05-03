@@ -160,7 +160,8 @@ namespace WebsitePanel.Portal
                                                                 (resourceGroup.GroupName == ResourceGroups.HostedCRM)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Os)|
                                                                 (resourceGroup.GroupName == ResourceGroups.HostedOrganizations) |
-                                                                (resourceGroup.GroupName == ResourceGroups.HostedSharePoint) |
+                                                                (resourceGroup.GroupName == ResourceGroups.SharepointFoundationServer) |
+                                                                (resourceGroup.GroupName == ResourceGroups.SharepointEnterpriseServer) |
                                                                 (resourceGroup.GroupName == ResourceGroups.Mail)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Lync)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Exchange)|
@@ -176,6 +177,7 @@ namespace WebsitePanel.Portal
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql5)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Statistics)|
                                                                 (resourceGroup.GroupName == ResourceGroups.VPS)|
+                                                                (resourceGroup.GroupName == ResourceGroups.VPS2012)|
                                                                 (resourceGroup.GroupName == ResourceGroups.VPSForPC));
         }
 

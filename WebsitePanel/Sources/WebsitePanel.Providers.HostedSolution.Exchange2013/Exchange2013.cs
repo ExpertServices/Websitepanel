@@ -4995,12 +4995,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 //general settings
                 Command cmd = new Command("Set-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!folderName.Equals(newFolderName, StringComparison.OrdinalIgnoreCase))
-                {
-                    cmd.Parameters.Add("Name", newFolderName);
-                }
                 cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 ExecuteShellCommand(runSpace, cmd);
+
+                // rename
+                if (!folderName.Equals(newFolderName, StringComparison.OrdinalIgnoreCase))
+                {
+                    cmd = new Command("Set-PublicFolder");
+                    cmd.Parameters.Add("Identity", folder);
+                    cmd.Parameters.Add("Name", newFolderName);
+                    ExecuteShellCommand(runSpace, cmd);
+
+                }
             }
             finally
             {
@@ -5334,16 +5340,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 string newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
 
-                if (newValue != oldValue)
-                {
-                    cmd = new Command("Set-Mailbox");
-                    cmd.Parameters.Add("Identity", id);
-                    cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+                cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", id);
+                cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
 
-                    ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommand(runSpace, cmd);
 
-                    res.Add(newValue);
-                }
+                res.Add(newValue);
 
             }
             finally
@@ -7481,6 +7484,43 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Archiving
+
+        public ResultObject ExportMailBox(string organizationId, string accountName, string storagePath)
+        {
+            return ExportMailBoxInternal(organizationId, accountName, storagePath);
+        }
+
+        public ResultObject ExportMailBoxInternal(string organizationId, string accountName, string storagePath)
+        {
+            ExchangeLog.LogStart("ExportMailBoxInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd = new Command("New-MailboxExportRequest");
+                cmd.Parameters.Add("Mailbox", accountName);
+                cmd.Parameters.Add("FilePath", storagePath);
+
+                ExecuteShellCommand(runSpace, cmd, res);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+
+            ExchangeLog.LogEnd("ExportMailBoxInternal");
+
+            return res;
+        }
 
         public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {

@@ -1481,6 +1481,10 @@ namespace WebsitePanel.EnterpriseServer
             {
                 return Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER;
             }
+            else if (String.Compare(groupName, ResourceGroups.VPS2012, true) == 0)
+            {
+                return Quotas.VPS2012_EXTERNAL_IP_ADDRESSES_NUMBER;
+            }
             else if (String.Compare(groupName, ResourceGroups.VPSForPC, true) == 0)
             {
                 return Quotas.VPSForPC_EXTERNAL_IP_ADDRESSES_NUMBER;
@@ -1840,6 +1844,7 @@ namespace WebsitePanel.EnterpriseServer
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS2012, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                 }
 
@@ -2403,6 +2408,7 @@ namespace WebsitePanel.EnterpriseServer
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MySql5, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Statistics, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.VPS, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.VPS2012, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.VPSForPC, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Dns, domain, "");
                                         break;
@@ -2709,6 +2715,7 @@ namespace WebsitePanel.EnterpriseServer
                 domain.CreationDate = ParseDate(creationDateString);
                 domain.ExpirationDate = ParseDate(expirationDateString);
                 domain.RegistrarName = ParseWhoisDomainInfo(whoisResult.Raw, _registrarNamePatterns);
+                domain.LastUpdateDate = DateTime.Now;
 
                 DataProvider.UpdateWhoisDomainInfo(domain.DomainId, domain.CreationDate, domain.ExpirationDate, DateTime.Now, domain.RegistrarName);
             }
@@ -2727,6 +2734,7 @@ namespace WebsitePanel.EnterpriseServer
             domain.CreationDate = creationDate;
             domain.ExpirationDate = expirationDate;
             domain.RegistrarName = registrarName;
+            domain.LastUpdateDate = DateTime.Now;
 
             return domain;
         }

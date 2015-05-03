@@ -151,6 +151,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_MAIL_LICENSE_USERS_QUOTA = -724;
 
 		public const int ERROR_MAIL_ACCOUNT_MAX_MAILBOX_SIZE_LIMIT = -725;
+		public const int ERROR_MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY = -726;
         #endregion
 
         #region FTP
@@ -326,6 +327,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int CURRENT_USER_IS_CRM_USER = -2708;
         public const int CURRENT_USER_IS_OCS_USER = -2709;
         public const int CURRENT_USER_IS_LYNC_USER = -2710;
+        public const int ERROR_DELETED_USERS_RESOURCE_QUOTA_LIMIT = -2711;
 
         #endregion
 

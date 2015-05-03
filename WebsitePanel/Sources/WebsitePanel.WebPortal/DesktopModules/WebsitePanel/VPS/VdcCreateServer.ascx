@@ -188,7 +188,7 @@
                                             </tr>
                                         </table>
                                     </asp:Panel>
-                                    
+
                                     <wsp:CollapsiblePanel id="secSnapshots" runat="server"
                                         TargetControlID="SnapshotsPanel" meta:resourcekey="secSnapshots" Text="Snapshots">
                                     </wsp:CollapsiblePanel>

@@ -402,6 +402,9 @@
   <data name="Error.MAIL_UPDATE_ACCOUNT" xml:space="preserve">
     <value>Error updating mail account</value>
   </data>
+  <data name="Error.MAIL_ACCOUNT_PASSWORD_NOT_COMPLEXITY" xml:space="preserve">
+    <value>Password doesn't meet complexity. Perhaps the password length is less 5 characters.</value>
+  </data>
   <data name="Error.MAIL_UPDATE_DOMAIN" xml:space="preserve">
     <value>Error updating mail domain</value>
   </data>
@@ -3136,6 +3139,15 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Action has been successfully performed.</value>
+  </data>
+  <data name="Error.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Failed to perform action.</value>
+  </data>
+  <data name="Warning.ACTIONS_MESSAGE" xml:space="preserve">
+    <value>Please select the items for which you want to perform action.</value>
+  </data>
   <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
     <value>User password has been successfully updated.</value>
   </data>
@@ -3289,6 +3301,12 @@
   <data name="Success.ORGANIZATION_LETTER_SEND" xml:space="preserve">
     <value>Organization user setup instructions have been sent</value>
   </data>
+  <data name="Error.RDS_SETUP_LETTER_SEND" xml:space="preserve">
+    <value>Error sending setup instructions</value>
+  </data>
+  <data name="Success.RDS_SETUP_LETTER_SEND" xml:space="preserve">
+    <value>Setup instructions have been sent</value>
+  </data>
   <data name="Quota.MsSQL2005.MaxLogSize" xml:space="preserve">
     <value>Max Log Size, MB</value>
   </data>
@@ -3326,7 +3344,7 @@
     <value>Hosted Organizations</value>
   </data>
   <data name="ResourceGroup.Hosted CRM" xml:space="preserve">
-    <value>Hosted CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="ResourceGroup.BlackBerry" xml:space="preserve">
     <value>BlackBerry</value>
@@ -3346,8 +3364,20 @@
   <data name="Quota.HostedSolution.SecurityGroups" xml:space="preserve">
     <value>Security Groups per Organization</value>
   </data>
-  <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
-    <value>Hosted SharePoint</value>
+  <data name="Quota.HostedSolution.DeletedUsers" xml:space="preserve">
+    <value>Deleted Users per Organization</value>
+  </data>
+  <data name="Quota.HostedSolution.DeletedUsersBackupStorageSpace" xml:space="preserve">
+    <value>Deleted Users Backup Storage Space per Organization, Mb</value>
+  </data>
+  <data name="ResourceGroup.SharePoint Foundation Server" xml:space="preserve">
+    <value>SharePoint Foundation Server</value>
+  </data>
+  <data name="ResourceGroup.SharePoint Server" xml:space="preserve">
+    <value>SharePoint Server</value>
+  </data>
+  <data name="ResourceGroup.SharePoint Enterprise Server" xml:space="preserve">
+    <value>SharePoint Enterprise Server</value>
   </data>
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>
@@ -3359,6 +3389,18 @@
     <value>SharePoint Site Collections per Organization</value>
   </data>
   <data name="Quota.HostedSharePoint.MaxStorage" xml:space="preserve">
+    <value>Max site storage, MB</value>
+  </data>
+  <data name="Quota.HostedSharePointServer.Sites" xml:space="preserve">
+    <value>SharePoint Site Collections per Organization</value>
+  </data>
+  <data name="Quota.HostedSharePointServer.MaxStorage" xml:space="preserve">
+    <value>Max site storage, MB</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.Sites" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collections per Organization</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.MaxStorage" xml:space="preserve">
     <value>Max site storage, MB</value>
   </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
@@ -4033,6 +4075,56 @@
   <data name="Error.VPS_ERROR_TAKE_SNAPSHOT" xml:space="preserve">
     <value>Cannot take virtual machine snapshot</value>
   </data>
+  <data name="Error.VPS_ERROR_SET_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot enable/set replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_ERROR_DISABLE_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot disable replication for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_ERROR_GET_VM_REPLICATION" xml:space="preserve">
+    <value>Cannot get replication for the virtual machine</value>
+  </data>
+  
+  <data name="Error.VPS_SET_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot set replication for the server</value>
+  </data>
+  <data name="Error.VPS_UNSET_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot unset replication for the server</value>
+  </data>
+  <data name="Error.VPS_NO_REPLICA_SERVER_ERROR" xml:space="preserve">
+    <value>Cannot find replication server</value>
+  </data>
+  <data name="Error.VPS_SET_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot enable\set replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_SET_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication set\enabled for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_DISABLE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot disable replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_DISABLE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication disabled for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_PAUSE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot pause replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_PAUSE_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication paused for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_RESUME_REPLICATION_ERROR" xml:space="preserve">
+    <value>Cannot resume replication for the virtual machine</value>
+  </data>
+  <data name="Success.VPS_RESUME_REPLICATION_ERROR" xml:space="preserve">
+    <value>Replication resumed for the virtual machine</value>
+  </data>
+  <data name="Error.VPS_REQUIRED" xml:space="preserve">
+    <value>Please fill required fields</value>
+  </data>
+  <data name="Error.VPS_QUOTA_REPLICATION_ENABLED" xml:space="preserve">
+    <value>Replications is not allowed in the hosting plan</value>
+  </data>
+  
   <data name="VPS.VPS_JOB_FAILED_ERROR" xml:space="preserve">
     <value>Job execution failed with the following code: {1}</value>
   </data>
@@ -4224,6 +4316,9 @@
   </data>
   <data name="VPS.VPS_QUOTA_WRONG_RAM" xml:space="preserve">
     <value>RAM size must be a positive number and greater than zero</value>
+  </data>
+  <data name="VPS.VPS_QUOTA_NOT_IN_DYNAMIC_RAM" xml:space="preserve">
+    <value>RAM size must be between the minimum and maximum of the dynamic memory</value>
   </data>
   <data name="VPS.VPS_QUOTA_WRONG_SNAPSHOTS" xml:space="preserve">
     <value>Snapshots must be a positive number and greater than zero</value>
@@ -5086,6 +5181,75 @@
   <data name="Quota.VPSForPC.StartShutdownAllowed" xml:space="preserve">
     <value>Allow user to Start, Turn off VPS</value>
   </data>
+  <data name="ResourceGroup.VPS2012" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
+  <data name="AuditLogSource.VPS2012" xml:space="preserve">
+    <value>Virtual Private Servers 2012</value>
+  </data>
+  <data name="Quota.VPS2012.Bandwidth" xml:space="preserve">
+    <value>Monthly bandwidth, GB</value>
+  </data>
+  <data name="Quota.VPS2012.BootCdAllowed" xml:space="preserve">
+    <value>Boot from CD allowed</value>
+  </data>
+  <data name="Quota.VPS2012.BootCdEnabled" xml:space="preserve">
+    <value>Boot from CD</value>
+  </data>
+  <data name="Quota.VPS2012.CpuNumber" xml:space="preserve">
+    <value>Number of CPU cores</value>
+  </data>
+  <data name="Quota.VPS2012.DvdEnabled" xml:space="preserve">
+    <value>DVD drive</value>
+  </data>
+  <data name="Quota.VPS2012.ExternalIPAddressesNumber" xml:space="preserve">
+    <value>Number of External IP addresses</value>
+  </data>
+  <data name="Quota.VPS2012.ExternalNetworkEnabled" xml:space="preserve">
+    <value>External Network</value>
+  </data>
+  <data name="Quota.VPS2012.Hdd" xml:space="preserve">
+    <value>Hard Drive size, GB</value>
+  </data>
+  <data name="Quota.VPS2012.ManagingAllowed" xml:space="preserve">
+    <value>Allow user to create, delete VPS</value>
+  </data>
+  <data name="Quota.VPS2012.NumLockEnabled" xml:space="preserve">
+    <value>"Num Lock" by default</value>
+  </data>
+  <data name="Quota.VPS2012.PauseResumeAllowed" xml:space="preserve">
+    <value>Allow user to Pause, Resume VPS</value>
+  </data>
+  <data name="Quota.VPS2012.PrivateIPAddressesNumber" xml:space="preserve">
+    <value>Number of Private IP addresses per VPS</value>
+  </data>
+  <data name="Quota.VPS2012.PrivateNetworkEnabled" xml:space="preserve">
+    <value>Private Network</value>
+  </data>
+  <data name="Quota.VPS2012.Ram" xml:space="preserve">
+    <value>RAM size, MB</value>
+  </data>
+  <data name="Quota.VPS2012.RebootAllowed" xml:space="preserve">
+    <value>Allow user to Reboot VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ReinstallAllowed" xml:space="preserve">
+    <value>Allow user to Re-install VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ResetAlowed" xml:space="preserve">
+    <value>Allow user to Reset VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ServersNumber" xml:space="preserve">
+    <value>Number of VPS</value>
+  </data>
+  <data name="Quota.VPS2012.SnapshotsNumber" xml:space="preserve">
+    <value>Number of Snaphots</value>
+  </data>
+  <data name="Quota.VPS2012.StartShutdownAllowed" xml:space="preserve">
+    <value>Allow user to Start, Turn off VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ReplicationEnabled" xml:space="preserve">
+    <value>Allow user to Replication</value>
+  </data>
   <data name="Error.CreateCheckPointError" xml:space="preserve">
     <value>Error creating CheckPoint</value>
   </data>
@@ -5135,6 +5299,12 @@
     <value>Web Publishing profile for this web site has been successfully saved</value>
   </data>
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.HostedSharePointEnterprise.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.HostedSharePointServer.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
   </data>
   <data name="Quota.Exchange2007.IsConsumer" xml:space="preserve">
@@ -5329,6 +5499,9 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Success.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Succesfully set default mailbox plan.</value>
+  </data>
   <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
     <value>Lync plan update failed</value>
   </data>
@@ -5423,7 +5596,7 @@
     <value>ESS licenses per organization</value>
   </data>
   <data name="ResourceGroup.Hosted CRM2013" xml:space="preserve">
-    <value>Hosted CRM 2013</value>
+    <value>CRM 2013/2015</value>
   </data>
   <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_0" xml:space="preserve">
     <value>CRM users quota (Professional license) has been reached.</value>
@@ -5590,6 +5763,9 @@
   <data name="Quota.RDS.Users" xml:space="preserve">
     <value>Remote Desktop Users</value>
   </data>
+  <data name="Quota.RDS.Collections" xml:space="preserve">
+    <value>Remote Desktop Collections</value>
+  </data>
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
@@ -5625,5 +5801,62 @@
   </data>
   <data name="ERROR.IDNDOMAIN_NO_ORGANIZATION" xml:space="preserve">
     <value>You cannot use a IDN domain name for organizations</value>
+  </data>
+  <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
+    <value>Collection not created</value>
+  </data>
+  <data name="ERROR.RDSSESSIONHOST_CERTIFICATE_NOT_INSTALLED" xml:space="preserve">
+    <value>Session host certificate not installed</value>
+  </data>
+  <data name="ERROR.RDSSERVER_NOT_ADDED" xml:space="preserve">
+    <value>RDS Server not added</value>
+  </data>
+  <data name="ERROR.RDSSERVER_NOT_UPDATED" xml:space="preserve">
+    <value>RDS Server not updated</value>
+  </data>
+  <data name="Success.RDSSESSIONHOST_CERTIFICATE_INSTALLED" xml:space="preserve">
+    <value>Session host certificate has been installed</value>
+  </data>
+  <data name="ERROR.RDSCOLLECTIONSETTINGS_NOT_UPDATES" xml:space="preserve">
+    <value>RDS Collection settings not updated</value>
+  </data>
+  <data name="ERROR.REMOTEAPPUSERS_NOT_UPDATED" xml:space="preserve">
+    <value>Remote application users not updated</value>
+  </data>
+  <data name="ERROR.RDSSERVER_NOT_ASSIGNED" xml:space="preserve">
+    <value>RDS server not assigned to organization</value>
+  </data>
+  <data name="ERROR.RDSLOCALADMINS_NOT_ADDED" xml:space="preserve">
+    <value>Local admins not added</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
+    <value>RDS User logging off error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_VIEW_SESSION" xml:space="preserve">
+    <value>View session error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_CONTROL_SESSION" xml:space="preserve">
+    <value>Control session error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_SESSIONS" xml:space="preserve">
+    <value>Getting RDS User sessions error</value>
+  </data>
+  <data name="ERROR.REMOTE_DESKTOP_SERVICES_USER_EXPERIENCE" xml:space="preserve">
+    <value>Updating RDS User experience error</value>
+  </data>
+  <data name="Success.REMOTE_DESKTOP_SERVICES_USER_EXPERIENCE" xml:space="preserve">
+    <value>RDS User experience has been updated</value>
+  </data>
+  <data name="SchedulerTask.SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION" xml:space="preserve">
+    <value>User password expiration notification</value>
+  </data>
+  <data name="ERROR.ORANIZATIONSETTINGS_NOT_UPDATED" xml:space="preserve">
+    <value>Error during updating settings.</value>
+  </data>
+  <data name="Error.UNABLETOLOADPASSWORDSETTINGS" xml:space="preserve">
+    <value>Unable to load password settings</value>
+  </data>
+  <data name="Error.SEND_USER_PASSWORD_RESET_SMS" xml:space="preserve">
+    <value>Sms was not sent.</value>
   </data>
 </root>

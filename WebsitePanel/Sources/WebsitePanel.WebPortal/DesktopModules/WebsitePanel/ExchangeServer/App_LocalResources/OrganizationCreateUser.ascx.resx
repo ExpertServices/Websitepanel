@@ -159,4 +159,7 @@
   <data name="valRequireSubscriberNumber.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="chkUserMustChangePassword.Text" xml:space="preserve">
+    <value>User must change password at next logon</value>
+  </data>
 </root>

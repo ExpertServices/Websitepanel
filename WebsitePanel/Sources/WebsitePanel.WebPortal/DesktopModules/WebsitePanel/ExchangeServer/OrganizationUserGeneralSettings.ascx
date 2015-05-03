@@ -74,13 +74,15 @@
                                 <asp:Button id="btnSetUserPassword" runat="server" Text="Set Password" CssClass="Button1"
 							meta:resourcekey="btnSetUserPassword" OnClick="btnSetUserPassword_Click" ValidationGroup="ValidatePassword"></asp:Button>
 					            <asp:ValidationSummary ID="ValidationSummary2" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="ValidatePassword" />
+                                <asp:Button id="btnResetUserPassword" runat="server" Text="Reset Password" CssClass="Button1"
+							meta:resourcekey="btnResetUserPassword" OnClick="btnResetUserPassword_Click"></asp:Button>
                             </td>
 						</tr>
-						
 						
 						<tr>
 						    <td></td>
 						    <td>
+						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
 						        <br />
 						        <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
 						        <br />

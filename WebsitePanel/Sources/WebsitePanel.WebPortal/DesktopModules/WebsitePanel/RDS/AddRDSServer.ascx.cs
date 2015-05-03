@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal.RDS
 
         private void BindRDSServers()
         {
-            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers();
+            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers(PanelRequest.ItemID);
             ddlServers.DataTextField = "Name";
             ddlServers.DataValueField = "Id";
             ddlServers.DataBind();
@@ -68,9 +68,10 @@ namespace WebsitePanel.Portal.RDS
                 Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_servers",
                                   "SpaceID=" + PanelSecurity.PackageId));
             }
-            catch { }
-
- 
+            catch (Exception ex)
+            {
+                ShowErrorMessage("RDSSERVER_NOT_ASSIGNED", ex);
+            }
         }
     }
 }

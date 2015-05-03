@@ -34,6 +34,7 @@ namespace WebsitePanel.Providers.Virtualization
 {
     public class MountedDiskInfo
     {
+        public int DiskNumber { get; set; }
         public string DiskAddress { get; set; }
         public string[] DiskVolumes { get; set; }
     }

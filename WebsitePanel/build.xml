@@ -37,8 +37,9 @@
 		<ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
 		<AWStatsViewerSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer</AWStatsViewerSrc>
 		<WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
+    <FixDefaultPublicFolderMailboxSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.FixDefaultPublicFolderMailbox\bin\$(BuildConfiguration)</FixDefaultPublicFolderMailboxSrc>
 
-		<ServerBuild>$(BuildFolder)\Server</ServerBuild>
+    <ServerBuild>$(BuildFolder)\Server</ServerBuild>
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
 		<SchedulerServiceBuild>$(BuildFolder)\SchedulerService</SchedulerServiceBuild>
 		<PortalBuild>$(BuildFolder)\Portal</PortalBuild>
@@ -51,8 +52,10 @@
 		<WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
 		<LocalizationToolkitBuild>$(BuildFolder)\LocalizationToolkit</LocalizationToolkitBuild>
 		<InstallerBuild>$(BuildFolder)\Installer</InstallerBuild>
+    <FixDefaultPublicFolderMailboxBuild>$(BuildFolder)\FixDefaultPublicFolderMailbox</FixDefaultPublicFolderMailboxBuild>
+        <WiXInstallerBuild>$(BuildFolder)\WiXInstaller</WiXInstallerBuild>
 
-		<ftphost></ftphost>
+    <ftphost></ftphost>
 		<ftpUsername></ftpUsername>
 		<ftpPassword></ftpPassword>
 
@@ -61,7 +64,8 @@
 		<codeplexUser></codeplexUser>
 		<codeplexPassword></codeplexPassword>
 
-	</PropertyGroup>
+	
+</PropertyGroup>
 	
 	<PropertyGroup Label="WebPlatformFeed">
 		<!-- URI where to locate the installer's distributive online -->
@@ -69,6 +73,7 @@
 	</PropertyGroup>
 
 	<Target Name="RestorePackages">
+	    <Exec Command="$(TrunkFolder)\Sources\.nuget\NuGet.exe restore $(TrunkFolder)\Sources\WebsitePanel.EnterpriseServer.sln" />
 	    <Exec Command="$(TrunkFolder)\Sources\.nuget\NuGet.exe restore $(TrunkFolder)\Sources\WebsitePanel.WebPortal.sln" />
 	</Target>
 
@@ -92,7 +97,8 @@
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WSPTransportAgent.sln" Properties="Configuration=$(BuildConfiguration)" />
-	</Target>
+    <MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.FixDefaultPublicFolderMailbox.sln" Properties="Configuration=$(BuildConfiguration)" />
+  </Target>
 
 	<Target Name="PrepareBuilds" DependsOnTargets="CompileSources">
 		<!-- Remove build output folders in reversed order (e.q. root folder removed last) -->
@@ -110,8 +116,9 @@
 		<RemoveDir Directories="$(LocalizationToolkitBuild)"/>
 		<RemoveDir Directories="$(InstallerBuild)"/>
 		<RemoveDir Directories="$(BuildFolder)"/>
+    <RemoveDir Directories="$(FixDefaultPublicFolderMailboxBuild)"/>
 
-		<MakeDir Directories="$(BuildFolder)"/>
+    <MakeDir Directories="$(BuildFolder)"/>
 		<MakeDir Directories="$(ServerBuild)"/>
 		<MakeDir Directories="$(EnterpriseServerBuild)"/>
 		<MakeDir Directories="$(SchedulerServiceBuild)"/>
@@ -125,7 +132,8 @@
 		<MakeDir Directories="$(WSPTransportAgentBuild)"/>
 		<MakeDir Directories="$(LocalizationToolkitBuild)"/>
 		<MakeDir Directories="$(InstallerBuild)"/>
-	</Target>
+    <MakeDir Directories="$(FixDefaultPublicFolderMailboxBuild)"/>
+  </Target>
 
 	<Target Name="CreateServerBuild" DependsOnTargets="PrepareBuilds">
 		<ItemGroup>
@@ -345,11 +353,29 @@
 		</MSBuild>
 		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
 	</Target>
-	
-	<Target Name="Build" DependsOnTargets="CreateSetupBuild">
+
+  <Target Name="CreateFixDefaultPublicFolderMailboxBuild" DependsOnTargets="CreateSetupBuild">
+    <ItemGroup>
+      <FixDefaultPublicFolderMailboxExclude Include="$(FixDefaultPublicFolderMailboxSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
+      <FixDefaultPublicFolderMailboxExclude Include="$(FixDefaultPublicFolderMailboxSrc)\**\*.vshost.*" />
+      <FixDefaultPublicFolderMailboxBuildFiles Include="$(FixDefaultPublicFolderMailboxSrc)\**\*.*" Exclude="@(FixDefaultPublicFolderMailboxExclude)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FixDefaultPublicFolderMailboxBuildFiles)" DestinationFolder="$(FixDefaultPublicFolderMailboxBuild)\%(RecursiveDir)" />
+  </Target>
+    
+    <Target Name="WiXCreateRedistFileListBuild" DependsOnTargets="CreateFixDefaultPublicFolderMailboxBuild" >
+        <RemoveDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
+        <MakeDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr INSTALLENTERPRISESERVERFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr INSTALLSERVERFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr INSTALLPORTALFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr INSTALLWEBDAVPORTALFOLDER' />
+    </Target>
+
+    <Target Name="Build" DependsOnTargets="WiXCreateRedistFileListBuild">
 		<!-- Do nothing -->
 	</Target>
-
+    
   <!-- Create full distributives -->
 	<PropertyGroup>
 		<InstallFolder>$(DeployFolder)\Install</InstallFolder>
@@ -368,8 +394,8 @@
 		<ImportEnterpriseInstall>$(ToolsFolder)\Import.Enterprise</ImportEnterpriseInstall>
 		<AWStatsViewerInstall>$(ToolsFolder)\AWStats.Viewer</AWStatsViewerInstall>
 		<WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
-    
-	</PropertyGroup>
+    <FixDefaultPublicFolderMailboxInstall>$(ToolsFolder)\FixDefaultPublicFolderMailbox</FixDefaultPublicFolderMailboxInstall>
+  </PropertyGroup>
 
 	<Target Name="PrepareInstalls" DependsOnTargets="Build">
 		<Delete Files="$(InstallFolder)\**\*.*"/>
@@ -492,9 +518,20 @@
 			<LocalizationToolkitDeployFiles Include="$(LocalizationToolkitBuild)\**\*.*" />
 		</ItemGroup>
 		<Copy SourceFiles="@(LocalizationToolkitDeployFiles)" DestinationFolder="$(ToolsFolder)\%(RecursiveDir)" />
-	</Target>	
+	</Target>
 
-	<!-- Create update from previous version -->
+  <Target Name="CreateFixDefaultPublicFolderMailboxInstall" DependsOnTargets="CreateLocalizationToolkitInstall">
+    <ItemGroup>
+      <FixDefaultPublicFolderMailboxDeployFiles Include="$(FixDefaultPublicFolderMailboxBuild)\**\*.*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(FixDefaultPublicFolderMailboxInstall)"/>
+    <MakeDir Directories="$(FixDefaultPublicFolderMailboxInstall)"/>
+    <Copy SourceFiles="@(FixDefaultPublicFolderMailboxDeployFiles)" DestinationFolder="$(FixDefaultPublicFolderMailboxInstall)\%(RecursiveDir)" />
+    <Copy SourceFiles="$(RootFolder)\LICENSE.txt" DestinationFolder="$(FixDefaultPublicFolderMailboxInstall)" />
+  </Target>
+
+
+  <!-- Create update from previous version -->
 	<PropertyGroup>
 		<UpdateFolder>$(DeployFolder)\Update</UpdateFolder>
 		<ServerUpdate>$(UpdateFolder)\Server</ServerUpdate>
@@ -502,7 +539,7 @@
 		<PortalUpdate>$(UpdateFolder)\Portal</PortalUpdate>
 	</PropertyGroup>
 
-	<Target Name="PrepareUpdates" DependsOnTargets="CreateLocalizationToolkitInstall">
+	<Target Name="PrepareUpdates" DependsOnTargets="CreateFixDefaultPublicFolderMailboxInstall">
 		<RemoveDir Directories="$(UpdateFolder)"/>
 		<MakeDir Directories="$(UpdateFolder)"/>
 
@@ -613,8 +650,15 @@
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.pdb" DestinationFolder="$(StandaloneInstall)\Setup" Condition="'$(BuildConfiguration)' == 'Debug'" />
 	</Target>
 
+    <Target Name="CreateStandaloneFullMsi" DependsOnTargets="CreateSetupDLL">
+        <MSBuild Projects='$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIXInstaller\Setup.WIXInstaller.wixproj' Properties='Configuration=$(BuildConfiguration)' Targets='Build'>
+           <Output TaskParameter="TargetOutputs" ItemName="StandaloneFullMsi" />	 
+        </MSBuild>    			
+		<Copy SourceFiles="@(StandaloneFullMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
+    </Target>
+
 	<!-- Deploy -->
-	<Target Name="Deploy" DependsOnTargets="CreateSetupDLL" >
+	<Target Name="Deploy" DependsOnTargets="CreateStandaloneFullMsi" >
 		<ItemGroup>
 			<PortalInstallFiles Include="$(PortalInstall)\**\*.*" />
 			<WebDavPortalInstallFiles Include="$(WebDavPortalInstall)\**\*.*" />
@@ -697,6 +741,7 @@
 		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip&quot; &quot;$(ImportEnterpriseInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip&quot; &quot;$(AWStatsViewerInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip&quot; &quot;$(WSPTransportAgentInstall)\*&quot;" />
+    <Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-FixDefaultPublicFolderMailbox-$(Version).zip&quot; &quot;$(FixDefaultPublicFolderMailboxInstall)\*&quot;" />
 
   </Target>
 
@@ -786,12 +831,14 @@
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
-      		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
+          <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-VMConfig-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Websitepanel-SchedulerService-$(Version).msi" LocalFile="$(DeployFolder)\Websitepanel-SchedulerService.msi" />
+          <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Full-$(Version).msi" LocalFile="$(DeployFolder)\Websitepanel.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Manual-Update-$(Version).zip" LocalFile="$(DeployFolder)\Manual-Update.zip" />
-		  </Target>
+      <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-FixDefaultPublicFolderMailbox-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-FixDefaultPublicFolderMailbox-$(Version).zip" />
+  </Target>
 
   <Import Project="$(RootFolder)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
   

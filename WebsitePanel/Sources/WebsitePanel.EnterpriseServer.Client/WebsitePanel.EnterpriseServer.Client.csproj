@@ -89,8 +89,10 @@
       <SubType>code</SubType>
     </Compile>
     <Compile Include="HeliconZooProxy.cs" />
+    <Compile Include="HostedSharePointServersEntProxy.cs" />
     <Compile Include="LyncProxy.cs" />
     <Compile Include="RemoteDesktopServicesProxy.cs" />
+    <Compile Include="VirtualizationServerProxy2012.cs" />
     <Compile Include="VirtualizationServerProxyForPrivateCloud.cs" />
     <Compile Include="CRMProxy.cs" />
     <Compile Include="DatabaseServersProxy.cs" />

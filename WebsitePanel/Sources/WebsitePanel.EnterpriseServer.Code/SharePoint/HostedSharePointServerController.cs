@@ -69,7 +69,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             SharePointSiteCollectionListPaged paged = new SharePointSiteCollectionListPaged();
-            DataSet result = PackageController.GetRawPackageItemsPaged(packageId, typeof(SharePointSiteCollection),
+            DataSet result = PackageController.GetRawPackageItemsPaged(packageId,  ResourceGroups.SharepointFoundationServer, typeof(SharePointSiteCollection),
                 true, filterColumn, filterValue, sortColumn, startRow, Int32.MaxValue);
             List<SharePointSiteCollection> items = PackageController.CreateServiceItemsList(result, 1).ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
 
@@ -122,7 +122,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             // Log operation.
             TaskManager.StartTask("HOSTEDSHAREPOINT", "GET_LANGUAGES");
 
-            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
             if (serviceId == 0)
             {
                 return new int[] { };
@@ -236,7 +236,8 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Check if stats resource is available
-            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.HostedSharePoint);
+            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.SharepointFoundationServer);
+
             if (serviceId == 0)
             {
                 return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_UNAVAILABLE;
@@ -271,9 +272,9 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
                 int counter = 0;
                 item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
-                siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);
+                siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);                
 
-                while (DataProvider.CheckServiceItemExists(serviceId, item.Name, "WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base"))
+                while  ( DataProvider. CheckServiceItemExists( serviceId,   item. Name,   "WebsitePanel.Providers.SharePoint.SharePointSiteCollection,   WebsitePanel.Providers.Base"))  
                 {
                     counter++;
                     item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
@@ -303,7 +304,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
 
             // Check package item with given name already exists.
-            if (PackageController.GetPackageItemByName(item.PackageId, item.Name, typeof(SharePointSiteCollection)) != null)
+            if (PackageController.GetPackageItemByName(item.PackageId,  item.Name, typeof(SharePointSiteCollection)) != null)
             {
                 return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_EXISTS;
             }
@@ -790,7 +791,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
         private static int GetHostedSharePointServiceId(int packageId)
         {
-            return PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.SharepointFoundationServer);
         }
 
         private static List<SharePointSiteCollection> GetOrganizationSharePointSiteCollections(int orgId)
@@ -1012,5 +1013,6 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 return (SecurityContext.CheckAccount(DemandAccount.NotDemo) < 0);
             }
         }
-    }
+
+     }
 }

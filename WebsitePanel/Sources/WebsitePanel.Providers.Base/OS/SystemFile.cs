@@ -144,6 +144,9 @@ namespace WebsitePanel.Providers.OS
             set { this.url = value; }
         }
 
+        public string RelativeUrl { get; set; }
+        public string Summary { get; set; }
+
         public string DriveLetter
         {
             get { return this.driveLetter; }

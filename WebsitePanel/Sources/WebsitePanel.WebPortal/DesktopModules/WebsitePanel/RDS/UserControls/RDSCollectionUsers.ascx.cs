@@ -42,6 +42,18 @@ namespace WebsitePanel.Portal.RDS.UserControls
 	{
         public const string DirectionString = "DirectionString";
 
+        public bool ButtonAddEnabled
+        {
+            get
+            {
+                return btnAdd.Enabled;
+            }
+            set
+            {
+                btnAdd.Enabled = value;
+            }
+        }
+
 		protected enum SelectedState
 		{
 			All,
@@ -74,14 +86,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 }";
                 Page.ClientScript.RegisterClientScriptBlock(typeof(RDSCollectionUsers), "SelectAllCheckboxes",
 					script, true);
-			}
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))
-            {
-                int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
-                btnAdd.Enabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
-            }
+			}            
 		}
 
 		protected void btnAdd_Click(object sender, EventArgs e)
@@ -132,6 +137,19 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		protected void BindPopupAccounts()
 		{
             OrganizationUser[] accounts = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+            var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+            foreach (var user in accounts)
+            {
+                if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                {
+                    user.IsVIP = true;
+                }
+                else
+                {
+                    user.IsVIP = false;
+                }                
+            }
 
             accounts = accounts.Where(x => !GetUsers().Select(p => p.AccountName).Contains(x.AccountName)).ToArray();
             Array.Sort(accounts, CompareAccount);
@@ -194,6 +212,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 OrganizationUser user = new OrganizationUser();
                 user.AccountName = (string)gvUsers.DataKeys[i][0];
                 user.DisplayName = ((Literal)row.FindControl("litAccount")).Text;
+                user.SamAccountName = ((HiddenField)row.FindControl("hdnSamAccountName")).Value;
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||
@@ -219,7 +238,9 @@ namespace WebsitePanel.Portal.RDS.UserControls
                     accounts.Add(new OrganizationUser
                     {
                         AccountName = (string)gvPopupAccounts.DataKeys[i][0],
-                        DisplayName = ((Literal)row.FindControl("litDisplayName")).Text
+                        DisplayName = ((Literal)row.FindControl("litDisplayName")).Text,
+                        SamAccountName = ((HiddenField)row.FindControl("hdnSamName")).Value,
+                        IsVIP = Convert.ToBoolean(((HiddenField)row.FindControl("hdnLocalAdmin")).Value)
                     });
                 }
             }
@@ -242,6 +263,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
         protected static int CompareAccount(OrganizationUser user1, OrganizationUser user2)
         {
             return string.Compare(user1.DisplayName, user2.DisplayName);
+        }
+
+        protected void gvUsers_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "SetupInstructions")
+            {
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_setup_letter", "CollectionID=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID, "AccountID=" + e.CommandArgument.ToString()));
+            }
         }
 	}
 }

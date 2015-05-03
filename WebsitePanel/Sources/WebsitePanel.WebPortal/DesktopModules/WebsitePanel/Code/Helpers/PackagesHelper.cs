@@ -28,12 +28,15 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Caching;
 
 using WebsitePanel.EnterpriseServer;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal
 {
@@ -162,6 +165,33 @@ namespace WebsitePanel.Portal
             return ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId);
         }
 
+        public Hashtable GetMyPackages(int index, int PackagesPerPage) 
+        {
+            Hashtable ret = new Hashtable();
+
+            DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
+            if(table.Rows.Count > 0) {
+                System.Collections.Generic.IEnumerable<DataRow> dr = table.AsEnumerable().Skip(PackagesPerPage * index - PackagesPerPage).Take(PackagesPerPage);
+            
+                DataSet set = new DataSet();
+                set.Tables.Add(dr.CopyToDataTable());
+
+                ret.Add("DataSet", set);
+                ret.Add("RowCount", table.Rows.Count);
+            }
+            return ret;
+        }
+
+        public DataSet GetMyPackage(int packageid) {
+            DataSet ret = new DataSet();
+            DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
+            if(table.Rows.Count > 0) {
+                DataTable t = table.Select("PackageID = " + packageid).CopyToDataTable();
+                ret.Tables.Add(t);
+            }
+            return ret;
+        }
+
         #region Packages Paged ODS Methods
         DataSet dsPackagesPaged;
 
@@ -214,6 +244,34 @@ namespace WebsitePanel.Portal
                 itemTypeId, "%" + filterValue + "%", sortColumn, startRowIndex, maximumRows);
             return dsServiceItemsPaged.Tables[1];
         }
+        #endregion
+
+        //TODO START
+        #region Service Items Paged Search
+        DataSet dsObjectItemsPaged;
+
+        public int SearchObjectItemsPagedCount(string filterColumn, string filterValue, string fullType, string colType)
+        {
+            return (int)dsObjectItemsPaged.Tables[0].Rows[0][0];
+        }
+
+        public DataTable SearchObjectItemsPaged(int maximumRows, int startRowIndex, string sortColumn,
+            string filterColumn, string filterValue, string colType, string fullType)
+        {
+            dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
+                String.Format("%{0}%", filterValue),
+                0, 0, sortColumn, startRowIndex, maximumRows, colType, fullType);
+            return dsObjectItemsPaged.Tables[2];
+        }
+
+        public DataTable SearchObjectTypes(string filterColumn, string filterValue, string fullType, string sortColumn)
+        {
+            dsObjectItemsPaged = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, filterColumn,
+                String.Format("%{0}%", filterValue),
+                0, 0, sortColumn, 0, 0, "",fullType);
+            return dsObjectItemsPaged.Tables[1];
+        }
+        //TODO END
         #endregion
     }
 }

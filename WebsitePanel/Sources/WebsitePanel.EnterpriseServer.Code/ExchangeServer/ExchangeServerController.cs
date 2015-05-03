@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Net.Mail;
 using System.Threading;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
@@ -1210,22 +1211,16 @@ namespace WebsitePanel.EnterpriseServer
             if (account == null)
                 return null;
 
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
             return account;
         }
 
-        public static ExchangeAccount GetAccountByAccountName(string primaryEmailAddress)
+        public static ExchangeAccount GetAccountByAccountName(string userPrincipalName)
         {
             ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
-                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(primaryEmailAddress));
+                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(userPrincipalName));
 
             if (account == null)
                 return null;
-
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
 
             return account;
         }
@@ -1267,9 +1262,6 @@ namespace WebsitePanel.EnterpriseServer
             if (account == null)
                 return null;
 
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
             return account;
         }
 
@@ -1279,14 +1271,14 @@ namespace WebsitePanel.EnterpriseServer
         {
             return DataProvider.AddExchangeAccount(itemId, (int)accountType,
                 accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
+                mailboxManagerActions.ToString(), samAccountName, mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
         private static void UpdateAccount(ExchangeAccount account)
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()),
                 account.EnableArchiving);
         }
@@ -1673,7 +1665,6 @@ namespace WebsitePanel.EnterpriseServer
                 mailEnabledPublicFolder,
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword),
                 mailboxPlanId, archivePlanId,
                 (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()), EnableArchiving);
         }
@@ -1951,7 +1942,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 account.AccountType = ExchangeAccountType.User;
                 account.MailEnabledPublicFolder = false;
-                account.AccountPassword = null;
                 UpdateAccount(account);
                 DataProvider.DeleteUserEmailAddresses(account.AccountId, account.PrimaryEmailAddress);
 
@@ -1967,6 +1957,86 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static int ExportMailBox(int itemId, int accountId, string path)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "EXPORT_MAILBOX", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // export mailbox
+                int serviceExchangeId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
+                exchange.ExportMailBox(org.OrganizationId, account.UserPrincipalName, path);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int SetDeletedMailbox(int itemId, int accountId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "SET_DELETED_MAILBOX", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                if (BlackBerryController.CheckBlackBerryUserExists(accountId))
+                {
+                    BlackBerryController.DeleteBlackBerryUser(itemId, accountId);
+                }
+
+                // delete mailbox
+                int serviceExchangeId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
+                exchange.DisableMailbox(account.UserPrincipalName);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         public static int DeleteMailbox(int itemId, int accountId)
         {
@@ -2257,7 +2327,6 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -2481,7 +2550,6 @@ namespace WebsitePanel.EnterpriseServer
                 else account.MailboxManagerActions &= ~action;
 
                 // update account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -2496,7 +2564,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
+        public static string GetMailboxSetupInstructions(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string passwordResetUrl)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -2521,12 +2589,11 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty(body))
                 return null;
 
-            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body);
+            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
             return user.HtmlMail ? result : result.Replace("\n", "<br/>");
         }
 
-        private static string EvaluateMailboxTemplate(int itemId, int accountId,
-            bool pmm, bool emailMode, bool signup, string template)
+        private static string EvaluateMailboxTemplate(int itemId, int accountId, bool pmm, bool emailMode, bool signup, string template, string passwordResetUrl)
         {
             Hashtable items = new Hashtable();
 
@@ -2547,6 +2614,16 @@ namespace WebsitePanel.EnterpriseServer
             items["Account"] = account;
             items["AccountDomain"] = account.PrimaryEmailAddress.Substring(account.PrimaryEmailAddress.IndexOf("@") + 1);
             items["DefaultDomain"] = org.DefaultDomain;
+
+            Guid token;
+
+            passwordResetUrl = OrganizationController.GenerateUserPasswordResetLink(account.ItemId, account.AccountId, out token, string.Empty, passwordResetUrl);
+
+            if (!string.IsNullOrEmpty(passwordResetUrl))
+            {
+                items["PswResetUrl"] = passwordResetUrl;
+            } 
+
 
             if (!String.IsNullOrEmpty(account.SamAccountName))
             {
@@ -2619,8 +2696,8 @@ namespace WebsitePanel.EnterpriseServer
             if (to == null)
                 to = user.Email;
 
-            subject = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, subject);
-            body = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, body);
+            subject = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, subject, string.Empty);
+            body = EvaluateMailboxTemplate(itemId, accountId, false, true, signup, body, string.Empty);
 
             // send message
             return MailHelper.SendMessage(from, to, cc, subject, body, priority, isHtml);
@@ -2839,23 +2916,18 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 List<ExchangeMailboxPlan> mailboxPlans = new List<ExchangeMailboxPlan>();
+                int? defaultPlanId = null;
 
                 UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
 
                 if (user.Role == UserRole.User)
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, archiving);
+                    GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, ref defaultPlanId, archiving);
                 else
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, archiving);
+                    GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, ref defaultPlanId, archiving);
 
-
-                ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
-
-                if (ExchangeOrg != null)
+                if (defaultPlanId.HasValue)
                 {
-                    foreach (ExchangeMailboxPlan p in mailboxPlans)
-                    {
-                        p.IsDefault = (p.MailboxPlanId == ExchangeOrg.ExchangeMailboxPlanID);
-                    }
+                    mailboxPlans.ForEach(p => p.IsDefault = (p.MailboxPlanId == defaultPlanId.Value));
                 }
 
                 return mailboxPlans;
@@ -2870,7 +2942,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, bool archiving)
+        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, ref int? defaultPlanId, bool archiving)
         {
             if ((user != null))
             {
@@ -2903,11 +2975,20 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         mailboxPlans.Add(p);
                     }
+
+                    // Set default plan
+                    ExchangeOrganization exchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(OrgId));
+
+                    // If the default plan has not been set by the setting of higher priority 
+                    if (!defaultPlanId.HasValue && exchangeOrg != null && exchangeOrg.ExchangeMailboxPlanID > 0)
+                    {
+                        defaultPlanId = exchangeOrg.ExchangeMailboxPlanID;
+                    }
                 }
 
                 UserInfo owner = UserController.GetUserInternally(user.OwnerId);
 
-                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, archiving);
+                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, ref defaultPlanId, archiving);
             }
         }
 
@@ -2998,7 +3079,7 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
                                                         mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
-                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct);
+                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
             }
             catch (Exception ex)
             {
@@ -3068,9 +3149,8 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg,
-                                                        mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
-                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
+                                                        mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
             }
             catch (Exception ex)
             {
@@ -3811,7 +3891,6 @@ namespace WebsitePanel.EnterpriseServer
                 // update account
                 account.DisplayName = displayName;
                 account.PrimaryEmailAddress = emailAddress;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4134,7 +4213,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update account
                 account.DisplayName = displayName;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4350,7 +4428,6 @@ namespace WebsitePanel.EnterpriseServer
                     addressLists.ToArray());
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4913,7 +4990,6 @@ namespace WebsitePanel.EnterpriseServer
                 account.AccountName = accountName;
                 account.MailEnabledPublicFolder = true;
                 account.PrimaryEmailAddress = email;
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 // register e-mail
@@ -4965,7 +5041,6 @@ namespace WebsitePanel.EnterpriseServer
                 // update and save account
                 account.MailEnabledPublicFolder = false;
                 account.PrimaryEmailAddress = "";
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
 
@@ -5084,7 +5159,6 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // rename original folder
                     account.DisplayName = newFullName;
-                    account.AccountPassword = null;
                     UpdateAccount(account);
 
                     // rename nested folders
@@ -5299,7 +5373,6 @@ namespace WebsitePanel.EnterpriseServer
                     emailAddress);
 
                 // save account
-                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -5453,7 +5526,7 @@ namespace WebsitePanel.EnterpriseServer
                         res += id + " has a value \"" + defaultPublicFoldes[0] + "\"" + Environment.NewLine;
 
                     if (defaultPublicFoldes.Length == 2)
-                        res += id + " changed from \"" + defaultPublicFoldes[0] + "\" to \"" + defaultPublicFoldes[1] + "\"" + Environment.NewLine;
+                        res += id + " changed \"" + defaultPublicFoldes[0] + "\" to \"" + defaultPublicFoldes[1] + "\"" + Environment.NewLine;
 
                 }
 

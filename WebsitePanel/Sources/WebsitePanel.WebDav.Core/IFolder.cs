@@ -1,4 +1,5 @@
 using System;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Net.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
 
 namespace WebsitePanel.WebDav.Core
@@ -18,12 +20,15 @@ namespace WebsitePanel.WebDav.Core
             IFolder CreateFolder(string name);
             IHierarchyItem[] GetChildren();
             IResource GetResource(string name);
+            Uri Path { get; }
         }
 
         public class WebDavFolder : WebDavHierarchyItem, IFolder
         {
             private IHierarchyItem[] _children = new IHierarchyItem[0];
             private Uri _path;
+
+            public Uri Path { get { return _path; } }
 
             /// <summary>
             ///     The constructor
@@ -143,7 +148,7 @@ namespace WebsitePanel.WebDav.Core
             public IResource GetResource(string name)
             {
                 IHierarchyItem item =
-                    _children.Single(i => i.ItemType == ItemType.Resource && i.DisplayName.Trim('/') == name.Trim('/'));
+                    _children.Single(i => i.DisplayName.ToLowerInvariant().Trim('/') == name.ToLowerInvariant().Trim('/'));
                 var resource = new WebDavResource();
                 resource.SetCredentials(_credentials);
                 resource.SetHierarchyItem(item);
@@ -155,7 +160,7 @@ namespace WebsitePanel.WebDav.Core
             /// </summary>
             public void Open()
             {
-                var request = (HttpWebRequest) WebRequest.Create(_path);
+                var request = (HttpWebRequest)WebRequest.Create(_path);
                 request.PreAuthenticate = true;
                 request.Method = "PROPFIND";
                 request.ContentType = "application/xml";
@@ -163,10 +168,10 @@ namespace WebsitePanel.WebDav.Core
                 //TODO Disable SSL
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
 
-                var credentials = (NetworkCredential) _credentials;
+                var credentials = (NetworkCredential)_credentials;
                 if (credentials != null && credentials.UserName != null)
                 {
-                    request.Credentials = credentials;
+                    //request.Credentials = credentials;
                     string auth = "Basic " +
                                   Convert.ToBase64String(
                                       Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
@@ -213,6 +218,68 @@ namespace WebsitePanel.WebDav.Core
                 Open();
             }
 
+            public void OpenPaged(string path)
+            {
+                _path = new Uri(path);
+                OpenPaged();
+            }
+
+            public void OpenPaged()
+            {
+                var request = (HttpWebRequest)WebRequest.Create(_path);
+                //request.PreAuthenticate = true;
+                request.Method = "SEARCH";
+
+                //TODO Disable SSL
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+
+                var credentials = (NetworkCredential)_credentials;
+                if (credentials != null && credentials.UserName != null)
+                {
+                    request.Credentials = _credentials;
+
+                    string auth = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+                    request.Headers.Add("Authorization", auth);
+                }
+
+                var strQuery = "<?xml version=\"1.0\"?><D:searchrequest xmlns:D = \"DAV:\" >"
+                        + "<D:sql>SELECT \"DAV:displayname\" FROM \"" + _path + "\""
+                        + "WHERE \"DAV:ishidden\" = false"
+                        + "</D:sql></D:searchrequest>";
+
+                try
+                {
+                   var bytes = Encoding.UTF8.GetBytes(strQuery);
+
+                    request.ContentLength = bytes.Length;
+
+                    using (var requestStream = request.GetRequestStream())
+                    {
+                        // Write the SQL query to the request stream.
+                        requestStream.Write(bytes, 0, bytes.Length);
+                    }
+
+                    request.ContentType = "text/xml";
+
+                    using (var response = (HttpWebResponse)request.GetResponse())
+                    {
+                        using (var responseStream = new StreamReader(response.GetResponseStream()))
+                        {
+                            string responseString = responseStream.ReadToEnd();
+                            ProcessResponse(responseString);
+                        }
+                    }
+                }
+                catch (WebException e)
+                {
+                    if (e.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        throw new UnauthorizedException();
+                    }
+                    throw e;
+                }
+            }
+
             /// <summary>
             ///     Processes the response from the server.
             /// </summary>
@@ -228,11 +295,11 @@ namespace WebsitePanel.WebDav.Core
                     {
                         XmlResponseList = XmlDoc.GetElementsByTagName("d:response");
                     }
-                    var children = new WebDavHierarchyItem[XmlResponseList.Count];
+                    var children = new WebDavResource[XmlResponseList.Count];
                     int counter = 0;
                     foreach (XmlNode XmlCurrentResponse in XmlResponseList)
                     {
-                        var item = new WebDavHierarchyItem();
+                        var item = new WebDavResource();
                         item.SetCredentials(_credentials);
 
                         foreach (XmlNode XmlCurrentNode in XmlCurrentResponse.ChildNodes)
@@ -296,6 +363,36 @@ namespace WebsitePanel.WebDav.Core
                                                                         XmlCurrentPropNode.NamespaceURI),
                                                                     XmlCurrentPropNode.InnerXml));
                                                             break;
+                                                        //case "lockdiscovery":
+                                                        //{
+                                                        //    if (XmlCurrentPropNode.HasChildNodes == false)
+                                                        //    {
+                                                        //        break;
+                                                        //    }
+
+                                                        //    foreach (XmlNode activeLockNode in XmlCurrentPropNode.FirstChild)
+                                                        //    {
+                                                        //        switch (activeLockNode.LocalName)
+                                                        //        {
+                                                        //            case "owner":
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("owner",
+                                                        //                            activeLockNode.NamespaceURI),
+                                                        //                        activeLockNode.InnerXml));
+                                                        //                break;
+                                                        //            case "locktoken":
+                                                        //                var lockTokenNode = activeLockNode.FirstChild;
+                                                        //                item.SetProperty(
+                                                        //                    new Property(
+                                                        //                        new PropertyName("locktoken",
+                                                        //                            lockTokenNode.NamespaceURI),
+                                                        //                        lockTokenNode.InnerXml));
+                                                        //                break;
+                                                        //        }
+                                                        //    }
+                                                        //    break;
+                                                        //}
                                                     }
                                                 }
                                                 break;
@@ -321,6 +418,7 @@ namespace WebsitePanel.WebDav.Core
                             SetComment(item.Comment);
                             SetCreatorDisplayName(item.CreatorDisplayName);
                             SetLastModified(item.LastModified);
+
                             foreach (Property property in item.Properties)
                             {
                                 SetProperty(property);

@@ -37,6 +37,10 @@
         <td class="SubHead" nowrap><asp:Label ID="lblUserAccounts" runat="server" meta:resourcekey="lblUserAccounts" Text="User Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaUserAccounts" runat="server" QuotaName="HostedSolution.Users" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlDeletedUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblDeletedUsers" runat="server" meta:resourcekey="lblDeletedUsers" Text="Deleted Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaDeletedUsers" runat="server" QuotaName="HostedSolution.DeletedUsers" DisplayGauge="True" /></td>
+    </tr>
     <tr ID="pnlExchangeAccounts" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblExchangeAccounts" runat="server" meta:resourcekey="lblExchangeAccounts" Text="Exchange Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaExchangeAccounts" runat="server" QuotaName="Exchange2007.Mailboxes" DisplayGauge="True" /></td>
@@ -67,9 +71,14 @@
         <td class="Normal"><wsp:Quota ID="quotaBlackBerryUsers" runat="server" QuotaName="BlackBerry.Users" DisplayGauge="True" /></td>
     </tr>
     <tr ID="pnlSharepointSites" runat="server">
-        <td class="SubHead" nowrap><asp:Label ID="lblSharepointSites" runat="server" meta:resourcekey="lblSharepointSites" Text="Sharepoint Sites:"></asp:Label></td>
+        <td class="SubHead" nowrap><asp:Label ID="lblSharepointSites" runat="server" meta:resourcekey="lblSharepointSites" Text="Sharepoint Foundation Sites:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaSharepointSites" runat="server" QuotaName="HostedSharePoint.Sites" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlEnterpriseSharepointSites" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblEnterpriseSharepointSites" runat="server" meta:resourcekey="lblEnterpriseSharepointSites" Text="Sharepoint Server Sites:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaEnterpriseSharepointSites" runat="server" QuotaName="HostedSharePointEnterprise.Sites" DisplayGauge="True" /></td>
+    </tr>    
+
     <tr ID="pnlWebSites" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblWebSites" runat="server" meta:resourcekey="lblWebSites" Text="Web Sites:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaWebSites" runat="server" QuotaName="Web.Sites" DisplayGauge="True" /></td>

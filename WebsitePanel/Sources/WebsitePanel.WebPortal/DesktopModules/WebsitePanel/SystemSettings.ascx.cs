@@ -51,6 +51,9 @@ namespace WebsitePanel.Portal
 		public const string SMTP_ENABLE_SSL = "SmtpEnableSsl";
 		public const string BACKUPS_PATH = "BackupsPath";
         public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
+        public const string RDS_MAIN_CONTROLLER = "RdsMainController";
+        public const string WEBDAV_PORTAL_URL = "WebdavPortalUrl";
+        public const string WEBDAV_PASSWORD_RESET_ENABLED = "WebdavPasswordResetEnabled";
 
         /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
@@ -95,7 +98,7 @@ namespace WebsitePanel.Portal
 				txtBackupsPath.Text = settings["BackupsPath"];
 			}
 
-
+            
             // WPI
             settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WPI_SETTINGS);
 
@@ -136,6 +139,45 @@ namespace WebsitePanel.Portal
                 // Original WebsitePanel Extensions
                 txtFileManagerEditableExtensions.Text = FileManager.ALLOWED_EDIT_EXTENSIONS.Replace(",", System.Environment.NewLine);
             }
+
+            // RDS
+            var services = ES.Services.RDS.GetRdsServices();
+
+            foreach(var service in services)
+            {
+                ddlRdsController.Items.Add(new ListItem(service.ServiceName, service.ServiceId.ToString()));
+            }
+
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.RDS_SETTINGS);
+
+            if (settings != null && !string.IsNullOrEmpty(settings[RDS_MAIN_CONTROLLER]))
+            {
+                ddlRdsController.SelectedValue = settings[RDS_MAIN_CONTROLLER];
+            }
+            else if (ddlRdsController.Items.Count > 0)
+            {
+                ddlRdsController.SelectedValue = ddlRdsController.Items[0].Value;
+            }
+
+            // Webdav portal
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS);
+
+            if (settings != null)
+            {
+                chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
+                txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
+            }
+
+            // Twilio portal
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.TWILIO_SETTINGS);
+
+            if (settings != null)
+            {
+                txtAccountSid.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty);
+                txtAuthToken.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty);
+                txtPhoneFrom.Text = settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty);
+            }
+
 		}
 
 		private void SaveSettings()
@@ -175,6 +217,7 @@ namespace WebsitePanel.Portal
 				}
 
 
+
                 // WPI
                 /*
                 settings[FEED_ENABLE_MICROSOFT] = wpiMicrosoftFeed.Checked.ToString();
@@ -205,6 +248,34 @@ namespace WebsitePanel.Portal
 
                 result = ES.Services.System.SetSystemSettings(
                     WSP.SystemSettings.FILEMANAGER_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                settings = new WSP.SystemSettings();
+                settings[RDS_MAIN_CONTROLLER] = ddlRdsController.SelectedValue;
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.RDS_SETTINGS, settings);
+
+                settings = new WSP.SystemSettings();
+                settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
+                settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY] = chkEnablePasswordReset.Checked.ToString();
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                // Twilio portal
+                settings = new WSP.SystemSettings();
+                settings[WSP.SystemSettings.TWILIO_ACCOUNTSID_KEY] = txtAccountSid.Text;
+                settings[WSP.SystemSettings.TWILIO_AUTHTOKEN_KEY] = txtAuthToken.Text;
+                settings[WSP.SystemSettings.TWILIO_PHONEFROM_KEY] = txtPhoneFrom.Text;
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.TWILIO_SETTINGS, settings);
 
                 if (result < 0)
                 {

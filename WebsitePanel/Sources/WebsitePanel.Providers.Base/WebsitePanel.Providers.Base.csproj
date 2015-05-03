@@ -119,7 +119,15 @@
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
+    <Compile Include="HostedSolution\OrganizationGeneralSettings.cs" />
+    <Compile Include="HostedSolution\OrganizationPasswordSettings.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUser.cs" />
+    <Compile Include="HostedSolution\OrganizationDeletedUsersPaged.cs" />
+    <Compile Include="HostedSolution\OrganizationSettings.cs" />
+    <Compile Include="HostedSolution\OrganizationSettingsEntity.cs" />
+    <Compile Include="HostedSolution\SharePointEnterpriseStatisticsReport.cs" />
+    <Compile Include="HostedSolution\SharePointEntetpriseStatistics.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="OS\MappedDrivesPaged.cs" />
     <Compile Include="OS\MappedDrive.cs" />
@@ -127,11 +135,19 @@
     <Compile Include="OS\QuotaType.cs" />
     <Compile Include="OS\SystemFilesPaged.cs" />
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
+    <Compile Include="RemoteDesktopServices\RdsCertificate.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsCollectionSettings.cs" />
+    <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerDriveInfo.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerInfo.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerSetting.cs" />
+    <Compile Include="RemoteDesktopServices\RdsServerSettings.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsUserSession.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />
     <Compile Include="RemoteDesktopServices\SessionHostServer.cs" />
     <Compile Include="RemoteDesktopServices\StartMenuApp.cs" />
@@ -270,16 +286,23 @@
     <Compile Include="ResultObjects\ValueResultObject.cs" />
     <Compile Include="ResultObjects\VirtualMachineResult.cs" />
     <Compile Include="ResultObjects\WebAppGallery.cs" />
+    <Compile Include="SharePoint\IHostedSharePointServerEnt.cs" />
     <Compile Include="SharePoint\IHostedSharePointServer.cs" />
     <Compile Include="SharePoint\ISharePointServer.cs" />
     <Compile Include="SharePoint\SharePointSite.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteCollection.cs" />
     <Compile Include="SharePoint\SharePointSiteCollection.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteCollectionListPaged.cs" />
     <Compile Include="SharePoint\SharePointSiteCollectionListPaged.cs" />
+    <Compile Include="SharePoint\SharePointEnterpriseSiteDiskSpace.cs" />
     <Compile Include="SharePoint\SharePointSiteDiskSpace.cs" />
     <Compile Include="Statistics\IStatisticsServer.cs" />
     <Compile Include="Statistics\StatsServer.cs" />
     <Compile Include="Statistics\StatsSite.cs" />
     <Compile Include="Statistics\StatsUser.cs" />
+    <Compile Include="Virtualization\AutomaticStopAction.cs" />
+    <Compile Include="Virtualization\AutomaticStartAction.cs" />
+    <Compile Include="Virtualization\BiosInfo.cs" />
     <Compile Include="Virtualization\ChangeJobStateReturnCode.cs" />
     <Compile Include="Virtualization\ConcreteJob.cs">
       <SubType>Code</SubType>
@@ -290,6 +313,8 @@
     <Compile Include="Virtualization\ConcreteJobState.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Virtualization\ControllerType.cs" />
+    <Compile Include="Virtualization\IVirtualizationServer2012.cs" />
     <Compile Include="Virtualization\IVirtualizationServer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -300,11 +325,21 @@
     <Compile Include="Virtualization\KvpExchangeDataItem.cs" />
     <Compile Include="Virtualization\LibraryItem.cs" />
     <Compile Include="Virtualization\LogicalDisk.cs" />
+    <Compile Include="Virtualization\DvdDriveInfo.cs" />
     <Compile Include="Virtualization\MonitoredObjectAlert.cs" />
     <Compile Include="Virtualization\MonitoredObjectEvent.cs" />
     <Compile Include="Virtualization\MountedDiskInfo.cs" />
     <Compile Include="Virtualization\OperationalStatus.cs" />
     <Compile Include="Virtualization\PerformanceObject.cs" />
+    <Compile Include="Virtualization\Replication\CertificateInfo.cs" />
+    <Compile Include="Virtualization\Replication\ReplicaFrequency.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationHealth.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationServerInfo.cs" />
+    <Compile Include="Virtualization\Replication\VmReplicationMode.cs" />
+    <Compile Include="Virtualization\Replication\ReplicaMode.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationState.cs" />
+    <Compile Include="Virtualization\Replication\ReplicationDetailInfo.cs" />
+    <Compile Include="Virtualization\Replication\VmReplication.cs" />
     <Compile Include="Virtualization\ReturnCode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -314,8 +349,10 @@
     <Compile Include="Virtualization\ThumbnailSize.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Virtualization\VirtualHardDiskFormat.cs" />
     <Compile Include="Virtualization\VirtualHardDiskInfo.cs" />
     <Compile Include="Virtualization\VirtualHardDiskType.cs" />
+    <Compile Include="Virtualization\DynamicMemory.cs" />
     <Compile Include="Virtualization\VirtualMachine.cs">
       <SubType>Code</SubType>
     </Compile>

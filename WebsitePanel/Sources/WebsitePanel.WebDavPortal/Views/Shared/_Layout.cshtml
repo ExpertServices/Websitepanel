@@ -1,45 +1,94 @@
-﻿@using Ninject
-@using WebsitePanel.WebDavPortal.Config
+﻿@using System.Web.Script.Serialization
+@using Ninject
+@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDavPortal.Controllers
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.Models.Common
+@using WebsitePanel.WebDavPortal.Resources
+@using WebsitePanel.WebDavPortal.UI.Routes;
+    
+
+@{
+    var messages = TempData[BaseController.MessagesKey] as List<Message> ?? new List<Message>();
+}
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>@(ViewBag.Title ?? WebDavAppConfigManager.Instance.ApplicationName)</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <div class="navbar navbar-inverse navbar-fixed-top prevent-deselect">
+        <div class="container top-container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink(WebDavAppConfigManager.Instance.ApplicationName, "Login", "Account", new { area = "" }, new { @class = "navbar-brand" })
+                @if (WspContext.User != null)
+                {
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                }
+                <a href="/">
+                    <img class="header-logo processing-dialog" src="@Url.Content("~/Content/Images/logo.png")" />
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 @{
-                    IKernel kernel = new StandardKernel(new NinjectSettings { AllowNullInjection = true }, new WebDavExplorerAppModule());
-                    var account = kernel.Get<AccountModel>();
-                    if (account != null)
+                    if (WspContext.User != null)
                     {
-                        <h4 class="nav navbar-text navbar-right">@account.UserName</h4>
+                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="@UI.LogOut"><i class="glyphicon glyphicon-log-out"></i></a>
+                        <a id="user-profile" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.UserProfile)" title="@UI.Profile">@WspContext.User.Login</a>
                     }
                 }
             </div>
         </div>
     </div>
     <div class="container body-content">
+        <div id="message-area" class="container row prevent-deselect"> </div>
+
         @RenderBody()
     </div>
+    
+    <div class="prevent-deselect">
+        @Html.Partial("_ProcessDialog", null)
+        @Html.Partial("_ConfirmDialog")
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+        @RenderSection("popups", required: false)
+    </div>
+    
+    <div class="manual-scripts">
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/appScripts")
+    </div>
+
+    @if (WspContext.User != null)
+    {
+        @Scripts.Render("~/bundles/authScripts")
+        
+        <script>
+            $(document).ready(function () {
+                StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@FormsAuthentication.FormsCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+            });
+        </script>
+    }
+
+
+    <script>
+        $(document).ready(function () {
+            wsp.messages.showMessages(@Html.Raw(Json.Encode(messages)));
+        });
+    </script>
+    
+     @RenderSection("scripts", required: false)
 </body>
 </html>

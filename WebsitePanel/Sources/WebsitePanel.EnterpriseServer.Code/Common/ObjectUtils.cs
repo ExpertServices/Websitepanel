@@ -27,11 +27,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Xml;
+using System.Xml.Serialization;
 using WebsitePanel.Providers;
 
 namespace WebsitePanel.EnterpriseServer
@@ -97,6 +99,19 @@ namespace WebsitePanel.EnterpriseServer
                             for (int i = 0; i < svals.Length; i++)
                                 svals[i] = ivals[i].ToString();
                             s = String.Join(";", svals);
+                        }
+                        // when property is custom class with Persistent attribute
+                        else if (prop.PropertyType.GetCustomAttributes(typeof(PersistentAttribute), false).Length > 0)
+                        {
+                            // add sub-class properties to hash
+                            var childHash = GetObjectProperties(val, persistentOnly);
+                            foreach (var hashKey in childHash.Keys)
+                            {
+                                var value = childHash[hashKey];
+                                hash.Add(prop.Name + "." + hashKey, value);
+                            }
+                            // exit
+                            continue;
                         }
                         else
                             s = val.ToString();
@@ -476,6 +491,41 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        private static Hashtable GetPropertiesForCache(Type type, bool persistentOnly)
+        {
+            // create properties cache
+            var props = new Hashtable();
+            PropertyInfo[] objProps = type.GetProperties(BindingFlags.Instance
+                //| BindingFlags.DeclaredOnly
+                | BindingFlags.Public);
+            foreach (PropertyInfo prop in objProps)
+            {
+                // check for persistent attribute
+                object[] attrs = prop.GetCustomAttributes(typeof(PersistentAttribute), false);
+                if (!persistentOnly || (persistentOnly && attrs.Length > 0) && !props.ContainsKey(prop.Name))
+                {
+                    // when property is custom class with Persistent attribute
+                    if (prop.PropertyType.GetCustomAttributes(typeof (PersistentAttribute), false).Length > 0)
+                    {
+                        // add sub-class properties to hash
+                        var childHash = GetPropertiesForCache(prop.PropertyType, persistentOnly);
+                        foreach (var hashKey in childHash.Keys)
+                        {
+                            var value = childHash[hashKey];
+                            props.Add(prop.Name + "." + hashKey, value);
+                        }
+                        // exit
+                        continue;
+                    }
+
+                    // add property to hash
+                    props.Add(prop.Name, prop);
+                }
+            }
+
+            return props;
+        }
+
         public static void CreateObjectFromHash(object obj, Hashtable propValues, bool persistentOnly)
         {
             Type type = obj.GetType();
@@ -489,21 +539,7 @@ namespace WebsitePanel.EnterpriseServer
             }
             else
             {
-                // create properties cache
-                props = new Hashtable();
-                PropertyInfo[] objProps = type.GetProperties(BindingFlags.Instance
-                    //| BindingFlags.DeclaredOnly
-                    | BindingFlags.Public);
-                foreach (PropertyInfo prop in objProps)
-                {
-                    // check for persistent attribute
-                    object[] attrs = prop.GetCustomAttributes(typeof(PersistentAttribute), false);
-                    if (!persistentOnly || (persistentOnly && attrs.Length > 0) && !props.ContainsKey(prop.Name))
-                    {
-                        // add property to hash
-                        props.Add(prop.Name, prop);
-                    }
-                }
+                props = GetPropertiesForCache(type, persistentOnly);
 
                 if (!propertiesCache.ContainsKey(type.Name))
                 {
@@ -518,38 +554,63 @@ namespace WebsitePanel.EnterpriseServer
                 // try to locate specified property
                 if (props[propName] != null)
                 {
+                    PropertyInfo prop = (PropertyInfo)props[propName];
+                    string val = propValues[propName].ToString();
+                    var currentObj = obj;
+
+                    // when property is custom class with Persistent attribute
+                    if (propName.Contains("."))
+                    {
+                        var mainPropertyName = propName.Split('.')[0];
+                        var childPropertyName = propName.Split('.')[1];
+
+                        var mainProperty = type.GetProperty(mainPropertyName);
+                        if (mainProperty == null) continue;
+
+                        var mainVal = mainProperty.GetValue(obj, null);
+                        if (mainVal == null)
+                        {
+                            mainVal = Activator.CreateInstance(mainProperty.PropertyType);
+                            mainProperty.SetValue(obj, mainVal, null);
+                        }
+                        currentObj = mainVal;
+
+                        var childProperty = mainProperty.PropertyType.GetProperty(childPropertyName);
+                        if (childProperty == null) continue;
+                        prop = childProperty;
+                    }
+
                     // set property
                     // we support:
                     //	String
                     //	Int32
                     //	Boolean
                     //	Float
-                    PropertyInfo prop = (PropertyInfo)props[propName];
-                    string val = propValues[propName].ToString();
+
                     if (prop.PropertyType == typeof(String))
-                        prop.SetValue(obj, val, null);
+                        prop.SetValue(currentObj, val, null);
                     else if (prop.PropertyType == typeof(Int32))
-                        prop.SetValue(obj, Int32.Parse(val), null);
+                        prop.SetValue(currentObj, Int32.Parse(val), null);
                     else
                         if (prop.PropertyType == typeof(long))
-                            prop.SetValue(obj, long.Parse(val), null);
+                            prop.SetValue(currentObj, long.Parse(val), null);
                         else
                             if (prop.PropertyType == typeof(Boolean))
-                                prop.SetValue(obj, Boolean.Parse(val), null);
+                                prop.SetValue(currentObj, Boolean.Parse(val), null);
                             else if (prop.PropertyType == typeof(Single))
-                                prop.SetValue(obj, Single.Parse(val), null);
+                                prop.SetValue(currentObj, Single.Parse(val), null);
                             else if (prop.PropertyType.IsEnum)
-                                prop.SetValue(obj, Enum.Parse(prop.PropertyType, val, true), null);
+                                prop.SetValue(currentObj, Enum.Parse(prop.PropertyType, val, true), null);
                             else
                                 if (prop.PropertyType == typeof(Guid))
-                                    prop.SetValue(obj, new Guid(val), null);
+                                    prop.SetValue(currentObj, new Guid(val), null);
                                 else
                                     if (prop.PropertyType == typeof(string[]))
                                     {
                                         if (val == "")
-                                            prop.SetValue(obj, new string[0], null);
+                                            prop.SetValue(currentObj, new string[0], null);
                                         else
-                                            prop.SetValue(obj, val.Split(';'), null);
+                                            prop.SetValue(currentObj, val.Split(';'), null);
                                     }
                                     else if (prop.PropertyType == typeof(int[]))
                                     {
@@ -562,7 +623,7 @@ namespace WebsitePanel.EnterpriseServer
                                         if (val == "")
                                             ivals = new int[0];
 
-                                        prop.SetValue(obj, ivals, null);
+                                        prop.SetValue(currentObj, ivals, null);
                                     }
                 }
             }
@@ -645,6 +706,37 @@ namespace WebsitePanel.EnterpriseServer
             return type.FullName + ", " + type.Assembly.GetName().Name;
         }
 
+        public static TResult Deserialize<TResult>(string inputString)
+        {
+            TResult result;
+
+            var serializer = new XmlSerializer(typeof(TResult));
+
+            using (TextReader reader = new StringReader(inputString))
+            {
+                result = (TResult)serializer.Deserialize(reader);
+            }
+
+            return result;
+        }
+
+        public static string Serialize<TEntity>(TEntity entity)
+        {
+            string result = string.Empty;
+
+            var xmlSerializer = new XmlSerializer(typeof(TEntity));
+
+            using (var stringWriter = new StringWriter())
+            {
+                using (XmlWriter writer = XmlWriter.Create(stringWriter))
+                {
+                    xmlSerializer.Serialize(writer, entity);
+                    result = stringWriter.ToString();
+                }
+            }
+
+            return result;
+        } 
 
         #region Helper Functions
 

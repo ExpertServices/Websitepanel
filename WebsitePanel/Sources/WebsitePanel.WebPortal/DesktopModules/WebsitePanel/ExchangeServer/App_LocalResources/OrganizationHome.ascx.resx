@@ -181,7 +181,7 @@
     <value>BlackBerry</value>
   </data>
   <data name="locCRM.Text" xml:space="preserve">
-    <value>CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="locExchangeStatistics.Text" xml:space="preserve">
     <value>Exchange</value>
@@ -196,7 +196,7 @@
     <value>OCS</value>
   </data>
   <data name="locSharePoint.Text" xml:space="preserve">
-    <value>SharePoint</value>
+    <value>SharePoint Foundation</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Home</value>
@@ -221,5 +221,29 @@
   </data>
   <data name="locServiceLevels.Text" xml:space="preserve">
     <value>Service Levels</value>
+  </data>
+  <data name="lnkDeletedUsers.Text" xml:space="preserve">
+    <value>Deleted Users:</value>
+  </data>
+  <data name="locRemoteDesktop.Text" xml:space="preserve">
+    <value>Remote Desktop</value>
+  </data>
+  <data name="lnkRdsServers.Text" xml:space="preserve">
+    <value>RDS Servers</value>
+  </data>
+  <data name="lnkRdsCollections.Text" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="lnkRdsUsers.Text" xml:space="preserve">
+    <value>RDS Users</value>
+  </data>
+  <data name="locSharePointEnterprise.Text" xml:space="preserve">
+    <value>SharePoint Server</value>
+  </data>
+  <data name="lnkEditOrganizationSettings.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="OrganizationSettings.Text" xml:space="preserve">
+    <value>Organization settings:</value>
   </data>
 </root>

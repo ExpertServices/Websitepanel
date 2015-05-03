@@ -24,9 +24,11 @@ td.NormalBold span {}
 td.Normal > br {display:none;}
 .NormalTextBox + br + span {font-size:11px; color:#888;}
 td.Normal .NormalTextBox + span {display:inline-block; padding:0;}
-.FormLabel150, .FormLabel200 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
+.FormSimpleLabel {padding:9px 8px 14px 0; color:#555; vertical-align:top;}
+.FormLabel150, .FormLabel200, .FormLabel260 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
 .FormLabel150 {width:150px;}
 .FormLabel200 {width:200px;}
+.FormLabel260 {width:260px;}
 .Huge {font-family:'Segoe UI Light','Open Sans',Arial!important; font-size:36px; font-weight:300; color:#333; background:none !important; border:none !important; padding:0 !important; letter-spacing:-1px;}
 .FormBody .Huge {font-size:18px; font-weight:600; letter-spacing:0;}
 .Right .SubHead {width:80px;}
@@ -52,9 +54,9 @@ legend {font-weight:700; color:#428bca; padding:0 4px;}
 legend span.NormalBold {display:inline;}
 .Tabs {width:100%;}
 .Separator {display:none;}
-.Tabs span {display:table; table-layout:fixed; width:100%; table-layout:fixed;}
+.Tabs span {display:table; table-layout:fixed; min-width:100%; table-layout:fixed;}
 .Tabs span span {display:table-cell; width:15%; text-align:center; padding:0;}
-.Tabs a {display:block; padding:10px 0; text-decoration:none; border-bottom:1px solid #ddd;}
+.Tabs a {display:block; padding:10px 5px; text-decoration:none; border-bottom:1px solid #ddd;}
 .Tabs a:Hover {background:#eee; text-decoration:none;}
 .Tabs a.ActiveTab {border:1px solid #ddd; border-bottom:none; color:#555; margin-bottom:-1px;}
 .Tabs a.ActiveTab:hover {background:none;}
@@ -81,6 +83,7 @@ input[type=text]:hover, input[type=password]:hover {border-color:#999;}
 input.NormalTextBox {min-width:130px;}
 input.TextBox50 {width:40px;}
 input.TextBox100 {width:80px;}
+input.TextBox300 {width:300px;}
 /* selectbox */
 select {height:34px; font-family:inherit; font-size:inherit; color:inherit; background:#fff; border:1px solid #ccc; cursor:pointer; padding:6px; margin:0 3px 4px 0; vertical-align:middle;}
 select:hover {border-color:#999;}
@@ -90,6 +93,8 @@ select:disabled {border:1px solid #ccc; background:#f5f5f5; color:#ccc; cursor:n
 textarea {font-family:inherit; font-size:inherit; color:inherit; background:#fff; border: 1px solid #ccc; padding:3px 0 3px 3px; margin:0; resize:none;}
 /* checkbox */
 input[type=checkbox], input[type=radio] {margin:8px 4px 8px; vertical-align:-1px;}
+.HeaderCheckbox {margin-left:5px;}
+.GridCheckbox input[type=checkbox] {margin-top:0px;}
 input[type=image] {margin-right:4px;}
 .LoginLabel {display:block; line-height:34px; width:auto !important; padding-right:8px;}
 .LoginContainer .SubHead {padding-right:8px; color:#333;}
@@ -174,9 +179,12 @@ h2.ProductTitle.Huge {margin:0;}
 .FormButtonsBar .Left {float: left;}
 .FormButtonsBar .Right {float:right;}
 .FormButtonsBar Button2.Right {text-align: right; margin-bottom: 3px;}
-.FormButtonsBarClean {clear: both; padding-bottom: 4px;}
+.FormButtonsBarClean {clear: both; padding-bottom: 4px; height: 26px;}
 .FormButtonsBarCleanLeft {float: left;}
 .FormButtonsBarCleanRight {text-align: right;}
+.FormButtonsBarCleanMiddle {float: right;}
+.FormButtonsBarCleanSeparator {padding-right: 30px;}
+.FormButtonsBarCleanSeparatorSmall {padding-right: 3px;}
 .GridFooter .Left {float: left;}
 .GridFooter .Right {text-align: right;}
 .FormRow {padding-top: 4px; padding-bottom: 4px;}
@@ -187,6 +195,7 @@ SPAN.Checkbox.Bold {font-weight: bold;}
 .Checkbox INPUT {vertical-align: middle;}
 .FormFooter {padding:10px 0;}
 .FormFooterClean {font-size: 9pt; margin-top: 10px; padding: 10px 10px 0px 0px; border-top: solid 1px #DFDFDF;}
+.FormFooterMiddle {padding:10px;}
 .FormRBtnL {padding-top: 10px;}
 UL.VerticalButtons {margin: 0px; list-style: none; padding-left: 20px; float: right; width: 150px;}
 UL.VerticalButtons LI {padding-top: 2px; padding-bottom: 2px;}
@@ -284,6 +293,10 @@ UL.ActionButtons LI {margin-bottom: 12px;}
 .ActionButtonRename {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS/rename.gif) left center no-repeat;}
 .ActionButtonDeleteSnapshot {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS/delete3.png) left center no-repeat;}
 .ActionButtonDeleteSnapshotTree {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS/delete4.png) left center no-repeat;}
+.ActionButtonApplySnapshot2012 {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS2012/apply.png) left center no-repeat;}
+.ActionButtonRename2012 {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS2012/rename.png) left center no-repeat;}
+.ActionButtonDeleteSnapshot2012 {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS2012/delete3.png) left center no-repeat;}
+.ActionButtonDeleteSnapshotTree2012 {padding: 3px 2px 3px 20px; background: transparent url(../images/VPS2012/delete4.png) left center no-repeat;}
 .CodeEditor {width: 100%; height: 360px; font-size: 13px; white-space: pre; line-height: 16px; font-family: Consolas, Monospace;}
 .pnlControl {height:20px; margin:5px 5px; text-align:left;}
 .pnlControl span {display:inline-block; width:100px;}
@@ -294,3 +307,76 @@ p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
 .LinkText {color:#428bca;}
 .WrapText { white-space: normal;}
+.chosen-container { margin-top: -30px; }
+
+.ui-autocomplete {z-index: 200 !important; }
+
+.ui-button {
+	padding: 5px 5px;
+	margin: 3px;
+	background: #20A0D0;
+	color: white;
+	border: 1px solid #2080A0;
+	float: left;
+	cursor: pointer;
+	display: block;
+}
+
+.ui-button:hover {
+	background: #20B0E0;
+}
+
+.ui-popupdialog {
+	display: none;
+	position: absolute;
+    background-color: #FFF;
+	border: 1px solid #C0C0C0;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);
+    background-clip: padding-box;
+}
+
+.ui-popupdialog .title {
+	padding: 5px;
+	background: #F8F8F8;
+}
+
+.ui-popupdialog .content {
+	padding: 10px;
+}
+
+.ui-popupdialog .actions {
+	padding: 5px;
+	border-top: 1px solid #C0C0C0;
+	background: #F0F0F0;
+}
+
+.ui-menu {
+    background-color: #FFF;
+	border: 1px solid #C0C0C0;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.176);
+    background-clip: padding-box;
+}
+.ui-menu-item {
+}
+.ui-widget-content {
+    background: #FFF;
+}
+.ui-corner-all {
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+}
+.ui-menu-item .ui-state-hover
+{
+    background: #f0f0f0;
+    border-radius: 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-color: #f0f0f0;
+    color: #000;
+}
+.ui-menu-item:hover {
+    background-color: #f0f0f0;
+}

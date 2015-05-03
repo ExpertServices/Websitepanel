@@ -56,6 +56,29 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esEnterpriseStorage : WebService
     {
+        [WebMethod]
+        public int AddWebDavAccessToken(WebDavAccessToken accessToken)
+        {
+           return EnterpriseStorageController.AddWebDavAccessToken(accessToken);
+        }
+
+        [WebMethod]
+        public void DeleteExpiredWebDavAccessTokens()
+        {
+            EnterpriseStorageController.DeleteExpiredWebDavAccessTokens();
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenById(int id)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenById(id);
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenByAccessToken(accessToken);
+        }
 
         [WebMethod]
         public bool CheckFileServicesInstallation(int serviceId)
@@ -67,6 +90,12 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile[] GetEnterpriseFolders(int itemId)
         {
             return EnterpriseStorageController.GetFolders(itemId);
+        }
+
+        [WebMethod]
+        public SystemFile[] GetUserRootFolders(int itemId, int accountId, string userName, string displayName)
+        {
+            return EnterpriseStorageController.GetUserRootFolders(itemId, accountId, userName, displayName);
         }
 
         [WebMethod]
@@ -135,6 +164,24 @@ namespace WebsitePanel.EnterpriseServer
             return EnterpriseStorageController.CheckUsersDomainExists(itemId);
         }
 
+        [WebMethod]
+        public string GetWebDavPortalUserSettingsByAccountId(int accountId)
+        {
+            return EnterpriseStorageController.GetWebDavPortalUserSettingsByAccountId(accountId);
+        }
+
+        [WebMethod]
+        public void UpdateWebDavPortalUserSettings(int accountId, string settings)
+        {
+            EnterpriseStorageController.UpdateUserSettings(accountId,settings);
+        }
+
+        [WebMethod]
+        public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
+        {
+           return EnterpriseStorageController.SearchFiles(itemId, searchPaths, searchText, userPrincipalName, recursive);
+        }
+
         #region Directory Browsing
 
         [WebMethod]
@@ -153,6 +200,36 @@ namespace WebsitePanel.EnterpriseServer
         public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
             EnterpriseStorageController.StartSetEnterpriseFolderSettingsBackgroundTask(itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
+        }
+
+        [WebMethod]
+        public void SetEnterpriseFolderGeneralSettings(int itemId, SystemFile folder, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
+        {
+            EnterpriseStorageController.SetESGeneralSettings(itemId, folder, directoyBrowsingEnabled, quota, quotaType);
+        }
+
+        [WebMethod]
+        public void SetEnterpriseFolderPermissionSettings(int itemId, SystemFile folder, ESPermission[] permissions)
+        {
+            EnterpriseStorageController.SetESFolderPermissionSettings(itemId, folder, permissions);
+        }
+
+        [WebMethod]
+        public OrganizationUser[] GetFolderOwaAccounts(int itemId, SystemFile folder)
+        {
+           return  EnterpriseStorageController.GetFolderOwaAccounts(itemId, folder.Name);
+        }
+
+        [WebMethod]
+        public void SetFolderOwaAccounts(int itemId, SystemFile folder, OrganizationUser[] users)
+        {
+            EnterpriseStorageController.SetFolderOwaAccounts(itemId, folder.Name, users);
+        }
+
+        [WebMethod]
+        public List<string> GetUserEnterpriseFolderWithOwaEditPermission(int itemId, List<int> accountIds)
+        {
+            return EnterpriseStorageController.GetUserEnterpriseFolderWithOwaEditPermission(itemId, accountIds);
         }
 
         #endregion

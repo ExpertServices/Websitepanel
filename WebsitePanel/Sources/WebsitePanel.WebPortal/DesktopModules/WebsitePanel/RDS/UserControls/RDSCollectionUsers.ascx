@@ -4,11 +4,11 @@
 <asp:UpdatePanel ID="UsersUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
 	<div class="FormButtonsBarClean">
-		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button2"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
-		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button2" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
+		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
+		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
 	</div>
 	<asp:GridView ID="gvUsers" runat="server" meta:resourcekey="gvUsers" AutoGenerateColumns="False"
-		Width="600px" CssSelectorClass="NormalGridView"
+		Width="600px" CssSelectorClass="NormalGridView" OnRowCommand="gvUsers_RowCommand"
 		DataKeyNames="AccountName">
 		<Columns>
 			<asp:TemplateField>
@@ -21,12 +21,21 @@
 				<ItemStyle Width="10px" />
 			</asp:TemplateField>
 			<asp:TemplateField meta:resourcekey="gvUsersAccount" HeaderText="gvUsersAccount">
-				<ItemStyle Width="60%" Wrap="false">
+				<ItemStyle Width="80%" Wrap="false" HorizontalAlign="Left">
 				</ItemStyle>
-				<ItemTemplate>
+				<ItemTemplate>                    
                     <asp:Literal ID="litAccount" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
+                    <asp:Image ID="Image1" runat="server" ImageUrl='<%# GetThemedImage("Exchange/admin_16.png") %>' Visible='<%# Convert.ToBoolean(Eval("IsVIP")) %>' ImageAlign="AbsMiddle" />
+                    <asp:HiddenField ID="hdnSamAccountName" runat="server" Value='<%# Eval("SamAccountName") %>' />
 				</ItemTemplate>
 			</asp:TemplateField>
+            <asp:TemplateField meta:resourcekey="gvSetupInstructions">
+                <ItemStyle Width="20%" HorizontalAlign="right"></ItemStyle>
+                <ItemTemplate>
+                    <asp:LinkButton ID="lbSetupInstructions" CommandName="SetupInstructions" CommandArgument='<%# Eval("AccountId")%>' runat="server"
+                        Text="Setup Instructions" OnClientClick="ShowProgressDialog('Loading ...');return true;"/>
+                </ItemTemplate>
+            </asp:TemplateField>
 		</Columns>
 	</asp:GridView>
     <br />
@@ -75,18 +84,20 @@
 								<ItemStyle Width="10px" />
 							</asp:TemplateField>
 							<asp:TemplateField meta:resourcekey="gvAccountsDisplayName">
-								<ItemStyle Width="50%"></ItemStyle>
+								<ItemStyle Width="50%" HorizontalAlign="Left"></ItemStyle>
 								<ItemTemplate>
 									<asp:Image ID="imgAccount" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
 									<asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
+                                    <asp:HiddenField ID="hdnSamName" runat="server" Value='<%# Eval("SamAccountName") %>' />
+                                    <asp:HiddenField ID="hdnLocalAdmin" runat="server" Value='<%# Eval("IsVIP").ToString() %>' />
 								</ItemTemplate>
 							</asp:TemplateField>
 							<asp:TemplateField meta:resourcekey="gvAccountsEmail">
-								<ItemStyle Width="50%"></ItemStyle>
+								<ItemStyle Width="50%" HorizontalAlign="Left"></ItemStyle>
 								<ItemTemplate>
 									<asp:Literal ID="litPrimaryEmailAddress" runat="server" Text='<%# Eval("PrimaryEmailAddress") %>'></asp:Literal>
 								</ItemTemplate>
-							</asp:TemplateField>
+							</asp:TemplateField>                            
 						</Columns>
 					</asp:GridView>
 				</div>

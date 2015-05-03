@@ -21,6 +21,10 @@ HRESULT DAPI TimeFromString(
     __in_z LPCWSTR wzTime,
     __out FILETIME* pFileTime
     );
+HRESULT DAPI TimeFromString3339(
+    __in_z LPCWSTR wzTime,
+    __out FILETIME* pFileTime
+    );
 HRESULT DAPI TimeCurrentTime(
     __deref_out_z LPWSTR* ppwz,
     __in BOOL fGMT

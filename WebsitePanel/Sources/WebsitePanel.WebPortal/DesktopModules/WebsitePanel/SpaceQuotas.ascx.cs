@@ -60,19 +60,21 @@ namespace WebsitePanel.Portal
 			//{ "quotaDomainPointers", "pnlDomainPointers" },
             { "quotaOrganizations", "pnlOrganizations" },
             { "quotaUserAccounts", "pnlUserAccounts" },
+            { "quotaDeletedUsers", "pnlDeletedUsers" },
 			{ "quotaMailAccounts", "pnlMailAccounts" },
             { "quotaExchangeAccounts", "pnlExchangeAccounts" },
             { "quotaOCSUsers", "pnlOCSUsers" },
             { "quotaLyncUsers", "pnlLyncUsers" },
             { "quotaBlackBerryUsers", "pnlBlackBerryUsers" },
-            { "quotaSharepointSites", "pnlSharepointSites" },
+            { "quotaSharepointSites", "pnlSharepointSites" },            
 			{ "quotaWebSites", "pnlWebSites" },
             { "quotaDatabases", "pnlDatabases" },
 			{ "quotaNumberOfVm", "pnlHyperVForPC" },
             { "quotaFtpAccounts", "pnlFtpAccounts" },
             { "quotaExchangeStorage", "pnlExchangeStorage" },
             { "quotaNumberOfFolders", "pnlFolders" },
-            { "quotaEnterpriseStorage", "pnlEnterpriseStorage" }
+            { "quotaEnterpriseStorage", "pnlEnterpriseStorage" },
+            { "quotaEnterpriseSharepointSites", "pnlEnterpriseSharepointSites"}
 		};
 
         protected void Page_Load(object sender, EventArgs e)

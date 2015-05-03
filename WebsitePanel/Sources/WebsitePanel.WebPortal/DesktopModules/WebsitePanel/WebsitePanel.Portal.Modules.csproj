@@ -153,6 +153,7 @@
     <Compile Include="Code\Framework\ISchedulerTaskView.cs" />
     <Compile Include="Code\Framework\WebPortalPageTitleProvider.cs" />
     <Compile Include="Code\Framework\WebPortalThemeProvider.cs" />
+    <Compile Include="Code\Helpers\AjaxHandler.cs" />
     <Compile Include="Code\Helpers\AppInstallerHelpers.cs" />
     <Compile Include="Code\Framework\WebsitePanelControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -169,9 +170,11 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\HostedSharePointEnterpriseSiteCollectionsHelper.cs" />
     <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
+    <Compile Include="Code\Helpers\VirtualMachineSettingExtensions.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
     <Compile Include="Code\Helpers\CRMHelper.cs" />
     <Compile Include="Code\Helpers\ExchangeHelper.cs" />
@@ -189,12 +192,14 @@
     <Compile Include="Code\Helpers\ServiceItemsHelper.cs" />
     <Compile Include="Code\Helpers\TasksHelper.cs" />
     <Compile Include="Code\Helpers\UsersHelper.cs" />
+    <Compile Include="Code\Helpers\VirtualMachines2012Helper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesHelper.cs" />
     <Compile Include="Code\Helpers\WebAppGalleryHelpers.cs" />
     <Compile Include="Code\ProviderControls\IDatabaseEditDatabaseControl.cs" />
     <Compile Include="Code\ProviderControls\IDatabaseEditUserControl.cs" />
     <Compile Include="Code\ProviderControls\IFtpEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IHostingServiceProviderSettings.cs" />
+    <Compile Include="Code\ProviderControls\IVirtualMachineSettingsControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditAccountControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditDomainControl.cs" />
     <Compile Include="Code\ProviderControls\IMailEditForwardingControl.cs" />
@@ -211,19 +216,494 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsFolderPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsFolderPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsOwaEditing.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderSettingsOwaEditing.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUsers.ascx.cs">
+      <DependentUpon>OrganizationDeletedUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.cs">
       <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUsers.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUsers.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.designer.cs">
       <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx.cs">
+      <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsPasswordSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationUserResetPassword.ascx.cs">
+      <DependentUpon>OrganizationUserResetPassword.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationUserResetPassword.ascx.designer.cs">
+      <DependentUpon>OrganizationUserResetPassword.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx.cs">
+      <DependentUpon>EnterpriseStorageEditFolderTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageEditFolderTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.cs">
+      <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageOwaUsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx.designer.cs">
+      <DependentUpon>OrganizationSettingsTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseBackupSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseEditSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseSiteCollections.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseRestoreSiteCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
+      <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VpsMenu.ascx.cs">
+      <DependentUpon>VpsMenu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VpsMenu.ascx.designer.cs">
+      <DependentUpon>VpsMenu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\HyperV2012R2_Settings.ascx.designer.cs">
+      <DependentUpon>HyperV2012R2_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchObject.ascx.cs">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchObject.ascx.designer.cs">
+      <DependentUpon>SearchObject.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.cs">
+      <DependentUpon>Connect.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx.designer.cs">
+      <DependentUpon>UserPasswordExpirationNotificationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordExpirationLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsUserPasswordResetLetter.ascx.designer.cs">
+      <DependentUpon>SettingsUserPasswordResetLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\RemoteDesktop\Connect.aspx.designer.cs">
+      <DependentUpon>Connect.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\TestVirtualMachineTemplate.aspx.cs">
+      <DependentUpon>TestVirtualMachineTemplate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\TestVirtualMachineTemplate.aspx.designer.cs">
+      <DependentUpon>TestVirtualMachineTemplate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Breadcrumb.ascx.cs">
+      <DependentUpon>Breadcrumb.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Breadcrumb.ascx.designer.cs">
+      <DependentUpon>Breadcrumb.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\DynamicMemoryControl.ascx.cs">
+      <DependentUpon>DynamicMemoryControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\DynamicMemoryControl.ascx.designer.cs">
+      <DependentUpon>DynamicMemoryControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\FormTitle.ascx.cs">
+      <DependentUpon>FormTitle.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\FormTitle.ascx.designer.cs">
+      <DependentUpon>FormTitle.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Generation.ascx.cs">
+      <DependentUpon>Generation.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Generation.ascx.designer.cs">
+      <DependentUpon>Generation.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Menu.ascx.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\Menu.ascx.designer.cs">
+      <DependentUpon>Menu.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\ServerTabs.ascx.cs">
+      <DependentUpon>ServerTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\UserControls\ServerTabs.ascx.designer.cs">
+      <DependentUpon>ServerTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcAddExternalAddress.ascx.cs">
+      <DependentUpon>VdcAddExternalAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcAddExternalAddress.ascx.designer.cs">
+      <DependentUpon>VdcAddExternalAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcAuditLog.ascx.cs">
+      <DependentUpon>VdcAuditLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcAuditLog.ascx.designer.cs">
+      <DependentUpon>VdcAuditLog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcCreateServer.ascx.cs">
+      <DependentUpon>VdcCreateServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcCreateServer.ascx.designer.cs">
+      <DependentUpon>VdcCreateServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcExternalNetwork.ascx.cs">
+      <DependentUpon>VdcExternalNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcExternalNetwork.ascx.designer.cs">
+      <DependentUpon>VdcExternalNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcHome.ascx.cs">
+      <DependentUpon>VdcHome.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcHome.ascx.designer.cs">
+      <DependentUpon>VdcHome.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcImportServer.ascx.cs">
+      <DependentUpon>VdcImportServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcImportServer.ascx.designer.cs">
+      <DependentUpon>VdcImportServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcManagementNetwork.ascx.cs">
+      <DependentUpon>VdcManagementNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcManagementNetwork.ascx.designer.cs">
+      <DependentUpon>VdcManagementNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcPermissions.ascx.cs">
+      <DependentUpon>VdcPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcPermissions.ascx.designer.cs">
+      <DependentUpon>VdcPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VdcPrivateNetwork.ascx.cs">
+      <DependentUpon>VdcPrivateNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VdcPrivateNetwork.ascx.designer.cs">
+      <DependentUpon>VdcPrivateNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VirtualMachineImage.ashx.cs">
+      <DependentUpon>VirtualMachineImage.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VirtualMachineSnapshotImage.ashx.cs">
+      <DependentUpon>VirtualMachineSnapshotImage.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddExternalAddress.ascx.cs">
+      <DependentUpon>VpsDetailsAddExternalAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddExternalAddress.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAddExternalAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddPrivateAddress.ascx.cs">
+      <DependentUpon>VpsDetailsAddPrivateAddress.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAddPrivateAddress.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAddPrivateAddress.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAuditLog.ascx.cs">
+      <DependentUpon>VpsDetailsAuditLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsAuditLog.ascx.designer.cs">
+      <DependentUpon>VpsDetailsAuditLog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsConfiguration.ascx.cs">
+      <DependentUpon>VpsDetailsConfiguration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsConfiguration.ascx.designer.cs">
+      <DependentUpon>VpsDetailsConfiguration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsDvd.ascx.cs">
+      <DependentUpon>VpsDetailsDvd.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsDvd.ascx.designer.cs">
+      <DependentUpon>VpsDetailsDvd.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsEditConfiguration.ascx.cs">
+      <DependentUpon>VpsDetailsEditConfiguration.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsEditConfiguration.ascx.designer.cs">
+      <DependentUpon>VpsDetailsEditConfiguration.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsGeneral.ascx.cs">
+      <DependentUpon>VpsDetailsGeneral.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsGeneral.ascx.designer.cs">
+      <DependentUpon>VpsDetailsGeneral.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsHelp.ascx.cs">
+      <DependentUpon>VpsDetailsHelp.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsHelp.ascx.designer.cs">
+      <DependentUpon>VpsDetailsHelp.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsInsertDvd.ascx.cs">
+      <DependentUpon>VpsDetailsInsertDvd.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsInsertDvd.ascx.designer.cs">
+      <DependentUpon>VpsDetailsInsertDvd.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsNetwork.ascx.cs">
+      <DependentUpon>VpsDetailsNetwork.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsNetwork.ascx.designer.cs">
+      <DependentUpon>VpsDetailsNetwork.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsPermissions.ascx.cs">
+      <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsPermissions.ascx.designer.cs">
+      <DependentUpon>VpsDetailsPermissions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsReplications.ascx.designer.cs">
+      <DependentUpon>VpsDetailsReplications.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.cs">
+      <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsSnapshots.ascx.designer.cs">
+      <DependentUpon>VpsDetailsSnapshots.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsTools.ascx.cs">
+      <DependentUpon>VpsDetailsTools.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsDetailsTools.ascx.designer.cs">
+      <DependentUpon>VpsDetailsTools.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsMoveServer.ascx.cs">
+      <DependentUpon>VpsMoveServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsMoveServer.ascx.designer.cs">
+      <DependentUpon>VpsMoveServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsDeleteServer.ascx.cs">
+      <DependentUpon>VpsToolsDeleteServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsDeleteServer.ascx.designer.cs">
+      <DependentUpon>VpsToolsDeleteServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsReinstallServer.ascx.cs">
+      <DependentUpon>VpsToolsReinstallServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VPS2012\VpsToolsReinstallServer.ascx.designer.cs">
+      <DependentUpon>VpsToolsReinstallServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.cs">
+      <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditAccount.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditAccount.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Features.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Features.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Sharing.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Sharing.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Throttling.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditDomain_Throttling.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditForwarding.ascx.cs">
+      <DependentUpon>SmarterMail100_EditForwarding.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditForwarding.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditForwarding.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditGroup.ascx.cs">
+      <DependentUpon>SmarterMail100_EditGroup.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditGroup.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditGroup.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditList.ascx.cs">
+      <DependentUpon>SmarterMail100_EditList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_EditList.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_EditList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_Settings.ascx.cs">
+      <DependentUpon>SmarterMail100_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\SmarterMail100_Settings.ascx.designer.cs">
+      <DependentUpon>SmarterMail100_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\Windows2012_Settings.ascx.cs">
       <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\Windows2012_Settings.ascx.designer.cs">
       <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx.cs">
+      <DependentUpon>OrganizationDeletedUserMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUserMemberOf.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\DeletedUserTabs.ascx.cs">
+      <DependentUpon>DeletedUserTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\DeletedUserTabs.ascx.designer.cs">
+      <DependentUpon>DeletedUserTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="RDSServersAddserver.ascx.cs">
       <DependentUpon>RDSServersAddserver.ascx</DependentUpon>
@@ -238,6 +718,13 @@
     </Compile>
     <Compile Include="RDSServers.ascx.designer.cs">
       <DependentUpon>RDSServers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDSServersEditServer.ascx.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDSServersEditServer.ascx.designer.cs">
+      <DependentUpon>RDSServersEditServer.ascx</DependentUpon>
     </Compile>
     <Compile Include="RDS\AssignedRDSServers.ascx.cs">
       <DependentUpon>AssignedRDSServers.ascx</DependentUpon>
@@ -274,6 +761,13 @@
     <Compile Include="RDS\RDSEditCollectionApps.ascx.designer.cs">
       <DependentUpon>RDSEditCollectionApps.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\RDSEditCollectionSettings.ascx.cs">
+      <DependentUpon>RDSEditCollectionSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollectionSettings.ascx.designer.cs">
+      <DependentUpon>RDSEditCollectionSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\RDSEditCollectionUsers.ascx.cs">
       <DependentUpon>RDSEditCollectionUsers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -295,6 +789,34 @@
     <Compile Include="RDS\RDSCollections.ascx.designer.cs">
       <DependentUpon>RDSCollections.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\RDSEditUserExperience.ascx.cs">
+      <DependentUpon>RDSEditUserExperience.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditUserExperience.ascx.designer.cs">
+      <DependentUpon>RDSEditUserExperience.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSLocalAdmins.ascx.cs">
+      <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSLocalAdmins.ascx.designer.cs">
+      <DependentUpon>RDSLocalAdmins.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSSetupLetter.ascx.cs">
+      <DependentUpon>RDSSetupLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSSetupLetter.ascx.designer.cs">
+      <DependentUpon>RDSSetupLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSUserSessions.ascx.cs">
+      <DependentUpon>RDSUserSessions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSUserSessions.ascx.designer.cs">
+      <DependentUpon>RDSUserSessions.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDS\UserControls\RDSCollectionApps.ascx.cs">
       <DependentUpon>RDSCollectionApps.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -315,6 +837,20 @@
     </Compile>
     <Compile Include="RDS\UserControls\RDSCollectionUsers.ascx.designer.cs">
       <DependentUpon>RDSCollectionUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionTabs.ascx.cs">
+      <DependentUpon>RDSCollectionTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionTabs.ascx.designer.cs">
+      <DependentUpon>RDSCollectionTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSSessionLimit.ascx.cs">
+      <DependentUpon>RDSSessionLimit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSSessionLimit.ascx.designer.cs">
+      <DependentUpon>RDSSessionLimit.ascx</DependentUpon>
     </Compile>
     <Compile Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -348,6 +884,20 @@
     </Compile>
     <Compile Include="SettingsDomainLookupLetter.ascx.designer.cs">
       <DependentUpon>SettingsDomainLookupLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsRdsPolicy.ascx.cs">
+      <DependentUpon>SettingsRdsPolicy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsRdsPolicy.ascx.designer.cs">
+      <DependentUpon>SettingsRdsPolicy.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsRdsSetupLetter.ascx.cs">
+      <DependentUpon>SettingsRdsSetupLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsRdsSetupLetter.ascx.designer.cs">
+      <DependentUpon>SettingsRdsSetupLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="SettingsServiceLevels.ascx.cs">
       <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
@@ -787,6 +1337,9 @@
     <Compile Include="UserControls\DomainControl.ascx.designer.cs">
       <DependentUpon>DomainControl.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ActionListControlBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -834,6 +1387,34 @@
     </Compile>
     <Compile Include="UserControls\ItemButtonPanel.ascx.designer.cs">
       <DependentUpon>ItemButtonPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\DomainActions.ascx.cs">
+      <DependentUpon>DomainActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\DomainActions.ascx.designer.cs">
+      <DependentUpon>DomainActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MailAccountActions.ascx.cs">
+      <DependentUpon>MailAccountActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\MailAccountActions.ascx.designer.cs">
+      <DependentUpon>MailAccountActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\WebsiteActions.ascx.cs">
+      <DependentUpon>WebsiteActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\WebsiteActions.ascx.designer.cs">
+      <DependentUpon>WebsiteActions.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserActions.ascx.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\UserActions.ascx.designer.cs">
+      <DependentUpon>UserActions.ascx</DependentUpon>
     </Compile>
     <Compile Include="UserOrganization.ascx.cs">
       <DependentUpon>UserOrganization.ascx</DependentUpon>
@@ -1243,46 +1824,46 @@
     <Compile Include="ExchangeServer\UserControls\UserSelector.ascx.designer.cs">
       <DependentUpon>UserSelector.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointBackupSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointBackupSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointBackupSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointBackupSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointEditSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointEditSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointEditSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointEditSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointRestoreSiteCollection.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx.cs">
       <DependentUpon>HostedSharePointRestoreSiteCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointRestoreSiteCollection.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx.designer.cs">
       <DependentUpon>HostedSharePointRestoreSiteCollection.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointSiteCollections.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointSiteCollections.ascx.cs">
       <DependentUpon>HostedSharePointSiteCollections.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointSiteCollections.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointSiteCollections.ascx.designer.cs">
       <DependentUpon>HostedSharePointSiteCollections.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointStorageSettings.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageSettings.ascx.cs">
       <DependentUpon>HostedSharePointStorageSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointStorageSettings.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageSettings.ascx.designer.cs">
       <DependentUpon>HostedSharePointStorageSettings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="HostedSharePointStorageUsage.ascx.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageUsage.ascx.cs">
       <DependentUpon>HostedSharePointStorageUsage.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="HostedSharePointStorageUsage.ascx.designer.cs">
+    <Compile Include="HostedSharePoint\HostedSharePointStorageUsage.ascx.designer.cs">
       <DependentUpon>HostedSharePointStorageUsage.ascx</DependentUpon>
     </Compile>
     <Compile Include="HostedSoluitonReportSummaryLetter.ascx.cs">
@@ -4298,21 +4879,164 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsFolderPermissions.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderSettingsOwaEditing.ascx" />
     <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationSettingsPasswordSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationUserResetPassword.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStorageEditFolderTabs.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStorageOwaUsersList.ascx" />
+    <Content Include="ExchangeServer\UserControls\OrganizationSettingsTabs.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseBackupSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseEditSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseSiteCollections.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseRestoreSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
+    <Content Include="VpsMenu.ascx" />
+    <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
+    <Content Include="SearchObject.ascx" />
+    <Content Include="ScheduleTaskControls\UserPasswordExpirationNotificationView.ascx" />
+    <Content Include="SettingsUserPasswordExpirationLetter.ascx" />
+    <Content Include="SettingsUserPasswordResetLetter.ascx" />
+    <Content Include="VPS2012\RemoteDesktop\Connect.aspx" />
+    <Content Include="VPS2012\RemoteDesktop\msrdp.cab" />
+    <Content Include="VPS2012\TestVirtualMachineTemplate.aspx" />
+    <Content Include="VPS2012\UserControls\Breadcrumb.ascx" />
+    <Content Include="VPS2012\UserControls\DynamicMemoryControl.ascx" />
+    <Content Include="VPS2012\UserControls\FormTitle.ascx" />
+    <Content Include="VPS2012\UserControls\Generation.ascx" />
+    <Content Include="VPS2012\UserControls\Menu.ascx" />
+    <Content Include="VPS2012\UserControls\ServerTabs.ascx" />
+    <Content Include="VPS2012\VdcAddExternalAddress.ascx" />
+    <Content Include="VPS2012\VdcAuditLog.ascx" />
+    <Content Include="VPS2012\VdcCreateServer.ascx" />
+    <Content Include="VPS2012\VdcExternalNetwork.ascx" />
+    <Content Include="VPS2012\VdcHome.ascx" />
+    <Content Include="VPS2012\VdcImportServer.ascx" />
+    <Content Include="VPS2012\VdcManagementNetwork.ascx" />
+    <Content Include="VPS2012\VdcPermissions.ascx" />
+    <Content Include="VPS2012\VdcPrivateNetwork.ascx" />
+    <Content Include="VPS2012\VpsDetailsAddExternalAddress.ascx" />
+    <Content Include="VPS2012\VpsDetailsAddPrivateAddress.ascx" />
+    <Content Include="VPS2012\VpsDetailsAuditLog.ascx" />
+    <Content Include="VPS2012\VpsDetailsConfiguration.ascx" />
+    <Content Include="VPS2012\VpsDetailsDvd.ascx" />
+    <Content Include="VPS2012\VpsDetailsEditConfiguration.ascx" />
+    <Content Include="VPS2012\VpsDetailsGeneral.ascx" />
+    <Content Include="VPS2012\VpsDetailsHelp.ascx" />
+    <Content Include="VPS2012\VpsDetailsInsertDvd.ascx" />
+    <Content Include="VPS2012\VpsDetailsNetwork.ascx" />
+    <Content Include="VPS2012\VpsDetailsPermissions.ascx" />
+    <Content Include="VPS2012\VpsDetailsReplications.ascx" />
+    <Content Include="VPS2012\VpsDetailsSnapshots.ascx" />
+    <Content Include="VPS2012\VpsDetailsTools.ascx" />
+    <Content Include="VPS2012\VpsMoveServer.ascx" />
+    <Content Include="VPS2012\VpsToolsDeleteServer.ascx" />
+    <Content Include="VPS2012\VpsToolsReinstallServer.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditAccount.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Features.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Sharing.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditDomain_Throttling.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditForwarding.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditGroup.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_EditList.ascx" />
+    <Content Include="ProviderControls\SmarterMail100_Settings.ascx" />
     <Content Include="ProviderControls\Windows2012_Settings.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUsers.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\DeletedUserTabs.ascx" />
     <Content Include="RDSServersAddserver.ascx" />
     <Content Include="RDSServers.ascx" />
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditAccount.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Features.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Sharing.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditDomain_Throttling.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditForwarding.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditGroup.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\SmarterMail100_EditList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\SettingsRdsSetupLetter.ascx.resx" />
+    <Content Include="App_LocalResources\RDSServersEditServer.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageEditFolderTabs.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsFolderPermissions.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStorageOwaUsersList.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderSettingsOwaEditing.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsRdsPolicy.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\HyperV2012R2_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseSiteCollections.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseBackupSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseEditSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseRestoreSiteCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseStorageSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEnterpriseStorageUsage.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationUserResetPassword.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordExpirationLetter.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\OrganizationSettingsTabs.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsPasswordSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSettingsGeneralSettings.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsUserPasswordResetLetter.ascx.resx" />
+    <Content Include="App_LocalResources\VpsMenu.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
+    <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />
     <Content Include="RDS\RDSEditApplicationUsers.ascx" />
     <Content Include="RDS\RDSEditCollection.ascx" />
     <Content Include="RDS\RDSEditCollectionApps.ascx" />
+    <Content Include="RDS\RDSEditCollectionSettings.ascx" />
     <Content Include="RDS\RDSEditCollectionUsers.ascx" />
     <Content Include="RDS\RDSCreateCollection.ascx" />
     <Content Include="RDS\RDSCollections.ascx" />
+    <Content Include="RDS\RDSEditUserExperience.ascx" />
+    <Content Include="RDS\RDSLocalAdmins.ascx" />
+    <Content Include="RDS\RDSSetupLetter.ascx" />
+    <Content Include="RDS\RDSUserSessions.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
+    <Content Include="RDS\UserControls\RDSCollectionTabs.ascx" />
+    <Content Include="RDS\UserControls\RDSSessionLimit.ascx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\DomainExpirationView.ascx.resx" />
     <Content Include="App_LocalResources\SettingsDomainExpirationLetter.ascx.resx" />
     <Content Include="App_LocalResources\SettingsDomainLookupLetter.ascx.resx" />
@@ -4326,6 +5050,13 @@
     <Content Include="ExchangeServer\App_LocalResources\ExchangeCheckDomainName.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\RDSUserSessions.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSLocalAdmins.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSSetupLetter.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditUserExperience.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
@@ -4334,6 +5065,8 @@
     <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
     <Content Include="SettingsDomainExpirationLetter.ascx" />
     <Content Include="SettingsDomainLookupLetter.ascx" />
+    <Content Include="SettingsRdsPolicy.ascx" />
+    <Content Include="SettingsRdsSetupLetter.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />
@@ -4404,6 +5137,10 @@
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="UserControls\ItemButtonPanel.ascx" />
+    <Content Include="UserControls\DomainActions.ascx" />
+    <Content Include="UserControls\MailAccountActions.ascx" />
+    <Content Include="UserControls\WebsiteActions.ascx" />
+    <Content Include="UserControls\UserActions.ascx" />
     <Content Include="UserOrganization.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -4472,6 +5209,116 @@
     <Content Include="PhoneNumbers.ascx" />
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
+    <Content Include="UserControls\App_LocalResources\UserActions.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainActions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
+    <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
+    <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
+    <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
+    <Content Include="VPS\UserControls\App_LocalResources\Generation.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS\UserControls\App_LocalResources\DynamicMemory.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcAddExternalAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcAuditLog.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcCreateServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcExternalNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcHome.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcImportServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcManagementNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcPermissions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VdcPrivateNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAddExternalAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAddPrivateAddress.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsAuditLog.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsConfiguration.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsDvd.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsEditConfiguration.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsGeneral.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsHelp.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsInsertDvd.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsNetwork.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsPermissions.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsSnapshots.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsTools.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsMoveServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsToolsDeleteServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsToolsReinstallServer.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\RemoteDesktop\App_LocalResources\Connect.aspx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Breadcrumb.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\DynamicMemoryControl.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Generation.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\Menu.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\UserControls\App_LocalResources\ServerTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="VPS2012\App_LocalResources\VpsDetailsReplications.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\BandwidthReport.ascx.resx">
@@ -5462,7 +6309,9 @@
     <Content Include="VPSForPC\App_LocalResources\VpsDetailsGeneral.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\WebsitesSSL.ascx.resx" />
+    <Content Include="App_LocalResources\WebsitesSSL.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="VPSForPC\App_LocalResources\VpsDetailsHelp.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
@@ -5562,6 +6411,7 @@
     <Content Include="UserControls\App_LocalResources\ItemButtonPanel.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">
@@ -5608,7 +6458,9 @@
     <Content Include="Lync\App_LocalResources\LyncPhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\OrganizationMenu.ascx.resx" />
+    <Content Include="App_LocalResources\OrganizationMenu.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_LocalResources\SettingsExchangeRetentionPolicyTag.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeRetentionPolicyTag.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageDriveMaps.ascx.resx">
@@ -5640,12 +6492,32 @@
     <Content Include="RDS\App_LocalResources\RDSEditCollectionUsers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionUsers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
-    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="ProviderControls\App_LocalResources\RDS_Settings.ascx.resx" />
-    <Content Include="UserControls\App_LocalResources\DomainControl.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainControl.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUsers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\OrganizationUserGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUserGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUserMemberOf.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\DeletedUserTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -5794,12 +6666,12 @@
     <Content Include="ExchangeServer\OrganizationUsers.ascx" />
     <Content Include="ExchangeServer\UserControls\HoursBox.ascx" />
     <Content Include="ExchangeServer\UserControls\UserSelector.ascx" />
-    <Content Include="HostedSharePointBackupSiteCollection.ascx" />
-    <Content Include="HostedSharePointEditSiteCollection.ascx" />
-    <Content Include="HostedSharePointRestoreSiteCollection.ascx" />
-    <Content Include="HostedSharePointSiteCollections.ascx" />
-    <Content Include="HostedSharePointStorageSettings.ascx" />
-    <Content Include="HostedSharePointStorageUsage.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointBackupSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointEditSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointRestoreSiteCollection.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointSiteCollections.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointStorageSettings.ascx" />
+    <Content Include="HostedSharePoint\HostedSharePointStorageUsage.ascx" />
     <Content Include="HostedSoluitonReportSummaryLetter.ascx" />
     <Content Include="OverusageReport.ascx" />
     <Content Include="ProviderControls\CRM_Settings.ascx" />
@@ -5833,7 +6705,7 @@
     <Content Include="ScheduleTaskControls\SendFilesViaFtp.ascx" />
     <Content Include="ScheduleTaskControls\SuspendOverusedSpaces.ascx" />
     <Content Include="ScheduleTaskControls\ZipFiles.ascx" />
-    <Content Include="App_LocalResources\HostedSharePointStorageSettings.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointStorageSettings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\OverusageReport.ascx.resx">
@@ -5841,7 +6713,7 @@
     </Content>
     <Content Include="Reports\HostingSpaceDiskspaceOverusageDetails.rdlc" />
     <Content Include="Reports\OverusageReport.rdlc" />
-    <Content Include="App_LocalResources\HostedSharePointStorageUsage.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointStorageUsage.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="CRM\App_LocalResources\CRMUsers.ascx.resx">
@@ -6267,16 +7139,16 @@
     <Content Include="ProviderControls\App_LocalResources\PowerDNS_Settings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointBackupSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointBackupSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointEditSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointEditSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointRestoreSiteCollection.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointRestoreSiteCollection.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\HostedSharePointSiteCollections.ascx.resx">
+    <Content Include="HostedSharePoint\App_LocalResources\HostedSharePointSiteCollections.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationCreateOrganization.ascx.resx">
@@ -6595,6 +7467,8 @@
     <Content Include="ResizeImage.ashx" />
     <Content Include="VPSForPC\VirtualMachineImage.ashx" />
     <Content Include="VPSForPC\VirtualMachineSnapshotImage.ashx" />
+    <Content Include="VPS2012\VirtualMachineImage.ashx" />
+    <Content Include="VPS2012\VirtualMachineSnapshotImage.ashx" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.WebDavPortal.Models.Common;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
@@ -13,14 +16,8 @@ namespace WebsitePanel.WebDavPortal.Models
         [Display(Name = @"Password")]
         public string Password { get; set; }
 
-        public string UserName
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(Login) ? Login.Split('@')[0] : string.Empty; 
-            }
-        }
-
         public string LdapError { get; set; }
+
+        public bool PasswordResetEnabled { get; set; }
     }
 }

@@ -162,4 +162,34 @@
   <data name="litFileManagerEditableExtensions.Text" xml:space="preserve">
     <value>(One (1) extension per line)</value>
   </data>
+  <data name="lblRdsController.Text" xml:space="preserve">
+    <value>Main RDS Controller:</value>
+  </data>
+  <data name="RdsSettings.Text" xml:space="preserve">
+    <value>RDS</value>
+  </data>
+  <data name="lblWebdavPortalUrl.Text" xml:space="preserve">
+    <value>Webdav Portal URL</value>
+  </data>
+  <data name="WebdavPortalSettings.Text" xml:space="preserve">
+    <value>Webdav Portal</value>
+  </data>
+  <data name="chkEnablePasswordReset.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="locEnablePasswordReset.Text" xml:space="preserve">
+    <value>Enable password reset:</value>
+  </data>
+  <data name="lblAccountSid.Text" xml:space="preserve">
+    <value>AccountSID</value>
+  </data>
+  <data name="lblAuthToken.Text" xml:space="preserve">
+    <value>AuthToken</value>
+  </data>
+  <data name="lblPhoneFrom.Text" xml:space="preserve">
+    <value>Phone From</value>
+  </data>
+  <data name="TwilioSettings.Text" xml:space="preserve">
+    <value>Twilio</value>
+  </data>
 </root>

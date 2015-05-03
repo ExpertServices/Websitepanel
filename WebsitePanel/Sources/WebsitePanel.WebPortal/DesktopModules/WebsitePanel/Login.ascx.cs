@@ -233,6 +233,26 @@ namespace WebsitePanel.Portal
                         }
                     }
 
+                    
+                    if (cntx.Groups.ContainsKey(ResourceGroups.VPS2012))
+                    {
+                        // VPS resource found
+                        // check created VPS
+                        VirtualMachineMetaItemsPaged vms = ES.Services.VPS2012.GetVirtualMachines(packageId, "", "", "", 0, Int32.MaxValue, false);
+                        if (vms.Items.Length == 1)
+                        {
+                            // one VPS - redirect to its properties screen
+                            Response.Redirect(PortalUtils.NavigatePageURL("SpaceVPS2012", "SpaceID", packageId.ToString(),
+                                "ItemID=" + vms.Items[0].ItemID.ToString(), "ctl=vps_general", "moduleDefId=VPS2012"));
+                        }
+                        else
+                        {
+                            // several VPS - redirect to VPS list page
+                            Response.Redirect(PortalUtils.NavigatePageURL("SpaceVPS2012", "SpaceID", packageId.ToString(),
+                                "ctl=", "moduleDefId=VPS2012"));
+                        }
+                    }
+
 
                     if (cntx.Groups.ContainsKey(ResourceGroups.VPSForPC))
                     {

@@ -35,9 +35,10 @@ namespace WebsitePanel.Providers.Virtualization
     public enum OperationalStatus
     {
         None = 0,
-        OK = 2,
+        Ok = 2,
         Error = 6,
         NoContact = 12,
-        LostCommunication = 13
+        LostCommunication = 13,
+        Paused = 15
     }
 }

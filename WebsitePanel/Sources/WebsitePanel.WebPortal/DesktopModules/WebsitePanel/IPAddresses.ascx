@@ -51,7 +51,7 @@
         </asp:TemplateField>
 		<asp:TemplateField SortExpression="ExternalIP" HeaderText="gvIPAddressesExternalIP">
 			<ItemTemplate>
-				<asp:hyperlink NavigateUrl='<%# EditUrl("AddressID", DataBinder.Eval(Container.DataItem, "AddressID").ToString(), "edit_ip") %>' runat="server" ID="Hyperlink2">
+				<asp:hyperlink NavigateUrl='<%# EditUrl("AddressID", DataBinder.Eval(Container.DataItem, "AddressID").ToString(), "edit_ip", "ReturnUrl=" + GetReturnUrl()) %>' runat="server" ID="Hyperlink2">
 					<%# Eval("ExternalIP") %>
 				</asp:hyperlink>
 			</ItemTemplate>

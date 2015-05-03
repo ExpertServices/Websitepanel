@@ -338,8 +338,8 @@ namespace WebsitePanel.Setup
 		/// <param name="domain"></param>
 		/// <returns></returns>
 		internal static string GetSid(string userAccount, string domain)
-		{
-			if(domain == null)
+		{            
+			if(string.IsNullOrWhiteSpace(domain))
 				domain = Environment.MachineName;
 
 			// try to get user account

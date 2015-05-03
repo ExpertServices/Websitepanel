@@ -151,10 +151,10 @@
     <value>Contacts</value>
   </data>
   <data name="Text.CRM2013Group" xml:space="preserve">
-    <value>Hosted Organization - CRM 2013</value>
+    <value>CRM 2013/2015</value>
   </data>
   <data name="Text.CRMGroup" xml:space="preserve">
-    <value>Hosted Organization - CRM</value>
+    <value>CRM 4/2011</value>
   </data>
   <data name="Text.CRMOrganization" xml:space="preserve">
     <value>CRM Organization</value>
@@ -234,8 +234,11 @@
   <data name="Text.Setup" xml:space="preserve">
     <value>Setup</value>
   </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>Hosted Organization - SharePoint</value>
+  <data name="Text.SharePointFoundationServerGroup" xml:space="preserve">
+    <value>Hosted Organization - SharePoint Foundation Server</value>
+  </data>
+  <data name="Text.SharePointEnterpriseServerGroup" xml:space="preserve">
+    <value>Hosted Organization - SharePoint Server</value>
   </data>
   <data name="Text.SiteCollections" xml:space="preserve">
     <value>Sharepoint Sites</value>
@@ -247,7 +250,7 @@
     <value>Storage Usage</value>
   </data>
   <data name="Text.Users" xml:space="preserve">
-    <value>Users</value>
+    <value>Users (User Organization)</value>
   </data>
   <data name="Text.CreateOrganization" xml:space="preserve">
     <value>Create Organization</value>
@@ -260,5 +263,11 @@
   </data>
   <data name="Text.RDSServers" xml:space="preserve">
     <value>RDS Servers</value>
+  </data>
+  <data name="Text.DeletedUsers" xml:space="preserve">
+    <value>Deleted Users</value>
+  </data>
+  <data name="Text.PasswordPolicy" xml:space="preserve">
+    <value>Password Policy</value>
   </data>
 </root>

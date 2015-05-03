@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Collections.Generic;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -38,6 +39,8 @@ namespace WebsitePanel.Providers.HostedSolution
         void DeleteOrganization(string organizationId);
 
         int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled);
+
+        void DisableUser(string loginName, string organizationId);
 
         void DeleteUser(string loginName, string organizationId);
 
@@ -62,7 +65,8 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string jobTitle,
                                     string company, string department, string office, string managerAccountName,
                                     string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-                                    string webPage, string notes, string externalEmail);
+                                    string webPage, string notes, string externalEmail,
+                                    bool userMustChangePassword);
 
         void SetUserPassword(string organizationId, string accountName, string password);
 
@@ -93,5 +97,12 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName);
 
         void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
+
+        List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration);
+        void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings);
+
+        bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null);
+
+        OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId);
     }
 }

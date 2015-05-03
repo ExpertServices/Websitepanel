@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using AjaxControlToolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,62 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            servers.Module = Module;
+            servers.OnRefreshClicked -= OnRefreshClicked;
+            servers.OnRefreshClicked += OnRefreshClicked;
 
+            if (!Page.IsPostBack)
+            {
+                var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                litCollectionName.Text = collection.DisplayName;                
+            }
+        }
+
+        private void OnRefreshClicked(object sender, EventArgs e)
+        {
+            var rdsServers = (List<RdsServer>)sender;
+
+            foreach (var rdsServer in rdsServers)
+            {
+                rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(PanelRequest.ItemID, rdsServer.FqdName);
+            }
+
+            servers.BindServers(rdsServers.ToArray());
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
+        }
+
+        private bool SaveRdsServers(bool exit = false)
+        {
+            try
+            {
+                if (servers.GetServers().Count < 1)
+                {
+                    messageBox.ShowErrorMessage("RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED");
+                    return false;
+                }
+
+                RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                collection.Servers = servers.GetServers();
+
+                ES.Services.RDS.EditRdsCollection(PanelRequest.ItemID, collection);
+
+                if (!exit)
+                {
+                    foreach(var rdsServer in collection.Servers)
+                    {
+                        rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(PanelRequest.ItemID, rdsServer.FqdName);
+                    }
+
+                    servers.BindServers(collection.Servers.ToArray());
+                }
+            }
+            catch(Exception ex)
+            {
+                messageBox.ShowErrorMessage(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -48,23 +104,18 @@ namespace WebsitePanel.Portal.RDS
             if (!Page.IsValid)
                 return;
 
-            try
+            SaveRdsServers();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+                return;
+
+            if (SaveRdsServers())
             {
-                if (servers.GetServers().Count < 1)
-                {
-                    messageBox.ShowErrorMessage("RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED");
-                    return;
-                }
-                
-                RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-                collection.Servers = servers.GetServers();
-
-                ES.Services.RDS.EditRdsCollection(PanelRequest.ItemID, collection);
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
             }
-            catch { }
         }
     }
 }

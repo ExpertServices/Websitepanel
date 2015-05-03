@@ -45,10 +45,10 @@
 					    OnRowCommand="gvRDSCollections_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsRDSCollectionsPaged" PageSize="20">
                         <Columns>
-                            <asp:TemplateField HeaderText="gvCollectionName" SortExpression="Name">
+                            <asp:TemplateField HeaderText="gvCollectionName" SortExpression="DisplayName">
 							    <ItemStyle Width="40%"></ItemStyle>
-							    <ItemTemplate>                                    
-                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("Name").ToString() %></asp:hyperlink>
+							    <ItemTemplate>  
+                                    <asp:LinkButton id="lnkCollectionName" meta:resourcekey="lnkCollectionName" runat="server" CommandName="EditCollection" CommandArgument='<%# Eval("Id") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"><%# Eval("DisplayName").ToString() %></asp:LinkButton>                                                                 
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvServer">
@@ -58,11 +58,7 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField>
-			                    <ItemTemplate>
-				                    <asp:hyperlink id="lnkApps" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionAppsEditUrl(Eval("Id").ToString()) %>'>Applications</asp:hyperlink>
-                                    |
-				                    <asp:hyperlink id="lnkUsers" meta:resourcekey="lnkUsers" runat="server" NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("Id").ToString()) %>'>Users</asp:hyperlink>
-                                    |
+			                    <ItemTemplate>				                    
                                     <asp:LinkButton ID="lnkRemove" runat="server" Text="Remove"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("Id") %>' 
                                         meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to remove selected rds collection?')"></asp:LinkButton>
@@ -70,6 +66,11 @@
 		                    </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Collections Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="collectionsQuota" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                    </div>
                     <asp:ObjectDataSource ID="odsRDSCollectionsPaged" runat="server" EnablePaging="True"
 							SelectCountMethod="GetRDSCollectonsPagedCount"
 							SelectMethod="GetRDSCollectonsPaged"

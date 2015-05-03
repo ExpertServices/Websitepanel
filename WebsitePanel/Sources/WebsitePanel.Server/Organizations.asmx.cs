@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Services;
 using System.Web.Services.Protocols;
@@ -100,6 +101,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public void DisableUser(string loginName, string organizationId)
+        {
+            Organization.DisableUser(loginName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void DeleteUser(string loginName, string organizationId)
         {
             Organization.DeleteUser(loginName, organizationId);
@@ -153,12 +160,13 @@ namespace WebsitePanel.Server
             string address, string city, string state, string zip, string country, string jobTitle,
             string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, 
+            bool userMustChangePassword)
         {
             Organization.SetUserGeneralSettings(organizationId, accountName, displayName, password, hideFromAddressBook,
                 disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle,
                 company, department, office, managerAccountName, businessPhone, fax, homePhone,
-                mobilePhone, pager, webPage, notes, externalEmail);
+                mobilePhone, pager, webPage, notes, externalEmail, userMustChangePassword);
         }
 
 
@@ -246,6 +254,30 @@ namespace WebsitePanel.Server
         public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
         {
             Organization.ChangeDriveMapFolderPath(organizationId, oldFolder, newFolder);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<OrganizationUser> GetOrganizationUsersWithExpiredPassword(string organizationId, int daysBeforeExpiration)
+        {
+            return Organization.GetOrganizationUsersWithExpiredPassword(organizationId, daysBeforeExpiration);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ApplyPasswordSettings(string organizationId, OrganizationPasswordSettings passwordSettings)
+        {
+            Organization.ApplyPasswordSettings(organizationId, passwordSettings);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckPhoneNumberIsInUse(string phoneNumber, string userSamAccountName = null)
+        {
+           return Organization.CheckPhoneNumberIsInUse(phoneNumber, userSamAccountName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public OrganizationUser GetOrganizationUserWithExtraData(string loginName, string organizationId)
+        {
+            return Organization.GetOrganizationUserWithExtraData(loginName, organizationId);
         }
     }
 }

@@ -10,7 +10,7 @@
 <div class="FormBody">
     
     <p id="DomainPanel" runat="server" style="padding: 15px 0 15px 5px;">
-        <wsp:DomainControl ID="DomainName" runat="server" RequiredEnabled="True" ValidationGroup="Domain" OnTextChanged="DomainName_TextChanged"></wsp:DomainControl>
+        <wsp:DomainControl ID="DomainName" runat="server" RequiredEnabled="True" ValidationGroup="Domain"></wsp:DomainControl>
     </p>
     
     <wsp:CollapsiblePanel id="OptionsPanelHeader" runat="server"

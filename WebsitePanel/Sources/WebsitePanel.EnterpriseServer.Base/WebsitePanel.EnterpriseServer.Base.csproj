@@ -39,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.EnterpriseServer\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -49,7 +49,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.EnterpriseServer\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -116,10 +116,13 @@
     <Compile Include="Ecommerce\TransactionResult.cs" />
     <Compile Include="Ecommerce\TriggerSystem\ITriggerHandler.cs" />
     <Compile Include="ExchangeServer\ExchangeEmailAddress.cs" />
+    <Compile Include="HostedSolution\AccessTokenTypes.cs" />
     <Compile Include="HostedSolution\AdditionalGroup.cs" />
     <Compile Include="HostedSolution\ServiceLevel.cs" />
     <Compile Include="HostedSolution\CRMLycenseTypes.cs" />
     <Compile Include="HostedSolution\ESPermission.cs" />
+    <Compile Include="HostedSolution\AccessToken.cs" />
+    <Compile Include="HostedSolution\WebDavAccessToken.cs" />
     <Compile Include="Log\LogRecord.cs" />
     <Compile Include="Packages\ServiceLevelQuotaValueInfo.cs" />
     <Compile Include="Packages\HostingPlanContext.cs" />
@@ -241,7 +244,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="RDS\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

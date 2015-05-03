@@ -143,6 +143,7 @@ namespace WebsitePanel.Providers.HostedSolution
         int RemoveDisclamerMember(string name, string member);
 
         // Archiving
+        ResultObject ExportMailBox(string organizationId, string accountName, string storagePath);
         ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);
 
         // Retention policy

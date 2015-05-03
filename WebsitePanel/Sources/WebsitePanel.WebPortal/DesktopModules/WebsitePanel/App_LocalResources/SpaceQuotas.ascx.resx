@@ -180,8 +180,8 @@
   <data name="lblOCSUsers.Text" xml:space="preserve">
     <value>OCS Users:</value>
   </data>
-  <data name="lblSharepointSites" xml:space="preserve">
-    <value>Sharepoint Sites:</value>
+  <data name="lblSharepointSites.Text" xml:space="preserve">
+    <value>SharePoint Foundation Sites:</value>
   </data>
   <data name="lblUserAccounts.Text" xml:space="preserve">
     <value>User Accounts:</value>
@@ -206,5 +206,11 @@
   </data>
   <data name="lblEnterpriseStorage.Text" xml:space="preserve">
     <value>Enterprise Storage, MB:</value>
+  </data>
+  <data name="lblDeletedUsers.Text" xml:space="preserve">
+    <value>Deleted Users:</value>
+  </data>
+  <data name="lblSharepointEnterpriseSites.Text" xml:space="preserve">
+    <value>SharePoint Server Sites:</value>
   </data>
 </root>

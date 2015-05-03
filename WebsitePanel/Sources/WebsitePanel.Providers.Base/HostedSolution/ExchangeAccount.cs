@@ -108,11 +108,11 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.mailEnabledPublicFolder = value; }
         }
 
-        public string AccountPassword
-        {
-            get { return this.accountPassword; }
-            set { this.accountPassword = value; }
-        }
+        //public string AccountPassword
+        //{
+        //    get { return this.accountPassword; }
+        //    set { this.accountPassword = value; }
+        //}
 
         public MailboxManagerActions MailboxManagerActions
         {

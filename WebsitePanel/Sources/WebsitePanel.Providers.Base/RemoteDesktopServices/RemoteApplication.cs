@@ -35,5 +35,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public string FilePath { get; set; }
         public string FileVirtualPath { get; set; }
         public bool ShowInWebAccess { get; set; }
+        public string RequiredCommandLine { get; set; }
+        public string[] Users { get; set; }
     }
 }

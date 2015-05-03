@@ -5,61 +5,65 @@
 <%@ Register Src="UserOrganization.ascx" TagName="UserOrganization" TagPrefix="wsp" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
+<script src="/JavaScript/chosen.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-select").chosen({ width: "200px" });
+    });
+</script>
 
 <asp:Panel id="ButtonsPanel" runat="server" class="FormButtonsBar UserSpaces">
-	<asp:Button ID="btnAddItem" runat="server" meta:resourcekey="btnAddItem" Text="Create Hosting Space" CssClass="Button3" OnClick="btnAddItem_Click" />
+    <asp:Button ID="btnAddItem" runat="server" meta:resourcekey="btnAddItem" Text="Create Hosting Space" CssClass="Button3" OnClick="btnAddItem_Click" />
 </asp:Panel>
 
 
-
 <asp:Panel ID="UserPackagesPanel" runat="server" Visible="false">
-    <asp:Repeater ID="PackagesList" runat="server" EnableViewState="false">
-        <ItemTemplate>
-            <div class="IconsBlock">
-                <div class="IconsTitle">
-                    <asp:hyperlink id="lnkEdit" runat="server" NavigateUrl='<%# GetSpaceHomePageUrl((int)Eval("PackageID")) %>'>
-		                <%# Eval("PackageName") %>
-	                </asp:hyperlink>
-                </div>
-                <div>
+    <div class="IconsBlock">
+        <div class="IconsTitle">
+            <asp:DropDownList ID="ddlPackageSelect" OnSelectedIndexChanged="openSelectedPackage" AutoPostBack="true" CssClass="chosen-select" runat="server" Visible="false" />
+        </div>
+        <asp:Repeater ID="PackagesList" runat="server" EnableViewState="false">
+            <ItemTemplate>
+                    <div>
+                        <asp:Repeater ID="PackageGroups" runat="server" DataSource='<%# GetIconsDataSource((int)Eval("PackageID"))  %>' > 
+                            <ItemTemplate>
 
-                    <asp:Repeater ID="PackageGroups" runat="server" DataSource='<%# GetIconsDataSource((int)Eval("PackageID"))  %>' > 
-                        <ItemTemplate>
+                                <asp:Label ID="lblGroup" runat="server" CssClass="LinkText" Text='<%# Eval("Text") %>' />
 
-                            <asp:Label ID="lblGroup" runat="server" CssClass="LinkText" Text='<%# Eval("Text") %>' />
+                                <asp:DataList ID="PackageIcons" runat="server" DataSource='<%# GetIconMenuItems(Eval("ChildItems")) %>'
+                                    CellSpacing="1" RepeatColumns="5" RepeatDirection="Horizontal">
+                                    <ItemTemplate>
+                                        <asp:Panel ID="IconPanel" runat="server" CssClass="Icon">
+                                            <asp:HyperLink ID="imgLink" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><asp:Image ID="imgIcon" runat="server" ImageUrl='<%# Eval("ImageUrl") %>' /></asp:HyperLink>
+                                            <br />
+                                            <asp:HyperLink ID="lnkIcon" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><%# Eval("Text") %></asp:HyperLink>
+                                        </asp:Panel>
+                                        <asp:Panel ID="IconMenu" runat="server" CssClass="IconMenu" Visible='<%# IsIconMenuVisible(Eval("ChildItems")) %>'>
+                                            <ul>
+                                                <asp:Repeater ID="MenuItems" runat="server" DataSource='<%# GetIconMenuItems(Eval("ChildItems")) %>'>
+                                                    <ItemTemplate>
+                                                        <li><asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><%# Eval("Text") %></asp:HyperLink></li>
+                                                    </ItemTemplate>
+                                                </asp:Repeater>
+                                            </ul>
+                                        </asp:Panel>
+                                        <ajaxToolkit:HoverMenuExtender TargetControlID="IconPanel" PopupControlID="IconMenu" runat="server"
+                                            PopupPosition="Right" HoverCssClass="Icon Hover"></ajaxToolkit:HoverMenuExtender>
+                                    </ItemTemplate>
+                                </asp:DataList>
 
-                            <asp:DataList ID="PackageIcons" runat="server" DataSource='<%# GetIconMenuItems(Eval("ChildItems")) %>'
-                                CellSpacing="1" RepeatColumns="5" RepeatDirection="Horizontal">
-                                <ItemTemplate>
-                                    <asp:Panel ID="IconPanel" runat="server" CssClass="Icon">
-                                        <asp:HyperLink ID="imgLink" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><asp:Image ID="imgIcon" runat="server" ImageUrl='<%# Eval("ImageUrl") %>' /></asp:HyperLink>
-                                        <br />
-                                        <asp:HyperLink ID="lnkIcon" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><%# Eval("Text") %></asp:HyperLink>
-                                    </asp:Panel>
-                                    <asp:Panel ID="IconMenu" runat="server" CssClass="IconMenu" Visible='<%# IsIconMenuVisible(Eval("ChildItems")) %>'>
-                                        <ul>
-                                            <asp:Repeater ID="MenuItems" runat="server" DataSource='<%# GetIconMenuItems(Eval("ChildItems")) %>'>
-                                                <ItemTemplate>
-                                                    <li><asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'><%# Eval("Text") %></asp:HyperLink></li>
-                                                </ItemTemplate>
-                                            </asp:Repeater>
-                                        </ul>
-                                    </asp:Panel>
-                                    <ajaxToolkit:HoverMenuExtender TargetControlID="IconPanel" PopupControlID="IconMenu" runat="server"
-                                        PopupPosition="Right" HoverCssClass="Icon Hover"></ajaxToolkit:HoverMenuExtender>
-                                </ItemTemplate>
-                            </asp:DataList>
+                            </ItemTemplate>
+                        </asp:Repeater>
 
-                        </ItemTemplate>
-                    </asp:Repeater>
-
-                </div>
-            </div>
-            <asp:Panel ID="OrgPanel" runat="server" Visible='<%# IsOrgPanelVisible((int)Eval("PackageID")) %>'>
-                <wsp:UserOrganization ID="UserOrganization" runat="server" PackageId='<%# (int)Eval("PackageID") %>' />
-            </asp:Panel>
-        </ItemTemplate>
-    </asp:Repeater>
+                    </div>
+                <asp:Panel ID="OrgPanel" runat="server" Visible='<%# IsOrgPanelVisible((int)Eval("PackageID")) %>'>
+                    <wsp:UserOrganization ID="UserOrganization" runat="server" PackageId='<%# (int)Eval("PackageID") %>' />
+                </asp:Panel>
+            </ItemTemplate>
+        </asp:Repeater>
+    </div>
+    
     <asp:Panel ID="EmptyPackagesList" runat="server" Visible="false" CssClass="FormBody">
         <asp:Literal ID="litEmptyList" runat="server" EnableViewState="false"></asp:Literal>
     </asp:Panel>

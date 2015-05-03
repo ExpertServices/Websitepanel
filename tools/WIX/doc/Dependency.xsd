@@ -41,7 +41,7 @@
                         By default this uses the Product/@Id attribute value, which may be automatically generated.
                     </html:p>
                 </xse:remarks>
-                <xse:howtoRef href="author_product_dependencies.htm">How To: Author product dependencies</xse:howtoRef>
+                <xse:howtoRef href="author_product_dependencies.html">How To: Author product dependencies</xse:howtoRef>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
@@ -103,7 +103,7 @@
                     </html:p>
                 </xse:remarks>
                 <xse:seeAlso ref="RequiresRef" />
-                <xse:howtoRef href="author_product_dependencies.htm">How To: Author product dependencies</xse:howtoRef>
+                <xse:howtoRef href="author_product_dependencies.html">How To: Author product dependencies</xse:howtoRef>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>
@@ -166,7 +166,7 @@
                     </html:p>
                 </xse:remarks>
                 <xse:seeAlso ref="Requires" />
-                <xse:howtoRef href="author_product_dependencies.htm">How To: Author product dependencies</xse:howtoRef>
+                <xse:howtoRef href="author_product_dependencies.html">How To: Author product dependencies</xse:howtoRef>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexType>

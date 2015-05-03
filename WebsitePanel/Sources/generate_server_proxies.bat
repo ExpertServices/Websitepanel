@@ -26,14 +26,17 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerHostedEditionProxy.cs
 REM %WSDL% %SERVER_URL%/HostedSharePointServer.asmx /out:.\WebsitePanel.Server.Client\HostedSharePointServerProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\HostedSharePointServerProxy.cs
 
+REM %WSDL% %SERVER_URL%/HostedSharePointServerEnt.asmx /out:.\WebsitePanel.Server.Client\HostedSharePointServerEntProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\HostedSharePointServerEntProxy.cs
+
 REM %WSDL% %SERVER_URL%/OCSEdgeServer.asmx /out:.\WebsitePanel.Server.Client\OCSEdgeServerProxy.cs /namespace:WebsitePanel.Providers.OCS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OCSEdgeServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/OCSServer.asmx /out:.\WebsitePanel.Server.Client\OCSServerProxy.cs /namespace:WebsitePanel.Providers.OCS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OCSServerProxy.cs
 
-%WSDL% %SERVER_URL%/OperatingSystem.asmx /out:.\WebsitePanel.Server.Client\OperatingSystemProxy.cs /namespace:WebsitePanel.Providers.OS /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\OperatingSystemProxy.cs
+REM %WSDL% %SERVER_URL%/OperatingSystem.asmx /out:.\WebsitePanel.Server.Client\OperatingSystemProxy.cs /namespace:WebsitePanel.Providers.OS /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OperatingSystemProxy.cs
 
 REM %WSDL% %SERVER_URL%/Organizations.asmx /out:.\WebsitePanel.Server.Client\OrganizationProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OrganizationProxy.cs
@@ -46,6 +49,9 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\SharePointServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/VirtualizationServer.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerProxy.cs /namespace:WebsitePanel.Providers.Virtualization /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy.cs
+
+%WSDL% %SERVER_URL%/VirtualizationServer2012.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs /namespace:WebsitePanel.Providers.Virtualization2012 /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs
 
 REM %WSDL% %SERVER_URL%/VirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs /namespace:WebsitePanel.Providers.VirtualizationForPC /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs

@@ -39,6 +39,7 @@
         public const string QUOTA_EXCEEDED_CPU = "VPS_QUOTA_EXCEEDED_CPU";
         public const string QUOTA_EXCEEDED_RAM = "VPS_QUOTA_EXCEEDED_RAM";
         public const string QUOTA_WRONG_RAM = "VPS_QUOTA_WRONG_RAM";
+        public const string QUOTA_NOT_IN_DYNAMIC_RAM = "VPS_QUOTA_NOT_IN_DYNAMIC_RAM";
         public const string QUOTA_EXCEEDED_HDD = "VPS_QUOTA_EXCEEDED_HDD";
         public const string QUOTA_WRONG_HDD = "VPS_QUOTA_WRONG_HDD";
         public const string QUOTA_EXCEEDED_SNAPSHOTS = "VPS_QUOTA_EXCEEDED_SNAPSHOTS";
@@ -111,6 +112,16 @@
         // DVD disks
         public const string INSERT_DVD_DISK_ERROR = "VPS_INSERT_DVD_DISK_ERROR";
         public const string EJECT_DVD_DISK_ERROR = "VPS_EJECT_DVD_DISK_ERROR";
+
+        // Replication
+        public const string SET_REPLICA_SERVER_ERROR = "VPS_SET_REPLICA_SERVER_ERROR";
+        public const string UNSET_REPLICA_SERVER_ERROR = "VPS_UNSET_REPLICA_SERVER_ERROR";
+        public const string NO_REPLICA_SERVER_ERROR = "VPS_NO_REPLICA_SERVER_ERROR";
+        public const string SET_REPLICATION_ERROR = "VPS_SET_REPLICATION_ERROR";
+        public const string DISABLE_REPLICATION_ERROR = "VPS_DISABLE_REPLICATION_ERROR";
+        public const string PAUSE_REPLICATION_ERROR = "VPS_PAUSE_REPLICATION_ERROR";
+        public const string RESUME_REPLICATION_ERROR = "VPS_RESUME_REPLICATION_ERROR";
+        public const string QUOTA_REPLICATION_ENABLED = "VPS_QUOTA_REPLICATION_ENABLED";
 
         
         public const string HOST_NAMER_IS_ALREADY_USED = "HOST_NAMER_IS_ALREADY_USED";

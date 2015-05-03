@@ -61,6 +61,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		private int allocatedSharePointSiteCollections;
 		private int createdSharePointSiteCollections;
 
+        private int allocatedSharePointEnterpriseSiteCollections;
+        private int createdSharePointEnterpriseSiteCollections;
+
         private int createdCRMUsers;
         private int allocatedCRMUsers;
 
@@ -81,6 +84,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private int createdProfessionalCRMUsers;
         private int allocatedProfessionalCRMUsers;
+
+        private int allocatedDeletedUsers;
+        private int deletedUsers;
+
+        private int allocatedDeletedUsersBackupStorageSpace;
+        private int usedDeletedUsersBackupStorageSpace;
 
         public int CreatedProfessionalCRMUsers
         {
@@ -282,6 +291,18 @@ namespace WebsitePanel.Providers.HostedSolution
 			set { createdSharePointSiteCollections = value; }
 		}
 
+        public int AllocatedSharePointEnterpriseSiteCollections
+        {
+            get { return allocatedSharePointEnterpriseSiteCollections; }
+            set { allocatedSharePointEnterpriseSiteCollections = value; }
+        }
+
+        public int CreatedSharePointEnterpriseSiteCollections
+        {
+            get { return createdSharePointEnterpriseSiteCollections; }
+            set { createdSharePointEnterpriseSiteCollections = value; }
+        }
+
         public int CreatedBlackBerryUsers { get; set; }
         public int AllocatedBlackBerryUsers { get; set; }
 
@@ -370,7 +391,35 @@ namespace WebsitePanel.Providers.HostedSolution
             set { createdResourceMailboxes = value; }
         }
 
+        public int AllocatedDeletedUsers
+        {
+            get { return allocatedDeletedUsers; }
+            set { allocatedDeletedUsers = value; }
+        }
 
+        public int DeletedUsers
+        {
+            get { return deletedUsers; }
+            set { deletedUsers = value; }
+        }
+
+        public int AllocatedDeletedUsersBackupStorageSpace
+        {
+            get { return allocatedDeletedUsersBackupStorageSpace; }
+            set { allocatedDeletedUsersBackupStorageSpace = value; }
+        }
+        public int UsedDeletedUsersBackupStorageSpace
+        {
+            get { return usedDeletedUsersBackupStorageSpace; }
+            set { usedDeletedUsersBackupStorageSpace = value; }
+        }
+        
+        public int CreatedRdsServers { get; set; }
+        public int CreatedRdsCollections { get; set; }
+        public int CreatedRdsUsers { get; set; }
+        public int AllocatedRdsServers { get; set; }
+        public int AllocatedRdsCollections { get; set; }
+        public int AllocatedRdsUsers { get; set; }               
 	}
 }
 

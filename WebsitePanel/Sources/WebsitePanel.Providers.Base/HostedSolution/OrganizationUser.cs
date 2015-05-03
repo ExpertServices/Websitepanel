@@ -268,11 +268,11 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        public string AccountPassword
-        {
-            get { return accountPassword; }
-            set { accountPassword = value; }
-        }
+        //public string AccountPassword
+        //{
+        //    get { return accountPassword; }
+        //    set { accountPassword = value; }
+        //}
 
         public string ExternalEmail { get; set; }
 
@@ -327,5 +327,14 @@ namespace WebsitePanel.Providers.HostedSolution
             set { isVip = value; }
         }
 
+        private bool userMustChangePassword;
+
+        public bool UserMustChangePassword
+        {
+            get { return userMustChangePassword; }
+            set { userMustChangePassword = value; }
+        }
+
+        public DateTime PasswordExpirationDateTime { get; set; }
     }
 }

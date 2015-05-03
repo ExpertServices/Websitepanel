@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -46,6 +47,60 @@ namespace WebsitePanel.EnterpriseServer
     public class esOrganizations : WebService
     {
         #region Organizations
+
+        [WebMethod]
+        public bool CheckPhoneNumberIsInUse(int itemId, string phoneNumber, string userSamAccountName = null)
+        {
+            return OrganizationController.CheckPhoneNumberIsInUse(itemId, phoneNumber, userSamAccountName);
+        }
+
+        [WebMethod]
+        public void DeletePasswordresetAccessToken(Guid accessToken)
+        {
+            OrganizationController.DeleteAccessToken(accessToken, AccessTokenTypes.PasswrodReset);
+        }
+
+        [WebMethod]
+        public void SetAccessTokenResponse(Guid accessToken, string response)
+        {
+            OrganizationController.SetAccessTokenResponse(accessToken, response);
+        }
+
+        [WebMethod]
+        public AccessToken GetPasswordresetAccessToken(Guid token)
+        {
+            return OrganizationController.GetAccessToken(token, AccessTokenTypes.PasswrodReset);
+        }
+
+        [WebMethod]
+        public void UpdateOrganizationGeneralSettings(int itemId, OrganizationGeneralSettings settings)
+        {
+            OrganizationController.UpdateOrganizationGeneralSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public OrganizationGeneralSettings GetOrganizationGeneralSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationGeneralSettings(itemId);
+        }
+
+        [WebMethod]
+        public void UpdateOrganizationPasswordSettings(int itemId, OrganizationPasswordSettings settings)
+        {
+            OrganizationController.UpdateOrganizationPasswordSettings(itemId, settings);
+        }
+
+        [WebMethod]
+        public SystemSettings GetWebDavSystemSettings()
+        {
+            return OrganizationController.GetWebDavSystemSettings();
+        }
+
+        [WebMethod]
+        public OrganizationPasswordSettings GetOrganizationPasswordSettings(int itemId)
+        {
+            return OrganizationController.GetOrganizationPasswordSettings(itemId);
+        }
 
         [WebMethod]
         public bool CheckOrgIdExists(string orgId)
@@ -130,7 +185,27 @@ namespace WebsitePanel.EnterpriseServer
             OrganizationController.SetDefaultOrganization(newDefaultOrganizationId, currentDefaultOrganizationId);
         }
 
-        #endregion
+        [WebMethod]
+        public OrganizationUser GetUserGeneralSettingsWithExtraData(int itemId, int accountId)
+        {
+            return OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+        }
+
+        [WebMethod]
+        public ResultObject SendResetUserPasswordLinkSms(int itemId, int accountId, string reason, string phoneTo = null)
+        {
+           return  OrganizationController.SendResetUserPasswordLinkSms(itemId, accountId, reason, phoneTo);
+        }
+
+
+        [WebMethod]
+        public ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
+        {
+            return OrganizationController.SendResetUserPasswordPincodeSms(token, phoneTo);
+        }
+
+
+    #endregion
 
         #region Domains
 
@@ -193,6 +268,12 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.ImportUser(itemId, accountName, displayName, name, domain, password, subscriberNumber);
         }
 
+        [WebMethod]
+        public OrganizationDeletedUsersPaged GetOrganizationDeletedUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationDeletedUsersPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
 
         [WebMethod]
         public OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
@@ -213,14 +294,15 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP, 
+            bool userMustChangePassword)
         {
             return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName,
                 password, hideAddressBook, disabled, locked, firstName, initials,
                 lastName, address, city, state, zip, country,
                 jobTitle, company, department, office, managerAccountName,
                 businessPhone, fax, homePhone, mobilePhone, pager,
-                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP);
+                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP, userMustChangePassword);
         }
 
 
@@ -248,6 +330,17 @@ namespace WebsitePanel.EnterpriseServer
                 filterColumn, filterValue, sortColumn, includeMailboxes);
         }
 
+        [WebMethod]
+        public int SetDeletedUser(int itemId, int accountId, bool enableForceArchive)
+        {
+            return OrganizationController.SetDeletedUser(itemId, accountId, enableForceArchive);
+        }
+        
+        [WebMethod]
+        public byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        {
+            return OrganizationController.GetArchiveFileBinaryChunk(packageId, path, offset, length);
+        }
 
         [WebMethod]
         public int DeleteUser(int itemId, int accountId)
@@ -262,6 +355,11 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetPasswordPolicy(itemId);
         }
 
+        [WebMethod]
+        public void SendResetUserPasswordEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
+        {
+            OrganizationController.SendResetUserPasswordEmail(itemId, accountId, reason, mailTo, finalStep);
+        }
 
         #endregion
 

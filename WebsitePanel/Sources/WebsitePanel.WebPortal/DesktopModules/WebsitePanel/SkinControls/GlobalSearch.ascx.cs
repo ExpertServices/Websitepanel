@@ -44,6 +44,14 @@ namespace WebsitePanel.Portal.SkinControls
 {
     public partial class GlobalSearch : WebsitePanelControlBase
     {
+        const string TYPE_WEBSITE = "WebSite";
+        const string TYPE_DOMAIN = "Domain";
+        const string TYPE_ORGANIZATION = "Organization";
+        const string TYPE_EXCHANGEACCOUNT = "ExchangeAccount";
+        const string PID_SPACE_WEBSITES = "SpaceWebSites";
+        const string PID_SPACE_DIMAINS = "SpaceDomains";
+        const string PID_SPACE_EXCHANGESERVER = "SpaceExchangeServer";
+
         class Tab
         {
             int index;
@@ -70,32 +78,20 @@ namespace WebsitePanel.Portal.SkinControls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(!IsPostBack)
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery",ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+            cs.RegisterClientScriptInclude("jqueryui",ResolveUrl("~/JavaScript/jquery-ui-1.8.9.min.js"));
+//            cs.RegisterClientScriptBlock(this.GetType(), "jquerycss",
+//                "<link rel='stylesheet' type='text/css' href='" + ResolveUrl("~/App_Themes/Default/Styles/jquery-ui-1.8.9.css") + "' />");
+            if (!IsPostBack)
             {
-                BindTabs();
                 BindItemTypes();
             }
         }
 
-        private void BindTabs()
-        {
-            List<Tab> tabsList = new List<Tab>();
-            if (PanelSecurity.EffectiveUser.Role != UserRole.User)
-                tabsList.Add(new Tab(0, GetLocalizedString("Users.Text")));
-
-			tabsList.Add(new Tab(1, GetLocalizedString("Spaces.Text")));
-
-            if(dlTabs.SelectedIndex == -1)
-                dlTabs.SelectedIndex = 0;   
-            dlTabs.DataSource = tabsList.ToArray();
-            dlTabs.DataBind();
-
-            tabs.ActiveViewIndex = tabsList[dlTabs.SelectedIndex].Index;
-        }
-
         private void BindItemTypes()
         {
-            // bind item types
+/*            // bind item types
             DataTable dtItemTypes = ES.Services.Packages.GetSearchableServiceItemTypes().Tables[0];
 			foreach (DataRow dr in dtItemTypes.Rows)
 			{
@@ -108,28 +104,125 @@ namespace WebsitePanel.Portal.SkinControls
 				}
 				//
 				ddlItemType.Items.Add(new ListItem(localizedStr, dr["ItemTypeID"].ToString()));
-			}
-        }
-
-        protected void dlTabs_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            BindTabs();
+			} */
         }
 
         protected void btnSearchUsers_Click(object sender, EventArgs e)
         {
-            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
+/*            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
                 "Query=" + Server.UrlEncode(txtUsersQuery.Text),
-                "Criteria=" + ddlUserFields.SelectedValue));
+                "Criteria=" + ddlUserFields.SelectedValue)); */
         }
 
         protected void btnSearchSpaces_Click(object sender, EventArgs e)
         {
-            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
+/*            Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
                 "Query=" + Server.UrlEncode(txtSpacesQuery.Text),
-                "ItemTypeID=" + ddlItemType.SelectedValue));
+                "ItemTypeID=" + ddlItemType.SelectedValue)); */
         }
+
+        public string GetItemPageUrl(string fullType, string itemType, int itemId, int spaceId)
+        {
+            string res = "";
+            if (fullType.Equals("Users"))
+            {
+                res = PortalUtils.GetUserHomePageUrl(itemId);
+            }
+            else
+            {
+                switch (itemType)
+                {
+                    case TYPE_WEBSITE:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_WEBSITES, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=websites");
+                        break;
+                    case TYPE_DOMAIN:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_DIMAINS, "DomainID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=domains");
+                        break;
+                    case TYPE_ORGANIZATION:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=ExchangeServer");
+                        break;
+                    case TYPE_EXCHANGEACCOUNT:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_user",//"mid="+this.ModuleID.ToString(),
+                            "AccountID="+this.tbAccountId.Text,"Context=User",
+                            "moduleDefId=ExchangeServer");
+                        break;
+                    default:
+                        res = PortalUtils.GetSpaceHomePageUrl(itemId);
+                        break;
+                }
+            }
+
+            return res;
+        }
+
+        //TODO START
+        protected void btnSearchObject_Click(object sender, EventArgs e)
+        {
+            String strColumnType = tbSearchColumnType.Text;
+            String strFullType = tbSearchFullType.Text;
+            String strText = tbSearchText.Text;
+            if (strText.Length > 0)
+            {
+                if (strFullType == "Users")
+                {
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(PortalUtils.GetUserHomePageUrl(Int32.Parse(tbObjectId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetUsersSearchPageId(),
+                           PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText),
+                            "Criteria=" + Server.UrlEncode(strColumnType)
+                        ));
+                    }
+                }
+                else if (strFullType == "Space")
+                {
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(GetItemPageUrl(strFullType,tbSearchColumnType.Text,Int32.Parse(tbObjectId.Text),Int32.Parse(tbPackageId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetSpacesSearchPageId(),
+                            PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText),
+                            "Criteria=" + Server.UrlEncode(strColumnType)
+                        ));
+                    }
+                }
+                else
+                {
+                    if (tbObjectId.Text.Length > 0)
+                    {
+                        Response.Redirect(GetItemPageUrl(strFullType, tbSearchColumnType.Text, Int32.Parse(tbObjectId.Text), Int32.Parse(tbPackageId.Text)));
+                    }
+                    else
+                    {
+                        Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                            PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                            "Query=" + Server.UrlEncode(strText)));
+                    }
+                }
+            }
+            else
+            {
+                Response.Redirect(PortalUtils.NavigatePageURL(PortalUtils.GetObjectSearchPageId(),
+                    PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),
+                    "Query=" + Server.UrlEncode(tbSearch.Text)));
+            }
+        }
+        //TODO END
     }
 }

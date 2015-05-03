@@ -7,7 +7,9 @@ namespace WebsitePanel.WebDav.Core
         public interface IItemContent
         {
             long ContentLength { get; }
+            long AllocatedSpace { get; set; }
             string ContentType { get; }
+            string Summary { get; set; }
 
             void Download(string filename);
             byte[] Download();

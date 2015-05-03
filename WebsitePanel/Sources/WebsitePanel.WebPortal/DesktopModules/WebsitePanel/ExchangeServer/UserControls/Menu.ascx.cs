@@ -186,8 +186,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
                         organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "org_domains"));
                 }
+                
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
+
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx))
+                    organizationGroup.MenuItems.Add(CreateMenuItem("DeletedUsers", "deleted_users"));
 
 				if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("SecurityGroups", "secur_groups"));
@@ -236,13 +240,27 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         }
 
-        private void PrepareSharePointMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        private void PrepareSharePointMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath, string menuItemText)
         {
             MenuGroup sharepointGroup =
-                    new MenuGroup(GetLocalizedString("Text.SharePointGroup"), imagePath + "sharepoint24.png");
+                    new MenuGroup(menuItemText, imagePath + "sharepoint24.png");
             sharepointGroup.MenuItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings"));
+
+            groups.Add(sharepointGroup);
+
+
+        }
+
+
+        private void PrepareSharePointEnterpriseMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath, string menuItemText)
+        {
+            MenuGroup sharepointGroup =
+                    new MenuGroup(menuItemText, imagePath + "sharepoint24.png");
+            sharepointGroup.MenuItems.Add(CreateMenuItem("SiteCollections", "sharepoint_enterprise_sitecollections"));
+            sharepointGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "sharepoint_enterprise_storage_usage"));
+            sharepointGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "sharepoint_enterprise_storage_settings"));
 
             groups.Add(sharepointGroup);
 
@@ -310,9 +328,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 PrepareBlackBerryMenu(cntx, groups, imagePath);
 
             //SharePoint menu group;
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
             {
-                PrepareSharePointMenu(cntx, groups, imagePath);
+                PrepareSharePointMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointFoundationServerGroup"));
+            }
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+            {
+                PrepareSharePointEnterpriseMenu(cntx, groups, imagePath, GetLocalizedString("Text.SharePointEnterpriseServerGroup"));
             }
 
             //CRM Menu

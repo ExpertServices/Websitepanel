@@ -14,7 +14,7 @@
                 <div class="FormBody">
                     <table>
                         <tr class="OrgStatsRow">
-                            <td align="right">
+                            <td>
                                 <asp:Label runat="server" ID="lblOrganizationName" meta:resourcekey="lblOrganizationName" />
                             </td>
                             <td>
@@ -63,6 +63,14 @@
                             </td>
                             <td>
                                 <wsp:QuotaViewer ID="userStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkDeletedUsers" runat="server" meta:resourcekey="lnkDeletedUsers"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="deletedUserStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow" id="securGroupsStat" runat="server">
@@ -210,6 +218,25 @@
                         </tr>
                         </asp:Panel>
 
+                        <asp:Panel runat="server" ID="sharePointEnterpriseStatsPanel">
+                        <tr class="OrgStatsRow">
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locSharePointEnterprise" runat="server" meta:resourcekey="locSharePointEnterprise"
+                                    Text="Organization Statistics"></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td class="OrgStatsQuota" nowrap> 
+                                <asp:HyperLink ID="lnkEnterpriseSiteCollections" runat="server" meta:resourcekey="lnkSiteCollections"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="enterpriseSiteCollectionsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        </asp:Panel>
+
+
+
                         <asp:Panel runat="server" ID="ocsStatsPanel">
                         <tr>
                             <td class="OrgStatsGroup" width="100%" colspan="2">
@@ -272,7 +299,7 @@
                         <tr >
                             <td class="OrgStatsGroup" width="100%" colspan="2">
                                 <asp:Localize ID="locCRM2013" runat="server" meta:resourcekey="locCRM2013"
-                                    Text="CRM 2013"></asp:Localize>
+                                    Text="CRM 2013/2015"></asp:Localize>
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
@@ -338,6 +365,38 @@
                         <tr>
                             <td class="OrgStatsGroup" width="100%" colspan="2">
                                 <asp:Localize ID="locServiceLevels" runat="server" meta:resourcekey="locServiceLevels" ></asp:Localize>
+                            </td>
+                        </tr>
+                        </asp:Panel>
+
+                        <asp:Panel runat="server" ID="remoteDesktopStatsPanel">
+                        <tr>
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locRemoteDesktop" runat="server" meta:resourcekey="locRemoteDesktop" ></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsServers" runat="server" meta:resourcekey="lnkRdsServers" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsServers" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsCollections" runat="server" meta:resourcekey="lnkRdsCollections" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsCollections" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                            <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsUsers" runat="server" meta:resourcekey="lnkRdsUsers" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsUsers" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>

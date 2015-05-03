@@ -1,4 +1,4 @@
-﻿USE [${install.database}]
+USE [${install.database}]
 GO
 -- update database version
 DECLARE @build_version nvarchar(10), @build_date datetime
@@ -21,7 +21,10 @@ DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
 GO
 DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
 GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE GroupID = 33 AND [GroupName] = 'VPS2012')
+BEGIN
 DELETE FROM HostingPlanResources WHERE GroupID = 33
+END
 GO
 
 
@@ -2416,6 +2419,12 @@ INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'RDS.Collections')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (491, 45, 2, N'RDS.Collections',N'Remote Desktop Servers',2, 0 , NULL)
+END
+GO
+
 -- RDS Provider
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Remote Desktop Services Windows 2012')
@@ -3803,6 +3812,7 @@ ALTER TABLE [dbo].[ExchangeAccounts] ADD
 END
 GO
 
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccount] 
 (
 	@ItemID int,
@@ -3819,7 +3829,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3838,7 +3847,7 @@ RETURN
 GO
 
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
 (
 	@ItemID int,
@@ -3855,7 +3864,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3877,7 +3885,7 @@ GO
 
 
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
 (
 	@ItemID int,
@@ -3897,7 +3905,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3929,7 +3936,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -3957,7 +3963,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -4089,7 +4094,7 @@ RETURN
 
 GO
 
-
+-- Password column removed
 ALTER PROCEDURE [dbo].[UpdateExchangeAccount] 
 (
 	@AccountID int,
@@ -4100,7 +4105,6 @@ ALTER PROCEDURE [dbo].[UpdateExchangeAccount]
 	@SamAccountName nvarchar(100),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
-	@Password varchar(200),
 	@MailboxPlanId int,
 	@ArchivingMailboxPlanId int,
 	@SubscriberNumber varchar(32),
@@ -4137,14 +4141,6 @@ IF (@@ERROR <> 0 )
 		RETURN -1
 	END
 
-UPDATE ExchangeAccounts SET 
-	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
-
-IF (@@ERROR <> 0 )
-	BEGIN
-		ROLLBACK TRANSACTION
-		RETURN -1
-	END
 COMMIT TRAN
 RETURN
 
@@ -5037,6 +5033,7 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 RETURN
 GO
 
+-- Password column removed
 ALTER PROCEDURE [dbo].[GetExchangeAccount] 
 (
 	@ItemID int,
@@ -5053,7 +5050,6 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxManagerActions,
 	E.SamAccountName,
-	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
 	E.SubscriberNumber,
@@ -5451,6 +5447,13 @@ CREATE TABLE RDSServers
 )
 GO
 
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'RDSServers' AND COLUMN_NAME = 'ConnectionEnabled')
+BEGIN
+	ALTER TABLE [dbo].[RDSServers]
+		ADD ConnectionEnabled BIT NOT NULL DEFAULT(1)
+END
+GO
+
 
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollections')
 CREATE TABLE RDSCollections
@@ -5462,19 +5465,106 @@ CREATE TABLE RDSCollections
 )
 GO
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'RDSCollections' AND COLUMN_NAME = 'DisplayName')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollections]
+		ADD DisplayName NVARCHAR(255)
+END
+GO
+
+UPDATE [dbo].[RDSCollections] SET DisplayName = [Name]	 WHERE DisplayName IS NULL
+
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCollectionSettings')
+CREATE TABLE [dbo].[RDSCollectionSettings](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[RDSCollectionId] [int] NOT NULL,
+	[DisconnectedSessionLimitMin] [int] NULL,
+	[ActiveSessionLimitMin] [int] NULL,
+	[IdleSessionLimitMin] [int] NULL,
+	[BrokenConnectionAction] [nvarchar](20) NULL,
+	[AutomaticReconnectionEnabled] [bit] NULL,
+	[TemporaryFoldersDeletedOnExit] [bit] NULL,
+	[TemporaryFoldersPerSession] [bit] NULL,
+	[ClientDeviceRedirectionOptions] [nvarchar](250) NULL,
+	[ClientPrinterRedirected] [bit] NULL,
+	[ClientPrinterAsDefault] [bit] NULL,
+	[RDEasyPrintDriverEnabled] [bit] NULL,
+	[MaxRedirectedMonitors] [int] NULL,
+ CONSTRAINT [PK_RDSCollectionSettings] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'SecurityLayer' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD SecurityLayer NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'EncryptionLevel' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD EncryptionLevel NVARCHAR(20) null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'AuthenticateUsingNLA' AND [object_id] = OBJECT_ID(N'RDSCollectionSettings'))
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionSettings] ADD AuthenticateUsingNLA BIT null;
+END
 GO
 
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSCertificates')
+CREATE TABLE [dbo].[RDSCertificates](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceId] [int] NOT NULL,
+	[Content] [ntext] NOT NULL,
+	[Hash] [nvarchar](255) NOT NULL,
+	[FileName] [nvarchar](255) NOT NULL,
+	[ValidFrom] [datetime] NULL,
+	[ExpiryDate] [datetime] NULL
+ CONSTRAINT [PK_RDSCertificates] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
 GO
 
-ALTER TABLE [dbo].[RDSServers]
-DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+END
+ELSE
+	PRINT 'FK_RDSCollectionUsers_RDSCollectionId not EXISTS'
 GO
 
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSCollectionUsers_UserId')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollectionUsers]
+	DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+END	
+ELSE
+	PRINT 'FK_RDSCollectionUsers_UserId not EXISTS'
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_RDSServers_RDSCollectionId')
+BEGIN
+	ALTER TABLE [dbo].[RDSServers]
+	DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+END	
+ELSE
+	PRINT 'FK_RDSServers_RDSCollectionId not EXISTS'	
+GO
 
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
@@ -5491,7 +5581,76 @@ ALTER TABLE [dbo].[RDSServers]  WITH CHECK ADD  CONSTRAINT [FK_RDSServers_RDSCol
 REFERENCES [dbo].[RDSCollections] ([ID])
 GO
 
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_RDSCollectionSettings_RDSCollections')
+ALTER TABLE [dbo].[RDSCollectionSettings]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionSettings_RDSCollections] FOREIGN KEY([RDSCollectionId])
+REFERENCES [dbo].[RDSCollections] ([ID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [dbo].[RDSCollectionSettings] CHECK CONSTRAINT [FK_RDSCollectionSettings_RDSCollections]
+GO
+
 /*Remote Desktop Services Procedures*/
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCertificate')
+DROP PROCEDURE AddRDSCertificate
+GO
+CREATE PROCEDURE [dbo].[AddRDSCertificate]
+(
+	@RDSCertificateId INT OUTPUT,
+	@ServiceId INT,
+	@Content NTEXT,
+	@Hash NVARCHAR(255),
+	@FileName NVARCHAR(255),
+	@ValidFrom DATETIME,
+	@ExpiryDate DATETIME
+)
+AS
+INSERT INTO RDSCertificates
+(
+	ServiceId,
+	Content,
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate	
+)
+VALUES
+(
+	@ServiceId,
+	@Content,
+	@Hash,
+	@FileName,
+	@ValidFrom,
+	@ExpiryDate
+)
+
+SET @RDSCertificateId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCertificateByServiceId')
+DROP PROCEDURE GetRDSCertificateByServiceId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCertificateByServiceId]
+(
+	@ServiceId INT
+)
+AS
+SELECT TOP 1
+	Id,
+	ServiceId,
+	Content, 
+	Hash,
+	FileName,
+	ValidFrom,
+	ExpiryDate
+	FROM RDSCertificates
+	WHERE ServiceId = @ServiceId
+	ORDER BY Id DESC
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServer')
 DROP PROCEDURE AddRDSServer
@@ -5744,7 +5903,8 @@ SELECT
 	CR.ID,
 	CR.ItemID,
 	CR.Name,
-	CR.Description
+	CR.Description,
+	CR.DisplayName
 FROM @RDSCollections AS C
 INNER JOIN RDSCollections AS CR ON C.RDSCollectionId = CR.ID
 WHERE C.ItemPosition BETWEEN @StartRow AND @EndRow'
@@ -5777,7 +5937,8 @@ SELECT
 	Id,
 	ItemId,
 	Name, 
-	Description 
+	Description,
+	DisplayName
 	FROM RDSCollections
 	WHERE ItemID = @ItemID
 GO
@@ -5796,9 +5957,10 @@ SELECT TOP 1
 	Id,
 	Name, 
 	ItemId,
-	Description 
+	Description,
+	DisplayName
 	FROM RDSCollections
-	WHERE Name = @Name
+	WHERE DisplayName = @Name
 GO
 
 
@@ -5815,7 +5977,8 @@ SELECT TOP 1
 	Id,
 	ItemId,
 	Name, 
-	Description 
+	Description,
+	DisplayName 
 	FROM RDSCollections
 	WHERE ID = @ID
 GO
@@ -5829,7 +5992,8 @@ CREATE PROCEDURE [dbo].[AddRDSCollection]
 	@RDSCollectionID INT OUTPUT,
 	@ItemID INT,
 	@Name NVARCHAR(255),
-	@Description NVARCHAR(255)
+	@Description NVARCHAR(255),
+	@DisplayName NVARCHAR(255)
 )
 AS
 
@@ -5837,13 +6001,15 @@ INSERT INTO RDSCollections
 (
 	ItemID,
 	Name,
-	Description
+	Description,
+	DisplayName
 )
 VALUES
 (
 	@ItemID,
 	@Name,
-	@Description
+	@Description,
+	@DisplayName
 )
 
 SET @RDSCollectionID = SCOPE_IDENTITY()
@@ -5860,7 +6026,8 @@ CREATE PROCEDURE [dbo].[UpdateRDSCollection]
 	@ID INT,
 	@ItemID INT,
 	@Name NVARCHAR(255),
-	@Description NVARCHAR(255)
+	@Description NVARCHAR(255),
+	@DisplayName NVARCHAR(255)
 )
 AS
 
@@ -5868,7 +6035,8 @@ UPDATE RDSCollections
 SET
 	ItemID = @ItemID,
 	Name = @Name,
-	Description = @Description
+	Description = @Description,
+	DisplayName = @DisplayName
 WHERE ID = @Id
 GO
 
@@ -5892,7 +6060,7 @@ WHERE Id = @Id
 GO
 
 
-
+-- Password column removed
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionUsersByRDSCollectionId')
 DROP PROCEDURE GetRDSCollectionUsersByRDSCollectionId
 GO
@@ -5911,7 +6079,6 @@ SELECT
 	  [MailEnabledPublicFolder],
 	  [MailboxManagerActions],
 	  [SamAccountName],
-	  [AccountPassword],
 	  [CreatedDate],
 	  [MailboxPlanId],
 	  [SubscriberNumber],
@@ -5978,50 +6145,186 @@ CREATE PROCEDURE [dbo].GetOrganizationRdsUsersCount
 )
 AS
 SELECT
-  @TotalNumber = Count([RDSCollectionId])
+  @TotalNumber = Count(DISTINCT([AccountId]))
   FROM [dbo].[RDSCollectionUsers]
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
 GO
 
-
-
-IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
-DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationRdsCollectionsCount')
+DROP PROCEDURE GetOrganizationRdsCollectionsCount
 GO
-CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+CREATE PROCEDURE [dbo].GetOrganizationRdsCollectionsCount
 (
-	@PrimaryEmailAddress nvarchar(300)
+	@ItemID INT,
+	@TotalNumber int OUTPUT
 )
 AS
 SELECT
-	E.AccountID,
-	E.ItemID,
-	E.AccountType,
-	E.AccountName,
-	E.DisplayName,
-	E.PrimaryEmailAddress,
-	E.MailEnabledPublicFolder,
-	E.MailboxManagerActions,
-	E.SamAccountName,
-	E.AccountPassword,
-	E.MailboxPlanId,
-	P.MailboxPlan,
-	E.SubscriberNumber,
-	E.UserPrincipalName,
-	E.ArchivingMailboxPlanId, 
-	AP.MailboxPlan as 'ArchivingMailboxPlan',
-	E.EnableArchiving
-FROM
-	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
-LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
-WHERE
-	E.PrimaryEmailAddress = @PrimaryEmailAddress
+  @TotalNumber = Count([Id])
+  FROM [dbo].[RDSCollections] WHERE [ItemId]  = @ItemId
 RETURN
 GO
 
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationRdsServersCount')
+DROP PROCEDURE GetOrganizationRdsServersCount
+GO
+CREATE PROCEDURE [dbo].GetOrganizationRdsServersCount
+(
+	@ItemID INT,
+	@TotalNumber int OUTPUT
+)
+AS
+SELECT
+  @TotalNumber = Count([Id])
+  FROM [dbo].[RDSServers] WHERE [ItemId]  = @ItemId
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionSettingsByCollectionId')
+DROP PROCEDURE GetRDSCollectionSettingsByCollectionId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionSettingsByCollectionId]
+(
+	@RDSCollectionID INT
+)
+AS
+
+SELECT TOP 1
+	Id,
+	RDSCollectionId,
+	DisconnectedSessionLimitMin, 
+	ActiveSessionLimitMin,
+	IdleSessionLimitMin,
+	BrokenConnectionAction,
+	AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected,
+	ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors
+	FROM RDSCollectionSettings
+	WHERE RDSCollectionID = @RDSCollectionID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCollectionSettings')
+DROP PROCEDURE AddRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[AddRDSCollectionSettings]
+(
+	@RDSCollectionSettingsID INT OUTPUT,
+	@RDSCollectionId INT,
+	@DisconnectedSessionLimitMin INT, 
+	@ActiveSessionLimitMin INT,
+	@IdleSessionLimitMin INT,
+	@BrokenConnectionAction NVARCHAR(20),
+	@AutomaticReconnectionEnabled BIT,
+	@TemporaryFoldersDeletedOnExit BIT,
+	@TemporaryFoldersPerSession BIT,
+	@ClientDeviceRedirectionOptions NVARCHAR(250),
+	@ClientPrinterRedirected BIT,
+	@ClientPrinterAsDefault BIT,
+	@RDEasyPrintDriverEnabled BIT,
+	@MaxRedirectedMonitors INT
+)
+AS
+
+INSERT INTO RDSCollectionSettings
+(
+	RDSCollectionId,
+	DisconnectedSessionLimitMin, 
+	ActiveSessionLimitMin,
+	IdleSessionLimitMin,
+	BrokenConnectionAction,
+	AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected,
+	ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors
+)
+VALUES
+(
+	@RDSCollectionId,
+	@DisconnectedSessionLimitMin, 
+	@ActiveSessionLimitMin,
+	@IdleSessionLimitMin,
+	@BrokenConnectionAction,
+	@AutomaticReconnectionEnabled,
+	@TemporaryFoldersDeletedOnExit,
+	@TemporaryFoldersPerSession,
+	@ClientDeviceRedirectionOptions,
+	@ClientPrinterRedirected,
+	@ClientPrinterAsDefault,
+	@RDEasyPrintDriverEnabled,
+	@MaxRedirectedMonitors
+)
+
+SET @RDSCollectionSettingsID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSCollectionSettings')
+DROP PROCEDURE UpdateRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateRDSCollectionSettings]
+(
+	@ID INT,
+	@RDSCollectionId INT,
+	@DisconnectedSessionLimitMin INT, 
+	@ActiveSessionLimitMin INT,
+	@IdleSessionLimitMin INT,
+	@BrokenConnectionAction NVARCHAR(20),
+	@AutomaticReconnectionEnabled BIT,
+	@TemporaryFoldersDeletedOnExit BIT,
+	@TemporaryFoldersPerSession BIT,
+	@ClientDeviceRedirectionOptions NVARCHAR(250),
+	@ClientPrinterRedirected BIT,
+	@ClientPrinterAsDefault BIT,
+	@RDEasyPrintDriverEnabled BIT,
+	@MaxRedirectedMonitors INT
+)
+AS
+
+UPDATE RDSCollectionSettings
+SET
+	RDSCollectionId = @RDSCollectionId,
+	DisconnectedSessionLimitMin = @DisconnectedSessionLimitMin,
+	ActiveSessionLimitMin = @ActiveSessionLimitMin,
+	IdleSessionLimitMin = @IdleSessionLimitMin,
+	BrokenConnectionAction = @BrokenConnectionAction,
+	AutomaticReconnectionEnabled = @AutomaticReconnectionEnabled,
+	TemporaryFoldersDeletedOnExit = @TemporaryFoldersDeletedOnExit,
+	TemporaryFoldersPerSession = @TemporaryFoldersPerSession,
+	ClientDeviceRedirectionOptions = @ClientDeviceRedirectionOptions,
+	ClientPrinterRedirected = @ClientPrinterRedirected,
+	ClientPrinterAsDefault = @ClientPrinterAsDefault,
+	RDEasyPrintDriverEnabled = @RDEasyPrintDriverEnabled,
+	MaxRedirectedMonitors = @MaxRedirectedMonitors
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSCollectionSettings')
+DROP PROCEDURE DeleteRDSCollectionSettings
+GO
+CREATE PROCEDURE [dbo].[DeleteRDSCollectionSettings]
+(
+	@Id  int
+)
+AS
+
+DELETE FROM DeleteRDSCollectionSettings
+WHERE Id = @Id
+GO
 
 -- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
 update ServiceDefaultProperties
@@ -7413,3 +7716,3262 @@ LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
 RETURN
 
 GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Packages' AND COLS.name='DefaultTopPackage')
+BEGIN
+ALTER TABLE [dbo].[Packages] ADD
+	[DefaultTopPackage] [bit] DEFAULT 0 NOT NULL
+END
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetMyPackages')
+DROP PROCEDURE GetMyPackages
+GO
+CREATE PROCEDURE [dbo].[GetMyPackages]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PlanID,
+	P.PurchaseDate,
+	
+	dbo.GetItemComments(P.PackageID, 'PACKAGE', @ActorID) AS Comments,
+	
+	-- server
+	ISNULL(P.ServerID, 0) AS ServerID,
+	ISNULL(S.ServerName, 'None') AS ServerName,
+	ISNULL(S.Comments, '') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email,
+
+	P.DefaultTopPackage
+FROM Packages AS P
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN Servers AS S ON P.ServerID = S.ServerID
+LEFT OUTER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE P.UserID = @UserID
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackages')
+DROP PROCEDURE GetPackages
+GO
+CREATE PROCEDURE [dbo].[GetPackages]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PurchaseDate,
+	
+	-- server
+	ISNULL(P.ServerID, 0) AS ServerID,
+	ISNULL(S.ServerName, 'None') AS ServerName,
+	ISNULL(S.Comments, '') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	P.PlanID,
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.RoleID,
+	U.Email,
+
+	P.DefaultTopPackage
+FROM Packages AS P
+INNER JOIN Users AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE
+	P.UserID = @UserID	
+RETURN
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackage')
+DROP PROCEDURE GetPackage
+GO
+CREATE PROCEDURE [dbo].[GetPackage]
+(
+	@PackageID int,
+	@ActorID int
+)
+AS
+
+-- Note: ActorID is not verified
+-- check both requested and parent package
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.UserID,
+	P.PackageName,
+	P.PackageComments,
+	P.ServerID,
+	P.StatusID,
+	P.PlanID,
+	P.PurchaseDate,
+	P.OverrideQuotas,
+	P.DefaultTopPackage
+FROM Packages AS P
+WHERE P.PackageID = @PackageID
+RETURN
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdatePackage')
+DROP PROCEDURE UpdatePackage
+GO
+CREATE PROCEDURE [dbo].[UpdatePackage]
+(
+	@ActorID int,
+	@PackageID int,
+	@PackageName nvarchar(300),
+	@PackageComments ntext,
+	@StatusID int,
+	@PlanID int,
+	@PurchaseDate datetime,
+	@OverrideQuotas bit,
+	@QuotasXml ntext,
+	@DefaultTopPackage bit
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+DECLARE @ParentPackageID int
+DECLARE @OldPlanID int
+
+SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
+WHERE PackageID = @PackageID
+
+-- update package
+UPDATE Packages SET
+	PackageName = @PackageName,
+	PackageComments = @PackageComments,
+	StatusID = @StatusID,
+	PlanID = @PlanID,
+	PurchaseDate = @PurchaseDate,
+	OverrideQuotas = @OverrideQuotas,
+	DefaultTopPackage = @DefaultTopPackage
+WHERE
+	PackageID = @PackageID
+
+-- update quotas (if required)
+EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
+
+-- check resulting quotas
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+
+-- check exceeding quotas if plan has been changed
+IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
+BEGIN
+	INSERT INTO @ExceedingQuotas
+	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
+END
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+
+COMMIT TRAN
+RETURN
+
+GO
+
+
+-- WebDAv portal
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'WebDavAccessTokens')
+DROP TABLE WebDavAccessTokens
+GO
+CREATE TABLE WebDavAccessTokens
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	FilePath NVARCHAR(MAX) NOT NULL,
+	AuthData NVARCHAR(MAX) NOT NULL,
+	AccessToken UNIQUEIDENTIFIER NOT NULL,
+	ExpirationDate DATETIME NOT NULL,
+	AccountID INT NOT NULL ,
+	ItemId INT NOT NULL
+)
+GO
+
+ALTER TABLE [dbo].[WebDavAccessTokens]  WITH CHECK ADD  CONSTRAINT [FK_WebDavAccessTokens_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddWebDavAccessToken')
+DROP PROCEDURE AddWebDavAccessToken
+GO
+CREATE PROCEDURE [dbo].[AddWebDavAccessToken]
+(
+	@TokenID INT OUTPUT,
+	@FilePath NVARCHAR(MAX),
+	@AccessToken UNIQUEIDENTIFIER,
+	@AuthData NVARCHAR(MAX),
+	@ExpirationDate DATETIME,
+	@AccountID INT,
+	@ItemId INT
+)
+AS
+INSERT INTO WebDavAccessTokens
+(
+	FilePath,
+	AccessToken,
+	AuthData,
+	ExpirationDate,
+	AccountID  ,
+	ItemId
+)
+VALUES
+(
+	@FilePath ,
+	@AccessToken  ,
+	@AuthData,
+	@ExpirationDate ,
+	@AccountID,
+	@ItemId
+)
+
+SET @TokenID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExpiredWebDavAccessTokens')
+DROP PROCEDURE DeleteExpiredWebDavAccessTokens
+GO
+CREATE PROCEDURE [dbo].[DeleteExpiredWebDavAccessTokens]
+AS
+DELETE FROM WebDavAccessTokens
+WHERE ExpirationDate < getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavAccessTokenById')
+DROP PROCEDURE GetWebDavAccessTokenById
+GO
+CREATE PROCEDURE [dbo].[GetWebDavAccessTokenById]
+(
+	@Id int
+)
+AS
+SELECT 
+	ID ,
+	FilePath ,
+	AuthData ,
+	AccessToken,
+	ExpirationDate,
+	AccountID,
+	ItemId
+	FROM WebDavAccessTokens 
+	Where ID = @Id AND ExpirationDate > getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavAccessTokenByAccessToken')
+DROP PROCEDURE GetWebDavAccessTokenByAccessToken
+GO
+CREATE PROCEDURE [dbo].[GetWebDavAccessTokenByAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER
+)
+AS
+SELECT 
+	ID ,
+	FilePath ,
+	AuthData ,
+	AccessToken,
+	ExpirationDate,
+	AccountID,
+	ItemId
+	FROM WebDavAccessTokens 
+	Where AccessToken = @AccessToken AND ExpirationDate > getdate()
+GO
+
+--add Deleted Users Quota
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.DeletedUsers')
+BEGIN
+	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (495, 13, 6, N'HostedSolution.DeletedUsers', N'Deleted Users', 2, 0, NULL, NULL)
+END
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.DeletedUsersBackupStorageSpace')
+BEGIN
+	INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (496, 13, 6, N'HostedSolution.DeletedUsersBackupStorageSpace', N'Deleted Users Backup Storage Space, Mb', 2, 0, NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeDeletedAccounts')
+CREATE TABLE ExchangeDeletedAccounts 
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccountID INT NOT NULL,
+	OriginAT INT NOT NULL,
+	StoragePath NVARCHAR(255) NULL,
+	FolderName NVARCHAR(128) NULL,
+	FileName NVARCHAR(128) NULL,
+	ExpirationDate DATETIME NOT NULL
+)
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationStatistics')
+DROP PROCEDURE [dbo].[GetOrganizationStatistics]
+GO
+
+CREATE PROCEDURE [dbo].[GetOrganizationStatistics]
+(
+	@ItemID int
+)
+AS
+SELECT
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 7 OR AccountType = 1 OR AccountType = 6 OR AccountType = 5)  AND ItemID = @ItemID) AS CreatedUsers,
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 8 OR AccountType = 9)  AND ItemID = @ItemID) AS CreatedGroups,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 11  AND ItemID = @ItemID) AS DeletedUsers
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteOrganizationDeletedUser')
+DROP PROCEDURE [dbo].[DeleteOrganizationDeletedUser]
+GO
+
+CREATE PROCEDURE [dbo].[DeleteOrganizationDeletedUser]
+(
+	@ID int
+)
+AS
+DELETE FROM	ExchangeDeletedAccounts WHERE AccountID = @ID
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationDeletedUser')
+DROP PROCEDURE [dbo].[GetOrganizationDeletedUser]
+GO
+
+CREATE PROCEDURE [dbo].[GetOrganizationDeletedUser]
+(
+	@AccountID int
+)
+AS
+SELECT
+	EDA.AccountID,
+	EDA.OriginAT,
+	EDA.StoragePath,
+	EDA.FolderName,
+	EDA.FileName,
+	EDA.ExpirationDate
+FROM
+	ExchangeDeletedAccounts AS EDA
+WHERE
+	EDA.AccountID = @AccountID
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddOrganizationDeletedUser')
+DROP PROCEDURE [dbo].[AddOrganizationDeletedUser]
+GO
+
+CREATE PROCEDURE [dbo].[AddOrganizationDeletedUser] 
+(
+	@ID int OUTPUT,
+	@AccountID int,
+	@OriginAT int,
+	@StoragePath nvarchar(255),
+	@FolderName nvarchar(128),
+	@FileName nvarchar(128),
+	@ExpirationDate datetime
+)
+AS
+
+INSERT INTO ExchangeDeletedAccounts
+(
+	AccountID,
+	OriginAT,
+	StoragePath,
+	FolderName,
+	FileName,
+	ExpirationDate
+)
+VALUES
+(
+	@AccountID,
+	@OriginAT,
+	@StoragePath,
+	@FolderName,
+	@FileName,
+	@ExpirationDate
+)
+
+SET @ID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+ALTER FUNCTION [dbo].[CalculateQuotaUsage]
+(
+	@PackageID int,
+	@QuotaID int
+)
+RETURNS int
+AS
+	BEGIN
+
+		DECLARE @QuotaTypeID int
+		DECLARE @QuotaName nvarchar(50)
+		SELECT @QuotaTypeID = QuotaTypeID, @QuotaName = QuotaName FROM Quotas
+		WHERE QuotaID = @QuotaID
+
+		IF @QuotaTypeID <> 2
+			RETURN 0
+
+		DECLARE @Result int
+
+		IF @QuotaID = 52 -- diskspace
+			SET @Result = dbo.CalculatePackageDiskspace(@PackageID)
+		ELSE IF @QuotaID = 51 -- bandwidth
+			SET @Result = dbo.CalculatePackageBandwidth(@PackageID)
+		ELSE IF @QuotaID = 53 -- domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 0 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 54 -- sub-domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 220 -- domain pointers
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsDomainPointer = 1 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 71 -- scheduled tasks
+			SET @Result = (SELECT COUNT(S.ScheduleID) FROM PackagesTreeCache AS PT
+				INNER JOIN Schedule AS S ON S.PackageID = PT.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 305 -- RAM of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 306 -- HDD of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 309 -- External IP addresses of VPS
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 558 BEGIN -- RAM of VPS2012
+			DECLARE @Result1 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
+			DECLARE @Result2 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN ServiceItemProperties AS SIP2 ON 
+								SIP2.ItemID = SI.ItemID AND SIP2.PropertyName = 'DynamicMemory.Enabled' AND SIP2.PropertyValue = 'True'
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'DynamicMemory.Maximum' AND PT.ParentPackageID = @PackageID)
+			SET @Result = CASE WHEN isnull(@Result1,0) > isnull(@Result2,0) THEN @Result1 ELSE @Result2 END
+		END
+		ELSE IF @QuotaID = 559 -- HDD of VPS2012
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 562 -- External IP addresses of VPS2012
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 100 -- Dedicated Web IP addresses
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 2)
+		ELSE IF @QuotaID = 350 -- RAM of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'Memory' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 351 -- HDD of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 354 -- External IP addresses of VPSforPc
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 319 -- BB Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN BlackBerryUsers bu ON ea.AccountID = bu.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 320 -- OCS Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN OCSUsers ocs ON ea.AccountID = ocs.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 206 -- HostedSolution.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (1,5,6,7))
+		ELSE IF @QuotaID = 78 -- Exchange2007.Mailboxes
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID 
+				AND ea.AccountType IN (1)
+				AND ea.MailboxPlanId IS NOT NULL)
+		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
+			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
+			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
+			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+			WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 370 -- Lync.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 376 -- Lync.EVUsers
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN LyncUserPlans lp ON lu.LyncUserPlanId = lp.LyncUserPlanId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND lp.EnterpriseVoice = 1)
+		ELSE IF @QuotaID = 381 -- Dedicated Lync Phone Numbers
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 5)
+		ELSE IF @QuotaID = 430 -- Enterprise Storage
+			SET @Result = (SELECT SUM(ESF.FolderQuota) FROM EnterpriseFolders AS ESF
+							INNER JOIN ServiceItems  SI ON ESF.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache PT ON SI.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 431 -- Enterprise Storage Folders
+			SET @Result = (SELECT COUNT(ESF.EnterpriseFolderID) FROM EnterpriseFolders AS ESF
+							INNER JOIN ServiceItems  SI ON ESF.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache PT ON SI.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 423 -- HostedSolution.SecurityGroups
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (8,9))
+		ELSE IF @QuotaID = 495 -- HostedSolution.DeletedUsers
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType = 11)
+		ELSE IF @QuotaID = 450
+			SET @Result = (SELECT COUNT(DISTINCT(RCU.[AccountId])) FROM [dbo].[RDSCollectionUsers] RCU
+				INNER JOIN ExchangeAccounts EA ON EA.AccountId = RCU.AccountId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 451
+			SET @Result = (SELECT COUNT(RS.[ID]) FROM [dbo].[RDSServers] RS				
+				INNER JOIN ServiceItems  si ON RS.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 491
+			SET @Result = (SELECT COUNT(RC.[ID]) FROM [dbo].[RDSCollections] RC
+				INNER JOIN ServiceItems  si ON RC.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaName like 'ServiceLevel.%' -- Support Service Level Quota
+		BEGIN
+			DECLARE @LevelID int
+
+			SELECT @LevelID = LevelID FROM SupportServiceLevels
+			WHERE LevelName = REPLACE(@QuotaName,'ServiceLevel.','')
+
+			IF (@LevelID IS NOT NULL)
+			SET @Result = (SELECT COUNT(EA.AccountID)
+				FROM SupportServiceLevels AS SL
+				INNER JOIN ExchangeAccounts AS EA ON SL.LevelID = EA.LevelID
+				INNER JOIN ServiceItems  SI ON EA.ItemID = SI.ItemID
+				INNER JOIN PackagesTreeCache PT ON SI.PackageID = PT.PackageID
+				WHERE EA.LevelID = @LevelID AND PT.ParentPackageID = @PackageID)
+			ELSE SET @Result = 0
+		END
+		ELSE
+			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
+			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
+			INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID AND PT.ParentPackageID = @PackageID
+			WHERE Q.QuotaID = @QuotaID)
+
+		RETURN @Result
+	END
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeMailboxPlans' AND COLS.name='EnableForceArchiveDeletion')
+BEGIN
+	ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD [EnableForceArchiveDeletion] [bit] NULL
+END
+GO
+
+ALTER PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+(
+	@MailboxPlanId int OUTPUT,
+	@ItemID int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int,
+	@AllowLitigationHold bit,
+	@RecoverableItemsWarningPct int,
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512),
+	@Archiving bit,
+	@EnableArchiving bit,
+	@ArchiveSizeMB int,
+	@ArchiveWarningPct int,
+	@EnableForceArchiveDeletion bit
+)
+AS
+
+IF (((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0) AND (@MailboxPlanType=0))
+BEGIN
+	SET @IsDefault = 1
+END
+ELSE
+BEGIN
+	IF ((@IsDefault = 1) AND (@MailboxPlanType=0))
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
+INSERT INTO ExchangeMailboxPlans
+(
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	AllowLitigationHold,
+	RecoverableItemsWarningPct,
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg,
+	Archiving,
+	EnableArchiving,
+	ArchiveSizeMB,
+	ArchiveWarningPct,
+	EnableForceArchiveDeletion
+)
+VALUES
+(
+	@ItemID,
+	@MailboxPlan,
+	@EnableActiveSync,
+	@EnableIMAP,
+	@EnableMAPI,
+	@EnableOWA,
+	@EnablePOP,
+	@IsDefault,
+	@IssueWarningPct,
+	@KeepDeletedItemsDays,
+	@MailboxSizeMB,
+	@MaxReceiveMessageSizeKB,
+	@MaxRecipients,
+	@MaxSendMessageSizeKB,
+	@ProhibitSendPct,
+	@ProhibitSendReceivePct,
+	@HideFromAddressBook,
+	@MailboxPlanType,
+	@AllowLitigationHold,
+	@RecoverableItemsWarningPct,
+	@RecoverableItemsSpace,
+	@LitigationHoldUrl,
+	@LitigationHoldMsg,
+	@Archiving,
+	@EnableArchiving,
+	@ArchiveSizeMB,
+	@ArchiveWarningPct,
+	@EnableForceArchiveDeletion
+)
+
+SET @MailboxPlanId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[UpdateExchangeMailboxPlan] 
+(
+	@MailboxPlanId int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int,
+	@AllowLitigationHold bit,
+	@RecoverableItemsWarningPct int,
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512),
+	@Archiving bit,
+	@EnableArchiving bit,
+	@ArchiveSizeMB int,
+	@ArchiveWarningPct int,
+	@EnableForceArchiveDeletion bit
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET
+	MailboxPlan = @MailboxPlan,
+	EnableActiveSync = @EnableActiveSync,
+	EnableIMAP = @EnableIMAP,
+	EnableMAPI = @EnableMAPI,
+	EnableOWA = @EnableOWA,
+	EnablePOP = @EnablePOP,
+	IsDefault = @IsDefault,
+	IssueWarningPct= @IssueWarningPct,
+	KeepDeletedItemsDays = @KeepDeletedItemsDays,
+	MailboxSizeMB= @MailboxSizeMB,
+	MaxReceiveMessageSizeKB= @MaxReceiveMessageSizeKB,
+	MaxRecipients= @MaxRecipients,
+	MaxSendMessageSizeKB= @MaxSendMessageSizeKB,
+	ProhibitSendPct= @ProhibitSendPct,
+	ProhibitSendReceivePct = @ProhibitSendReceivePct,
+	HideFromAddressBook = @HideFromAddressBook,
+	MailboxPlanType = @MailboxPlanType,
+	AllowLitigationHold = @AllowLitigationHold,
+	RecoverableItemsWarningPct = @RecoverableItemsWarningPct,
+	RecoverableItemsSpace = @RecoverableItemsSpace, 
+	LitigationHoldUrl = @LitigationHoldUrl,
+	LitigationHoldMsg = @LitigationHoldMsg,
+	Archiving = @Archiving,
+	EnableArchiving = @EnableArchiving,
+	ArchiveSizeMB = @ArchiveSizeMB,
+	ArchiveWarningPct = @ArchiveWarningPct,
+	EnableForceArchiveDeletion = @EnableForceArchiveDeletion
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	AllowLitigationHold,
+	RecoverableItemsWarningPct,
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg,
+	Archiving,
+	EnableArchiving,
+	ArchiveSizeMB,
+	ArchiveWarningPct,
+	EnableForceArchiveDeletion
+FROM
+	ExchangeMailboxPlans
+WHERE
+	MailboxPlanId = @MailboxPlanId
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlans]
+(
+	@ItemID int,
+	@Archiving bit
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	Archiving,
+	EnableArchiving,
+	ArchiveSizeMB,
+	ArchiveWarningPct,
+	EnableForceArchiveDeletion
+FROM
+	ExchangeMailboxPlans
+WHERE
+	ItemID = @ItemID 
+AND ((Archiving=@Archiving) OR ((@Archiving=0) AND (Archiving IS NULL)))
+ORDER BY MailboxPlan
+RETURN
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = 'SCHEDULE_TASK_DELETE_EXCHANGE_ACCOUNTS')
+BEGIN
+INSERT INTO [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DELETE_EXCHANGE_ACCOUNTS', N'WebsitePanel.EnterpriseServer.DeleteExchangeAccountsTask, WebsitePanel.EnterpriseServer.Code', 3)
+END
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[UpdateServiceItem]
+(
+	@ActorID int,
+	@ItemID int,
+	@ItemName nvarchar(500),
+	@XmlProperties ntext
+)
+AS
+BEGIN TRAN
+
+-- check rights
+DECLARE @PackageID int
+SELECT PackageID = @PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- update item
+UPDATE ServiceItems SET ItemName = @ItemName
+WHERE ItemID=@ItemID
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+-- Add the xml data into a temp table for the capability and robust
+IF OBJECT_ID('tempdb..#TempTable') IS NOT NULL DROP TABLE #TempTable
+
+CREATE TABLE #TempTable(
+	ItemID int,
+	PropertyName nvarchar(50),
+	PropertyValue  nvarchar(3000))
+
+INSERT INTO #TempTable (ItemID, PropertyName, PropertyValue)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
+
+-- Move data from temp table to real table
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT 
+	ItemID, 
+	PropertyName, 
+	PropertyValue
+FROM #TempTable
+
+DROP TABLE #TempTable
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
+RETURN 
+GO
+
+
+-- Password column removed
+IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
+DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+GO
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+(
+	@UserPrincipalName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan',
+	E.EnableArchiving
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.UserPrincipalName = @UserPrincipalName
+RETURN
+GO
+
+
+
+--Webdav portal users settings
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'WebDavPortalUsersSettings')
+CREATE TABLE WebDavPortalUsersSettings
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccountId INT NOT NULL,
+	Settings NVARCHAR(max)
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_WebDavPortalUsersSettings_UserId')
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]
+DROP CONSTRAINT [FK_WebDavPortalUsersSettings_UserId]
+GO
+
+ALTER TABLE [dbo].[WebDavPortalUsersSettings]  WITH CHECK ADD  CONSTRAINT [FK_WebDavPortalUsersSettings_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavPortalUsersSettingsByAccountId')
+DROP PROCEDURE GetWebDavPortalUsersSettingsByAccountId
+GO
+CREATE PROCEDURE [dbo].[GetWebDavPortalUsersSettingsByAccountId]
+(
+	@AccountId INT
+)
+AS
+SELECT TOP 1
+	US.Id,
+	US.AccountId,
+	US.Settings
+	FROM WebDavPortalUsersSettings AS US
+	WHERE AccountId = @AccountId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddWebDavPortalUsersSettings')
+DROP PROCEDURE AddWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[AddWebDavPortalUsersSettings]
+(
+	@WebDavPortalUsersSettingsId INT OUTPUT,
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+INSERT INTO WebDavPortalUsersSettings
+(
+	AccountId,
+	Settings
+)
+VALUES
+(
+	@AccountId,
+	@Settings
+)
+
+SET @WebDavPortalUsersSettingsId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateWebDavPortalUsersSettings')
+DROP PROCEDURE UpdateWebDavPortalUsersSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateWebDavPortalUsersSettings]
+(
+	@AccountId INT,
+	@Settings NVARCHAR(max)
+)
+AS
+
+UPDATE WebDavPortalUsersSettings
+SET
+	Settings = @Settings
+WHERE AccountId = @AccountId
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x +')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail100', NULL)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [EditorControl] = 'SmarterMail100' WHERE [DisplayName] = 'SmarterMail 10.x +'
+END
+GO
+
+
+-- Service items count by name and serviceid
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetServiceItemsCountByNameAndServiceId')
+DROP PROCEDURE GetServiceItemsCountByNameAndServiceId
+GO
+
+CREATE PROCEDURE [dbo].[GetServiceItemsCountByNameAndServiceId]
+(
+	@ActorID int,
+	@ServiceId int,
+	@ItemName nvarchar(500),
+	@GroupName nvarchar(100) = NULL,
+	@ItemTypeName nvarchar(200)
+)
+AS
+SELECT Count(*)
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+WHERE S.ServiceID = @ServiceId 
+AND SIT.TypeName = @ItemTypeName
+AND SI.ItemName = @ItemName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+RETURN 
+GO
+
+-- Hyper-V 2012 R2 Provider
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'VPS2012')
+BEGIN
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (33, N'VPS2012', 19, NULL, 1)
+
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (41, 33, N'VirtualMachine', N'WebsitePanel.Providers.Virtualization.VirtualMachine, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (42, 33, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (553, 33, 1, N'VPS2012.ServersNumber', N'Number of VPS', 2, 0, 41, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (554, 33, 2, N'VPS2012.ManagingAllowed', N'Allow user to create VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (555, 33, 3, N'VPS2012.CpuNumber', N'Number of CPU cores', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (556, 33, 7, N'VPS2012.BootCdAllowed', N'Boot from CD allowed', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (557, 33, 8, N'VPS2012.BootCdEnabled', N'Boot from CD', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (558, 33, 4, N'VPS2012.Ram', N'RAM size, MB', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (559, 33, 5, N'VPS2012.Hdd', N'Hard Drive size, GB', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (560, 33, 6, N'VPS2012.DvdEnabled', N'DVD drive', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (561, 33, 10, N'VPS2012.ExternalNetworkEnabled', N'External Network', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (562, 33, 11, N'VPS2012.ExternalIPAddressesNumber', N'Number of External IP addresses', 2, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (563, 33, 13, N'VPS2012.PrivateNetworkEnabled', N'Private Network', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (564, 33, 14, N'VPS2012.PrivateIPAddressesNumber', N'Number of Private IP addresses per VPS', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (565, 33, 9, N'VPS2012.SnapshotsNumber', N'Number of Snaphots', 3, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (566, 33, 15, N'VPS2012.StartShutdownAllowed', N'Allow user to Start, Turn off and Shutdown VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (567, 33, 16, N'VPS2012.PauseResumeAllowed', N'Allow user to Pause, Resume VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (568, 33, 17, N'VPS2012.RebootAllowed', N'Allow user to Reboot VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (569, 33, 18, N'VPS2012.ResetAlowed', N'Allow user to Reset VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (570, 33, 19, N'VPS2012.ReinstallAllowed', N'Allow user to Re-install VPS', 1, 0, NULL, NULL)
+
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (571, 33, 12, N'VPS2012.Bandwidth', N'Monthly bandwidth, GB', 2, 0, NULL, NULL)
+
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaID] = '572')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (572, 33, 20, N'VPS2012.ReplicationEnabled', N'Allow user to Replication', 1, 0, NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 33, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV2012R2', 1)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [EditorControl] = N'HyperV2012R2', [GroupID] = 33 WHERE [ProviderName] = 'HyperV2012R2'
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetVirtualMachinesPaged2012')
+DROP PROCEDURE GetVirtualMachinesPaged2012
+GO
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPaged2012]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.ItemTypeID = 41 -- VPS2012
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+'
+
+--print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+RETURN 
+GO
+
+
+--ES OWA Editing
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
+CREATE TABLE EnterpriseFoldersOwaPermissions
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	ItemID INT NOT NULL,
+	FolderID INT NOT NULL, 
+	AccountID INT NOT NULL 
+)
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_AccountId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_AccountId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_EnterpriseFoldersOwaPermissions_FolderId')
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]
+DROP CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId]
+GO
+
+ALTER TABLE [dbo].[EnterpriseFoldersOwaPermissions]  WITH CHECK ADD  CONSTRAINT [FK_EnterpriseFoldersOwaPermissions_FolderId] FOREIGN KEY([FolderID])
+REFERENCES [dbo].[EnterpriseFolders] ([EnterpriseFolderID])
+ON DELETE CASCADE
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAllEnterpriseFolderOwaUsers')
+DROP PROCEDURE DeleteAllEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[DeleteAllEnterpriseFolderOwaUsers]
+(
+	@ItemID  int,
+	@FolderID int
+)
+AS
+DELETE FROM EnterpriseFoldersOwaPermissions
+WHERE ItemId = @ItemID AND FolderID = @FolderID
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolderOwaUser')
+DROP PROCEDURE AddEnterpriseFolderOwaUser
+GO
+CREATE PROCEDURE [dbo].[AddEnterpriseFolderOwaUser]
+(
+	@ESOwsaUserId INT OUTPUT,
+	@ItemID INT,
+	@FolderID INT, 
+	@AccountID INT 
+)
+AS
+INSERT INTO EnterpriseFoldersOwaPermissions
+(
+	ItemID ,
+	FolderID, 
+	AccountID
+)
+VALUES
+(
+	@ItemID,
+	@FolderID, 
+	@AccountID 
+)
+
+SET @ESOwsaUserId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderOwaUsers')
+DROP PROCEDURE GetEnterpriseFolderOwaUsers
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderOwaUsers]
+(
+	@ItemID INT,
+	@FolderID INT
+)
+AS
+SELECT 
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress,
+	EA.MailEnabledPublicFolder,
+	EA.MailboxPlanId,
+	EA.SubscriberNumber,
+	EA.UserPrincipalName 
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  ExchangeAccounts AS EA ON EA.AccountID = EFOP.AccountID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.FolderID = @FolderID
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolderId')
+DROP PROCEDURE GetEnterpriseFolderId
+GO
+CREATE PROCEDURE [dbo].[GetEnterpriseFolderId]
+(
+	@ItemID INT,
+	@FolderName varchar(max)
+)
+AS
+SELECT TOP 1
+	EnterpriseFolderID
+	FROM EnterpriseFolders
+	WHERE ItemId = @ItemID AND FolderName = @FolderName
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetUserEnterpriseFolderWithOwaEditPermission')
+DROP PROCEDURE GetUserEnterpriseFolderWithOwaEditPermission
+GO
+CREATE PROCEDURE [dbo].[GetUserEnterpriseFolderWithOwaEditPermission]
+(
+	@ItemID INT,
+	@AccountID INT
+)
+AS
+SELECT 
+	EF.FolderName
+	FROM EnterpriseFoldersOwaPermissions AS EFOP
+	LEFT JOIN  [dbo].[EnterpriseFolders] AS EF ON EF.EnterpriseFolderID = EFOP.FolderID
+	WHERE EFOP.ItemID = @ItemID AND EFOP.AccountID = @AccountID
+GO
+
+
+-- CRM2015 Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2015')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1205, 24, N'CRM', N'Hosted MS CRM 2015', N'WebsitePanel.Providers.HostedSolution.CRMProvider2015, WebsitePanel.Providers.HostedSolution.Crm2015', N'CRM2011', NULL)
+END
+GO
+
+-- RDS Setup Instructions
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'CC' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'CC', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+
+DECLARE @RDSSetupLetterHtmlBody nvarchar(2500)
+
+Set @RDSSetupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>RDS Setup Information</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+
+<a name="top"></a>
+<div class="Header">
+	RDS Setup Information
+</div>
+</div>
+</body>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'HtmlBody', @RDSSetupLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @RDSSetupLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'Subject', N'RDS setup')
+END
+GO
+
+DECLARE @RDSSetupLetterTextBody nvarchar(2500)
+
+Set @RDSSetupLetterTextBody = N'=================================
+   RDS Setup Information
+=================================
+<ad:if test="#user#">
+Hello #user.FirstName#,
+</ad:if>
+
+Please, find below RDS setup instructions.
+
+If you have any questions, feel free to contact our support department at any time.
+
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'RDSSetupLetter', N'TextBody', @RDSSetupLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @RDSSetupLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'RDSSetupLetter' AND [PropertyName]= N'TextBody'
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Foundation Server')
+BEGIN	
+	DECLARE @group_order AS INT
+	DECLARE @group_controller AS NVARCHAR(1000)
+	DECLARE @group_id AS INT
+	DECLARE @provider_id AS INT
+
+	UPDATE [dbo].[ResourceGroups] SET GroupName = 'Sharepoint Foundation Server' WHERE GroupName = 'Hosted Sharepoint'
+	SELECT @group_order = GroupOrder, @group_controller = GroupController FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Foundation Server'	
+	SELECT TOP 1 @group_id = GroupId + 1 From [dbo].[ResourceGroups] ORDER BY GroupID DESC
+	SELECT TOP 1 @provider_id = ProviderId + 1 From [dbo].[Providers] ORDER BY ProviderID DESC
+	UPDATE [dbo].[ResourceGroups] SET GroupOrder = GroupOrder + 1 WHERE GroupOrder > @group_order
+	INSERT INTO [dbo].[ResourceGroups] (GroupID, GroupName, GroupOrder, GroupController, ShowGroup) VALUES (@group_id, 'Sharepoint Server', @group_order + 1, @group_controller, 1)
+	INSERT INTO [dbo].[Providers] (ProviderID, GroupID, ProviderName, DisplayName, ProviderType, EditorControl, DisableAutoDiscovery)
+		(SELECT @provider_id, @group_id, ProviderName, DisplayName, ProviderType, EditorControl, DisableAutoDiscovery FROM [dbo].[Providers] WHERE ProviderName = 'HostedSharePoint2013')
+
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (550, @group_id, 1, 'HostedSharePointServer.Sites', 'SharePoint Site Collections', 2, 0)
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (551, @group_id, 2, 'HostedSharePointServer.MaxStorage', 'Max site storage, MB', 3, 0)
+	INSERT INTO [dbo].[Quotas] (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+		VALUES (552, @group_id, 3, 'HostedSharePointServer.UseSharedSSL', 'Use shared SSL Root', 1, 0)
+END
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetLyncUsers')
+DROP PROCEDURE GetLyncUsers
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE PROCEDURE [dbo].[GetLyncUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+CREATE TABLE #TempLyncUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[UserPrincipalName] [nvarchar](300) NULL,
+	[SipAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL,
+	[LyncUserPlanId] [int] NOT NULL,		
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+)
+
+DECLARE @condition nvarchar(700)
+SET @condition = ''
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	SET @condition = 'ORDER BY ea.DisplayName'
+END
+
+IF (@SortColumn = 'UserPrincipalName')
+BEGIN
+	SET @condition = 'ORDER BY ea.UserPrincipalName'
+END
+
+IF (@SortColumn = 'SipAddress')
+BEGIN
+	SET @condition = 'ORDER BY ou.SipAddress'
+END
+
+IF (@SortColumn = 'LyncUserPlanName')
+BEGIN
+	SET @condition = 'ORDER BY lp.LyncUserPlanName'
+END
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+	INSERT INTO 
+		#TempLyncUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.UserPrincipalName,
+		ou.SipAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID ' + @condition
+
+exec sp_executesql @sql, N'@ItemID int',@ItemID
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempLyncUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+	BEGIN
+		IF (@SortColumn = 'DisplayName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+		END
+		IF (@SortColumn = 'UserPrincipalName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+		END
+
+		IF (@SortColumn = 'SipAddress')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY SipAddress DESC
+		END
+
+		IF (@SortColumn = 'LyncUserPlanName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
+		END
+	END
+	ELSE
+	BEGIN
+        SELECT * FROM #TempLyncUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+	END	
+END
+
+DROP TABLE #TempLyncUsers
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SearchOrganizationAccounts')
+DROP PROCEDURE SearchOrganizationAccounts
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE PROCEDURE [dbo].[SearchOrganizationAccounts]
+(
+	@ActorID int,
+	@ItemID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@IncludeMailboxes bit
+)
+AS
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+(EA.AccountType = 7 OR (EA.AccountType = 1 AND @IncludeMailboxes = 1)  )
+AND EA.ItemID = @ItemID
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'EA.DisplayName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress,
+	EA.SubscriberNumber,
+	EA.UserPrincipalName,
+	(CASE WHEN LU.AccountID IS NULL THEN ''false'' ELSE ''true'' END) as IsLyncUser
+FROM ExchangeAccounts AS EA
+LEFT JOIN LyncUsers AS LU
+ON LU.AccountID = EA.AccountID
+WHERE ' + @condition
+
+print @sql
+
+exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit', 
+@ItemID, @IncludeMailboxes
+
+RETURN 
+
+GO
+
+
+-- RDS GPO
+
+IF NOT EXISTS(SELECT * FROM SYS.TABLES WHERE name = 'RDSServerSettings')
+CREATE TABLE [dbo].[RDSServerSettings](
+	[RdsServerId] [int] NOT NULL,
+	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[ApplyUsers] [BIT] NOT NULL,
+	[ApplyAdministrators] [BIT] NOT NULL
+ CONSTRAINT [PK_RDSServerSettings] PRIMARY KEY CLUSTERED 
+(
+	[RdsServerId] ASC,
+	[SettingsName] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServerSettings')
+DROP PROCEDURE GetRDSServerSettings
+GO
+CREATE PROCEDURE GetRDSServerSettings
+(
+	@ServerId int,
+	@SettingsName nvarchar(50)
+)
+AS
+	SELECT RDSServerId, PropertyName, PropertyValue, ApplyUsers, ApplyAdministrators
+	FROM RDSServerSettings
+	WHERE RDSServerId = @ServerId AND SettingsName = @SettingsName			
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSServerSettings')
+DROP PROCEDURE DeleteRDSServerSettings
+GO
+CREATE PROCEDURE DeleteRDSServerSettings
+(
+	@ServerId int
+)
+AS
+	DELETE FROM RDSServerSettings WHERE RDSServerId = @ServerId
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSServerSettings')
+DROP PROCEDURE UpdateRDSServerSettings
+GO
+CREATE PROCEDURE UpdateRDSServerSettings
+(
+	@ServerId int,
+	@SettingsName nvarchar(50),
+	@Xml ntext
+)
+AS
+
+BEGIN TRAN
+DECLARE @idoc int
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+DELETE FROM RDSServerSettings
+WHERE RDSServerId = @ServerId AND SettingsName = @SettingsName
+
+INSERT INTO RDSServerSettings
+(
+	RDSServerId,
+	SettingsName,
+	ApplyUsers,
+	ApplyAdministrators,
+	PropertyName,
+	PropertyValue	
+)
+SELECT
+	@ServerId,
+	@SettingsName,
+	ApplyUsers,
+	ApplyAdministrators,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue ntext '@value',
+	ApplyUsers BIT '@applyUsers',
+	ApplyAdministrators BIT '@applyAdministrators'
+) as PV
+
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
+RETURN 
+
+GO
+
+
+IF EXISTS (SELECT * FROM ResourceGroups WHERE GroupName = 'SharePoint')
+BEGIN
+	DECLARE @group_id INT
+	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
+	DELETE FROM Providers WHERE GroupID = @group_id
+	DELETE FROM Quotas WHERE GroupID = @group_id
+	DELETE FROM VirtualGroups WHERE GroupID = @group_id
+	DELETE FROM ServiceItemTypes WHERE GroupID = @group_id	
+	DELETE FROM ResourceGroups WHERE GroupID = @group_id
+END
+
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
+BEGIN	
+	DECLARE @group_id AS INT
+	DECLARE @item_type_id INT
+	SELECT TOP 1 @item_type_id = ItemTypeId + 1 FROM [dbo].[ServiceItemTypes] ORDER BY ItemTypeId DESC
+	UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointFoundationSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
+	SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Server'	
+
+	INSERT INTO [dbo].[ServiceItemTypes] (ItemTypeId, GroupId, DisplayName, TypeName, TypeOrder, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable) 
+		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
+END
+
+GO
+
+UPDATE [dbo].[Quotas] SET GroupID = 45 WHERE QuotaName = 'EnterpriseStorage.DriveMaps'
+GO
+
+
+UPDATE [dbo].[ResourceGroups] SET GroupName = 'Sharepoint Enterprise Server' WHERE GroupName = 'Sharepoint Server'
+GO
+
+UPDATE [dbo].[ResourceGroups] SET GroupController = 'WebsitePanel.EnterpriseServer.HostedSharePointServerEntController' WHERE GroupName = 'Sharepoint Enterprise Server'
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted SharePoint Enterprise 2013')
+BEGIN
+DECLARE @provider_id AS INT
+DECLARE @group_id AS INT
+SELECT @group_id = GroupId FROM [dbo].[ResourceGroups] WHERE GroupName = 'Sharepoint Enterprise Server'
+SELECT TOP 1 @provider_id = ProviderId + 1 From [dbo].[Providers] ORDER BY ProviderID DESC
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery])
+VALUES (@provider_id, @group_id, N'HostedSharePoint2013Ent', N'Hosted SharePoint Enterprise 2013', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013Ent, WebsitePanel.Providers.HostedSolution.SharePoint2013Ent', N'HostedSharePoint30', NULL)
+END
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.Sites' WHERE QuotaId = 550
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.MaxStorage' WHERE QuotaId = 551
+GO
+
+UPDATE [dbo].[Quotas] SET QuotaName = 'HostedSharePointEnterprise.UseSharedSSL' WHERE QuotaId = 552
+GO
+
+UPDATE [dbo].[ServiceItemTypes] SET DisplayName = 'SharePointEnterpriseSiteCollection' WHERE DisplayName = 'SharePointSiteCollection'
+GO
+
+
+IF EXISTS (SELECT * FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID IN (Select GroupID FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'))
+BEGIN
+	DECLARE @group_id INT
+	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'Sharepoint Enterprise Server'
+	DELETE FROM Providers WHERE ProviderName = 'HostedSharePoint2013' AND GroupID = @group_id
+END
+
+GO
+
+		
+ALTER PROCEDURE [dbo].[AddServiceItem]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServiceID int,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200),
+	@ItemID int OUTPUT,
+	@XmlProperties ntext,
+	@CreatedDate datetime
+)
+AS
+BEGIN TRAN
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- get GroupID
+DECLARE @GroupID int
+SELECT
+	@GroupID = PROV.GroupID
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+WHERE S.ServiceID = @ServiceID
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+
+-- Fix to allow plans assigned to serveradmin
+IF (@ItemTypeName = 'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base')
+BEGIN
+	IF NOT EXISTS (SELECT * FROM ServiceItems WHERE PackageID = 1)
+	BEGIN
+		INSERT INTO ServiceItems (PackageID, ItemTypeID,ServiceID,ItemName,CreatedDate)
+		VALUES(1, @ItemTypeID, @ServiceID, 'System',  @CreatedDate)
+		
+		DECLARE @TempItemID int
+		
+		SET @TempItemID = SCOPE_IDENTITY()
+		INSERT INTO ExchangeOrganizations (ItemID, OrganizationID)
+		VALUES(@TempItemID, 'System')
+	END
+END
+
+
+		
+-- add item
+INSERT INTO ServiceItems
+(
+	PackageID,
+	ServiceID,
+	ItemName,
+	ItemTypeID,
+	CreatedDate
+)
+VALUES
+(
+	@PackageID,
+	@ServiceID,
+	@ItemName,
+	@ItemTypeID,
+	@CreatedDate
+)
+
+SET @ItemID = SCOPE_IDENTITY()
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+CREATE TABLE #TempTable(
+	ItemID int,
+	PropertyName nvarchar(50),
+	PropertyValue  nvarchar(3000))
+
+INSERT INTO #TempTable (ItemID, PropertyName, PropertyValue)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
+
+-- Move data from temp table to real table
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT 
+	ItemID, 
+	PropertyName, 
+	PropertyValue
+FROM #TempTable
+
+DROP TABLE #TempTable
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN 
+GO
+
+UPDATE [dbo].[ServiceItemTypes] SET TypeName ='WebsitePanel.Providers.SharePoint.SharePointEnterpriseSiteCollection, WebsitePanel.Providers.Base' WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
+GO
+
+-- USER PASSWORD EXPIRATION NOTIFICATION tasks
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION')
+BEGIN
+INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION', N'WebsitePanel.EnterpriseServer.UserPasswordExpirationNotificationTask, WebsitePanel.EnterpriseServer.Code', 1)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION')
+BEGIN
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/UserPasswordExpirationNotificationView.ascx')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION' AND [ParameterID]= N'DAYS_BEFORE_EXPIRATION' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_USER_PASSWORD_EXPIRATION_NOTIFICATION', N'DAYS_BEFORE_EXPIRATION', N'String', NULL, 1)
+END
+GO
+
+
+-- USER PASSWORD EXPIRATION EMAIL TEMPLATE
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+
+DECLARE @UserPasswordExpirationLetterHtmlBody nvarchar(2500)
+
+Set @UserPasswordExpirationLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Password expiration notification</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+<div class="Header">
+<img src="#logoUrl#">
+</div>
+<h1>Password expiration notification</h1>
+
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+<p>
+Your password expiration date is #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
+</p>
+
+<a href="#passwordResetLink#" target="_blank">#passwordResetLink#</a>
+
+
+<p>
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+</p>
+
+<p>
+Best regards
+</p>
+</div>
+</body>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'HtmlBody', @UserPasswordExpirationLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordExpirationLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'Subject', N'Password expiration notification')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'LogoUrl' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'LogoUrl', N'https://controlpanel.virtuworks.net/App_Themes/Default/Images/logo.png')
+END
+GO
+
+
+DECLARE @UserPasswordExpirationLetterTextBody nvarchar(2500)
+
+Set @UserPasswordExpirationLetterTextBody = N'=========================================
+   Password expiration notification
+=========================================
+
+<ad:if test="#user#">
+Hello #user.FirstName#,
+</ad:if>
+
+Your password expiration date is #user.PasswordExpirationDateTime#. You can reset your own password by visiting the following page:
+
+#passwordResetLink#
+
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'TextBody', @UserPasswordExpirationLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordExpirationLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'TextBody'
+GO
+
+
+-- USER PASSWORD RESET EMAIL TEMPLATE
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+
+DECLARE @UserPasswordResetLetterHtmlBody nvarchar(2500)
+
+Set @UserPasswordResetLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Password reset notification</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+<div class="Header">
+<img src="#logoUrl#">
+</div>
+<h1>Password reset notification</h1>
+
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+<p>
+We received a request to reset the password for your account. If you made this request, click the link below. If you did not make this request, you can ignore this email.
+</p>
+
+<a href="#passwordResetLink#" target="_blank">#passwordResetLink#</a>
+
+
+<p>
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+</p>
+
+<p>
+Best regards
+</p>
+</div>
+</body>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'HtmlBody', @UserPasswordResetLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'Subject', N'Password reset notification')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'LogoUrl' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'LogoUrl', N'https://controlpanel.virtuworks.net/App_Themes/Default/Images/logo.png')
+END
+GO
+
+
+DECLARE @UserPasswordResetLetterTextBody nvarchar(2500)
+
+Set @UserPasswordResetLetterTextBody = N'=========================================
+   Password reset notification
+=========================================
+
+<ad:if test="#user#">
+Hello #user.FirstName#,
+</ad:if>
+
+We received a request to reset the password for your account. If you made this request, click the link below. If you did not make this request, you can ignore this email.
+
+#passwordResetLink#
+
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'TextBody', @UserPasswordResetLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'TextBody'
+GO
+
+
+
+
+DECLARE @UserPasswordResetSMSBody nvarchar(2500)
+
+Set @UserPasswordResetSMSBody = N'Password reset link:
+#passwordResetLink#
+'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetLinkSmsBody', @UserPasswordResetSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody'
+GO
+
+
+DECLARE @UserPasswordPincodeSMSBody nvarchar(2500)
+
+Set @UserPasswordPincodeSMSBody = N'
+Your password reset pincode:
+#passwordResetPincode#'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetPincodeSmsBody', @UserPasswordPincodeSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordPincodeSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody'
+GO
+
+-- Exchange setup EMAIL TEMPLATE
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'From', N'orders@virtuworks.com')
+END
+GO
+
+DECLARE @ExchangeMailboxSetupLetterHtmlBody nvarchar(max)
+
+Set @ExchangeMailboxSetupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Account Summary Information</title>
+    <style type="text/css">
+        body {font-family: ''Segoe UI Light'',''Open Sans'',Arial!important;color:black;}
+        p {color:black;}
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.SummaryHeader { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.5em; color: ##1F4978; border-bottom: dotted 3px ##efefef; font-weight:normal; }
+        .Summary H2 { font-size: 1.2em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; color:black;}
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+        .Label { color:##1F4978; }
+        .menu-bar a {padding: 15px 0;display: inline-block;}
+    </style>
+</head>
+<body>
+<table border="0" cellspacing="0" cellpadding="0" width="100%"><!-- was 800 -->
+<tbody>
+<tr>
+<td style="padding: 10px 20px 10px 20px; background-color: ##e1e1e1;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="text-align: left; padding: 0px 0px 2px 0px;"><a href="http://www.virtuworks.com"><img src="https://controlpanel.virtuworks.net/vw-email-logo.gif" border="0" alt="VirtuWorks: Run Your Business In The Cloud" /></a></td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="padding-bottom: 10px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="background-color: ##2e8bcc; padding: 3px;">
+<table class="menu-bar" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com">Visit VirtuWorks.com</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="https://portal.virtuworks.net/whmcs/clientarea.php">Account Management</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="https://controlpanel.virtuworks.net">Control Panel</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com/support">Support</a></td>
+<td style="text-align: center;" width="20%"><a style="color: ##ffffff; text-transform: uppercase; font-size: 9px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; text-decoration: none;" href="http://www.virtuworks.com/company/contact-us.aspx">Contact Us</a></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="background-color: ##ffffff;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%"><!-- was 759 -->
+<tbody>
+<tr>
+<td style="vertical-align: top; padding: 10px 10px 0px 10px;" width="100%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: ''Segoe UI Light'',''Open Sans'',Arial; padding: 0px 10px 0px 0px;">
+<!-- Begin Content -->
+
+<div class="Summary">
+    <ad:if test="#Email#">
+    <p>
+    Hello #Account.DisplayName#,
+    </p>
+    <p>
+    Thanks for choosing VirtuWorks as your Exchange hosting provider.
+    </p>
+    </ad:if>
+    <ad:if test="#not(PMM)#">
+    <h1>User Accounts</h1>
+    <p>
+    The following user accounts have been created for you.
+    </p>
+    <table>
+        <tr>
+            <td class="Label">Username:</td>
+            <td>#Account.UserPrincipalName#</td>
+        </tr>
+        <tr>
+            <td class="Label">E-mail:</td>
+            <td>#Account.PrimaryEmailAddress#</td>
+        </tr>
+		<ad:if test="#PswResetUrl#">
+        <tr>
+            <td class="Label">Password Reset Url:</td>
+            <td><a href="#PswResetUrl#" target="_blank">Click here</a></td>
+        </tr>
+		</ad:if>
+    </table>
+    </ad:if>
+    <h1>DNS</h1>
+    <p>
+    In order for us to accept mail for your domain, you will need to point your MX records to:
+    </p>
+    <table>
+        <ad:foreach collection="#SmtpServers#" var="SmtpServer" index="i">
+            <tr>
+                <td class="Label">#SmtpServer#</td>
+            </tr>
+        </ad:foreach>
+    </table>
+   <h1>
+    Webmail (OWA, Outlook Web Access)</h1>
+    <p>
+    <a href="https://mail.virtuworks.net/owa" target="_blank">https://mail.virtuworks.net/owa</a>
+    </p>
+    <h1>
+    Outlook (Windows Clients)</h1>
+    <p>
+    To configure Outlook 2013 to work with the VirtuWorks servers, please reference:
+    </p>
+    <p>
+    <a href="http://www.virtuworks.com/how-to-configure-my-outlook-2010-client-to-work-with-my-velum-hosted-exchange-account/" target="_blank">http://www.virtuworks.com/how-to-configure-my-outlook-2010-client-to-work-with-my-velum-hosted-exchange-account/</a>
+    </p>
+    <p>
+    If you need to download and install the Outlook client:</p>
+
+        
+        <table>
+            <tr><td colspan="2" class="Label"><font size="3">Outlook 2013 Client</font></td></tr>
+            <tr>
+                <td class="Label">
+                    Download URL:</td>
+                <td><a href="http://www.virtuworks.net/saas-downloads/Outlook-2013-32bit.zip">Outlook 2013 - 32bit</a></td>
+            </tr>
+<tr>
+                <td class="Label"></td>
+                <td><a href="http://www.virtuworks.net/saas-downloads/Outlook-2013-64bit.zip">Outlook 2013 - 64bit</a></td>
+            </tr>
+            <tr>
+                <td class="Label">
+                    KEY:</td>
+                <td>HPN4P-JKC89-VCCWD-24CD2-9P8H7</td>
+            </tr>
+        </table>
+ 
+       <h1>
+    ActiveSync, iPhone, iPad</h1>
+    <table>
+        <tr>
+            <td class="Label">Server:</td>
+            <td>#ActiveSyncServer#</td>
+        </tr>
+        <tr>
+            <td class="Label">Domain:</td>
+            <td>#SamDomain#</td>
+        </tr>
+        <tr>
+            <td class="Label">SSL:</td>
+            <td>must be checked</td>
+        </tr>
+        <tr>
+            <td class="Label">Your username:</td>
+            <td>#SamUsername#</td>
+        </tr>
+    </table>
+ 
+    <h1>Password Changes</h1>
+    <p>
+    Passwords can be changed at any time using Webmail or the <a href="https://controlpanel.virtuworks.net" target="_blank">Control Panel</a>.</p>
+    <h1>Control Panel</h1>
+    <p>
+    If you need to change the details of your account, you can easily do this using <a href="https://controlpanel.virtuworks.net" target="_blank">Control Panel</a>.</p>
+    <h1>Support</h1>
+    <p>
+    You have 2 options, email <a href="mailto:help@virtuworks.com">help@virtuworks.com</a> or use the web interface at <a href="http://www.virtuworks.com/support">http://www.virtuworks.com/support</a></p>
+    
+</div>
+<!-- End Content -->
+<br></td>
+</tr>
+</tbody>
+</table>
+</td>
+
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr>
+<td style="background-color: ##ffffff; border-top: 1px solid ##999999;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="vertical-align: top; padding: 0px 20px 15px 20px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: Arial, Helvetica, sans-serif; text-align: left; font-size: 9px; color: ##717073; padding: 20px 0px 0px 0px;">
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; vertical-align: top;" width="33%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com">Visit VirtuWorks.com </a><br />Learn more about the services VirtuWorks can provide to improve your business.</td>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; padding: 0px 10px 0px 10px; vertical-align: top;" width="34%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/privacy-policy">Privacy Policy</a><br />VirtuWorks follows strict guidelines in protecting your privacy. Learn about our <a style="font-weight: bold; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/privacy-policy">Privacy Policy</a>.</td>
+<td style="font-family: Arial, Helvetica, sans-serif; font-size: 9px; text-align: left; color: ##1666af; vertical-align: top;" width="33%"><a style="font-weight: bold; text-transform: uppercase; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/contact/">Contact Us</a><br />Questions? For more information, <a style="font-weight: bold; text-decoration: underline; color: ##1666af;" href="http://www.virtuworks.com/contact/">contact us</a>.</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'HtmlBody', @ExchangeMailboxSetupLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @ExchangeMailboxSetupLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'Subject', N'Virtuworks Hosted Exchange Mailbox Setup')
+END
+GO
+
+
+DECLARE @ExchangeMailboxSetupLetterTextBody nvarchar(2500)
+
+Set @ExchangeMailboxSetupLetterTextBody = N'<ad:if test="#Email#">
+Hello #Account.DisplayName#,
+
+Thanks for choosing VirtuWorks as your Exchange hosting provider.
+</ad:if>
+<ad:if test="#not(PMM)#">
+User Accounts
+
+The following user accounts have been created for you.
+
+Username: #Account.UserPrincipalName#
+E-mail: #Account.PrimaryEmailAddress#
+<ad:if test="#PswResetUrl#">
+Password Reset Url: #PswResetUrl#
+</ad:if>
+</ad:if>
+
+=================================
+DNS
+=================================
+
+In order for us to accept mail for your domain, you will need to point your MX records to:
+
+<ad:foreach collection="#SmtpServers#" var="SmtpServer" index="i">#SmtpServer#</ad:foreach>
+
+=================================
+Webmail (OWA, Outlook Web Access)
+=================================
+
+https://mail.virtuworks.net/owa
+
+=================================
+Outlook (Windows Clients)
+=================================
+
+To configure Outlook 2010 to work with VirtuWorks servers, please reference:
+
+https://portal.virtuworks.net/whmcs/knowledgebase.php?action=displayarticle&id=2
+
+If you need to download and install the Outlook 2010 client:
+
+Outlook 2010 Download URL:
+32 Bit - http://www.virtuworks.net/downloads/Outlook2010-32bit.zip
+64 Bit - http://www.virtuworks.net/downloads/Outlook2010-64bit.zip
+KEY: HXGFV-DY3HM-4W2BQ-3R7KQ-K8P49
+
+=================================
+ActiveSync, iPhone, iPad
+=================================
+
+Server: #ActiveSyncServer#
+Domain: #SamDomain#
+SSL: must be checked
+Your username: #SamUsername#
+
+=================================
+Password Changes
+=================================
+
+Passwords can be changed at any time using Webmail or the Control Panel (https://controlpanel.virtuworks.net).
+
+
+=================================
+Control Panel
+=================================
+
+If you need to change the details of your account, you can easily do this using the Control Panel (https://controlpanel.virtuworks.net).
+
+
+=================================
+Support
+=================================
+
+You have 2 options, email help@virtuworks.com or use the web interface at http://www.virtuworks.com/contact/'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'ExchangeMailboxSetupLetter', N'TextBody', @ExchangeMailboxSetupLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @ExchangeMailboxSetupLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'ExchangeMailboxSetupLetter' AND [PropertyName]= N'TextBody'
+GO
+
+
+
+-- ORGANIZATION USER PASSWORD RESET TOKENS
+
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'AccessTokens')
+DROP TABLE AccessTokens
+GO
+CREATE TABLE AccessTokens
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	AccessTokenGuid UNIQUEIDENTIFIER NOT NULL,
+	ExpirationDate DATETIME NOT NULL,
+	AccountID INT NOT NULL ,
+	ItemId INT NOT NULL,
+	TokenType INT NOT NULL,
+	SmsResponse varchar(100)
+)
+GO
+
+ALTER TABLE [dbo].[AccessTokens]  WITH CHECK ADD  CONSTRAINT [FK_AccessTokens_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddAccessToken')
+DROP PROCEDURE AddAccessToken
+GO
+CREATE PROCEDURE [dbo].[AddAccessToken]
+(
+	@TokenID INT OUTPUT,
+	@AccessToken UNIQUEIDENTIFIER,
+	@ExpirationDate DATETIME,
+	@AccountID INT,
+	@ItemId INT,
+	@TokenType INT
+)
+AS
+INSERT INTO AccessTokens
+(
+	AccessTokenGuid,
+	ExpirationDate,
+	AccountID  ,
+	ItemId,
+	TokenType
+)
+VALUES
+(
+	@AccessToken  ,
+	@ExpirationDate ,
+	@AccountID,
+	@ItemId,
+	@TokenType
+)
+
+SET @TokenID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SetAccessTokenSmsResponse')
+DROP PROCEDURE SetAccessTokenSmsResponse
+GO
+CREATE PROCEDURE [dbo].[SetAccessTokenSmsResponse]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@SmsResponse varchar(100)
+)
+AS
+UPDATE [dbo].[AccessTokens] SET [SmsResponse] = @SmsResponse WHERE [AccessTokenGuid] = @AccessToken
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAccessToken')
+DROP PROCEDURE DeleteAccessToken
+GO
+CREATE PROCEDURE [dbo].[DeleteAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@TokenType INT
+)
+AS
+DELETE FROM AccessTokens
+WHERE AccessTokenGuid = @AccessToken AND TokenType = @TokenType
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExpiredAccessTokenTokens')
+DROP PROCEDURE DeleteExpiredAccessTokenTokens
+GO
+CREATE PROCEDURE [dbo].[DeleteExpiredAccessTokenTokens]
+AS
+DELETE FROM AccessTokens
+WHERE ExpirationDate < getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAccessTokenByAccessToken')
+DROP PROCEDURE GetAccessTokenByAccessToken
+GO
+CREATE PROCEDURE [dbo].[GetAccessTokenByAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER,
+	@TokenType INT
+)
+AS
+SELECT 
+	ID ,
+	AccessTokenGuid,
+	ExpirationDate,
+	AccountID,
+	ItemId,
+	TokenType,
+	SmsResponse
+	FROM AccessTokens 
+	Where AccessTokenGuid = @AccessToken AND ExpirationDate > getdate() AND TokenType = @TokenType
+GO
+
+
+-- ORGANIZATION SETTINGS
+
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeOrganizationSettings')
+BEGIN
+	CREATE TABLE ExchangeOrganizationSettings
+	(
+		ItemId INT NOT NULL,
+		SettingsName nvarchar(100)  NOT NULL,
+		Xml nvarchar(max) NOT NULL
+	);
+
+	ALTER TABLE [dbo].[ExchangeOrganizationSettings]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSettings_ExchangeOrganizations_ItemId] FOREIGN KEY([ItemId])
+	REFERENCES [dbo].[ExchangeOrganizations] ([ItemId])
+	ON DELETE CASCADE;
+END
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateExchangeOrganizationSettings')
+DROP PROCEDURE UpdateExchangeOrganizationSettings
+GO
+CREATE PROCEDURE [dbo].[UpdateExchangeOrganizationSettings]
+(
+	@ItemId INT ,
+	@SettingsName nvarchar(100) ,
+	@Xml nvarchar(max)
+)
+AS
+IF NOT EXISTS (SELECT * FROM [dbo].[ExchangeOrganizationSettings] WHERE [ItemId] = @ItemId AND [SettingsName]= @SettingsName )
+BEGIN
+INSERT [dbo].[ExchangeOrganizationSettings] ([ItemId], [SettingsName], [Xml]) VALUES (@ItemId, @SettingsName, @Xml)
+END
+ELSE
+UPDATE [dbo].[ExchangeOrganizationSettings] SET [Xml] = @Xml WHERE [ItemId] = @ItemId AND [SettingsName]= @SettingsName
+GO
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetExchangeOrganizationSettings')
+DROP PROCEDURE GetExchangeOrganizationSettings
+GO
+CREATE PROCEDURE [dbo].[GetExchangeOrganizationSettings]
+(
+	@ItemId INT ,
+	@SettingsName nvarchar(100)
+)
+AS
+SELECT 
+	ItemId,
+	SettingsName,
+	Xml
+
+FROM ExchangeOrganizationSettings 
+Where ItemId = @ItemId AND SettingsName = @SettingsName
+GO
+
+
+-- Exchange Account password column removed
+
+if exists(select * from sys.columns 
+            where Name = N'AccountPassword' and Object_ID = Object_ID(N'ExchangeAccounts'))
+begin
+  ALTER TABLE [ExchangeAccounts] DROP COLUMN [AccountPassword]
+end
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddExchangeAccount')
+DROP PROCEDURE AddExchangeAccount
+GO
+CREATE PROCEDURE [dbo].[AddExchangeAccount] 
+(
+	@AccountID int OUTPUT,
+	@ItemID int,
+	@AccountType int,
+	@AccountName nvarchar(300),
+	@DisplayName nvarchar(300),
+	@PrimaryEmailAddress nvarchar(300),
+	@MailEnabledPublicFolder bit,
+	@MailboxManagerActions varchar(200),
+	@SamAccountName nvarchar(100),
+	@MailboxPlanId int,
+	@SubscriberNumber nvarchar(32)
+)
+AS
+
+INSERT INTO ExchangeAccounts
+(
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	MailboxPlanId,
+	SubscriberNumber,
+	UserPrincipalName
+)
+VALUES
+(
+	@ItemID,
+	@AccountType,
+	@AccountName,
+	@DisplayName,
+	@PrimaryEmailAddress,
+	@MailEnabledPublicFolder,
+	@MailboxManagerActions,
+	@SamAccountName,
+	@MailboxPlanId,
+	@SubscriberNumber,
+	@PrimaryEmailAddress
+)
+
+SET @AccountID = SCOPE_IDENTITY()
+
+RETURN
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SearchExchangeAccount')
+DROP PROCEDURE SearchExchangeAccount
+GO
+CREATE PROCEDURE [dbo].[SearchExchangeAccount]
+(
+      @ActorID int,
+      @AccountType int,
+      @PrimaryEmailAddress nvarchar(300)
+)
+AS
+
+DECLARE @PackageID int
+DECLARE @ItemID int
+DECLARE @AccountID int
+
+SELECT
+      @AccountID = AccountID,
+      @ItemID = ItemID
+FROM ExchangeAccounts
+WHERE PrimaryEmailAddress = @PrimaryEmailAddress
+AND AccountType = @AccountType
+
+
+-- check space rights
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	AccountID,
+	ItemID,
+	@PackageID AS PackageID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	SubscriberNumber,
+	UserPrincipalName
+FROM ExchangeAccounts
+WHERE AccountID = @AccountID
+
+RETURN 
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchObject')
+DROP PROCEDURE GetSearchObject
+GO
+CREATE PROCEDURE [dbo].[GetSearchObject]
+(
+	@ActorID int,
+	@UserID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@StatusID int,
+	@RoleID int,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int = 0,
+	@Recursive bit,
+	@ColType nvarchar(50) = '',
+	@FullType nvarchar(50) = ''
+)
+AS
+
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+DECLARE @columnUsername nvarchar(20)  
+SET @columnUsername = 'Username'
+
+DECLARE @columnEmail nvarchar(20)  
+SET @columnEmail = 'Email'
+
+DECLARE @columnCompanyName nvarchar(20)  
+SET @columnCompanyName = 'CompanyName'
+
+DECLARE @columnFullName nvarchar(20)  
+SET @columnFullName = 'FullName'
+
+DECLARE @curUsers cursor
+DECLARE @curSpace cursor
+
+DECLARE @sqlSpace nvarchar(2000)
+DECLARE @sqlUsers nvarchar(2000)
+DECLARE @sqlReturn nvarchar(4000)
+
+IF @FilterColumn = '' AND @FilterValue <> ''
+SET @FilterColumn = 'TextSearch'
+
+SET @sqlUsers = '
+DECLARE @HasUserRights bit
+SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
+DECLARE @Users TABLE
+(
+	ItemPosition int IDENTITY(0,1),
+	UserID int
+)
+INSERT INTO @Users (UserID)
+SELECT
+	U.UserID
+FROM UsersDetailed AS U
+WHERE 
+	U.UserID <> @UserID AND U.IsPeer = 0 AND
+	(
+		(@Recursive = 0 AND OwnerID = @UserID) OR
+		(@Recursive = 1 AND dbo.CheckUserParent(@UserID, U.UserID) = 1)
+	)
+	AND ((@StatusID = 0) OR (@StatusID > 0 AND U.StatusID = @StatusID))
+	AND ((@RoleID = 0) OR (@RoleID > 0 AND U.RoleID = @RoleID))
+	AND @HasUserRights = 1  
+SET @curValue = cursor local for
+SELECT
+	U.ItemID,
+	U.TextSearch,
+	U.ColumnType,
+	''Users'' as FullType,
+	0 as PackageID,
+	0 as AccountID
+FROM @Users AS TU
+INNER JOIN 
+(
+SELECT ItemID, TextSearch, ColumnType
+FROM(
+SELECT U0.UserID as ItemID, U0.Username as TextSearch, @columnUsername as ColumnType
+FROM dbo.Users AS U0
+UNION
+SELECT U1.UserID as ItemID, U1.Email as TextSearch, @columnEmail as ColumnType                      
+FROM dbo.Users AS U1
+UNION
+SELECT U2.UserID as ItemID, U2.CompanyName as TextSearch, @columnCompanyName as ColumnType 
+FROM dbo.Users AS U2
+UNION
+SELECT U3.UserID as ItemID, U3.FirstName + '' '' + U3.LastName as TextSearch, @columnFullName as ColumnType 
+FROM dbo.Users AS U3) as U
+WHERE TextSearch<>'' '' OR ISNULL(TextSearch, 0) > 0
+)
+ AS U ON TU.UserID = U.ItemID'
+
+SET @sqlUsers = @sqlUsers + ' open @curValue'
+
+exec sp_executesql @sqlUsers, N'@UserID int, @FilterValue nvarchar(50), @ActorID int, @Recursive bit, @StatusID int, @RoleID int, @columnUsername nvarchar(20), @columnEmail nvarchar(20), @columnCompanyName nvarchar(20), @columnFullName nvarchar(20), @curValue cursor output',
+@UserID, @FilterValue, @ActorID, @Recursive, @StatusID, @RoleID, @columnUsername, @columnEmail, @columnCompanyName, @columnFullName, @curValue=@curUsers output
+
+SET @sqlSpace = '
+	DECLARE @ItemsService TABLE
+	(
+		ItemID int
+	)
+	INSERT INTO @ItemsService (ItemID)
+	SELECT
+		SI.ItemID
+	FROM ServiceItems AS SI
+	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+	DECLARE @ItemsDomain TABLE
+	(
+		ItemID int
+	)
+	INSERT INTO @ItemsDomain (ItemID)
+	SELECT
+		D.DomainID
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON P.PackageID = D.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+		
+	SET @curValue = cursor local for
+	SELECT
+		
+		SI.ItemID as ItemID,
+		SI.ItemName as TextSearch,
+		STYPE.DisplayName as ColumnType,
+		STYPE.DisplayName as FullType,
+		SI.PackageID as PackageID,
+		0 as AccountID
+	FROM @ItemsService AS I
+	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+	INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
+	WHERE STYPE.Searchable = 1
+	UNION
+	SELECT		
+		D.DomainID AS ItemID,
+		D.DomainName as TextSearch,
+		''Domain'' as ColumnType,
+		''Domain'' as FullType,
+		D.PackageID as PackageID,
+		0 as AccountID
+	FROM @ItemsDomain AS I
+	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
+	WHERE D.IsDomainPointer=0
+	UNION
+	SELECT
+		EA.ItemID AS ItemID,
+		EA.AccountName as TextSearch,
+		''ExchangeAccount'' as ColumnType,
+		''ExchangeAccount'' as FullType,
+		SI2.PackageID as PackageID,
+		EA.AccountID as AccountID
+	FROM @ItemsService AS I2
+	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
+	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
+';
+	
+SET @sqlSpace = @sqlSpace + ' open @curValue'
+
+exec sp_executesql @sqlSpace, N'@UserID int, @FilterValue nvarchar(50),  @ActorID int, @curValue cursor output',
+@UserID, @FilterValue, @ActorID, @curValue=@curSpace output
+
+SET @sqlReturn = '
+DECLARE @ItemID int
+DECLARE	@TextSearch nvarchar(500)
+DECLARE	@ColumnType nvarchar(50)
+DECLARE	@FullType nvarchar(50)
+DECLARE @PackageID int
+DECLARE @AccountID int
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @ItemsAll TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int,
+		TextSearch nvarchar(500),
+		ColumnType nvarchar(50),
+		FullType nvarchar(50),
+		PackageID int,
+		AccountID int
+	)
+
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+WHILE @@FETCH_STATUS = 0
+BEGIN
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+END
+
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+WHILE @@FETCH_STATUS = 0
+BEGIN
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+END
+
+DECLARE @ItemsReturn TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int,
+		TextSearch nvarchar(500),
+		ColumnType nvarchar(50),
+		FullType nvarchar(50),
+		PackageID int,
+		AccountID int
+	)
+INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)	
+SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+FROM @ItemsAll AS IA WHERE (1 = 1) '
+
+
+IF @ColType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.ColumnType in ( ' + @ColType + ' ) ';
+
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
+
+IF @FilterValue <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
+SET @sqlReturn = @sqlReturn + '
+SELECT COUNT(ItemID) FROM @ItemsReturn;
+SELECT DISTINCT(ColumnType) FROM @ItemsReturn WHERE (1 = 1) ';
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
+SET @sqlReturn = @sqlReturn + '; ';
+SET @sqlReturn = @sqlReturn + '
+SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+FROM @ItemsReturn AS IR WHERE (1 = 1)
+'
+
+IF  @MaximumRows > 0
+SET @sqlReturn = @sqlReturn + ' AND IR.ItemPosition BETWEEN @StartRow AND @EndRow';
+
+exec sp_executesql @sqlReturn, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curSpaceValue cursor, @curUsersValue cursor',
+@StartRow, @MaximumRows, @FilterValue, @curSpace, @curUsers
+
+CLOSE @curSpace
+DEALLOCATE @curSpace
+CLOSE @curUsers
+DEALLOCATE @curUsers
+RETURN

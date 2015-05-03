@@ -52,11 +52,13 @@ namespace WebsitePanel.Portal
         {
             rdsServers = ES.Services.RDS.GetRdsServersPaged("", filterValue, sortColumn, startRowIndex, maximumRows);
 
-            return rdsServers.Servers;
-            //return new RdsServer[] { new RdsServer { Name = "rds.1.server", FqdName = "", Address = "127.0.0.1" },
-            //                         new RdsServer { Name = "rds.2.server", FqdName = "", Address = "127.0.0.2" },
-            //                         new RdsServer { Name = "rds.3.server", FqdName = "", Address = "127.0.0.3" },
-            //                         new RdsServer { Name = "rds.4.server", FqdName = "", Address = "127.0.0.4" }};
+            foreach (var rdsServer in rdsServers.Servers)
+            {
+                rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(null, rdsServer.FqdName);
+                rdsServer.SslAvailable = ES.Services.RDS.GetRdsCertificateByItemId(rdsServer.ItemId) != null;
+            }
+
+            return rdsServers.Servers;            
         }
 
         public int GetOrganizationRdsServersPagedCount(int itemId, string filterValue)
@@ -71,9 +73,9 @@ namespace WebsitePanel.Portal
             return rdsServers.Servers;
         }
 
-        public RdsServer[] GetFreeRDSServers()
+        public RdsServer[] GetFreeRDSServers(int packageId)
         {
-            return ES.Services.RDS.GetFreeRdsServersPaged("", "", "", 0, 1000).Servers;
+            return ES.Services.RDS.GetFreeRdsServersPaged(packageId, "", "", "", 0, 1000).Servers;
         }
 
         #endregion

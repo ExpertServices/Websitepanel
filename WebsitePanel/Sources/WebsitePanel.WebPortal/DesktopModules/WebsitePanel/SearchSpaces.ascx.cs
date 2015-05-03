@@ -77,7 +77,7 @@ namespace WebsitePanel.Portal
 
                 // bind filter
                 Utils.SelectListItem(ddlItemType, Request["ItemTypeID"]);
-                txtFilterValue.Text = Request["Query"];
+                tbSearch.Text = Request["Query"];
             }
         }
 
@@ -119,7 +119,9 @@ namespace WebsitePanel.Portal
 
         protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
         {
-            string query = txtFilterValue.Text.Trim().Replace("%", "");
+            string query = tbSearchText.Text.Trim().Replace("%", "");
+            if (query.Length == 0)
+                query = tbSearch.Text.Trim().Replace("%", "");
 
             Response.Redirect(NavigateURL(
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(),

@@ -317,6 +317,15 @@ namespace WebsitePanel.EnterpriseServer
                 sortColumn, startRow, maximumRows);
         }
 
+        //TODO START
+        public static DataSet GetSearchObject(int userId, string filterColumn, string filterValue,
+            int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType)
+        {
+            return DataProvider.GetSearchObject(SecurityContext.User.UserId, userId,
+                filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, fullType, false);
+        }
+        //TODO END
+
         public static DataSet GetPackageQuotas(int packageId)
         {
             return DataProvider.GetPackageQuotas(SecurityContext.User.UserId, packageId);
@@ -488,6 +497,7 @@ namespace WebsitePanel.EnterpriseServer
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS2012, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                                 }
                             }
@@ -711,6 +721,11 @@ namespace WebsitePanel.EnterpriseServer
                 if (Utils.ParseBool(vpsSettings["AutoAssignExternalIP"], true))
                     ServerController.AllocateMaximumPackageIPAddresses(packageId, ResourceGroups.VPS, IPAddressPool.VpsExternalNetwork);
 
+                // allocate "VPS" IP addresses
+                int vps2012ServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.VPS2012);
+                StringDictionary vps2012Settings = ServerController.GetServiceSettings(vps2012ServiceId);
+                if (Utils.ParseBool(vps2012Settings["AutoAssignExternalIP"], true))
+                    ServerController.AllocateMaximumPackageIPAddresses(packageId, ResourceGroups.VPS2012, IPAddressPool.VpsExternalNetwork);
 
                 // allocate "VPSForPC" IP addresses
                 int vpsfcpServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.VPSForPC);
@@ -778,7 +793,7 @@ namespace WebsitePanel.EnterpriseServer
                 // update package
                 result.ExceedingQuotas = DataProvider.UpdatePackage(SecurityContext.User.UserId,
                     package.PackageId, package.PlanId, package.PackageName, package.PackageComments, package.StatusId,
-                    package.PurchaseDate, package.OverrideQuotas, quotasXml);
+                    package.PurchaseDate, package.OverrideQuotas, quotasXml, package.DefaultTopPackage);
 
                 if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                     result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
@@ -1380,6 +1395,14 @@ namespace WebsitePanel.EnterpriseServer
             return CreateServiceItem(dvItem[0], dsItem.Tables[1].DefaultView);
         }
 
+        public static int GetServiceItemsCountByNameAndServiceId(int serviceId, string groupName, string itemName, Type itemType)
+        {
+            string itemTypeName = ObjectUtils.GetTypeFullName(itemType);
+
+            return DataProvider.GetServiceItemsCountByNameAndServiceId(SecurityContext.User.UserId,
+                serviceId, groupName, itemName, itemTypeName);
+        }
+
         public static bool CheckServiceItemExists(string itemName, Type itemType)
         {
             return CheckServiceItemExists(itemName, null, itemType);
@@ -1673,6 +1696,18 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
+                // VPS2012
+                else if (String.Compare(PackageSettings.VIRTUAL_PRIVATE_SERVERS_2012, settingsName, true) == 0)
+                {
+                    // load Exchange service settings
+                    int vpsServiceId = GetPackageServiceId(packageId, ResourceGroups.VPS2012);
+                    if (vpsServiceId > 0)
+                    {
+                        StringDictionary vpsSettings = ServerController.GetServiceSettings(vpsServiceId);
+                        settings["HostnamePattern"] = vpsSettings["HostnamePattern"];
+                    }
+                }
+
                 //vpforCP
                 else if (String.Compare(PackageSettings.VIRTUAL_PRIVATE_SERVERS_FOR_PRIVATE_CLOUD, settingsName, true) == 0)
                 {
@@ -1740,6 +1775,21 @@ namespace WebsitePanel.EnterpriseServer
             //{
             //    AuditLog.AddRecord(record);
             //}
+        }
+
+        public static bool SetDefaultTopPackage(int userId, int packageId) {
+            List<PackageInfo> lpi = GetPackages(userId);
+            foreach(PackageInfo pi in lpi) {
+                if(pi.DefaultTopPackage) {
+                    pi.DefaultTopPackage = false;
+                    UpdatePackage(pi);
+                }
+                if(pi.PackageId == packageId) {
+                    pi.DefaultTopPackage = true;
+                    UpdatePackage(pi);
+                }
+            }
+            return true;
         }
 
         #endregion

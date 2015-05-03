@@ -61,6 +61,9 @@ namespace WebsitePanel.Providers.HostedSolution
         private int maxSharePointStorage;
         private int warningSharePointStorage;
 
+        private int maxSharePointEnterpriseStorage;
+        private int warningSharePointEnterpriseStorage;
+
         #endregion
  
         [Persistent]
@@ -78,6 +81,20 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return warningSharePointStorage; }
             set { warningSharePointStorage = value; }
+        }
+
+        [Persistent]
+        public int MaxSharePointEnterpriseStorage
+        {
+            get { return maxSharePointEnterpriseStorage; }
+            set { maxSharePointEnterpriseStorage = value; }
+        }
+
+        [Persistent]
+        public int WarningSharePointEnterpriseStorage
+        {
+            get { return warningSharePointEnterpriseStorage; }
+            set { warningSharePointEnterpriseStorage = value; }
         }
 
         [Persistent]

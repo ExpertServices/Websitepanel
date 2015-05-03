@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Xml;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +44,19 @@ namespace WebsitePanel.EnterpriseServer
 		public const string SETUP_SETTINGS = "SetupSettings";
         public const string WPI_SETTINGS = "WpiSettings";
         public const string FILEMANAGER_SETTINGS = "FileManagerSettings";
-        
+        public const string PACKAGE_DISPLAY_SETTINGS = "PackageDisplaySettings";
+        public const string RDS_SETTINGS = "RdsSettings";
+        public const string WEBDAV_PORTAL_SETTINGS = "WebdavPortalSettings";
+        public const string TWILIO_SETTINGS = "TwilioSettings";
+
+
+        //Keys
+        public const string TWILIO_ACCOUNTSID_KEY = "TwilioAccountSid";
+        public const string TWILIO_AUTHTOKEN_KEY = "TwilioAuthToken";
+        public const string TWILIO_PHONEFROM_KEY = "TwilioPhoneFrom";
+
+        public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPswResetEnabled";
+
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";
         public const string FEED_ULS_KEY = "FeedUrls";
@@ -95,7 +108,25 @@ namespace WebsitePanel.EnterpriseServer
 			}
 		}
 
-		public int GetInt(string settingName)
+	    public bool Contains(string settingName)
+	    {
+	        return Settings.AllKeys.Any(x => x.ToLowerInvariant() == (settingName ?? string.Empty).ToLowerInvariant());
+	    }
+
+	    public T GetValueOrDefault<T>(string settingName, T defaultValue)
+	    {
+	        try
+	        {
+                return (T)Convert.ChangeType(Settings[settingName], typeof(T));
+	        }
+	        catch
+	        {
+	        }
+
+	        return defaultValue;
+	    }
+
+	    public int GetInt(string settingName)
 		{
 			return Int32.Parse(Settings[settingName]);
 		}

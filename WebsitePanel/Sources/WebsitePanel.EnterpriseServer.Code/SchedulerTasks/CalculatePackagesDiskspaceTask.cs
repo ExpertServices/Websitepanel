@@ -167,7 +167,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
-                    if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
+                    if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                     {
                         SharePointSiteDiskSpace[] sharePointSiteDiskSpaces =
                             HostedSharePointServerController.CalculateSharePointSitesDiskSpace(org.Id, out res);
@@ -179,6 +179,20 @@ namespace WebsitePanel.EnterpriseServer
                             }
                         }
                     }
+
+                    if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
+                    {
+                        SharePointSiteDiskSpace[] sharePointSiteDiskSpaces =
+                            HostedSharePointServerEntController.CalculateSharePointSitesDiskSpace(org.Id, out res);
+                        if (res == 0)
+                        {
+                            foreach (SharePointSiteDiskSpace currecnt in sharePointSiteDiskSpaces)
+                            {
+                                size += currecnt.DiskSpace;
+                            }
+                        }
+                    }
+
                     ServiceProviderItemDiskSpace tmp = new ServiceProviderItemDiskSpace();
                     tmp.ItemId = item.Id;
                     tmp.DiskSpace = size;

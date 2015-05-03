@@ -1,14 +1,15 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDSCollectionApps.ascx.cs" Inherits="WebsitePanel.Portal.RDS.UserControls.RDSCollectionApps" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="../../UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 
 <asp:UpdatePanel ID="RDAppsUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
 	<div class="FormButtonsBarClean">
-		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button2"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
-		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button2" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
+		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
+		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>        
 	</div>
 	<asp:GridView ID="gvApps" runat="server" meta:resourcekey="gvApps" AutoGenerateColumns="False"
-		Width="600px" CssSelectorClass="NormalGridView"
+		Width="600px" CssSelectorClass="NormalGridView" OnRowCommand="gvApps_RowCommand"
 		DataKeyNames="Alias">
 		<Columns>
 			<asp:TemplateField>
@@ -23,16 +24,19 @@
 			<asp:TemplateField meta:resourcekey="gvAppName" HeaderText="gvAppName">
 				<ItemStyle Width="90%" Wrap="false">
 				</ItemStyle>
-				<ItemTemplate>
-                    <asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
+				<ItemTemplate>                    
+                    <asp:LinkButton id="lnkDisplayName" meta:resourcekey="lnkDisplayName" runat="server" Text='<%# Eval("DisplayName")%>' CommandName="EditApplication" CommandArgument='<%# Eval("Alias") %>' OnClientClick="ShowProgressDialog('Loading ...');return true;"/>
                     <asp:HiddenField ID="hfFilePath" runat="server"  Value='<%# Eval("FilePath") %>'/>
+                    <asp:HiddenField ID="hfRequiredCommandLine" runat="server"  Value='<%# Eval("RequiredCommandLine") %>'/>
+                    <asp:HiddenField ID="hfUsers" runat="server"  Value='<%# Eval("Users") != null ? "New" : null %>'/>
 				</ItemTemplate>
-			</asp:TemplateField>
+			</asp:TemplateField>  
             <asp:TemplateField>
+                <ItemStyle Width="20px" />
                 <ItemTemplate>
-                    <asp:hyperlink id="lnkUsers" meta:resourcekey="lnkUsers" runat="server" NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("DisplayName").ToString()) %>'>Users</asp:hyperlink>
+                    <asp:Image ID="UsersImage" ImageUrl='<%# PortalUtils.GetThemedImage("Exchange/accounting_mail_16.png")%>' runat="server" Visible='<%# Eval("Users") != null %>'/>
                 </ItemTemplate>
-            </asp:TemplateField>
+            </asp:TemplateField>          
 		</Columns>
 	</asp:GridView>
     <br />
@@ -74,6 +78,7 @@
 								<ItemTemplate>
 									<asp:Literal ID="litName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
                                     <asp:HiddenField ID="hfFilePathPopup" runat="server" Value='<%# Eval("FilePath") %>'/>
+                                    <asp:HiddenField ID="hfRequiredCommandLinePopup" runat="server"  Value='<%# Eval("RequiredCommandLine") %>'/>
 								</ItemTemplate>
 							</asp:TemplateField>
 						</Columns>

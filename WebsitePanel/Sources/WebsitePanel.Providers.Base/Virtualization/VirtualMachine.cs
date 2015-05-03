@@ -71,6 +71,10 @@ namespace WebsitePanel.Providers.Virtualization
         [Persistent]
         public int RamSize { get; set; }
         public int RamUsage { get; set; }
+
+        [Persistent]
+        public DynamicMemory DynamicMemory { get; set; }
+
         [Persistent]
         public int HddSize { get; set; }
         public LogicalDisk[] HddLogicalDisks { get; set; }
@@ -123,5 +127,23 @@ namespace WebsitePanel.Providers.Virtualization
 
         // for GetVirtualMachineEx used in import method
         public VirtualMachineNetworkAdapter[] Adapters { get; set; }
+
+        [Persistent]
+        public VirtualHardDiskInfo[] Disks { get; set; }
+
+        [Persistent]
+        public string Status { get; set; }
+
+        public ReplicationState ReplicationState { get; set; }
+
+        [Persistent]
+        public int Generation { get; set; }
+
+        [Persistent]
+        public int ProcessorCount { get; set; }
+
+        [Persistent]
+        public string ParentSnapshotId { get; set; }
+
     }
 }

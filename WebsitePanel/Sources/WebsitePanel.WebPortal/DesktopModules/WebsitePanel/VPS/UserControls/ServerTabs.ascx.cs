@@ -215,9 +215,14 @@ namespace WebsitePanel.Portal.VPS.UserControls
                 gauge.Visible = false;
                 if (e.Item.ItemIndex == task.GetLogs().Count - 1)
                 {
-                    gauge.Visible = true;
-                    gauge.Total = task.IndicatorMaximum;
-                    gauge.Progress = task.IndicatorCurrent;
+                    if (task.IndicatorCurrent == -1)
+                        litRecord.Text += "...";
+                    else
+                    {
+                        gauge.Visible = true;
+                        gauge.Total = task.IndicatorMaximum;
+                        gauge.Progress = task.IndicatorCurrent;
+                    }
                 }
             }
         }

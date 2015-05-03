@@ -6,6 +6,10 @@
 
             maxHeight = Math.max.apply(null, heights);
 
+        if (maxHeight < 135) {
+            maxHeight = 135;
+        }
+
         $(".element-container").height(maxHeight);
     });
 }

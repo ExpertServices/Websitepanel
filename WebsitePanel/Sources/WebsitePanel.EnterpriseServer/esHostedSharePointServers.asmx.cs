@@ -71,7 +71,7 @@ namespace WebsitePanel.EnterpriseServer
 		[WebMethod]
 		public int[] GetSupportedLanguages(int packageId)
 		{
-			return HostedSharePointServerController.GetSupportedLanguages(packageId);
+			return HostedSharePointServerController.GetSupportedLanguages(packageId);            
 		}
 
 		/// <summary>

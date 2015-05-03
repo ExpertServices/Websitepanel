@@ -76,6 +76,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public SystemFile[] GetFoldersWithoutFrsm(string organizationId, WebDavSetting[] settings)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFolders", ProviderSettings.ProviderName);
+                SystemFile[] result = EnterpriseStorageProvider.GetFoldersWithoutFrsm(organizationId, settings);
+                Log.WriteEnd("'{0}' GetFolders", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFolders", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public SystemFile GetFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try
@@ -171,6 +188,23 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' Search", ProviderSettings.ProviderName);
+                var searchResults = EnterpriseStorageProvider.Search(organizationId, searchPaths, searchText, userPrincipalName, recursive);
+                Log.WriteEnd("'{0}' Search", ProviderSettings.ProviderName);
+                return searchResults;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' Search", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

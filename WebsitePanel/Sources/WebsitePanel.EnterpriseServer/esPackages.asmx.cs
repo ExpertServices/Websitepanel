@@ -134,6 +134,16 @@ namespace WebsitePanel.EnterpriseServer
                 sortColumn, startRow, maximumRows);
         }
 
+        //TODO START
+
+        [WebMethod]
+        public DataSet GetSearchObject(int userId, string filterColumn, string filterValue,
+            int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType)
+        {
+            return PackageController.GetSearchObject(userId, filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, fullType);
+        }
+        //TODO END
+
         [WebMethod]
         public DataSet GetPackagesPaged(int userId, string filterColumn, string filterValue,
                 string sortColumn, int startRow, int maximumRows)
@@ -260,6 +270,11 @@ namespace WebsitePanel.EnterpriseServer
         public int UpdatePackageSettings(PackageSettings settings)
         {
             return PackageController.UpdatePackageSettings(settings);
+        }
+
+        [WebMethod]
+        public bool SetDefaultTopPackage(int userId, int packageId) {
+            return PackageController.SetDefaultTopPackage(userId, packageId);
         }
 
         #endregion
