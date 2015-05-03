@@ -43,6 +43,7 @@ namespace WebsitePanel.WebPortal
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
                     obj["FullType"] = "Space";
+                    obj["AccountID"] = row["AccountID"].ToString();
                     dataList.Add(obj);
                 }
 
@@ -67,6 +68,7 @@ namespace WebsitePanel.WebPortal
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
                     obj["FullType"] = row["FullType"].ToString();
+                    obj["AccountID"] = row["AccountID"].ToString();
                     dataList.Add(obj);
                 }
 

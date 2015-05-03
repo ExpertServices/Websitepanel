@@ -145,16 +145,16 @@ namespace WebsitePanel.EnterpriseServer
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "GetSearchObject",
-                new SqlParameter("@actorId", actorId),
+                new SqlParameter("@ActorId", actorId),
                 new SqlParameter("@UserID", userId),
                 new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
                 new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
-                new SqlParameter("@statusId", statusId),
-                new SqlParameter("@roleId", roleId),
+                new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@RoleId", roleId),
                 new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
-                new SqlParameter("@startRow", startRow),
-                new SqlParameter("@maximumRows", maximumRows),
-                new SqlParameter("@recursive", recursive),
+                new SqlParameter("@StartRow", startRow),
+                new SqlParameter("@MaximumRows", maximumRows),
+                new SqlParameter("@Recursive", recursive),
                 new SqlParameter("@ColType", colType),
                 new SqlParameter("@FullType", fullType));
         }

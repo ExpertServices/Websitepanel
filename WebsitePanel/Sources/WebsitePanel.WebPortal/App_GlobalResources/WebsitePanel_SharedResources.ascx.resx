@@ -4121,6 +4121,9 @@
   <data name="Error.VPS_REQUIRED" xml:space="preserve">
     <value>Please fill required fields</value>
   </data>
+  <data name="Error.VPS_QUOTA_REPLICATION_ENABLED" xml:space="preserve">
+    <value>Replications is not allowed in the hosting plan</value>
+  </data>
   
   <data name="VPS.VPS_JOB_FAILED_ERROR" xml:space="preserve">
     <value>Job execution failed with the following code: {1}</value>
@@ -5243,6 +5246,9 @@
   </data>
   <data name="Quota.VPS2012.StartShutdownAllowed" xml:space="preserve">
     <value>Allow user to Start, Turn off VPS</value>
+  </data>
+  <data name="Quota.VPS2012.ReplicationEnabled" xml:space="preserve">
+    <value>Allow user to Replication</value>
   </data>
   <data name="Error.CreateCheckPointError" xml:space="preserve">
     <value>Error creating CheckPoint</value>

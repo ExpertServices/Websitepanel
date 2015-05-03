@@ -11,6 +11,7 @@
             $("#<%= tbSearchText.ClientID %>").val('');
             $("#<%= tbObjectId.ClientID %>").val('');
             $("#<%= tbPackageId.ClientID %>").val('');
+            $("#<%= tbAccountId.ClientID %>").val('');
         }
     });
 
@@ -43,6 +44,7 @@
                 $("#<%= tbSearchText.ClientID %>").val(item.code.TextSearch);
                 $("#<%= tbObjectId.ClientID %>").val(item.code.ItemID);
                 $("#<%= tbPackageId.ClientID %>").val(item.code.PackageID);
+                $("#<%= tbAccountId.ClientID %>").val(item.code.AccountID);
                 $("#<%= ImageButton1.ClientID %>").trigger("click");
             }
         });
@@ -89,6 +91,12 @@
                         </asp:TextBox>
                         <asp:TextBox
                             ID="tbPackageId"
+                            runat="server"
+                            type="hidden"
+                        >
+                        </asp:TextBox>
+                        <asp:TextBox
+                            ID="tbAccountId"
                             runat="server"
                             type="hidden"
                         >

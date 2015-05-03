@@ -8921,6 +8921,12 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaID] = '572')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (572, 33, 20, N'VPS2012.ReplicationEnabled', N'Allow user to Replication', 1, 0, NULL, NULL)
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
 BEGIN
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 33, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV2012R2', 1)
@@ -10866,7 +10872,7 @@ DECLARE @curSpace cursor
 
 DECLARE @sqlSpace nvarchar(2000)
 DECLARE @sqlUsers nvarchar(2000)
-DECLARE @sqlReturn nvarchar(2000)
+DECLARE @sqlReturn nvarchar(4000)
 
 IF @FilterColumn = '' AND @FilterValue <> ''
 SET @FilterColumn = 'TextSearch'
@@ -10898,7 +10904,8 @@ SELECT
 	U.TextSearch,
 	U.ColumnType,
 	''Users'' as FullType,
-	0 as PackageID
+	0 as PackageID,
+	0 as AccountID
 FROM @Users AS TU
 INNER JOIN 
 (
@@ -10957,7 +10964,8 @@ SET @sqlSpace = '
 		SI.ItemName as TextSearch,
 		STYPE.DisplayName as ColumnType,
 		STYPE.DisplayName as FullType,
-		SI.PackageID as PackageID
+		SI.PackageID as PackageID,
+		0 as AccountID
 	FROM @ItemsService AS I
 	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
 	INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
@@ -10968,10 +10976,23 @@ SET @sqlSpace = '
 		D.DomainName as TextSearch,
 		''Domain'' as ColumnType,
 		''Domain'' as FullType,
-		D.PackageID as PackageID
+		D.PackageID as PackageID,
+		0 as AccountID
 	FROM @ItemsDomain AS I
 	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
-	WHERE D.IsDomainPointer=0'
+	WHERE D.IsDomainPointer=0
+	UNION
+	SELECT
+		EA.ItemID AS ItemID,
+		EA.AccountName as TextSearch,
+		''ExchangeAccount'' as ColumnType,
+		''ExchangeAccount'' as FullType,
+		SI2.PackageID as PackageID,
+		EA.AccountID as AccountID
+	FROM @ItemsService AS I2
+	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
+	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
+';
 	
 SET @sqlSpace = @sqlSpace + ' open @curValue'
 
@@ -10984,6 +11005,7 @@ DECLARE	@TextSearch nvarchar(500)
 DECLARE	@ColumnType nvarchar(50)
 DECLARE	@FullType nvarchar(50)
 DECLARE @PackageID int
+DECLARE @AccountID int
 DECLARE @EndRow int
 SET @EndRow = @StartRow + @MaximumRows
 DECLARE @ItemsAll TABLE
@@ -10993,23 +11015,24 @@ DECLARE @ItemsAll TABLE
 		TextSearch nvarchar(500),
 		ColumnType nvarchar(50),
 		FullType nvarchar(50),
-		PackageID int
+		PackageID int,
+		AccountID int
 	)
 
-FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID)
-FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 END
 
-FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID)
-FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 END
 
 DECLARE @ItemsReturn TABLE
@@ -11019,14 +11042,22 @@ DECLARE @ItemsReturn TABLE
 		TextSearch nvarchar(500),
 		ColumnType nvarchar(50),
 		FullType nvarchar(50),
-		PackageID int
+		PackageID int,
+		AccountID int
 	)
-INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID)	
-SELECT ItemID, TextSearch, ColumnType, FullType, PackageID
-FROM @ItemsAll AS IA'
+INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)	
+SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+FROM @ItemsAll AS IA WHERE (1 = 1) '
+
+
+IF @ColType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.ColumnType in ( ' + @ColType + ' ) ';
+
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
 
 IF @FilterValue <> ''
-SET @sqlReturn = @sqlReturn + ' WHERE IA.' + @FilterColumn + ' LIKE @FilterValue '
+SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
 
 IF @SortColumn <> '' AND @SortColumn IS NOT NULL
 SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
@@ -11037,18 +11068,12 @@ IF @FullType <> ''
 SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
 SET @sqlReturn = @sqlReturn + '; ';
 SET @sqlReturn = @sqlReturn + '
-SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID
+SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
 FROM @ItemsReturn AS IR WHERE (1 = 1)
 '
 
 IF  @MaximumRows > 0
 SET @sqlReturn = @sqlReturn + ' AND IR.ItemPosition BETWEEN @StartRow AND @EndRow';
-
-IF @ColType <> ''
-SET @sqlReturn = @sqlReturn + ' AND ColumnType in ( ' + @ColType + ' ) ';
-
-IF @FullType <> ''
-SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
 
 exec sp_executesql @sqlReturn, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curSpaceValue cursor, @curUsersValue cursor',
 @StartRow, @MaximumRows, @FilterValue, @curSpace, @curUsers
@@ -11058,4 +11083,3 @@ DEALLOCATE @curSpace
 CLOSE @curUsers
 DEALLOCATE @curUsers
 RETURN
-

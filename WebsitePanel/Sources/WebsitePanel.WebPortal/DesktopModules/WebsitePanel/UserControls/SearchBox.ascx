@@ -8,6 +8,7 @@
                 $("#tbSearchText").val('');
                 $("#tbObjectId").val('');
                 $("#tbPackageId").val('');
+                $("#tbAccountId").val('');
             }
         });
 
@@ -40,6 +41,7 @@
                 $("#tbSearchText").val(item.code.TextSearch);
                 $("#tbObjectId").val(item.code.ItemID);
                 $("#tbPackageId").val(item.code.PackageID);
+                $("#tbAccountId").val(item.code.AccountID);
                 $("#<%= cmdSearch.ClientID %>").trigger("click");
             }
         });
@@ -92,6 +94,13 @@
                                 </asp:TextBox>
                                 <asp:TextBox
                                     ID="tbPackageId"
+                                    ClientIDMode="Static"
+                                    runat="server"
+                                    type="hidden"
+                                >
+                                </asp:TextBox>
+                                <asp:TextBox
+                                    ID="tbAccountId"
                                     ClientIDMode="Static"
                                     runat="server"
                                     type="hidden"

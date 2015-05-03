@@ -47,6 +47,7 @@ namespace WebsitePanel.Portal.SkinControls
         const string TYPE_WEBSITE = "WebSite";
         const string TYPE_DOMAIN = "Domain";
         const string TYPE_ORGANIZATION = "Organization";
+        const string TYPE_EXCHANGEACCOUNT = "ExchangeAccount";
         const string PID_SPACE_WEBSITES = "SpaceWebSites";
         const string PID_SPACE_DIMAINS = "SpaceDomains";
         const string PID_SPACE_EXCHANGESERVER = "SpaceExchangeServer";
@@ -146,6 +147,12 @@ namespace WebsitePanel.Portal.SkinControls
                     case TYPE_ORGANIZATION:
                         res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
                             PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_item",
+                            "moduleDefId=ExchangeServer");
+                        break;
+                    case TYPE_EXCHANGEACCOUNT:
+                        res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_user",//"mid="+this.ModuleID.ToString(),
+                            "AccountID="+this.tbAccountId.Text,"Context=User",
                             "moduleDefId=ExchangeServer");
                         break;
                     default:
