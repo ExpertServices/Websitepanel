@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using WSP = WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -28,6 +29,15 @@ namespace WebsitePanel.Portal.ExchangeServer
             txtEmailAddress.Text = user.PrimaryEmailAddress;
 
             txtMobile.Text = user.MobilePhone;
+
+            var settings = ES.Services.System.GetSystemSettingsActive(WSP.SystemSettings.TWILIO_SETTINGS, false);
+
+            bool twilioEnabled = settings != null 
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(WSP.SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty));
+
+            rbtnMobile.Visible = twilioEnabled;
         }
 
         protected void btnResetPassoword_Click(object sender, EventArgs e)
@@ -54,7 +64,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                if (chkDontSaveAsMobile.Checked == false)
+                if (chkSaveAsMobile.Checked)
                 {
                     OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
                         PanelRequest.AccountID);

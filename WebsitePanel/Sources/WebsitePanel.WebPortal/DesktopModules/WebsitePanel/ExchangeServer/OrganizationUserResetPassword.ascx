@@ -45,7 +45,7 @@
                                         <asp:Localize ID="locMobile" runat="server" meta:resourcekey="locMobile"></asp:Localize></td>
                                     <td>
                                         <asp:TextBox runat="server" ID="txtMobile" CssClass="TextBox200" />
-                                        <asp:CheckBox ID="chkDontSaveAsMobile" runat="server" Text="Don't save as mobile" meta:resourcekey="chkDontSaveAsMobile" Checked="True" />
+                                        <asp:CheckBox ID="chkSaveAsMobile" runat="server" Text="Save as mobile" meta:resourcekey="chkSaveAsMobile" Checked="False" />
                                         <asp:RequiredFieldValidator ID="valMobile" runat="server" ErrorMessage="*" ControlToValidate="txtMobile" ValidationGroup="ResetUserPassword"></asp:RequiredFieldValidator>
                                         <asp:RegularExpressionValidator ID="regexMobileValid" runat="server" ValidationExpression="^\+?\d+$" ValidationGroup="ResetUserPassword" ControlToValidate="txtMobile" ErrorMessage="Invalid Mobile Format"></asp:RegularExpressionValidator>
                                     </td>

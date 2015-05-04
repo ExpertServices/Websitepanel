@@ -53,6 +53,12 @@ namespace WebsitePanel.EnterpriseServer
 			return SystemController.GetSystemSettings(settingsName);
 		}
 
+        [WebMethod]
+        public SystemSettings GetSystemSettingsActive(string settingsName, bool decrypt)
+        {
+            return SystemController.GetSystemSettingsActive(settingsName, decrypt);
+        }
+
 		[WebMethod]
 		public int SetSystemSettings(string settingsName, SystemSettings settings)
 		{

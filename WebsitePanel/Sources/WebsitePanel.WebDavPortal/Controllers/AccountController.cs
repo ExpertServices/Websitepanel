@@ -208,7 +208,14 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             var user = WspContext.Services.Organizations.GetUserGeneralSettings(accessToken.ItemId, accessToken.AccountId);
 
-            if (string.IsNullOrEmpty(user.MobilePhone))
+            var settings = WspContext.Services.System.GetSystemSettingsActive(EnterpriseServer.SystemSettings.TWILIO_SETTINGS, false);
+
+            bool twilioEnabled = settings != null
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(EnterpriseServer.SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(EnterpriseServer.SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(EnterpriseServer.SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty));
+
+            if (string.IsNullOrEmpty(user.MobilePhone) || twilioEnabled == false)
             {
                 var result = WspContext.Services.Organizations.SendResetUserPasswordPincodeEmail(accessToken.AccessTokenGuid, user.PrimaryEmailAddress);
 

@@ -53,6 +53,18 @@ namespace WebsitePanel.EnterpriseServer
 			return GetSystemSettingsInternal(settingsName, !isDemoAccount);
 		}
 
+        public static SystemSettings GetSystemSettingsActive(string settingsName, bool decrypt)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.IsActive);
+            if (accountCheck < 0)
+                return null;
+
+            bool isDemoAccount = (SecurityContext.CheckAccount(DemandAccount.NotDemo) < 0);
+
+            return GetSystemSettingsInternal(settingsName, decrypt && isDemoAccount);
+        }
+
 		internal static SystemSettings GetSystemSettingsInternal(string settingsName, bool decryptPassword)
 		{
 			// create settings object
