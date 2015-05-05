@@ -215,7 +215,7 @@
                     <Condition Action="disable">DB_CONN_CORRECT="0"</Condition>
                     <Condition Action="enable">DB_CONN_CORRECT="1"</Condition>
                 </Control>
-                <Control Type="PushButton" Id ="CheckConnButton" X="160" Y="200" Width="64" Height="17" Text="Test connection" />
+                <Control Type="PushButton" Id ="CheckConnButton" X="150" Y="200" Width="74" Height="17" Text="Test connection" />
             </Dialog>
             <Dialog Id="ConnectionWarningDlg" Width="250" Height="85" Title="[ProductName] Setup" NoMinimize="yes">
                 <Control Id="Ok" Type="PushButton" X="184" Y="60" Width="56" Height="17" Text="Ok" Default="yes" Cancel="yes"/>
@@ -563,17 +563,14 @@
         <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" />
         <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" />
         <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" />
-
         <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" />
-
         <CustomAction Id="CA_SetSqlDmoListLocal" Property="SQLDMO_LIST_LOCAL" Value="(local)" Execute="immediate" />
         <CustomAction Id="CA_SetSqlDmoListIndex" Property="SQLDMO_LIST_INDEX" Value="2" Execute="immediate" />
         <CustomAction Id="CA_SetSqlDmoListProperty" Property="SQLDMO_LIST_PROPERTY" Value="DB_SERVER" Execute="immediate" />
         <CustomAction Id="CA_SetSqlDmoListType" Property="SQLDMO_LIST_TYPE" Value="ComboBox" Execute="immediate" />
         <CustomAction Id="CA_SQLDMO_ListAvailableSQLServers" BinaryKey="MsiExt.DataSource"  DllEntry="SQLDMO_ListAvailableSQLServers" />
-
         <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
-
+        <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no" />
         <!--Run corresponding install scripts.-->
         <!--Server.-->
         <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLSERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
@@ -595,6 +592,7 @@
         <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_ROOT]">WSP_ROOT</SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
+            <Custom Action="CA_InstallWebFeatures" After="InstallValidate"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
             <!--<Custom Action="CA_PropertyFinalizeInstall" After='InstallValidate'/>
             <Custom Action="CA_FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
             <Custom Action="CA_FinalizeInstall" After="InstallFiles" >NOT Installed or REINSTALL</Custom>-->
@@ -614,6 +612,7 @@
             <Custom Action="CA_OnPortalRemove" After="CA_PropertyOnPortalRemove"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
         </InstallExecuteSequence>
         <InstallUISequence>
+            <Custom Action="CA_InstallWebFeatures" Before="CA_PrereqCheck" />
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
             <Custom Action="CA_FillIpListUI" After="CostInitialize" />
