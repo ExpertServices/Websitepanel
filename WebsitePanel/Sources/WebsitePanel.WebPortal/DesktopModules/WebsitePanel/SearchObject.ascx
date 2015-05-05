@@ -70,7 +70,7 @@
                 <a href="javascript: void(0)" onclick="CPopupDialog('mydialog',event)">Type</a>
             </HeaderTemplate>
             <ItemTemplate>
-                <%# Eval("ColumnType") %>
+                <%# GetTypeDisplayName((string)Eval("ColumnType")) %>
             </ItemTemplate>
         </asp:TemplateField>
 		<asp:TemplateField SortExpression="TextSearch" HeaderText="gvText" HeaderStyle-Wrap="false">
@@ -80,9 +80,11 @@
 	            </asp:hyperlink>
             </ItemTemplate>
 		</asp:TemplateField>
-		<asp:BoundField DataField="FullType" HtmlEncode="false" SortExpression="FullType" HeaderText="gvFullType">
-		    <HeaderStyle Wrap="false" />
-        </asp:BoundField>		
+		<asp:TemplateField SortExpression="FullType" HeaderText="gvFullType" HeaderStyle-Wrap="false">
+            <ItemTemplate>
+                <%# GetTypeDisplayName((string)Eval("FullType")) %>
+            </ItemTemplate>
+        </asp:TemplateField>		
 	</Columns>
 </asp:GridView>
 

@@ -5274,6 +5274,18 @@
   <data name="ServiceItemType.VMInfo" xml:space="preserve">
     <value>Virtual Machine (Private Cloud)</value>
   </data>
+  <data name="UserItemType.Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="UserItemType.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="UserItemType.CompanyName" xml:space="preserve">
+    <value>Company Name</value>
+  </data>
+  <data name="UserItemType.FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
   <data name="Error.WEB_PUB_DISABLE" xml:space="preserve">
     <value>Could not disable access to Web Publishing feature for the account specified</value>
   </data>
