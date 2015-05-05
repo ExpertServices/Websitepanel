@@ -601,16 +601,29 @@ namespace WebsitePanel.Setup
 
 		private static bool IsAspNetRoleServiceInstalled()
 		{
-            RegistryKey regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\InetStp\\Components");
-            if (regkey == null)
-                return false;
-
-            int value = (int)regkey.GetValue("ASPNET", 0);
-
-            if (value != 1)
-                value = (int)regkey.GetValue("ASPNET45", 0);
-
-            return value == 1;
+            return GetIsWebFeaturesInstalled();
 		}
+        private static bool GetIsWebFeaturesInstalled()
+        {   // See WebsitePanel.Installer\Sources\WebsitePanel.WIXInstaller\Common\Tool.cs
+            bool Result = false;
+            var LMKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            Result |= CheckAspNetRegValue(LMKey);
+            LMKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            Result |= CheckAspNetRegValue(LMKey);
+            return Result;
+        }
+        private static bool CheckAspNetRegValue(RegistryKey BaseKey)
+        {
+            var WebComponentsKey = "SOFTWARE\\Microsoft\\InetStp\\Components";
+            var AspNet = "ASPNET";
+            var AspNet45 = "ASPNET45";
+            RegistryKey Key = BaseKey.OpenSubKey(WebComponentsKey);
+            if (Key == null)
+                return false;
+            var Value = int.Parse(Key.GetValue(AspNet, 0).ToString());
+            if (Value != 1)
+                Value = int.Parse(Key.GetValue(AspNet45, 0).ToString());
+            return Value == 1;
+        }
 	}
 }

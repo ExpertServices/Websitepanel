@@ -250,9 +250,9 @@ namespace WebsitePanel.Setup
 				var page2 = new ConfigurationCheckPage();			
 				// Setup prerequisites validation
 				page2.Checks.AddRange(new ConfigurationCheck[] { 
-					new ConfigurationCheck(CheckTypes.OperationSystem, "Operating System Requirement"), 
-					new ConfigurationCheck(CheckTypes.IISVersion, "IIS Requirement"), 
-					new ConfigurationCheck(CheckTypes.ASPNET, "ASP.NET Requirement"), 
+					new ConfigurationCheck(CheckTypes.OperationSystem, "Operating System Requirement"){ SetupVariables = serverSetup }, 
+					new ConfigurationCheck(CheckTypes.IISVersion, "IIS Requirement"){ SetupVariables = serverSetup }, 
+					new ConfigurationCheck(CheckTypes.ASPNET, "ASP.NET Requirement"){ SetupVariables = serverSetup }, 
 					// Validate Server installation prerequisites
 					new ConfigurationCheck(CheckTypes.WPServer, "WebsitePanel Server Requirement") { SetupVariables = serverSetup }, 
 					// Validate EnterpriseServer installation prerequisites

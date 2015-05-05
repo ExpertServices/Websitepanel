@@ -53,6 +53,45 @@ namespace WebsitePanel.WIXInstaller
         public const string CustomDataDelimiter = "-=del=-";
 
         #region CustomActions
+        [CustomAction]
+        public static ActionResult InstallWebFeatures(Session session)
+        {
+            var Msg = string.Empty;
+            var Ctx = session;
+            Ctx.AttachToSetupLog();
+            var Result = ActionResult.Success;
+            try
+            {
+                Log.WriteStart("InstallWebFeatures");
+                if(Tool.GetIsWebRoleInstalled())
+                {                    
+                    if (!Tool.GetIsWebFeaturesInstalled())
+                    {
+                        Log.WriteInfo("InstallWebFeatures: ASP.NET.");
+                        Tool.InstallWebFeatures(out Msg);
+                    }
+                }
+                else
+                {
+                    var Tmp = string.Empty;
+                    Log.WriteInfo("InstallWebFeatures: IIS and ASP.NET.");
+                    Tool.InstallWebRole(out Tmp);
+                    Msg += Tmp;
+                    Tool.InstallWebFeatures(out Tmp);
+                    Msg += Tmp;
+                }
+                Log.WriteInfo("InstallWebFeatures: done.");
+            }
+            catch(Exception ex)
+            {
+                Log.WriteError(string.Format("InstallWebFeatures: fail - {0}.", ex.ToString()));
+                Result = ActionResult.Failure;
+            }
+            if(!string.IsNullOrWhiteSpace(Msg))
+                Log.WriteInfo(string.Format("InstallWebFeatures Tool Log: {0}.", Msg));
+            Log.WriteEnd("InstallWebFeatures");
+            return Result;
+        }
         // Install.
         [CustomAction]
         public static ActionResult OnServerInstall(Session session)

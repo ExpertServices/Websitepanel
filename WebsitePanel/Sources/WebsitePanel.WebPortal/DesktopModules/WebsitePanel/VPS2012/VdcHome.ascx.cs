@@ -52,9 +52,7 @@ namespace WebsitePanel.Portal.VPS2012
             gvServers.Columns[4].Visible = !isUserSelected;
 
             // replication
-            gvServers.Columns[5].Visible =
-                PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED) &&
-                VirtualMachines2012Helper.IsReplicationEnabled(PanelSecurity.PackageId);
+            gvServers.Columns[5].Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
 
             // check package quotas
             bool manageAllowed = VirtualMachines2012Helper.IsVirtualMachineManagementAllowed(PanelSecurity.PackageId);
