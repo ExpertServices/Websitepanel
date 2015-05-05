@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Script.Serialization;
 using WebsitePanel.WebPortal;
+using System.Xml;
 
 namespace WebsitePanel.Portal
 {
@@ -46,6 +47,13 @@ namespace WebsitePanel.Portal
                 ProcessException(e.Exception.InnerException);
                 e.ExceptionHandled = true;
             }
+        }
+
+        protected string GetTypeDisplayName(string type)
+        {
+            return GetSharedLocalizedString("ServiceItemType." + type)
+                ?? GetSharedLocalizedString("UserItemType." + type)
+                ?? type;
         }
 
         public string GetItemPageUrl(string fullType, string itemType, int itemId, int spaceId, int accountId)

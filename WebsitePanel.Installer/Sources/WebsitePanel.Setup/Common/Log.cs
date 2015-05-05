@@ -57,7 +57,7 @@ namespace WebsitePanel.Setup
 		/// </summary>
 		/// <param name="message">Error message.</param>
 		/// <param name="ex">Exception.</param>
-		internal static void WriteError(string message, Exception ex)
+		public static void WriteError(string message, Exception ex)
 		{
 			try
 			{
@@ -74,7 +74,7 @@ namespace WebsitePanel.Setup
 		/// </summary>
 		/// <param name="message">Error message.</param>
 		/// <param name="ex">Exception.</param>
-		internal static void WriteError(string message)
+        public static void WriteError(string message)
 		{
 			WriteError(message, null);
 		}
@@ -83,7 +83,7 @@ namespace WebsitePanel.Setup
 		/// Write to log
 		/// </summary>
 		/// <param name="message"></param>
-		internal static void Write(string message)
+        public static void Write(string message)
 		{
 			try
 			{
@@ -98,7 +98,7 @@ namespace WebsitePanel.Setup
 		/// Write line to log
 		/// </summary>
 		/// <param name="message"></param>
-		internal static void WriteLine(string message)
+        public static void WriteLine(string message)
 		{
 			try
 			{
@@ -112,7 +112,7 @@ namespace WebsitePanel.Setup
 		/// Write info message to log
 		/// </summary>
 		/// <param name="message"></param>
-		internal static void WriteInfo(string message)
+        public static void WriteInfo(string message)
 		{
 			try
 			{
@@ -126,7 +126,7 @@ namespace WebsitePanel.Setup
 		/// Write start message to log
 		/// </summary>
 		/// <param name="message"></param>
-		internal static void WriteStart(string message)
+        public static void WriteStart(string message)
 		{
 			try
 			{
@@ -141,7 +141,7 @@ namespace WebsitePanel.Setup
 		/// Write end message to log
 		/// </summary>
 		/// <param name="message"></param>
-		internal static void WriteEnd(string message)
+        public static void WriteEnd(string message)
 		{
 			try
 			{

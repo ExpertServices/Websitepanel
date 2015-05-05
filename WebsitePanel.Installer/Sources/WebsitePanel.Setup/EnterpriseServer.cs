@@ -138,9 +138,9 @@ namespace WebsitePanel.Setup
 				var licPage = new LicenseAgreementPage();
 				var page1 = new ConfigurationCheckPage();
 				//
-				ConfigurationCheck check1 = new ConfigurationCheck(CheckTypes.OperationSystem, "Operating System Requirement");
-				ConfigurationCheck check2 = new ConfigurationCheck(CheckTypes.IISVersion, "IIS Requirement");
-				ConfigurationCheck check3 = new ConfigurationCheck(CheckTypes.ASPNET, "ASP.NET Requirement");
+                ConfigurationCheck check1 = new ConfigurationCheck(CheckTypes.OperationSystem, "Operating System Requirement") { SetupVariables = setupVariables };
+                ConfigurationCheck check2 = new ConfigurationCheck(CheckTypes.IISVersion, "IIS Requirement") { SetupVariables = setupVariables };
+                ConfigurationCheck check3 = new ConfigurationCheck(CheckTypes.ASPNET, "ASP.NET Requirement") { SetupVariables = setupVariables };
 				//
 				page1.Checks.AddRange(new ConfigurationCheck[] { check1, check2, check3 });
 				//
