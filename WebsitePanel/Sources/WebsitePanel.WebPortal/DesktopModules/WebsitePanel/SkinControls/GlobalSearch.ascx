@@ -45,8 +45,9 @@
                 $("#<%= tbObjectId.ClientID %>").val(item.code.ItemID);
                 $("#<%= tbPackageId.ClientID %>").val(item.code.PackageID);
                 $("#<%= tbAccountId.ClientID %>").val(item.code.AccountID);
-                $("#<%= ImageButton1.ClientID %>").trigger("click");
-                $("#<%= ImageButton1.ClientID %>").attr('disabled','disabled');
+                var $ImgBtn = $("#<%= ImageButton1.ClientID %>");
+                $ImgBtn.trigger("click");
+                $ImgBtn.attr('disabled', 'disabled');
             }
         });
     });//]]>

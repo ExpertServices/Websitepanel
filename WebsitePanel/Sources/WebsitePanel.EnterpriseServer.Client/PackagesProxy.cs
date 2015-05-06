@@ -926,6 +926,22 @@ namespace WebsitePanel.EnterpriseServer {
             });
             return ((System.Data.DataSet)(results[0]));
         }
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetSearchObjectQuickFind", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public System.Data.DataSet GetSearchObjectQuickFind(int userId, string filterColumn, string filterValue, int statusId, int roleId, string sortColumn, int maximumRows, string colType, string fullType)
+        {
+            object[] results = this.Invoke("GetSearchObjectQuickFind", new object[] {
+                        userId,
+                        filterColumn,
+                        filterValue,
+                        statusId,
+                        roleId,
+                        sortColumn,
+                        maximumRows,
+                        colType,
+                        fullType
+            });
+            return ((System.Data.DataSet)(results[0]));
+        }
 
         //TODO END
 

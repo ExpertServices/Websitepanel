@@ -140,7 +140,14 @@ namespace WebsitePanel.EnterpriseServer
         public DataSet GetSearchObject(int userId, string filterColumn, string filterValue,
             int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType)
         {
-            return PackageController.GetSearchObject(userId, filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, fullType);
+            return PackageController.GetSearchObject(userId, filterColumn, filterValue, statusId, roleId, sortColumn, startRow, maximumRows, colType, fullType, false);
+        }
+
+        [WebMethod]
+        public DataSet GetSearchObjectQuickFind(int userId, string filterColumn, string filterValue,
+            int statusId, int roleId, string sortColumn, int maximumRows, string colType, string fullType)
+        {
+            return PackageController.GetSearchObject(userId, filterColumn, filterValue, statusId, roleId, sortColumn, 0, maximumRows, colType, fullType, true);
         }
         //TODO END
 
