@@ -9607,6 +9607,8 @@ IF EXISTS (SELECT * FROM ResourceGroups WHERE GroupName = 'SharePoint')
 BEGIN
 	DECLARE @group_id INT
 	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
+	DELETE FROM PackageQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
 	DELETE FROM Providers WHERE GroupID = @group_id
 	DELETE FROM Quotas WHERE GroupID = @group_id
 	DELETE FROM VirtualGroups WHERE GroupID = @group_id
