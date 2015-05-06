@@ -5,8 +5,6 @@
 <%@ Register Src="UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EditFeedsList.ascx" TagName="EditFeedsList" TagPrefix="uc6" %>
 
-<script src="/JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
-
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 

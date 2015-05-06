@@ -63,7 +63,7 @@
 	AllowPaging="True" AllowSorting="True"
 	CssSelectorClass="NormalGridView"
 	DataSourceID="odsObjectsPaged" EnableViewState="False"
-	EmptyDataText="gvObjects">
+	EmptyDataText=<%# GetSharedLocalizedString("SearchObject.NOT_FOUND") %>>
 	<Columns>
         <asp:TemplateField HeaderText="gvType" SortExpression="ColumnType">
             <HeaderTemplate>

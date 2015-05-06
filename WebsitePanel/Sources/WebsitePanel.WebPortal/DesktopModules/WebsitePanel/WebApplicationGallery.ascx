@@ -1,7 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebApplicationGallery.ascx.cs" Inherits="WebsitePanel.Portal.WebApplicationGallery" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="uc1" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
-<script src="/JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
 
 <style>
 ul.WPIKeywordList {

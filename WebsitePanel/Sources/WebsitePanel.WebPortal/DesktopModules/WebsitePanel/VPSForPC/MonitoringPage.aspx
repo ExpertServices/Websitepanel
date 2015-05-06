@@ -10,8 +10,6 @@
 <html>
 <head runat="server">
 	<title></title>
-	<script src="/JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
-	<script src="/JavaScript/jquery-ui-1.8.9.min.js" type="text/javascript"></script>
 	<link href="/App_Themes/Default/Styles/jquery-ui-1.8.9.css" rel="stylesheet" type="text/css" />
 </head>
 <body>

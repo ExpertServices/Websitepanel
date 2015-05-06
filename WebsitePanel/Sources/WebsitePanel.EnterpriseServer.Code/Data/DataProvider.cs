@@ -141,7 +141,8 @@ namespace WebsitePanel.EnterpriseServer
 
         //TODO START
         public static DataSet GetSearchObject(int actorId, int userId, string filterColumn, string filterValue,
-           int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType, bool recursive)
+           int statusId, int roleId, string sortColumn, int startRow, int maximumRows, string colType, string fullType, 
+           bool recursive, bool onlyFind)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "GetSearchObject",
@@ -156,7 +157,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MaximumRows", maximumRows),
                 new SqlParameter("@Recursive", recursive),
                 new SqlParameter("@ColType", colType),
-                new SqlParameter("@FullType", fullType));
+                new SqlParameter("@FullType", fullType),
+                new SqlParameter("@OnlyFind", onlyFind));
         }
 
         //TODO END

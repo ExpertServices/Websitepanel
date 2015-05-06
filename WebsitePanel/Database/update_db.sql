@@ -10848,7 +10848,8 @@ CREATE PROCEDURE [dbo].[GetSearchObject]
 	@MaximumRows int = 0,
 	@Recursive bit,
 	@ColType nvarchar(50) = '',
-	@FullType nvarchar(50) = ''
+	@FullType nvarchar(50) = '',
+	@OnlyFind bit
 )
 AS
 
@@ -10886,8 +10887,12 @@ DECLARE @Users TABLE
 	UserID int
 )
 INSERT INTO @Users (UserID)
-SELECT
-	U.UserID
+SELECT '
+
+IF @OnlyFind = 1
+SET @sqlUsers = @sqlUsers + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlUsers = @sqlUsers + 'U.UserID
 FROM UsersDetailed AS U
 WHERE 
 	U.UserID <> @UserID AND U.IsPeer = 0 AND
@@ -10937,8 +10942,12 @@ SET @sqlSpace = '
 		ItemID int
 	)
 	INSERT INTO @ItemsService (ItemID)
-	SELECT
-		SI.ItemID
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	FROM ServiceItems AS SI
 	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
 	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID

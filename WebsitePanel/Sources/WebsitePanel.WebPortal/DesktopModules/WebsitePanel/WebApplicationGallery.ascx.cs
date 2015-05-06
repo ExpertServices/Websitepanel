@@ -28,6 +28,7 @@
 
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.ResultObjects;
@@ -38,6 +39,9 @@ namespace WebsitePanel.Portal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+
 			// Maintains appearance settings corresponding to user's display preferences
 			gvApplications.PageSize = UsersHelper.GetDisplayItemsPerPage();
 

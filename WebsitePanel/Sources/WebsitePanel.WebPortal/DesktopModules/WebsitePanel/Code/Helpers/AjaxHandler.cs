@@ -54,9 +54,8 @@ namespace WebsitePanel.WebPortal
             }
             else
             {
-                DataSet dsObjectItems = ES.Services.Packages.GetSearchObject(PanelSecurity.EffectiveUserId, null,
-                    String.Format("%{0}%", filterValue),
-                   0, 0, "", 0, iNumResults, columnType, fullType);
+                DataSet dsObjectItems = ES.Services.Packages.GetSearchObjectQuickFind(PanelSecurity.EffectiveUserId, null,
+                    String.Format("%{0}%", filterValue), 0, 0, "", iNumResults, columnType, fullType);
                 DataTable dt = dsObjectItems.Tables[2];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
                 for (int i = 0; i < dt.Rows.Count; ++i)

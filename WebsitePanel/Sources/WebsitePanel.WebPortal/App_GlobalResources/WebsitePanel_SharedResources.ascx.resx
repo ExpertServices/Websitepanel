@@ -5874,4 +5874,7 @@
   <data name="Error.SEND_USER_PASSWORD_RESET_SMS" xml:space="preserve">
     <value>Sms was not sent.</value>
   </data>
+  <data name="SearchObject.NOT_FOUND" xml:space="preserve">
+    <value>Not found</value>
+  </data>
 </root>

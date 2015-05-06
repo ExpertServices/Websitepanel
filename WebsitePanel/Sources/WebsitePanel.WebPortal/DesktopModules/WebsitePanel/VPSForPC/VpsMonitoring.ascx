@@ -14,8 +14,6 @@
 <link type="text/css" href="/App_Themes/Default/Styles/jquery-ui-1.8.9.css" rel="stylesheet" />	
 <link type="text/css" href="/App_Themes/Default/Styles/jquery.window.css" rel="stylesheet" />	
 
-<script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
-<script src="JavaScript/jquery-ui-1.8.9.min.js" type="text/javascript"></script>
 <script src="JavaScript/jquery.window.js" type="text/javascript"></script>
 
 <div runat="server" id="divWrapper">

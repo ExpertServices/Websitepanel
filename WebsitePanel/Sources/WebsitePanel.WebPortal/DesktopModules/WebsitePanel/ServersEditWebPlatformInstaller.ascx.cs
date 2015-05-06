@@ -50,6 +50,9 @@ namespace WebsitePanel.Portal
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+
             if (!IsPostBack)
             {
 

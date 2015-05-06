@@ -33,6 +33,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using System.Web.UI;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
@@ -43,6 +44,9 @@ namespace WebsitePanel.Portal.HostedSolution
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+
             cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
             if (!IsPostBack)
