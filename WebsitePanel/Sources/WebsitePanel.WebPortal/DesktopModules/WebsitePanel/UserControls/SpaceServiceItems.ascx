@@ -5,8 +5,6 @@
 <%@ Register Src="WebsiteActions.ascx" TagName="WebsiteActions" TagPrefix="wsp" %>
 <%@ Register Src="MailAccountActions.ascx" TagName="MailAccountActions" TagPrefix="wsp" %>
 
-<script src="JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
-
 <script language="javascript">
     function SelectAllCheckboxes(box) {
         $(".NormalGridView tbody :checkbox").attr("checked", $(box).attr("checked"));

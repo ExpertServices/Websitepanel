@@ -33,6 +33,7 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using System.Collections.Generic;
+using System.Web.UI;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -52,6 +53,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+
             locTitle.Text = ArchivingBoxes ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
 
             btnCreateMailbox.Visible = !ArchivingBoxes;

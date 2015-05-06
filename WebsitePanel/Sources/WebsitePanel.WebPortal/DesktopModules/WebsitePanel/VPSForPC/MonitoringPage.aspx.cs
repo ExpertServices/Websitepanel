@@ -41,6 +41,10 @@ namespace WebsitePanel.Portal.VPSForPC
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            ClientScriptManager cs = Page.ClientScript;
+            cs.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+            cs.RegisterClientScriptInclude("jqueryui", ResolveUrl("~/JavaScript/jquery-ui-1.8.9.min.js"));
+
 			if (Page.IsPostBack == false)
 			{
 				SetDefaultMonitoringTimeFrame();
