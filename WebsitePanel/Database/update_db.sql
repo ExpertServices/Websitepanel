@@ -9609,6 +9609,11 @@ BEGIN
 	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
 	DELETE FROM PackageQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
 	DELETE FROM HostingPlanQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanResources WHERE GroupId = @group_id
+	DELETE FROM PackagesBandwidth WHERE GroupId = @group_id
+	DELETE FROM PackagesDiskspace WHERE GroupId = @group_id
+	DELETE FROM PackageResources WHERE GroupId = @group_id
+	DELETE FROM ResourceGroupDnsRecords WHERE GroupId = @group_id
 	DELETE FROM Providers WHERE GroupID = @group_id
 	DELETE FROM Quotas WHERE GroupID = @group_id
 	DELETE FROM VirtualGroups WHERE GroupID = @group_id
