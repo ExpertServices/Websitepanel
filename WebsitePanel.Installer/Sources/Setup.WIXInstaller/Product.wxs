@@ -452,6 +452,7 @@
             <Publish Dialog="FinishDlg" Control="Next" Event="NewDialog" Value="FinishDlg">1</Publish>
             <!--ValidateDlg-->
             <Publish Dialog="ValidateDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
+            <ProgressText Action="CA_InstallWebFeatures">Please wait while [ProductName] Installer configures IIS &amp; ASP.NET, this may take a few minutes. Thanks!</ProgressText>
         </UI>
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
         <Binary Id="Assembly_CA" SourceFile="bin\WebsitePanel.WIXInstaller.CA.dll" />
@@ -476,7 +477,7 @@
         <!--SQL props.-->
         <Property Id="DB_SERVER" Secure="yes" Value="localhost\SQLExpress" />
         <Property Id="DB_CONN" Secure="yes" />
-        <Property Id="DB_DATABASE" Secure="yes" />
+        <Property Id="DB_DATABASE" Secure="yes" Value="WebsitePanel" />
         <Property Id="DB_AUTH" Secure="yes" Value="Windows Authentication" />
         <Property Id="DB_LOGIN" Secure="yes" />
         <Property Id="DB_PASSWORD" Secure="yes" />
@@ -503,7 +504,7 @@
         <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
         <Property Id="PI_SERVER_HOST" Secure="yes" />
-        <Property Id="PI_SERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_SERVER_LOGIN" Secure="yes" Value="WPServer"/>
         <Property Id="PI_SERVER_PASSWORD" Secure="yes" />
         <Property Id="PI_SERVER_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_SERVER_DOMAIN" Secure="yes" />
@@ -512,7 +513,7 @@
         <Property Id="PI_ESERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_ESERVER_PORT" Secure="yes" Value="9002" />
         <Property Id="PI_ESERVER_HOST" Secure="yes" />
-        <Property Id="PI_ESERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_ESERVER_LOGIN" Secure="yes"  Value="WPEnterpriseServer"/>
         <Property Id="PI_ESERVER_PASSWORD" Secure="yes" />
         <Property Id="PI_ESERVER_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_ESERVER_DOMAIN" Secure="yes" />
@@ -522,7 +523,7 @@
         <Property Id="PI_PORTAL_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_PORTAL_PORT" Secure="yes" Value="9001" />
         <Property Id="PI_PORTAL_HOST" Secure="yes" />
-        <Property Id="PI_PORTAL_LOGIN" Secure="yes" />
+        <Property Id="PI_PORTAL_LOGIN" Secure="yes" Value="WPPortal" />
         <Property Id="PI_PORTAL_PASSWORD" Secure="yes" />
         <Property Id="PI_PORTAL_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_PORTAL_DOMAIN" Secure="yes" />
@@ -590,9 +591,10 @@
         <CustomAction Id="CA_OnPortalRemove" BinaryKey="Assembly_CA" DllEntry="OnPortalRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
         <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_ROOT]">WSP_ROOT</SetProperty>
+        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
         <!--Exe sequence.-->
         <InstallExecuteSequence>
-            <Custom Action="CA_InstallWebFeatures" After="InstallValidate"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
+            <Custom Action="CA_InstallWebFeatures" Before="CostInitialize"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
             <!--<Custom Action="CA_PropertyFinalizeInstall" After='InstallValidate'/>
             <Custom Action="CA_FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
             <Custom Action="CA_FinalizeInstall" After="InstallFiles" >NOT Installed or REINSTALL</Custom>-->
@@ -610,8 +612,10 @@
             <Custom Action="CA_OnEServerRemove" Before="StopServices"><![CDATA[(&EnterpriseServerFeature=2) AND (!EnterpriseServerFeature=3)]]></Custom>
             <Custom Action="CA_PropertyOnPortalRemove" After="InstallInitialize"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
             <Custom Action="CA_OnPortalRemove" After="CA_PropertyOnPortalRemove"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
+            <Custom Action="CA_PreFillSettings" After="SetWEBSITEPANELDIR">1</Custom>
         </InstallExecuteSequence>
         <InstallUISequence>
+            <Custom Action="CA_PreFillSettings" Before="CA_InstallWebFeatures" />
             <Custom Action="CA_InstallWebFeatures" Before="CA_PrereqCheck" />
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
