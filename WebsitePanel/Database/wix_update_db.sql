@@ -8910,6 +8910,12 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaID] = '572')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (572, 33, 20, N'VPS2012.ReplicationEnabled', N'Allow user to Replication', 1, 0, NULL, NULL)
+END
+GO
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'HyperV2012R2')
 BEGIN
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 33, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV2012R2', 1)
@@ -9590,6 +9596,13 @@ IF EXISTS (SELECT * FROM ResourceGroups WHERE GroupName = 'SharePoint')
 BEGIN
 	DECLARE @group_id INT
 	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
+	DELETE FROM PackageQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanResources WHERE GroupId = @group_id
+	DELETE FROM PackagesBandwidth WHERE GroupId = @group_id
+	DELETE FROM PackagesDiskspace WHERE GroupId = @group_id
+	DELETE FROM PackageResources WHERE GroupId = @group_id
+	DELETE FROM ResourceGroupDnsRecords WHERE GroupId = @group_id
 	DELETE FROM Providers WHERE GroupID = @group_id
 	DELETE FROM Quotas WHERE GroupID = @group_id
 	DELETE FROM VirtualGroups WHERE GroupID = @group_id
@@ -10019,6 +10032,145 @@ ELSE
 UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'TextBody'
 GO
 
+
+
+
+DECLARE @UserPasswordResetSMSBody nvarchar(2500)
+
+Set @UserPasswordResetSMSBody = N'Password reset link:
+#passwordResetLink#
+'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetLinkSmsBody', @UserPasswordResetSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody'
+GO
+
+-- USER PASSWORD RESET EMAIL PINCODE TEMPLATE
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+
+DECLARE @UserPasswordResetPincodeLetterHtmlBody nvarchar(2500)
+
+Set @UserPasswordResetPincodeLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Password reset notification</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; }
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+<div class="Header">
+<img src="#logoUrl#">
+</div>
+<h1>Password reset notification</h1>
+
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+<p>
+We received a request to reset the password for your account. Your password reset pincode:
+</p>
+
+#passwordResetPincode#
+
+<p>
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+</p>
+
+<p>
+Best regards
+</p>
+</div>
+</body>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'HtmlBody', @UserPasswordResetPincodeLetterHtmlBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetPincodeLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'HtmlBody'
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'Subject', N'Password reset notification')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'LogoUrl' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'LogoUrl', N'https://controlpanel.virtuworks.net/App_Themes/Default/Images/logo.png')
+END
+GO
+
+
+DECLARE @UserPasswordResetPincodeLetterTextBody nvarchar(2500)
+
+Set @UserPasswordResetPincodeLetterTextBody = N'=========================================
+   Password reset notification
+=========================================
+
+<ad:if test="#user#">
+Hello #user.FirstName#,
+</ad:if>
+
+We received a request to reset the password for your account. Your password reset pincode:
+
+#passwordResetPincode#
+
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'TextBody', @UserPasswordResetPincodeLetterTextBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetPincodeLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'TextBody'
+GO
+
+DECLARE @UserPasswordPincodeSMSBody nvarchar(2500)
+
+Set @UserPasswordPincodeSMSBody = N'
+Your password reset pincode:
+#passwordResetPincode#'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'PasswordResetPincodeSmsBody', @UserPasswordPincodeSMSBody)
+END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordPincodeSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody'
+GO
 
 -- Exchange setup EMAIL TEMPLATE
 
@@ -10674,3 +10826,265 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchObject')
+DROP PROCEDURE GetSearchObject
+GO
+CREATE PROCEDURE [dbo].[GetSearchObject]
+(
+	@ActorID int,
+	@UserID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@StatusID int,
+	@RoleID int,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int = 0,
+	@Recursive bit,
+	@ColType nvarchar(50) = '',
+	@FullType nvarchar(50) = '',
+	@OnlyFind bit
+)
+AS
+
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+DECLARE @columnUsername nvarchar(20)
+SET @columnUsername = 'Username'
+
+DECLARE @columnEmail nvarchar(20)
+SET @columnEmail = 'Email'
+
+DECLARE @columnCompanyName nvarchar(20)
+SET @columnCompanyName = 'CompanyName'
+
+DECLARE @columnFullName nvarchar(20)
+SET @columnFullName = 'FullName'
+
+DECLARE @curUsers cursor
+DECLARE @curSpace cursor
+
+DECLARE @sqlSpace nvarchar(2000)
+DECLARE @sqlUsers nvarchar(2000)
+DECLARE @sqlReturn nvarchar(4000)
+
+IF @FilterColumn = '' AND @FilterValue <> ''
+SET @FilterColumn = 'TextSearch'
+
+SET @sqlUsers = '
+DECLARE @HasUserRights bit
+SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
+DECLARE @Users TABLE
+(
+	ItemPosition int IDENTITY(0,1),
+	UserID int
+)
+INSERT INTO @Users (UserID)
+SELECT '
+
+IF @OnlyFind = 1
+SET @sqlUsers = @sqlUsers + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlUsers = @sqlUsers + 'U.UserID
+FROM UsersDetailed AS U
+WHERE
+	U.UserID <> @UserID AND U.IsPeer = 0 AND
+	(
+		(@Recursive = 0 AND OwnerID = @UserID) OR
+		(@Recursive = 1 AND dbo.CheckUserParent(@UserID, U.UserID) = 1)
+	)
+	AND ((@StatusID = 0) OR (@StatusID > 0 AND U.StatusID = @StatusID))
+	AND ((@RoleID = 0) OR (@RoleID > 0 AND U.RoleID = @RoleID))
+	AND @HasUserRights = 1
+SET @curValue = cursor local for
+SELECT
+	U.ItemID,
+	U.TextSearch,
+	U.ColumnType,
+	''Users'' as FullType,
+	0 as PackageID,
+	0 as AccountID
+FROM @Users AS TU
+INNER JOIN
+(
+SELECT ItemID, TextSearch, ColumnType
+FROM(
+SELECT U0.UserID as ItemID, U0.Username as TextSearch, @columnUsername as ColumnType
+FROM dbo.Users AS U0
+UNION
+SELECT U1.UserID as ItemID, U1.Email as TextSearch, @columnEmail as ColumnType
+FROM dbo.Users AS U1
+UNION
+SELECT U2.UserID as ItemID, U2.CompanyName as TextSearch, @columnCompanyName as ColumnType
+FROM dbo.Users AS U2
+UNION
+SELECT U3.UserID as ItemID, U3.FirstName + '' '' + U3.LastName as TextSearch, @columnFullName as ColumnType
+FROM dbo.Users AS U3) as U
+WHERE TextSearch<>'' '' OR ISNULL(TextSearch, 0) > 0
+)
+ AS U ON TU.UserID = U.ItemID'
+
+SET @sqlUsers = @sqlUsers + ' open @curValue'
+
+exec sp_executesql @sqlUsers, N'@UserID int, @FilterValue nvarchar(50), @ActorID int, @Recursive bit, @StatusID int, @RoleID int, @columnUsername nvarchar(20), @columnEmail nvarchar(20), @columnCompanyName nvarchar(20), @columnFullName nvarchar(20), @curValue cursor output',
+@UserID, @FilterValue, @ActorID, @Recursive, @StatusID, @RoleID, @columnUsername, @columnEmail, @columnCompanyName, @columnFullName, @curValue=@curUsers output
+
+SET @sqlSpace = '
+	DECLARE @ItemsService TABLE
+	(
+		ItemID int
+	)
+	INSERT INTO @ItemsService (ItemID)
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'SI.ItemID
+	FROM ServiceItems AS SI
+	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+	DECLARE @ItemsDomain TABLE
+	(
+		ItemID int
+	)
+	INSERT INTO @ItemsDomain (ItemID)
+	SELECT
+		D.DomainID
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON P.PackageID = D.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+
+	SET @curValue = cursor local for
+	SELECT
+
+		SI.ItemID as ItemID,
+		SI.ItemName as TextSearch,
+		STYPE.DisplayName as ColumnType,
+		STYPE.DisplayName as FullType,
+		SI.PackageID as PackageID,
+		0 as AccountID
+	FROM @ItemsService AS I
+	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+	INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
+	WHERE STYPE.Searchable = 1
+	UNION
+	SELECT
+		D.DomainID AS ItemID,
+		D.DomainName as TextSearch,
+		''Domain'' as ColumnType,
+		''Domain'' as FullType,
+		D.PackageID as PackageID,
+		0 as AccountID
+	FROM @ItemsDomain AS I
+	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
+	WHERE D.IsDomainPointer=0
+	UNION
+	SELECT
+		EA.ItemID AS ItemID,
+		EA.AccountName as TextSearch,
+		''ExchangeAccount'' as ColumnType,
+		''ExchangeAccount'' as FullType,
+		SI2.PackageID as PackageID,
+		EA.AccountID as AccountID
+	FROM @ItemsService AS I2
+	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
+	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
+';
+
+SET @sqlSpace = @sqlSpace + ' open @curValue'
+
+exec sp_executesql @sqlSpace, N'@UserID int, @FilterValue nvarchar(50),  @ActorID int, @curValue cursor output',
+@UserID, @FilterValue, @ActorID, @curValue=@curSpace output
+
+SET @sqlReturn = '
+DECLARE @ItemID int
+DECLARE	@TextSearch nvarchar(500)
+DECLARE	@ColumnType nvarchar(50)
+DECLARE	@FullType nvarchar(50)
+DECLARE @PackageID int
+DECLARE @AccountID int
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @ItemsAll TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int,
+		TextSearch nvarchar(500),
+		ColumnType nvarchar(50),
+		FullType nvarchar(50),
+		PackageID int,
+		AccountID int
+	)
+
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+WHILE @@FETCH_STATUS = 0
+BEGIN
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+END
+
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+WHILE @@FETCH_STATUS = 0
+BEGIN
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+END
+
+DECLARE @ItemsReturn TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int,
+		TextSearch nvarchar(500),
+		ColumnType nvarchar(50),
+		FullType nvarchar(50),
+		PackageID int,
+		AccountID int
+	)
+INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+FROM @ItemsAll AS IA WHERE (1 = 1) '
+
+
+IF @ColType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.ColumnType in ( ' + @ColType + ' ) ';
+
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
+
+IF @FilterValue <> ''
+SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
+SET @sqlReturn = @sqlReturn + '
+SELECT COUNT(ItemID) FROM @ItemsReturn;
+SELECT DISTINCT(ColumnType) FROM @ItemsReturn WHERE (1 = 1) ';
+IF @FullType <> ''
+SET @sqlReturn = @sqlReturn + ' AND FullType = ''' + @FullType + '''';
+SET @sqlReturn = @sqlReturn + '; ';
+SET @sqlReturn = @sqlReturn + '
+SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+FROM @ItemsReturn AS IR WHERE (1 = 1)
+'
+
+IF  @MaximumRows > 0
+SET @sqlReturn = @sqlReturn + ' AND IR.ItemPosition BETWEEN @StartRow AND @EndRow';
+
+exec sp_executesql @sqlReturn, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curSpaceValue cursor, @curUsersValue cursor',
+@StartRow, @MaximumRows, @FilterValue, @curSpace, @curUsers
+
+CLOSE @curSpace
+DEALLOCATE @curSpace
+CLOSE @curUsers
+DEALLOCATE @curUsers
+RETURN
