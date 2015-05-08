@@ -206,23 +206,7 @@ namespace WebsitePanel.Portal
                 {
                     lblSharedIP.Text = string.Format("({0})", ipsGeneral[0].ExternalIP);
                 }
-                else
-                {
-                    string[] settings = ES.Services.Servers.GetServiceSettings(site.ServiceId);
-                    foreach (string setting in settings)
-                    {
-                        int idx = setting.IndexOf('=');
-                        string option = setting.Substring(0, idx);
-                        if (String.Compare(option, "publicsharedip", true) == 0)
-                        {
-                            string res = setting.Substring(idx + 1);
-                            if (!String.IsNullOrEmpty(res))
-                                lblSharedIP.Text = string.Format("({0})", res);
-                            break;
-                        }
-                    }
-                }
-                lblSharedIP.Visible = !String.IsNullOrEmpty(lblSharedIP.Text);
+                lblSharedIP.Visible = generalIPExists;
             }
 
             dedicatedIP.Visible = site.IsDedicatedIP;

@@ -456,3 +456,75 @@ div#breadcrumb_wrapper a:last-child {
         margin-right: 0;
     }
 }
+
+.navbar-inverse {
+  background-color: #F4F4F4;
+  border-color: #d4d4d4;
+  background: rgb(251,251,251);
+  background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(242,242,242,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(251,251,251,1)), color-stop(100%,rgba(242,242,242,1)));
+  background: -webkit-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(242,242,242,1) 100%);
+  background: -o-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(242,242,242,1) 100%);
+  background: -ms-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(242,242,242,1) 100%);
+  background: linear-gradient(to bottom, rgba(251,251,251,1) 0%,rgba(242,242,242,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fbfbfb', endColorstr='#f2f2f2',GradientType=0 );
+  -webkit-box-shadow: 0 1px 10px rgba(0,0,0,.1);
+  -moz-box-shadow: 0 1px 10px rgba(0,0,0,.1);
+  box-shadow: 0 1px 10px rgba(0,0,0,.1);
+}
+.navbar-inverse .navbar-text, .navbar-inverse .navbar-brand, .navbar-text, #logout {
+  color: #565656;
+}
+
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus, .navbar-text:hover, #logout:hover {
+  color: #565656;
+  background-color: transparent;
+  opacity: 1;
+}
+
+div#breadcrumb_wrapper {
+   background-color: #F7F7F7;
+  border: 1px solid #d4d4d4;
+  margin-top: 9px;
+}
+.progress {  
+	height:21px;
+    
+	background-color: #ffffff;
+     border: 1px solid #BBBBBB;
+  border-radius: 3px!important;  
+}
+.progress-bar {
+	background-color: #F4C18F;
+	-webkit-box-shadow: none; 
+	box-shadow: none; 
+}
+body {
+  background-color: #FAFAFA;
+}
+p.progress-text {
+  position: absolute;
+  left: 44%;  
+  color: #515151;
+}
+p.resource-subtext {
+  color: #AEAEAE;
+}
+#logout :hover {
+  color: #333;
+}
+
+.file-link:hover {
+  text-decoration:none;
+}
+.file-link p {
+  color: #818181;
+  font-size: 13pt;
+}
+.file-link p:hover {
+  color: #333!important;
+}
+.icon-size {
+  width: 60px;
+  height: 60px;
+}
