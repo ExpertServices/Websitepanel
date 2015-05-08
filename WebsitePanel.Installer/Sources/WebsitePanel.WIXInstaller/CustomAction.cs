@@ -68,17 +68,6 @@ namespace WebsitePanel.WIXInstaller
             Log.WriteEnd("PreFillSettings");
             return ActionResult.Success;
         }
-        private static void TryApllyNewPassword(Session Ctx, string Id)
-        {
-            var Pass = Ctx[Id];
-            if(string.IsNullOrWhiteSpace(Pass))
-            {
-                Pass = Guid.NewGuid().ToString();
-                Ctx[Id] = Pass;
-                Ctx[Id + "_CONFIRM"] = Pass;
-                Log.WriteInfo("New password was applied to " + Id);
-            }
-        }
         [CustomAction]
         public static ActionResult InstallWebFeatures(Session session)
         {
@@ -778,6 +767,17 @@ namespace WebsitePanel.WIXInstaller
         {
             Debugger.Launch();
         }
+        private static void TryApllyNewPassword(Session Ctx, string Id)
+        {
+            var Pass = Ctx[Id];
+            if (string.IsNullOrWhiteSpace(Pass))
+            {
+                Pass = Guid.NewGuid().ToString();
+                Ctx[Id] = Pass;
+                Ctx[Id + "_CONFIRM"] = Pass;
+                Log.WriteInfo("New password was applied to " + Id);
+            }
+        }
     }
     public static class SessionExtension
     {
@@ -788,7 +788,6 @@ namespace WebsitePanel.WIXInstaller
             WiXSetup.InstallLogListener(new WiXLogFileListener());
         }
     }
-
     internal enum WiXInstallType: byte
     {
         InstallServer,
