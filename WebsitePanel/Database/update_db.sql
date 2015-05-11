@@ -9637,6 +9637,9 @@ BEGIN
 		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
 END
 
+
+
+
 GO
 
 UPDATE [dbo].[Quotas] SET GroupID = 45 WHERE QuotaName = 'EnterpriseStorage.DriveMaps'
@@ -11227,3 +11230,11 @@ DEALLOCATE @curSpace
 CLOSE @curUsers
 DEALLOCATE @curUsers
 RETURN
+
+
+IF EXISTS (SELECT TOP 1 * FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection')
+BEGIN
+	DECLARE @item_type_id AS INT
+	SELECT @item_type_id = ItemTypeId FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
+	UPDATE [dbo].[Quotas] SET ItemTypeID = @item_type_id WHERE QuotaId = 550
+END
