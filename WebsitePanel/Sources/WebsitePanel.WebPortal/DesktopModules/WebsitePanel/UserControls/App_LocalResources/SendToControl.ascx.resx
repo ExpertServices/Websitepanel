@@ -124,10 +124,10 @@
     <value>Save as user mobile</value>
   </data>
   <data name="locEmailAddress.Text" xml:space="preserve">
-    <value>Email:</value>
+    <value>Email: *</value>
   </data>
   <data name="locMobile.Text" xml:space="preserve">
-    <value>Mobile:</value>
+    <value>Mobile: *</value>
   </data>
   <data name="locReason.Text" xml:space="preserve">
     <value>Reason:</value>
