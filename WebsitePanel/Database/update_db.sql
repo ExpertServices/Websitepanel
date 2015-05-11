@@ -9887,8 +9887,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'HtmlBody', @UserPasswordExpirationLetterHtmlBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordExpirationLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'HtmlBody'
 GO
 
 
@@ -9931,8 +9929,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordExpirationLetter', N'TextBody', @UserPasswordExpirationLetterTextBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordExpirationLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordExpirationLetter' AND [PropertyName]= N'TextBody'
 GO
 
 
@@ -10000,8 +9996,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'HtmlBody', @UserPasswordResetLetterHtmlBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'HtmlBody'
 GO
 
 
@@ -10044,8 +10038,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'TextBody', @UserPasswordResetLetterTextBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'TextBody'
 GO
 
 
@@ -10061,8 +10053,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetLetter', N'PasswordResetLinkSmsBody', @UserPasswordResetSMSBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetLetter' AND [PropertyName]= N'PasswordResetLinkSmsBody'
 GO
 
 -- USER PASSWORD RESET EMAIL PINCODE TEMPLATE
@@ -10126,8 +10116,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'HtmlBody', @UserPasswordResetPincodeLetterHtmlBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetPincodeLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'HtmlBody'
 GO
 
 
@@ -10170,8 +10158,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'TextBody', @UserPasswordResetPincodeLetterTextBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordResetPincodeLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'TextBody'
 GO
 
 DECLARE @UserPasswordPincodeSMSBody nvarchar(2500)
@@ -10184,8 +10170,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'UserPasswordResetPincodeLetter', N'PasswordResetPincodeSmsBody', @UserPasswordPincodeSMSBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @UserPasswordPincodeSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'UserPasswordResetPincodeLetter' AND [PropertyName]= N'PasswordResetPincodeSmsBody'
 GO
 
 
@@ -10250,8 +10234,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'OrganizationUserPasswordRequestLetter', N'HtmlBody', @OrganizationUserPasswordRequestLetterHtmlBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @OrganizationUserPasswordRequestLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'OrganizationUserPasswordRequestLetter' AND [PropertyName]= N'HtmlBody'
 GO
 
 
@@ -10294,8 +10276,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'OrganizationUserPasswordRequestLetter', N'TextBody', @OrganizationUserPasswordRequestLetterTextBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @OrganizationUserPasswordRequestLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'OrganizationUserPasswordRequestLetter' AND [PropertyName]= N'TextBody'
 GO
 
 DECLARE @OrganizationUserPasswordRequestLetterSMSBody nvarchar(2500)
@@ -10308,8 +10288,6 @@ IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [Settin
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'OrganizationUserPasswordRequestLetter', N'SMSBody', @OrganizationUserPasswordRequestLetterSMSBody)
 END
-ELSE
-UPDATE [dbo].[UserSettings] SET [PropertyValue] = @OrganizationUserPasswordRequestLetterSMSBody WHERE [UserID] = 1 AND [SettingsName]= N'OrganizationUserPasswordRequestLetter' AND [PropertyName]= N'SMSBody'
 GO
 
 
