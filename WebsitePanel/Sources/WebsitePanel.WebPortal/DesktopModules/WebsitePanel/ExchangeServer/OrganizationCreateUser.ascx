@@ -89,7 +89,7 @@
                                         <wsp:SendToControl id="sendToControl" runat="server" ValidationGroup="CreateMailbox" ControlToHide="PasswordBlock"></wsp:SendToControl>
                                     </td>
                                 </tr>
-                                <tr id="PasswordBlock" runat="server">
+                                <tr id="PasswordBlock" runat="server" Visible="false">
                                     <td class="FormLabel150" valign="top">
                                         <asp:Localize ID="locPassword" runat="server" meta:resourcekey="locPassword" Text="Password: *"></asp:Localize></td>
                                     <td>
