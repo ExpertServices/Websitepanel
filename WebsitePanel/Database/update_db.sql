@@ -8208,11 +8208,13 @@ AS
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 558 BEGIN -- RAM of VPS2012
-			DECLARE @Result1 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+			DECLARE @Result1 int
+			SET @Result1 = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
 							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
-			DECLARE @Result2 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+			DECLARE @Result2 int
+			SET @Result2 = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN ServiceItemProperties AS SIP2 ON 
 								SIP2.ItemID = SI.ItemID AND SIP2.PropertyName = 'DynamicMemory.Enabled' AND SIP2.PropertyValue = 'True'
@@ -9634,6 +9636,9 @@ BEGIN
 	INSERT INTO [dbo].[ServiceItemTypes] (ItemTypeId, GroupId, DisplayName, TypeName, TypeOrder, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable) 
 		(SELECT TOP 1 @item_type_id, @group_id, 'SharePointSiteCollection', TypeName, 100, CalculateDiskSpace, CalculateBandwidth, Suspendable, Disposable, Searchable, Importable, Backupable FROM [dbo].[ServiceItemTypes] WHERE DisplayName = 'SharePointFoundationSiteCollection')
 END
+
+
+
 
 GO
 
@@ -11203,3 +11208,11 @@ DEALLOCATE @curSpace
 CLOSE @curUsers
 DEALLOCATE @curUsers
 RETURN
+
+
+IF EXISTS (SELECT TOP 1 * FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection')
+BEGIN
+	DECLARE @item_type_id AS INT
+	SELECT @item_type_id = ItemTypeId FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
+	UPDATE [dbo].[Quotas] SET ItemTypeID = @item_type_id WHERE QuotaId = 550
+END
