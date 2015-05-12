@@ -54,6 +54,33 @@ namespace WebsitePanel.WIXInstaller
 
         #region CustomActions
         [CustomAction]
+        public static ActionResult MaintenanceServer(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenanceServer");
+            Result = ProcessInstall(session, WiXInstallType.MaintenanceServer);
+            Log.WriteEnd("MaintenanceServer");
+            return Result;
+        }
+        [CustomAction]
+        public static ActionResult MaintenanceEServer(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenanceEServer");
+            Result = ProcessInstall(session, WiXInstallType.MaintenanceEnterpriseServer);
+            Log.WriteEnd("MaintenanceEServer");
+            return Result;
+        }
+        [CustomAction]
+        public static ActionResult MaintenancePortal(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenancePortal");
+            Result = ProcessInstall(session, WiXInstallType.MaintenancePortal);
+            Log.WriteEnd("MaintenancePortal");
+            return Result;
+        }
+        [CustomAction]
         public static ActionResult PreFillSettings(Session session)
         {
             PopUpDebugger();
@@ -733,17 +760,26 @@ namespace WebsitePanel.WIXInstaller
                     case WiXInstallType.RemoveServer:
                         Install = ServerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
+                    case WiXInstallType.MaintenanceServer:
+                        Install = ServerSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
                     case WiXInstallType.InstallEnterpriseServer:
                         Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Install);
                         break;
                     case WiXInstallType.RemoveEnterpriseServer:
                         Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
+                    case WiXInstallType.MaintenanceEnterpriseServer:
+                        Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
                     case WiXInstallType.InstallPortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Install);
                         break;
                     case WiXInstallType.RemovePortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
+                        break;
+                    case WiXInstallType.MaintenancePortal:
+                        Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -796,7 +832,8 @@ namespace WebsitePanel.WIXInstaller
         RemoveServer,
         RemoveEnterpriseServer,
         RemovePortal,
-        RemoveUpdate,
-        RestoreUpdate
+        MaintenanceServer,
+        MaintenanceEnterpriseServer,
+        MaintenancePortal
     }    
 }

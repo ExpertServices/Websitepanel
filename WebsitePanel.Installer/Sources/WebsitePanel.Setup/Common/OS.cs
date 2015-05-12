@@ -322,12 +322,30 @@ namespace WebsitePanel.Setup
 				case WindowsVersion.WindowsServer2008:
 					ret = "Windows Server 2008";
 					break;
+                case WindowsVersion.WindowsServer2008R2:
+                    ret = "Windows Server 2008 R2";
+                    break;
+                case WindowsVersion.WindowsServer2012:
+                    ret = "Windows Server 2012";
+                    break;
+                case WindowsVersion.WindowsServer2012R2:
+                    ret = "Windows Server 2012 R2";
+                    break;
 				case WindowsVersion.WindowsVista:
 					ret = "Windows Vista";
 					break;
 				case WindowsVersion.WindowsXP:
 					ret = "Windows XP";
 					break;
+                case WindowsVersion.Windows7:
+                    ret = "Windows 7";
+                    break;
+                case WindowsVersion.Windows8:
+                    ret = "Windows 8";
+                    break;
+                default:
+                    ret = "Windows";
+                    break;
 			}
 			return ret;
 		}
