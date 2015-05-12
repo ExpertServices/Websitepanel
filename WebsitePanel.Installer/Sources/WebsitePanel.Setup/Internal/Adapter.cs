@@ -94,6 +94,9 @@ namespace WebsitePanel.Setup.Internal
                 case SetupActions.Uninstall:
                     Uninstall();
                     break;
+                case SetupActions.Setup:
+                    Maintenance();
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -101,6 +104,7 @@ namespace WebsitePanel.Setup.Internal
 
         protected abstract void Install();
         protected abstract void Uninstall();
+        protected abstract void Maintenance();
 
         /// <summary>
         /// LoadSetupVariablesFromParameters.
@@ -393,6 +397,9 @@ namespace WebsitePanel.Setup.Internal
                         case ActionTypes.ConfigureSecureSessionModuleInWebConfig:
                             ConfigureSecureSessionModuleInWebConfig();
                             break;
+                        case ActionTypes.RestoreConfig:
+                            RestoreXmlConfigs(Execute.SetupVariables);
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -402,7 +409,6 @@ namespace WebsitePanel.Setup.Internal
                 }
             }
         }
-
         protected virtual List<InstallAction> GetActions(string ComponentID)
         {
             return new List<InstallAction>();
@@ -843,7 +849,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
                 }
                 // Load web.config
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(webConfigPath);
 
                 // add node:
@@ -993,7 +999,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
                 }
                 // Load web.config
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(webConfigPath);
                 // do Windows 2008 platform-specific changes
                 bool iis7 = (Context.IISVersion.Major >= 7);
@@ -1229,7 +1235,7 @@ namespace WebsitePanel.Setup.Internal
         private string GetConnectionString(string webConfigPath)
         {
             string ret = null;
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(webConfigPath);
             //connection string
             string xPath = "configuration/connectionStrings/add[@name=\"EnterpriseServer\"]";
@@ -1244,7 +1250,7 @@ namespace WebsitePanel.Setup.Internal
         private string GetCryptoKey(string webConfigPath)
         {
             string ret = null;
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(webConfigPath);
             //crypto key
             string xPath = "configuration/appSettings/add[@key=\"WebsitePanel.CryptoKey\"]";
@@ -1258,7 +1264,7 @@ namespace WebsitePanel.Setup.Internal
 
         private bool IsEncryptionEnabled(string webConfigPath)
         {
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(webConfigPath);
             //encryption enabled
             string xPath = "configuration/appSettings/add[@key=\"WebsitePanel.EncryptionEnabled\"]";
@@ -2316,7 +2322,7 @@ namespace WebsitePanel.Setup.Internal
                 }
 
                 Log.WriteStart("Updating config.xml file");
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(path);
 
                 XmlNode serversNode = doc.SelectSingleNode("//myLittleAdmin/sqlservers");
@@ -2429,7 +2435,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
                 }
                 // Load web.config
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(webConfigPath);
 
                 // Tighten WSE security on local machine
@@ -2513,7 +2519,7 @@ namespace WebsitePanel.Setup.Internal
                 }
 
                 Log.WriteStart("Loading portal settings");
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(path);
 
                 string xPath = "configuration/connectionStrings/add[@name=\"SiteSqlServer\"]";
@@ -2605,7 +2611,7 @@ namespace WebsitePanel.Setup.Internal
                 }
 
                 Log.WriteStart("Updating site settings");
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(path);
 
                 XmlElement urlNode = doc.SelectSingleNode("SiteSettings/EnterpriseServer") as XmlElement;
@@ -3178,7 +3184,7 @@ namespace WebsitePanel.Setup.Internal
                 }
 
                 Log.WriteStart("Updating configuration file (server password)");
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(path);
 
                 XmlElement passwordNode = doc.SelectSingleNode("//websitepanel.server/security/password") as XmlElement;
@@ -3221,7 +3227,7 @@ namespace WebsitePanel.Setup.Internal
                 }
 
                 Log.WriteStart("Updating configuration file (service settings)");
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(path);
 
                 XmlElement ipNode = doc.SelectSingleNode("//configuration/appSettings/add[@key='WebsitePanel.HostIP']") as XmlElement;
@@ -3881,7 +3887,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
                 }
                 // Load web.config
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(webConfigPath);
 
                 // replace existing node:
@@ -3915,8 +3921,63 @@ namespace WebsitePanel.Setup.Internal
         }
         #endregion
         #endregion
+        private void RestoreXmlConfigs(SetupVariables Ctx)
+        {
+            try
+            {
+                Log.WriteStart("RestoreXmlConfigs");
+                var Backup = BackupRestore.Find(Ctx.InstallerFolder, "WebsitePanel", Ctx.ComponentName);                
+                switch(Ctx.ComponentCode)
+                {
+                    case "server":
+                    {
+                        Backup.XmlFiles.Add("Web.config");
+                    }
+                    break;
+                    case "enterpriseserver":
+                    {
+                        Backup.XmlFiles.Add("Web.config");
+                    }
+                    break;
+                    case "portal":
+                    {
+                        Backup.XmlFiles.Add("Web.config");
+                        Backup.XmlFiles.Add(@"App_Data\Countries.config");
+                        Backup.XmlFiles.Add(@"App_Data\CountryStates.config");
+                        Backup.XmlFiles.Add(@"App_Data\Ecommerce_Modules.config");
+                        Backup.XmlFiles.Add(@"App_Data\Ecommerce_Pages.config");
+                        Backup.XmlFiles.Add(@"App_Data\ESModule_ControlsHierarchy.config");
+                        Backup.XmlFiles.Add(@"App_Data\ModulesData.config");
+                        Backup.XmlFiles.Add(@"App_Data\SiteSettings.config");
+                        Backup.XmlFiles.Add(@"App_Data\SupportedLocales.config");
+                        Backup.XmlFiles.Add(@"App_Data\SupportedThemes.config");
+                        Backup.XmlFiles.Add(@"App_Data\WebsitePanel_Modules.config");
+                        Backup.XmlFiles.Add(@"App_Data\WebsitePanel_Pages.config");
+                    }
+                    break;
+                }                
+                var MainCfg = Path.Combine(Ctx.InstallerFolder, BackupRestore.MainConfig);
+                var XCfg = new XmlDocument();
+                XCfg.Load(MainCfg);
+                if (XCfg.SelectSingleNode("//components").ChildNodes.Count == 0)
+                {
+                    Log.WriteInfo("Restoring main config...");
+                    XmlDocumentMerge.Process(Backup.BackupMainConfigFile, MainCfg);
+                    Context.ComponentId = WiXSetup.GetComponentID(Ctx);
+                    AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = MainCfg });
+                    AppConfig.LoadComponentSettings(Ctx);
+                }                
+                Log.WriteInfo(string.Format("Restoring xml config for component - {0}.", Ctx.ComponentFullName));
+                Backup.Restore();
+                Log.WriteEnd("RestoreXmlConfigs");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("RestoreXmlConfigs", ex);
+                throw;
+            }
+        }
     }
-
     public class UninstallScript : SetupScript // UninstallPage
     {
         public UninstallScript(SetupVariables SessionVariables):base(SessionVariables)
@@ -4117,12 +4178,22 @@ namespace WebsitePanel.Setup.Internal
         protected override List<InstallAction> GetActions(string ComponentID)
         {
             var Scenario = base.GetActions(ComponentID);
-            var Act = new InstallAction(ActionTypes.UpdateConfig);
-            Act.Description = "Updating system configuration...";
-            Scenario.Add(Act);
-            Act = new InstallAction(ActionTypes.StartApplicationPool);
-            Act.Description = "Starting IIS Application Pool...";
-            Scenario.Add(Act);
+            Scenario.Add(new InstallAction(ActionTypes.RestoreConfig) { SetupVariables = Context, Description = "Restoring xml configuration files..." });
+            Scenario.Add(new InstallAction(ActionTypes.UpdateConfig) { Description = "Updating system configuration..." });
+            Scenario.Add(new InstallAction(ActionTypes.StartApplicationPool) { Description = "Starting IIS Application Pool..." });
+            return Scenario;
+        }
+    }
+    public class MaintenanceScript: ExpressScript
+    {
+        public MaintenanceScript(SetupVariables SessionVariables):base(SessionVariables)
+        {
+            Context.SetupAction = SetupActions.Setup;
+        }
+        protected override List<InstallAction> GetActions(string ComponentID)
+        {
+            var Scenario = base.GetActions(ComponentID);
+            Scenario.Add(new InstallAction(ActionTypes.UpdateConfig) { Description = "Updating system configuration..." });
             return Scenario;
         }
     }
@@ -4170,6 +4241,7 @@ namespace WebsitePanel.Setup.Internal
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
+                Context.UpdateVersion = Context.Release;
                 AppConfig.LoadComponentSettings(Context);
                 new RestoreScript(Context).Run();
             }
@@ -4194,12 +4266,19 @@ namespace WebsitePanel.Setup.Internal
             }
             Script.Run();
         }
+        protected override void Maintenance()
+        {
+            Context.ComponentId = GetComponentID(Context);
+            AppConfig.LoadComponentSettings(Context);
+            SetupScript Script = new MaintenanceScript(Context);
+            Script.Actions.Add(new InstallAction(ActionTypes.UpdateServerPassword) { Description = "Updating server password..." });
+            Script.Run();
+        }
     }
-
     public class EServerSetup : WiXSetup
     {
-        public EServerSetup(SetupVariables Ctx)
-            : base(Ctx)
+        public EServerSetup(SetupVariables Ctx, ModeExtension Ext)
+            : base(Ctx, Ext)
         {
 
         }
@@ -4210,7 +4289,7 @@ namespace WebsitePanel.Setup.Internal
             SetupVars.SetupAction = Action;
             SetupVars.IISVersion = Global.IISVersion;
             AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = GetFullConfigPath(SetupVars) });
-            return new EServerSetup(SetupVars);
+            return new EServerSetup(SetupVars, GetModeExtension(Ctx));
         }
         protected override void Install()
         {
@@ -4240,6 +4319,7 @@ namespace WebsitePanel.Setup.Internal
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
+                Context.UpdateVersion = Context.Release;
                 AppConfig.LoadComponentSettings(Context);
                 new RestoreScript(Context).Run();
             }
@@ -4264,12 +4344,19 @@ namespace WebsitePanel.Setup.Internal
             }
             Script.Run();
         }
+        protected override void Maintenance()
+        {
+            Context.ComponentId = GetComponentID(Context);
+            AppConfig.LoadComponentSettings(Context);
+            SetupScript Script = new MaintenanceScript(Context);
+            Script.Actions.Add(new InstallAction(ActionTypes.UpdateServerAdminPassword) { Description = "Updating serveradmin password..." });
+            Script.Run();
+        }
     }
-
     public class PortalSetup : WiXSetup
     {
-        public PortalSetup(SetupVariables Ctx)
-            : base(Ctx)
+        public PortalSetup(SetupVariables Ctx, ModeExtension Ext)
+            : base(Ctx, Ext)
         {
 
         }
@@ -4280,7 +4367,7 @@ namespace WebsitePanel.Setup.Internal
             SetupVars.SetupAction = Action;
             SetupVars.IISVersion = Global.IISVersion;
             AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = GetFullConfigPath(SetupVars) });
-            return new PortalSetup(SetupVars);
+            return new PortalSetup(SetupVars, GetModeExtension(Ctx));
         }
         protected override void Install()
         {
@@ -4306,17 +4393,11 @@ namespace WebsitePanel.Setup.Internal
                 }
                 if (WiXThrow)
                     InstallFailed();
-
-                else if (ModeExtension == ModeExtension.Restore)
-                {
-                    Context.ComponentId = GetComponentID(Context);
-                    AppConfig.LoadComponentSettings(Context);
-                    new RestoreScript(Context).Run();
-                }
             }
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
+                Context.UpdateVersion = Context.Release;
                 AppConfig.LoadComponentSettings(Context);
                 new RestoreScript(Context).Run();
             }
@@ -4348,8 +4429,15 @@ namespace WebsitePanel.Setup.Internal
             }
             Script.Run();
         }
+        protected override void Maintenance()
+        {
+            Context.ComponentId = GetComponentID(Context);
+            AppConfig.LoadComponentSettings(Context);
+            SetupScript Script = new MaintenanceScript(Context);
+            Script.Actions.Add(new InstallAction(ActionTypes.UpdateEnterpriseServerUrl) { Description = "Updating site settings..." });
+            Script.Run();
+        }
     }
-
 #region WiXActionManagers
     public class WiXServerActionManager : BaseActionManager
     {

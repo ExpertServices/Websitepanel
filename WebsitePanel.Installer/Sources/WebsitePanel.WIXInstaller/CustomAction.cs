@@ -54,6 +54,48 @@ namespace WebsitePanel.WIXInstaller
 
         #region CustomActions
         [CustomAction]
+        public static ActionResult MaintenanceServer(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenanceServer");
+            Result = ProcessInstall(session, WiXInstallType.MaintenanceServer);
+            Log.WriteEnd("MaintenanceServer");
+            return Result;
+        }
+        [CustomAction]
+        public static ActionResult MaintenanceEServer(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenanceEServer");
+            Result = ProcessInstall(session, WiXInstallType.MaintenanceEnterpriseServer);
+            Log.WriteEnd("MaintenanceEServer");
+            return Result;
+        }
+        [CustomAction]
+        public static ActionResult MaintenancePortal(Session session)
+        {
+            var Result = ActionResult.Success;
+            Log.WriteStart("MaintenancePortal");
+            Result = ProcessInstall(session, WiXInstallType.MaintenancePortal);
+            Log.WriteEnd("MaintenancePortal");
+            return Result;
+        }
+        [CustomAction]
+        public static ActionResult PreFillSettings(Session session)
+        {
+            PopUpDebugger();
+            var Ctx = session;
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("PreFillSettings");
+            TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
+            TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
+            TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
+            TryApllyNewPassword(Ctx, "SERVER_ACCESS_PASSWORD");
+            TryApllyNewPassword(Ctx, "SERVERADMIN_PASSWORD");
+            Log.WriteEnd("PreFillSettings");
+            return ActionResult.Success;
+        }
+        [CustomAction]
         public static ActionResult InstallWebFeatures(Session session)
         {
             var Msg = string.Empty;
@@ -406,6 +448,7 @@ namespace WebsitePanel.WIXInstaller
         [CustomAction]
         public static ActionResult FillIpListUI(Session session)
         {
+            PopUpDebugger();
             var Ctrls = new[]{ new ComboBoxCtrl(session, "PI_SERVER_IP"),
                                 new ComboBoxCtrl(session, "PI_ESERVER_IP"),
                                 new ComboBoxCtrl(session, "PI_PORTAL_IP") };
@@ -717,17 +760,26 @@ namespace WebsitePanel.WIXInstaller
                     case WiXInstallType.RemoveServer:
                         Install = ServerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
+                    case WiXInstallType.MaintenanceServer:
+                        Install = ServerSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
                     case WiXInstallType.InstallEnterpriseServer:
                         Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Install);
                         break;
                     case WiXInstallType.RemoveEnterpriseServer:
                         Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
+                    case WiXInstallType.MaintenanceEnterpriseServer:
+                        Install = EServerSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
                     case WiXInstallType.InstallPortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Install);
                         break;
                     case WiXInstallType.RemovePortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
+                        break;
+                    case WiXInstallType.MaintenancePortal:
+                        Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -751,6 +803,17 @@ namespace WebsitePanel.WIXInstaller
         {
             Debugger.Launch();
         }
+        private static void TryApllyNewPassword(Session Ctx, string Id)
+        {
+            var Pass = Ctx[Id];
+            if (string.IsNullOrWhiteSpace(Pass))
+            {
+                Pass = Guid.NewGuid().ToString();
+                Ctx[Id] = Pass;
+                Ctx[Id + "_CONFIRM"] = Pass;
+                Log.WriteInfo("New password was applied to " + Id);
+            }
+        }
     }
     public static class SessionExtension
     {
@@ -758,9 +821,9 @@ namespace WebsitePanel.WIXInstaller
         {
             WiXSetup.InstallLogListener(new WiXLogListener(Ctx));
             WiXSetup.InstallLogListener(new InMemoryStringLogListener("WIX CA IN MEMORY"));
+            WiXSetup.InstallLogListener(new WiXLogFileListener());
         }
     }
-
     internal enum WiXInstallType: byte
     {
         InstallServer,
@@ -769,7 +832,8 @@ namespace WebsitePanel.WIXInstaller
         RemoveServer,
         RemoveEnterpriseServer,
         RemovePortal,
-        RemoveUpdate,
-        RestoreUpdate
+        MaintenanceServer,
+        MaintenanceEnterpriseServer,
+        MaintenancePortal
     }    
 }

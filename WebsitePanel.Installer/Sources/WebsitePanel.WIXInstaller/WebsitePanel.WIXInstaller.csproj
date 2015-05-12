@@ -63,6 +63,7 @@
     <Compile Include="Common\Tool.cs" />
     <Compile Include="Common\Prop.cs" />
     <Compile Include="Common\Util\IListCtrl.cs" />
+    <Compile Include="Common\WiXLogFileListener.cs" />
     <Compile Include="Common\WiXLogListener.cs" />
     <Compile Include="Common\YesNo.cs" />
     <Compile Include="CustomAction.cs" />
