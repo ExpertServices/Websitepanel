@@ -74,6 +74,18 @@ namespace WebsitePanel.Portal.UserControls
             var isTwilioEnabled = ES.Services.System.CheckIsTwilioEnabled();
 
             rbtnMobile.Visible = isTwilioEnabled;
+
+            if (!Page.IsPostBack)
+            {
+                if (isTwilioEnabled)
+                {
+                    rbtnMobile.Checked = true;
+                    rbtnEmail.Checked = false;
+                    SendToGroupCheckedChanged(null, null);
+                }
+
+                chkSendPasswordResetEmail_StateChanged(null, null);
+            }
         }
     }
 }

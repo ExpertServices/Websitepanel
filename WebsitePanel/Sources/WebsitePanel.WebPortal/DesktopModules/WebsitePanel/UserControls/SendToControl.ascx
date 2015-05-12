@@ -5,7 +5,7 @@
     <tr>
         <td class="FormLabel150"></td>
         <td>
-            <asp:CheckBox ID="chkSendPasswordResetEmail" runat="server" meta:resourcekey="chkSendPasswordResetEmail" Text="Send Password Request" AutoPostBack="true" Checked="false" OnCheckedChanged="chkSendPasswordResetEmail_StateChanged" />
+            <asp:CheckBox ID="chkSendPasswordResetEmail" runat="server" meta:resourcekey="chkSendPasswordResetEmail" Text="Send Password Request" AutoPostBack="true" Checked="True" OnCheckedChanged="chkSendPasswordResetEmail_StateChanged" />
         </td>
     </tr>
     <tbody id="SendToBody" runat="server" visible="False">
