@@ -170,9 +170,13 @@ namespace WebsitePanel.Setup.Internal
         }
         public static string GetComponentID(SetupVariables Ctx)
         {
-            var XmlPath = string.Format("//component[.//add/@key='ComponentCode' and .//add/@value='{0}']", Ctx.ComponentCode);
+            return GetComponentID(GetFullConfigPath(Ctx), Ctx.ComponentCode);
+        }
+        public static string GetComponentID(string Cfg, string ComponentCode)
+        {
+            var XmlPath = string.Format("//component[.//add/@key='ComponentCode' and .//add/@value='{0}']", ComponentCode);
             var Xml = new XmlDocument();
-            Xml.Load(GetFullConfigPath(Ctx));
+            Xml.Load(Cfg);
             var Node = Xml.SelectSingleNode(XmlPath) as XmlElement;
             return Node == null ? null : Node.GetAttribute("id");
         }
@@ -3926,20 +3930,20 @@ namespace WebsitePanel.Setup.Internal
             try
             {
                 Log.WriteStart("RestoreXmlConfigs");
-                var Backup = BackupRestore.Find(Ctx.InstallerFolder, "WebsitePanel", Ctx.ComponentName);                
+                var Backup = BackupRestore.Find(Ctx.InstallerFolder, Global.DefaultProductName, Ctx.ComponentName);                
                 switch(Ctx.ComponentCode)
                 {
-                    case "server":
+                    case Global.Server.ComponentCode:
                     {
                         Backup.XmlFiles.Add("Web.config");
                     }
                     break;
-                    case "enterpriseserver":
+                    case Global.EntServer.ComponentCode:
                     {
                         Backup.XmlFiles.Add("Web.config");
                     }
                     break;
-                    case "portal":
+                    case Global.WebPortal.ComponentCode:
                     {
                         Backup.XmlFiles.Add("Web.config");
                         Backup.XmlFiles.Add(@"App_Data\Countries.config");
@@ -3957,9 +3961,7 @@ namespace WebsitePanel.Setup.Internal
                     break;
                 }                
                 var MainCfg = Path.Combine(Ctx.InstallerFolder, BackupRestore.MainConfig);
-                var XCfg = new XmlDocument();
-                XCfg.Load(MainCfg);
-                if (XCfg.SelectSingleNode("//components").ChildNodes.Count == 0)
+                if (!BackupRestore.HaveChild(MainCfg, "//components"))
                 {
                     Log.WriteInfo("Restoring main config...");
                     XmlDocumentMerge.Process(Backup.BackupMainConfigFile, MainCfg);
