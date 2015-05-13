@@ -8,7 +8,7 @@ using Ionic.Zip;
 
 namespace WebsitePanel.Setup.Internal
 {
-    class BackupRestore
+    public class BackupRestore
     {
         struct DirectoryTag
         {
@@ -47,9 +47,7 @@ namespace WebsitePanel.Setup.Internal
                                 Version BckpVersion;
                                 var StrVersion = VersionName.Substring(FullId.Length);
                                 if (Version.TryParse(StrVersion, out BckpVersion))
-                                {
                                     DirList.Add(new DirectoryTag { Name = VersionItem, Date = date, Version = BckpVersion });
-                                }
                             }
                         }
                     }
@@ -59,6 +57,16 @@ namespace WebsitePanel.Setup.Internal
                 var SrcTag = ByDate.First();
                 Result = new BackupRestore { Id = Id, Root = GetComponentRoot(SrcTag, Id), BackupFile = Path.Combine(SrcTag.Name, AppZip), BackupMainConfigFile = GetMainConfig(SrcTag) };
             }
+            return Result;
+        }
+        public static bool HaveChild(string XmlDocPath, string XmlPath)
+        {
+            var Result = false;
+            var XCfg = new XmlDocument();
+            XCfg.Load(XmlDocPath);
+            var Node = XCfg.SelectSingleNode(XmlPath);
+            if (Node != null)
+                Result = Node.ChildNodes.Count > 0;
             return Result;
         }
         private static string GetComponentRoot(DirectoryTag DirTag, string Id)

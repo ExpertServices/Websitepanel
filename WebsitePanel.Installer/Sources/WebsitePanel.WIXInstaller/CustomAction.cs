@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Configuration.Install;
 using System.Data;
 using System.Data.Sql;
@@ -87,6 +88,102 @@ namespace WebsitePanel.WIXInstaller
             var Ctx = session;
             Ctx.AttachToSetupLog();
             Log.WriteStart("PreFillSettings");
+            var WSP = Ctx["WEBSITEPANELDIR"];
+            var CfgStr = string.Empty;
+            Func<string, string> GetCfg = (string CfgDir) =>
+            {
+                if (Directory.Exists(CfgDir))
+                {
+                    var CfgFile = Path.Combine(CfgDir, BackupRestore.MainConfig);
+                    if (File.Exists(CfgFile) && BackupRestore.HaveChild(CfgFile, "//components"))
+                        return CfgFile;
+                    else
+                    {
+                        var Names = new string[] { Global.Server.ComponentName, Global.EntServer.ComponentName, Global.WebPortal.ComponentName };
+                        foreach (var Name in Names)
+                        {
+                            var Backup = BackupRestore.Find(CfgDir, Global.DefaultProductName, Name);
+                            if (Backup != null && BackupRestore.HaveChild(Backup.BackupMainConfigFile, "//components"))
+                                return CfgStr = Backup.BackupMainConfigFile;
+                        }
+                    }
+                }
+                return string.Empty;
+            };
+            Func<Session, string, string, bool> SetProperty = (Session CtxSession, string Prop, string Value) =>
+            {
+                if(!string.IsNullOrWhiteSpace(Value))
+                {
+                    CtxSession[Prop] = Value; 
+                    return true;
+                }
+                return false;
+            };
+            CfgStr = GetCfg(WSP);            
+            if(string.IsNullOrWhiteSpace(CfgStr))
+            {
+                var Drives = from Drive in DriveInfo.GetDrives() where Drive.DriveType == DriveType.Fixed select Drive;
+                foreach(var Drive in Drives)
+                {
+                    var Dir = Path.Combine(Drive.RootDirectory.FullName, Global.DefaultProductName);
+                    CfgStr = GetCfg(Dir);
+                    if (!string.IsNullOrWhiteSpace(CfgStr))
+                        break;
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(CfgStr))
+            {
+                var EServerUrl = string.Empty;
+                AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = CfgStr });
+                var CtxVars = new SetupVariables();
+                CtxVars.ComponentId = WiXSetup.GetComponentID(CfgStr, Global.Server.ComponentCode);
+                if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
+                {                       
+                    AppConfig.LoadComponentSettings(CtxVars);
+                    Ctx["COMPFOUND_SERVER"] = "1";                    
+                    SetProperty(Ctx, "PI_SERVER_IP", CtxVars.WebSiteIP);
+                    SetProperty(Ctx, "PI_SERVER_PORT", CtxVars.WebSitePort);
+                    SetProperty(Ctx, "PI_SERVER_HOST", CtxVars.WebSiteDomain);
+                    SetProperty(Ctx, "PI_SERVER_LOGIN", CtxVars.UserAccount);
+                    SetProperty(Ctx, "PI_SERVER_PASSWORD", CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_SERVER_PASSWORD_CONFIRM",CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_SERVER_DOMAIN", CtxVars.UserDomain);
+                    SetProperty(Ctx, "SERVER_ACCESS_PASSWORD", CtxVars.ServerPassword);
+                    SetProperty(Ctx, "SERVER_ACCESS_PASSWORD_CONFIRM", CtxVars.ServerPassword);
+                }
+                CtxVars.ComponentId = WiXSetup.GetComponentID(CfgStr, Global.EntServer.ComponentCode);
+                if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
+                {
+                    AppConfig.LoadComponentSettings(CtxVars);
+                    Ctx["COMPFOUND_ESERVER"] = "1";
+                    SetProperty(Ctx, "PI_ESERVER_IP", CtxVars.WebSiteIP);
+                    SetProperty(Ctx, "PI_ESERVER_PORT", CtxVars.WebSitePort);
+                    SetProperty(Ctx, "PI_ESERVER_HOST", CtxVars.WebSiteDomain);
+                    SetProperty(Ctx, "PI_ESERVER_LOGIN", CtxVars.UserAccount);
+                    SetProperty(Ctx, "PI_ESERVER_PASSWORD", CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_ESERVER_PASSWORD_CONFIRM", CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_ESERVER_DOMAIN", CtxVars.UserDomain);
+                    SetProperty(Ctx, "SERVERADMIN_PASSWORD", CtxVars.ServerAdminPassword);
+                    SetProperty(Ctx, "SERVERADMIN_PASSWORD_CONFIRM", CtxVars.ServerAdminPassword);
+                    EServerUrl = string.Format("http://{0}:{1}", CtxVars.WebSiteIP, CtxVars.WebSitePort);
+                }
+                CtxVars.ComponentId = WiXSetup.GetComponentID(CfgStr, Global.WebPortal.ComponentCode);
+                if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
+                {
+                    AppConfig.LoadComponentSettings(CtxVars);
+                    Ctx["COMPFOUND_PORTAL"] = "1";
+                    SetProperty(Ctx, "PI_PORTAL_IP", CtxVars.WebSiteIP);
+                    SetProperty(Ctx, "PI_PORTAL_PORT", CtxVars.WebSitePort);
+                    SetProperty(Ctx, "PI_PORTAL_HOST", CtxVars.WebSiteDomain);
+                    SetProperty(Ctx, "PI_PORTAL_LOGIN", CtxVars.UserAccount);
+                    SetProperty(Ctx, "PI_PORTAL_PASSWORD", CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_PORTAL_PASSWORD_CONFIRM", CtxVars.UserPassword);
+                    SetProperty(Ctx, "PI_PORTAL_DOMAIN", CtxVars.UserDomain);
+                    if (!SetProperty(Ctx, "PI_ESERVER_URL", CtxVars.EnterpriseServerURL))
+                        if (!SetProperty(Ctx, "PI_ESERVER_URL", EServerUrl))
+                            SetProperty(Ctx, "PI_ESERVER_URL", Global.WebPortal.DefaultEntServURL);
+                }
+            }
             TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
             TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
             TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
