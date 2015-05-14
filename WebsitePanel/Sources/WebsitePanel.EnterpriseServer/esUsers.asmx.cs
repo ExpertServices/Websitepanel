@@ -57,13 +57,15 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public UserInfo GetUserById(int userId)
         {
-            return UserController.GetUser(userId);
+            UserInfoInternal uinfo = UserController.GetUser(userId);
+            return (uinfo != null) ? new UserInfo(uinfo) : null;
         }
 
         [WebMethod]
         public UserInfo GetUserByUsername(string username)
         {
-            return UserController.GetUser(username);
+            UserInfoInternal uinfo = UserController.GetUser(username);
+            return (uinfo != null) ? new UserInfo(uinfo) : null;
         }
 
         [WebMethod]
@@ -136,9 +138,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddUser(UserInfo user, bool sendLetter)
+        public int AddUser(UserInfo user, bool sendLetter, string password)
         {
-            return UserController.AddUser(user, sendLetter);
+            return UserController.AddUser(user, sendLetter, password);
         }
 
         [WebMethod]
@@ -175,7 +177,7 @@ namespace WebsitePanel.EnterpriseServer
             user.IsPeer = isPeer;
             user.IsDemo = isDemo;
             user.Username = username;
-            user.Password = password;
+//            user.Password = password;
             user.FirstName = firstName;
             user.LastName = lastName;
             user.Email = email;
@@ -192,7 +194,7 @@ namespace WebsitePanel.EnterpriseServer
             user.HtmlMail = htmlMail;
             user.CompanyName = companyName;
             user.EcommerceEnabled = ecommerceEnabled;
-            return UserController.AddUser(user, sendLetter);
+            return UserController.AddUser(user, sendLetter, password);
         }
 
         [WebMethod]

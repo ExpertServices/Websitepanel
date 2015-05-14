@@ -195,7 +195,7 @@ namespace WebsitePanel.Portal
                 user.SecondaryEmail = txtSecondaryEmail.Text;
                 user.HtmlMail = ddlMailFormat.SelectedIndex == 1;
                 user.Username = txtUsername.Text;
-                user.Password = userPassword.Password;
+//                user.Password = userPassword.Password;
                 user.IsDemo = chkDemo.Checked;
                 
                 user.LoginStatusId = loginStatus.SelectedIndex;
@@ -220,7 +220,7 @@ namespace WebsitePanel.Portal
                     try
                     {
                         //int userId = UsersHelper.AddUser(log, PortalId, user);
-                        int userId = PortalUtils.AddUserAccount(log, user, false);
+                        int userId = PortalUtils.AddUserAccount(log, user, false, userPassword.Password);
 
                         if (userId < 0)
                         {

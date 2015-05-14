@@ -58,7 +58,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // try to get user from database
-                UserInfo user = GetUserInternally(username);
+                UserInfoInternal user = GetUserInternally(username);
 
                 // check if the user exists
                 if (user == null)
@@ -99,7 +99,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
                 // compare user passwords
-                if (user.Password != password)
+                if (CryptoUtils.SHA1(user.Password) != password)
                 {
                     if (lockOut >= 0)
                         DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, false);
@@ -145,7 +145,7 @@ namespace WebsitePanel.EnterpriseServer
 			try
 			{
 				// try to get user from database
-				UserInfo user = GetUserInternally(username);
+				UserInfoInternal user = GetUserInternally(username);
 
 				// check if the user exists
 				if (user == null)
@@ -155,8 +155,8 @@ namespace WebsitePanel.EnterpriseServer
 				}
 
 				// compare user passwords
-				if (user.Password == password)
-					return user;
+				if (CryptoUtils.SHA1(user.Password) == password)
+					return new UserInfo(user);
 
 				return null;
 			}
@@ -239,7 +239,7 @@ namespace WebsitePanel.EnterpriseServer
 				items["Email"] = true;
 
 				// get reseller details
-				UserInfo reseller = UserController.GetUser(user.OwnerId);
+				UserInfoInternal reseller = UserController.GetUser(user.OwnerId);
 				if (reseller != null)
 				{
 					reseller.Password = "";
@@ -264,10 +264,10 @@ namespace WebsitePanel.EnterpriseServer
 			}
 		}
 
-		internal static UserInfo GetUserInternally(int userId)
+        internal static UserInfoInternal GetUserInternally(int userId)
 		{
 			// try to get user from database
-			UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(
+            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
 				DataProvider.GetUserByIdInternally(userId));
 
 			if (user != null)
@@ -275,10 +275,10 @@ namespace WebsitePanel.EnterpriseServer
 			return user;
 		}
 
-		internal static UserInfo GetUserInternally(string username)
+		internal static UserInfoInternal GetUserInternally(string username)
 		{
 			// try to get user from database
-			UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(
+            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
 				DataProvider.GetUserByUsernameInternally(username));
 
 			if (user != null)
@@ -288,10 +288,10 @@ namespace WebsitePanel.EnterpriseServer
 			return user;
 		}
 
-		public static UserInfo GetUser(int userId)
+        public static UserInfoInternal GetUser(int userId)
 		{
 			// try to get user from database
-			UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(
+            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
 				DataProvider.GetUserById(SecurityContext.User.UserId, userId));
 
 			if (user != null)
@@ -299,10 +299,10 @@ namespace WebsitePanel.EnterpriseServer
 			return user;
 		}
 
-		public static UserInfo GetUser(string username)
+        public static UserInfoInternal GetUser(string username)
 		{
 			// try to get user from database
-			UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(
+            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
 				DataProvider.GetUserByUsername(SecurityContext.User.UserId, username));
 
 			if (user != null)
@@ -381,7 +381,7 @@ namespace WebsitePanel.EnterpriseServer
 			return DataProvider.GetUsers(SecurityContext.User.UserId, ownerId, recursive);
 		}
 
-		public static int AddUser(UserInfo user, bool sendLetter)
+		public static int AddUser(UserInfo user, bool sendLetter, string password)
 		{
 			// check account
 			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
@@ -424,7 +424,7 @@ namespace WebsitePanel.EnterpriseServer
 					user.IsPeer,
 					user.Comments,
 					user.Username.Trim(),
-					CryptoUtils.Encrypt(user.Password),
+					CryptoUtils.Encrypt(password),
 					user.FirstName,
 					user.LastName,
 					user.Email,

@@ -103,7 +103,7 @@ namespace WebsitePanel.Portal
             user.SecondaryEmail = txtSecondaryEmail.Text;
             user.HtmlMail = ddlMailFormat.SelectedIndex == 1;
             user.Username  = txtUsername.Text.Trim();
-            user.Password = userPassword.Password;
+//            user.Password = userPassword.Password;
 
             // contact info
 			user.CompanyName = contact.CompanyName;
@@ -123,7 +123,7 @@ namespace WebsitePanel.Portal
             try
             {
                 //int userId = UsersHelper.AddUser(log, PortalId, user);
-                int userId = PortalUtils.AddUserAccount(log, user, chkAccountLetter.Checked);
+                int userId = PortalUtils.AddUserAccount(log, user, chkAccountLetter.Checked, userPassword.Password);
 
                 if (userId == BusinessErrorCodes.ERROR_INVALID_USER_NAME)
                 {
