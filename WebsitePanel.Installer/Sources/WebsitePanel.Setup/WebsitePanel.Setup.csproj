@@ -144,6 +144,8 @@
     <Compile Include="EnterpriseServer10.cs" />
     <Compile Include="EnterpriseServer20.cs" />
     <Compile Include="Internal\Adapter.cs" />
+    <Compile Include="Internal\BackupRestore.cs" />
+    <Compile Include="Internal\XmlDocumentMerge.cs" />
     <Compile Include="Portal10.cs" />
     <Compile Include="Portal20.cs" />
     <Compile Include="Server10.cs" />

@@ -331,11 +331,14 @@
             <Publish Dialog="PrereqCheckDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--CustomizeDlg-->
             <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="PrereqCheckDlg" Order="3">1</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="12">&amp;ServerFeature=3</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="11">&amp;EnterpriseServerFeature=3</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="10">&amp;PortalFeature=3</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="9">&amp;SchedulerServiceFeature=3</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="8">&amp;WDPortalFeature=3</Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg" Order="15"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="14"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="13"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="12"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="11"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="10"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="9"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="8"><![CDATA[&WDPortalFeature=3 AND COMPFOUND_WDPORTAL=0]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="7">1</Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="DoAction" Value="CA_RecapListUI" Order="1">1</Publish>
              <!--SWebDlg-->
@@ -357,7 +360,10 @@
             <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ServerPasswordDlg-->
-            <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="SUserAccountDlg">1</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="SUserAccountDlg" Order="1">1</Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="9"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND VALIDATE_OK = 1]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="8"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND VALIDATE_OK = "1"]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="7">&amp;EnterpriseServerFeature=3 AND VALIDATE_OK = "1"</Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="6">&amp;PortalFeature=3 AND VALIDATE_OK = "1"</Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="5">&amp;SchedulerServiceFeature=3 AND VALIDATE_OK = "1"</Publish>
@@ -389,7 +395,11 @@
             <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ServerAdminPasswordDlg-->
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ESUserAccountDlg">1</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ESUserAccountDlg" Order="1">1</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="4"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND VALIDATE_OK = "1"]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[(&EnterpriseServerFeature=3 OR &SchedulerServiceFeature=3) AND VALIDATE_OK="1"]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="DoAction" Value="CA_ServerAdminValidateUI" Order="1">1</Publish>
@@ -437,21 +447,28 @@
             <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ESUrlDlg-->
-            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg">1</Publish>
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="4"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="1">1</Publish>
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="2"><![CDATA[&SchedulerServiceFeature=3]]></Publish>
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
             <Publish Dialog="ESUrlDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--CustomVerifyReadyDlg-->
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&SchedulerServiceFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="15"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="14"><![CDATA[&PortalFeature=3 AND &EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="13"><![CDATA[&EnterpriseServerFeature=3 AND &PortalFeature<>3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="12"><![CDATA[&ServerFeature=3 AND &EnterpriseServerFeature<>3 AND &PortalFeature<>3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="19"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="18"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="17"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>          
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&SchedulerServiceFeature=3 AND NOT(&EnterpriseServerFeature=3) AND COMPFOUND_SCHEDULER=0]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="15"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3) AND COMPFOUND_PORTAL=0]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="14"><![CDATA[&PortalFeature=3 AND &EnterpriseServerFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="13"><![CDATA[&EnterpriseServerFeature=3 AND &PortalFeature<>3 AND COMPFOUND_ESERVER=0]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="12"><![CDATA[&ServerFeature=3 AND &EnterpriseServerFeature<>3 AND &PortalFeature<>3 AND COMPFOUND_SERVER=0]]></Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
             <!--FinishDlg-->
             <Publish Dialog="FinishDlg" Control="Next" Event="NewDialog" Value="FinishDlg">1</Publish>
             <!--ValidateDlg-->
             <Publish Dialog="ValidateDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
+            <ProgressText Action="CA_InstallWebFeatures">Please wait while [ProductName] Installer configures IIS &amp; ASP.NET, this may take a few minutes. Thanks!</ProgressText>
         </UI>
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
         <Binary Id="Assembly_CA" SourceFile="bin\WebsitePanel.WIXInstaller.CA.dll" />
@@ -476,7 +493,7 @@
         <!--SQL props.-->
         <Property Id="DB_SERVER" Secure="yes" Value="localhost\SQLExpress" />
         <Property Id="DB_CONN" Secure="yes" />
-        <Property Id="DB_DATABASE" Secure="yes" />
+        <Property Id="DB_DATABASE" Secure="yes" Value="WebsitePanel" />
         <Property Id="DB_AUTH" Secure="yes" Value="Windows Authentication" />
         <Property Id="DB_LOGIN" Secure="yes" />
         <Property Id="DB_PASSWORD" Secure="yes" />
@@ -503,7 +520,7 @@
         <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
         <Property Id="PI_SERVER_HOST" Secure="yes" />
-        <Property Id="PI_SERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_SERVER_LOGIN" Secure="yes" Value="WPServer"/>
         <Property Id="PI_SERVER_PASSWORD" Secure="yes" />
         <Property Id="PI_SERVER_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_SERVER_DOMAIN" Secure="yes" />
@@ -512,7 +529,7 @@
         <Property Id="PI_ESERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_ESERVER_PORT" Secure="yes" Value="9002" />
         <Property Id="PI_ESERVER_HOST" Secure="yes" />
-        <Property Id="PI_ESERVER_LOGIN" Secure="yes" />
+        <Property Id="PI_ESERVER_LOGIN" Secure="yes"  Value="WPEnterpriseServer"/>
         <Property Id="PI_ESERVER_PASSWORD" Secure="yes" />
         <Property Id="PI_ESERVER_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_ESERVER_DOMAIN" Secure="yes" />
@@ -522,7 +539,7 @@
         <Property Id="PI_PORTAL_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_PORTAL_PORT" Secure="yes" Value="9001" />
         <Property Id="PI_PORTAL_HOST" Secure="yes" />
-        <Property Id="PI_PORTAL_LOGIN" Secure="yes" />
+        <Property Id="PI_PORTAL_LOGIN" Secure="yes" Value="WPPortal" />
         <Property Id="PI_PORTAL_PASSWORD" Secure="yes" />
         <Property Id="PI_PORTAL_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_PORTAL_DOMAIN" Secure="yes" />
@@ -539,9 +556,15 @@
         <!---->
         <Property Id="VALIDATE_OK" Secure="yes" Value="0" />
         <Property Id="VALIDATE_MSG" Secure="yes" />
-        <Property Id ="WSP_ROOT" Secure="yes">
-            <RegistrySearch Id='Search_WSP_ROOT' Root='HKCU' Key='SOFTWARE\[ProductName]' Name='Root' Type='raw' />
+        <Property Id="WSP_BASE" Secure="yes">
+            <RegistrySearch Id='Search_WSP_BASE' Root='HKLM' Key='SOFTWARE\[ProductName]' Name='Base' Type='raw' />
         </Property>
+        <!--Was found an existing installation (configuration) on local pc. COMPFOUND stands for COMPonent FOUND.-->
+        <Property Id="COMPFOUND_SERVER" Secure="yes" Value="0" />
+        <Property Id="COMPFOUND_ESERVER" Secure="yes" Value="0" />
+        <Property Id="COMPFOUND_PORTAL" Secure="yes" Value="0" />
+        <Property Id="COMPFOUND_WDPORTAL" Secure="yes" Value="1" />
+        <Property Id="COMPFOUND_SCHEDULER" Secure="yes" Value="1" />
         <!--CustomActions.-->
       <!--  <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
         <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' /> -->
@@ -576,7 +599,7 @@
         <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLSERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--EServer.-->
-        <CustomAction Id="CA_PropertyOnEServerInstall" Property="CA_OnEServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterpriseserver;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLENTERPRISESERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnEServerInstall" Property="CA_OnEServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterprise server;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLENTERPRISESERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnEServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnEServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--Portal.-->
         <CustomAction Id="CA_PropertyOnPortalInstall" Property="CA_OnPortalInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLPORTALFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=[];InstallerType=[];InstallerPath=[];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
@@ -584,15 +607,23 @@
         <!--Run corresponding uninstall scripts.-->
         <CustomAction Id="CA_PropertyOnServerRemove" Property="CA_OnServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=server;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnServerRemove" BinaryKey="Assembly_CA" DllEntry="OnServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
-        <CustomAction Id="CA_PropertyOnEServerRemove" Property="CA_OnEServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterpriseserver;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnEServerRemove" Property="CA_OnEServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterprise server;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnEServerRemove" BinaryKey="Assembly_CA" DllEntry="OnEServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
         <CustomAction Id="CA_PropertyOnPortalRemove" Property="CA_OnPortalRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=portal;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnPortalRemove" BinaryKey="Assembly_CA" DllEntry="OnPortalRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <!--Maintenance mode.-->
+        <CustomAction Id="CA_PropertyMaintenanceServer" Property="CA_MaintenanceServer" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=server;BaseDirectory=[WEBSITEPANELDIR];ServerPassword=[SERVER_ACCESS_PASSWORD]" />
+        <CustomAction Id="CA_MaintenanceServer" BinaryKey="Assembly_CA" DllEntry="MaintenanceServer" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyMaintenanceEServer" Property="CA_MaintenanceEServer" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterprise server;BaseDirectory=[WEBSITEPANELDIR];ServerAdminPassword=[SERVERADMIN_PASSWORD];" />
+        <CustomAction Id="CA_MaintenanceEServer" BinaryKey="Assembly_CA" DllEntry="MaintenanceEServer" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=portal;BaseDirectory=[WEBSITEPANELDIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
+        <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
-        <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_ROOT]">WSP_ROOT</SetProperty>
+        <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
+        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
         <!--Exe sequence.-->
         <InstallExecuteSequence>
-            <Custom Action="CA_InstallWebFeatures" After="InstallValidate"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
+            <Custom Action="CA_InstallWebFeatures" Before="CostInitialize"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
             <!--<Custom Action="CA_PropertyFinalizeInstall" After='InstallValidate'/>
             <Custom Action="CA_FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
             <Custom Action="CA_FinalizeInstall" After="InstallFiles" >NOT Installed or REINSTALL</Custom>-->
@@ -609,9 +640,19 @@
             <Custom Action="CA_PropertyOnEServerRemove" After="InstallInitialize"><![CDATA[(&EnterpriseServerFeature=2) AND (!EnterpriseServerFeature=3)]]></Custom>
             <Custom Action="CA_OnEServerRemove" Before="StopServices"><![CDATA[(&EnterpriseServerFeature=2) AND (!EnterpriseServerFeature=3)]]></Custom>
             <Custom Action="CA_PropertyOnPortalRemove" After="InstallInitialize"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
-            <Custom Action="CA_OnPortalRemove" After="CA_PropertyOnPortalRemove"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>
+            <Custom Action="CA_OnPortalRemove" After="CA_PropertyOnPortalRemove"><![CDATA[(&PortalFeature=2) AND (!PortalFeature=3)]]></Custom>            
+            <!--Maintenance.-->
+            <Custom Action="CA_PropertyMaintenanceServer" After="InstallInitialize"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Custom>
+            <Custom Action="CA_MaintenanceServer" After="CA_PropertyMaintenanceServer"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Custom>
+            <Custom Action="CA_PropertyMaintenanceEServer" After="InstallInitialize"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Custom>
+            <Custom Action="CA_MaintenanceEServer" After="CA_PropertyMaintenanceEServer"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Custom>
+            <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
+            <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
+            <!---->
+            <!--<Custom Action="CA_PreFillSettings" After="SetWEBSITEPANELDIR">1</Custom>-->
         </InstallExecuteSequence>
         <InstallUISequence>
+            <Custom Action="CA_PreFillSettings" Before="CA_InstallWebFeatures" />
             <Custom Action="CA_InstallWebFeatures" Before="CA_PrereqCheck" />
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
@@ -630,7 +671,7 @@
         <DirectoryRef Id="INSTALLENTERPRISESERVERFOLDER">
             <Component Id="InstallDatabaseSql" Guid="{81FB6008-A445-464F-8A0E-2EE076027FF3}">
                 <CreateFolder />
-                <Condition>(NOT Installed OR NOT WIX_UPGRADE_DETECTED) AND NOT(DB_AUTH = "Windows Authentication")</Condition>
+                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND NOT(DB_AUTH = "Windows Authentication")</Condition>
                 <util:User Id="SqlUser" Name="[DB_LOGIN]" Password="[DB_PASSWORD]" CreateUser="no" />
                 <sql:SqlDatabase Id="SqlDatabaseInstallSql" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
                                  DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
@@ -654,7 +695,7 @@
             </Component>
             <Component Id="InstallDatabaseWin" Guid="{C50FC58C-3EF3-452D-BA9B-C9513B4D941A}">
                 <CreateFolder />
-                <Condition>(NOT Installed OR NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication")</Condition>
+                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication")</Condition>
                 <sql:SqlDatabase Id="SqlDatabaseInstallWin" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
                                  DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
                                  Server="[DB_SERVER]"
@@ -680,9 +721,9 @@
             <Component Id ="comp_WebsitePanel_config" Directory="WEBSITEPANELDIR" Guid="{28CD1ADB-562C-4E38-A3B6-325D3A2718B1}">
                 <File Id="file_WebsitePanel_config" KeyPath="yes" Source="WebsitePanel.config" />
             </Component>
-            <Component Directory="WEBSITEPANELDIR">
-                <RegistryValue Root='HKCU' Key='SOFTWARE\[ProductName]'
-                                           Name='Root' Value='[WEBSITEPANELDIR]'
+            <Component Id="comp_WebsitePanel_reg_locator" Directory="WEBSITEPANELDIR" Guid="{CC35E1B5-3E29-4AD1-991C-2904E4DCB099}">
+                <RegistryValue Root='HKLM' Key='SOFTWARE\[ProductName]'
+                                           Name='Base' Value='[WEBSITEPANELDIR]'
                                            Type='string' />                
             </Component>
         </ComponentGroup>

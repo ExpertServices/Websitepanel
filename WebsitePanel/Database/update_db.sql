@@ -8208,11 +8208,13 @@ AS
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 558 BEGIN -- RAM of VPS2012
-			DECLARE @Result1 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+			DECLARE @Result1 int
+			SET @Result1 = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
 							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
-			DECLARE @Result2 int = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+			DECLARE @Result2 int
+			SET @Result2 = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
 							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
 							INNER JOIN ServiceItemProperties AS SIP2 ON 
 								SIP2.ItemID = SI.ItemID AND SIP2.PropertyName = 'DynamicMemory.Enabled' AND SIP2.PropertyValue = 'True'
@@ -9607,6 +9609,13 @@ IF EXISTS (SELECT * FROM ResourceGroups WHERE GroupName = 'SharePoint')
 BEGIN
 	DECLARE @group_id INT
 	SELECT @group_id = GroupId FROM ResourceGroups WHERE GroupName = 'SharePoint'
+	DELETE FROM PackageQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanQuotas WHERE QuotaID IN (SELECT QuotaID FROM Quotas WHERE GroupID = @group_id)
+	DELETE FROM HostingPlanResources WHERE GroupId = @group_id
+	DELETE FROM PackagesBandwidth WHERE GroupId = @group_id
+	DELETE FROM PackagesDiskspace WHERE GroupId = @group_id
+	DELETE FROM PackageResources WHERE GroupId = @group_id
+	DELETE FROM ResourceGroupDnsRecords WHERE GroupId = @group_id
 	DELETE FROM Providers WHERE GroupID = @group_id
 	DELETE FROM Quotas WHERE GroupID = @group_id
 	DELETE FROM VirtualGroups WHERE GroupID = @group_id

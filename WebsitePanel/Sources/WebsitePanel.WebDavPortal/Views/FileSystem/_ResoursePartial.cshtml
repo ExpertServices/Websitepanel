@@ -64,7 +64,7 @@
                     <p class="progress-text">@percent%</p>
                 </div>
             </div>
-            <p>@ViewDataHelper.BytesToSize(resource.ContentLength) / @ViewDataHelper.BytesToSize(resource.AllocatedSpace)</p>
+            <p class="resource-subtext">@ViewDataHelper.BytesToSize(resource.ContentLength) / @ViewDataHelper.BytesToSize(resource.AllocatedSpace)</p>
         }
 
         <div class="selected-element-overlay">
