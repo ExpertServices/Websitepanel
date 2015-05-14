@@ -69,7 +69,7 @@ namespace WebsitePanel.EnterpriseServer
         protected override string AuthenticateToken(UsernameToken token)
         {
             // try to load user account
-            UserInfo user = UserController.GetUserInternally(token.Username);
+            UserInfoInternal user = UserController.GetUserInternally(token.Username);
             if (user == null)
                 return null;
 

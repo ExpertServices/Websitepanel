@@ -43,6 +43,7 @@ using System.Web.Security;
 using System.Web.UI.WebControls;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Cryptography;
 
 using Microsoft.Web.Services3;
 using WebsitePanel.EnterpriseServer;
@@ -336,15 +337,30 @@ namespace WebsitePanel.Portal
             return DefaultPage.GetLocalizedPageName(pageId);
         }
 
+        public static string SHA1(string plainText)
+        {
+            // Convert plain text into a byte array.
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+
+            HashAlgorithm hash = new SHA1Managed(); ;
+
+            // Compute hash value of our plain text with appended salt.
+            byte[] hashBytes = hash.ComputeHash(plainTextBytes);
+
+            // Return the result.
+            return Convert.ToBase64String(hashBytes);
+        }
         public static int AuthenticateUser(string username, string password, string ipAddress,
             bool rememberLogin, string preferredLocale, string theme)
         {
             esAuthentication authService = new esAuthentication();
             ConfigureEnterpriseServerProxy(authService, false);
 
+            string passwordSH = SHA1(password);
+
             try
             {
-                int authResult = authService.AuthenticateUser(username, password, ipAddress);
+                int authResult = authService.AuthenticateUser(username, passwordSH, ipAddress);
 
                 if (authResult < 0)
                 {
@@ -352,13 +368,13 @@ namespace WebsitePanel.Portal
                 }
                 else
                 {
-                    UserInfo user = authService.GetUserByUsernamePassword(username, password, ipAddress);
+                    UserInfo user = authService.GetUserByUsernamePassword(username, passwordSH, ipAddress);
                     if (user != null)
                     {
                         if (IsRoleAllowedToLogin(user.Role))
                         {
                             // issue authentication ticket
-                            FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
+                            FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, password, user.Role, rememberLogin);
                             SetAuthTicket(ticket, rememberLogin);
 
                             CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
@@ -513,7 +529,7 @@ namespace WebsitePanel.Portal
             }
         }
 
-        public static int AddUserAccount(List<string> log, UserInfo user, bool sendLetter)
+        public static int AddUserAccount(List<string> log, UserInfo user, bool sendLetter, string password)
         {
             esUsers usersService = new esUsers();
             ConfigureEnterpriseServerProxy(usersService, true);
@@ -521,7 +537,7 @@ namespace WebsitePanel.Portal
             try
             {
                 // add user to WebsitePanel server
-                return usersService.AddUser(user, sendLetter);
+                return usersService.AddUser(user, sendLetter, password);
             }
             catch (Exception ex)
             {

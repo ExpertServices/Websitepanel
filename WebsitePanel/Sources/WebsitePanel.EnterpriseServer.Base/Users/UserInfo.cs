@@ -51,7 +51,7 @@ namespace WebsitePanel.EnterpriseServer
         private bool isDemo;
         private string comments;
         private string username;
-        private string password;
+//        private string password;
         private string firstName;
         private string lastName;
         private string email;
@@ -76,6 +76,39 @@ namespace WebsitePanel.EnterpriseServer
         /// </summary>
         public UserInfo()
         {
+        }
+
+        public UserInfo(UserInfo src)
+        {
+            userId = src.userId;
+            ownerId = src.ownerId;
+            roleId = src.roleId;
+            statusId = src.statusId;
+            loginStatusId = src.loginStatusId;
+            failedLogins = src.failedLogins;
+            created = src.created;
+            changed = src.changed;
+            isPeer = src.isPeer;
+            isDemo = src.isDemo;
+            comments = src.comments;
+            username = src.username;
+            firstName = src.firstName;
+            lastName = src.lastName;
+            email = src.email;
+            secondaryEmail = src.secondaryEmail;
+            address = src.address;
+            city = src.city;
+            country = src.country;
+            state = src.state;
+            zip = src.zip;
+            primaryPhone = src.primaryPhone;
+            secondaryPhone = src.secondaryPhone;
+            fax = src.fax;
+            instantMessenger = src.instantMessenger;
+            htmlMail = src.htmlMail;
+            companyName = src.companyName;
+            ecommerceEnabled = src.ecommerceEnabled;
+            subscriberNumber = src.subscriberNumber;
         }
 
         /// <summary>
@@ -200,11 +233,11 @@ namespace WebsitePanel.EnterpriseServer
             set { this.username = value; }
         }
 
-        public string Password
-        {
-            get { return this.password; }
-            set { this.password = value; }
-        }
+//        public string Password
+//        {
+//            get { return this.password; }
+//            set { this.password = value; }
+//        }
 
         public string FirstName
         {
@@ -347,7 +380,18 @@ namespace WebsitePanel.EnterpriseServer
     {
         public ushort VLanID { get; set; }
         public string Comment { get; set; }
-    }
+    };
+
+    public class UserInfoInternal : UserInfo
+    {
+        private string password;
+
+        public string Password
+        {
+            get { return this.password; }
+            set { this.password = value; }
+        }
+    };
 }
 
 

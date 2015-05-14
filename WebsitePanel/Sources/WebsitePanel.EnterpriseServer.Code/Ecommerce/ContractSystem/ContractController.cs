@@ -182,7 +182,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.ContractSystem
                 //
                 if (customerId > -1)
                 {
-					ES.UserInfo userInfo = (internally) ? ES.UserController.GetUserInternally(customerId) : 
+					ES.UserInfoInternal userInfo = (internally) ? ES.UserController.GetUserInternally(customerId) : 
 						ES.UserController.GetUser(customerId);
 					//
 					if (internally)

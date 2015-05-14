@@ -210,10 +210,10 @@ namespace WebsitePanel.Portal
             return dsUsers;
         }
 
-        public static int AddUser(List<string> log, int portalId, UserInfo user, bool sendLetter)
+        public static int AddUser(List<string> log, int portalId, UserInfo user, bool sendLetter, string password)
         {
             // add user to WebsitePanel server
-            return ES.Services.Users.AddUser(user, sendLetter);
+            return ES.Services.Users.AddUser(user, sendLetter, password);
         }
 
         public static void AddUserVLan(int userId, UserVlan vLan)
