@@ -1,12 +1,10 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDSCreateCollection.ascx.cs" Inherits="WebsitePanel.Portal.RDS.RDSCreateCollection" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="RDSImportCollection.ascx.cs" Inherits="WebsitePanel.Portal.RDS.RDSImportCollection" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/RDSCollectionServers.ascx" TagName="CollectionServers" TagPrefix="wsp"%>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <script type="text/javascript" src="/JavaScript/jquery.min.js?v=1.4.4"></script>
+<%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
-
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
@@ -15,7 +13,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="imgAddRDSServer" SkinID="AddRDSServer48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create New RDS Collection"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Import RDS Collection"></asp:Localize>
 				</div>
 				<div class="FormContentRDS">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -28,17 +26,10 @@
                                 <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName" ValidationGroup="SaveRDSCollection"></asp:RequiredFieldValidator>
 						    </td>                            
 					    </tr>                        
-					</table>                                                                              
-
-                    <fieldset id="RDSServersPanel" runat="server">
-                        <legend><asp:Localize ID="locRDSServersSection" runat="server" meta:resourcekey="locRDSServersSection" Text="RDS Servers"></asp:Localize></legend>
-                        <div style="padding: 10px;">
-                            <wsp:CollectionServers id="servers" runat="server" />
-                        </div>  
-                    </fieldset>
+					</table>                                                                                                  
                       
 				    <div class="FormFooter">
-					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" OnClientClick="ShowProgressDialog('Adding collection...');" ValidationGroup="SaveRDSCollection"></asp:Button>
+					    <asp:Button id="btnSave" runat="server" Text="Import" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" OnClientClick="ShowProgressDialog('Importing collection...');" ValidationGroup="SaveRDSCollection"></asp:Button>
 				    </div>
 				</div>
 			</div>

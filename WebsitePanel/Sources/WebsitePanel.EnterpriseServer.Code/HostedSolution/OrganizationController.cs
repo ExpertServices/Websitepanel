@@ -1632,6 +1632,73 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
+        public static ResultObject SendUserPasswordRequestSms(int itemId, int accountId, string reason, string phoneTo = null)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_REQUEST_SMS",
+                itemId);
+
+            try
+            {
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
+                }
+
+                UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+                OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+
+                user.ItemId = itemId;
+
+                if (string.IsNullOrEmpty(phoneTo))
+                {
+                    phoneTo = user.MobilePhone;
+                }
+
+                UserSettings settings = UserController.GetUserSettings(owner.UserId, UserSettings.USER_PASSWORD_REQUEST_LETTER);
+
+
+                string body = settings["SMSBody"];
+
+                var pincode = GeneratePincode();
+                Guid token;
+
+                var items = new Hashtable();
+
+                items["passwordResetLink"] = GenerateUserPasswordResetLink(user.ItemId, user.AccountId, out token, pincode);
+
+                body = PackageController.EvaluateTemplate(body, items);
+
+                TaskManager.Write("Organization ID : " + user.ItemId);
+                TaskManager.Write("Account : " + user.DisplayName);
+                TaskManager.Write("Reason : " + reason);
+                TaskManager.Write("SmsTo : " + phoneTo);
+
+                // send Sms message
+                var response = SendSms(phoneTo, body);
+
+                if (response.RestException != null)
+                {
+                    throw new Exception(response.RestException.Message);
+                }
+
+                SetAccessTokenResponse(token, pincode);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(result);
+                result.AddError("", ex);
+                return result;
+            }
+
+            TaskManager.CompleteResultTask();
+            return result;
+        }
+
         public static ResultObject SendResetUserPasswordPincodeSms(Guid token, string phoneTo = null)
         {
             var result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "SEND_USER_PASSWORD_RESET_SMS_PINCODE");
@@ -1851,6 +1918,33 @@ namespace WebsitePanel.EnterpriseServer
             SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_RESET_LETTER, "USER_PASSWORD_RESET_LETTER", finalStep);
         }
 
+        public static void SendUserPasswordRequestEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
+        {
+            // load organization
+            Organization org = GetOrganization(itemId);
+
+            if (org == null)
+            {
+                throw new Exception(string.Format("Organization not found (ItemId = {0})", itemId));
+            }
+
+            UserInfo owner = PackageController.GetPackageOwner(org.PackageId);
+            OrganizationUser user = OrganizationController.GetUserGeneralSettingsWithExtraData(itemId, accountId);
+
+            user.ItemId = itemId;
+
+            if (string.IsNullOrEmpty(mailTo))
+            {
+                mailTo = user.PrimaryEmailAddress;
+            }
+
+            var generalSettings = OrganizationController.GetOrganizationGeneralSettings(itemId);
+
+            var logoUrl = generalSettings != null ? generalSettings.OrganizationLogoUrl : string.Empty;
+
+            SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_REQUEST_LETTER, "USER_PASSWORD_REQUEST_LETTER", finalStep);
+        }
+
         public static void SendUserExpirationPasswordEmail(UserInfo owner, OrganizationUser user, string reason,
             string mailTo, string logoUrl)
         {
@@ -1918,8 +2012,6 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
-
-
 
         public static AccessToken GetAccessToken(Guid accessToken, AccessTokenTypes type)
         {

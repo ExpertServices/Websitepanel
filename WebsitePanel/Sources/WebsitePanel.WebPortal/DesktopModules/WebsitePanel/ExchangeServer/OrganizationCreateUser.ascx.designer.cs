@@ -49,6 +49,15 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Localize locTitle;
         
         /// <summary>
+        /// CreateUserUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel CreateUserUpdatePanel;
+        
+        /// <summary>
         /// messageBox control.
         /// </summary>
         /// <remarks>
@@ -182,6 +191,24 @@ namespace WebsitePanel.Portal.HostedSolution {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.EmailAddress email;
+        
+        /// <summary>
+        /// sendToControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.UserControls.SendToControl sendToControl;
+        
+        /// <summary>
+        /// PasswordBlock control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow PasswordBlock;
         
         /// <summary>
         /// locPassword control.

@@ -54,6 +54,10 @@
             <asp:HyperLink ID="lnkOrganizationUserPasswordResetPincodeLetter" runat="server" meta:resourcekey="lnkOrganizationUserPasswordResetPincodeLetter"
                 Text="User Password Reset Pincode Letter" NavigateUrl='<%# GetSettingsLink("UserPasswordResetPincodeLetter", "SettingsUserPasswordResetPincodeLetter") %>'></asp:HyperLink>
         </li>
+        <li>
+            <asp:HyperLink ID="HyperLink3" runat="server" meta:resourcekey="lnkOrganizationUserPasswordRequestLetter"
+                Text="Organization User Password Request Letter" NavigateUrl='<%# GetSettingsLink("OrganizationUserPasswordRequestLetter", "SettingsUserPasswordRequestLetter") %>'></asp:HyperLink>
+        </li>
     </ul>
 </div>
 <div class="FormFooter">

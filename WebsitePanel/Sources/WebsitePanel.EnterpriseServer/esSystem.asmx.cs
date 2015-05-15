@@ -59,6 +59,12 @@ namespace WebsitePanel.EnterpriseServer
             return SystemController.GetSystemSettingsActive(settingsName, decrypt);
         }
 
+        [WebMethod]
+        public bool CheckIsTwilioEnabled()
+        {
+            return SystemController.CheckIsTwilioEnabled();
+        }
+
 		[WebMethod]
 		public int SetSystemSettings(string settingsName, SystemSettings settings)
 		{

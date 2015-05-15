@@ -211,6 +211,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
+        [WebMethod]
+        public ResultObject SendUserPasswordRequestSms(int itemId, int accountId, string reason, string phoneTo)
+        {
+            return OrganizationController.SendUserPasswordRequestSms(itemId, accountId, reason, phoneTo);
+        }
+
+        [WebMethod]
+        public void SendUserPasswordRequestEmail(int itemId, int accountId, string reason, string mailTo, bool finalStep)
+        {
+            OrganizationController.SendUserPasswordRequestEmail(itemId, accountId, reason, mailTo, finalStep);
+        }
+
     #endregion
 
         #region Domains

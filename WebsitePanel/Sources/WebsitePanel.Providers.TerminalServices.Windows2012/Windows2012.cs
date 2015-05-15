@@ -486,19 +486,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             try
             {
                 runSpace = OpenRunspace();
-
-                Command cmd = new Command("Get-RDSessionCollection");
-                cmd.Parameters.Add("CollectionName", collectionName);
-                cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
-
-                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
-
-                if (collectionPs != null)
-                {
-                    collection = new RdsCollection();
-                    collection.Name = Convert.ToString(GetPSObjectProperty(collectionPs, "CollectionName"));
-                    collection.Description = Convert.ToString(GetPSObjectProperty(collectionPs, "CollectionDescription"));
-                }
+                collection = runSpace.GetCollection(collectionName, ConnectionBroker, PrimaryDomainController);
             }
             finally
             {
@@ -1656,6 +1644,124 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #endregion
 
+        #region Import Collection
+
+        public ImportedRdsCollection GetExistingCollection(string collectionName)
+        {
+            Runspace runspace = null;
+            ImportedRdsCollection result;
+
+            try
+            {
+                runspace = OpenRunspace();
+                var collection = runspace.GetCollection(collectionName, ConnectionBroker, PrimaryDomainController);
+                result = new ImportedRdsCollection
+                {
+                    CollectionName = collection.Name,
+                    Description = collection.Description
+                };
+                
+                if (collection == null)
+                {
+                    throw new NullReferenceException(string.Format("Collection \"{0}\" not found", collectionName));
+                }
+
+                object[] errors;
+                result.CollectionSettings = runspace.GetCollectionSettings(collectionName, ConnectionBroker, PrimaryDomainController, out errors).ToList();
+
+                if (errors.Any())
+                {
+                    throw new Exception(string.Format("Collection not imported:\r\n{0}", string.Join("r\\n\\", errors.Select(e => e.ToString()).ToArray())));
+                }
+
+                result.SessionHosts = runspace.GetSessionHosts(collectionName, ConnectionBroker, PrimaryDomainController, out errors);
+
+                if (errors.Any())
+                {
+                    throw new Exception(string.Format("Collection not imported:\r\n{0}", string.Join("r\\n\\", errors.Select(e => e.ToString()).ToArray())));
+                }
+
+                result.UserGroups = runspace.GetCollectionUserGroups(collectionName, ConnectionBroker, PrimaryDomainController, out errors).ToList();
+
+                if (errors.Any())
+                {
+                    throw new Exception(string.Format("Collection not imported:\r\n{0}", string.Join("r\\n\\", errors.Select(e => e.ToString()).ToArray())));
+                }
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
+            return result;
+        }
+
+        public void ImportCollection(string organizationId, RdsCollection collection, List<string> users)
+        {            
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();                                                
+                var orgPath = GetOrganizationPath(organizationId);
+                CheckOrCreateAdGroup(GetComputerGroupPath(organizationId, collection.Name), orgPath, GetComputersGroupName(collection.Name), RdsCollectionComputersGroupDescription);
+                CheckOrCreateHelpDeskComputerGroup();
+                string helpDeskGroupSamAccountName = CheckOrCreateAdGroup(GetHelpDeskGroupPath(RDSHelpDeskGroup), GetRootOUPath(), RDSHelpDeskGroup, RDSHelpDeskGroupDescription);
+                string groupName = GetLocalAdminsGroupName(collection.Name);
+                string groupPath = GetGroupPath(organizationId, collection.Name, groupName);
+                string localAdminsGroupSamAccountName = CheckOrCreateAdGroup(groupPath, GetOrganizationPath(organizationId), groupName, WspAdministratorsGroupDescription);
+                CheckOrCreateAdGroup(GetUsersGroupPath(organizationId, collection.Name), orgPath, GetUsersGroupName(collection.Name), RdsCollectionUsersGroupDescription);
+
+                var capPolicyName = GetPolicyName(organizationId, collection.Name, RdsPolicyTypes.RdCap);
+                var rapPolicyName = GetPolicyName(organizationId, collection.Name, RdsPolicyTypes.RdRap);
+
+                foreach (var gateway in Gateways)
+                {
+                    CreateHelpDeskRdCapForce(runSpace, gateway);
+                    CreateHelpDeskRdRapForce(runSpace, gateway);
+
+                    if (!CentralNps)
+                    {
+                        CreateRdCapForce(runSpace, gateway, capPolicyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                    }
+
+                    CreateRdRapForce(runSpace, gateway, rapPolicyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                }
+
+                if (CentralNps)
+                {
+                    CreateCentralNpsPolicy(runSpace, CentralNpsHost, capPolicyName, collection.Name, organizationId);
+                }
+
+                //add user group to collection
+                AddUserGroupsToCollection(runSpace, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+
+                //add session servers to group
+                foreach (var rdsServer in collection.Servers)
+                {
+                    MoveSessionHostToCollectionOU(rdsServer.Name, collection.Name, organizationId);
+                    AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, helpDeskGroupSamAccountName);
+                    AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, localAdminsGroupSamAccountName);
+                    AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
+                }
+
+                string collectionComputersPath = GetComputerGroupPath(organizationId, collection.Name);
+                CreatePolicy(runSpace, organizationId, string.Format("{0}-administrators", collection.Name),
+                    new DirectoryEntry(GetGroupPath(organizationId, collection.Name, GetLocalAdminsGroupName(collection.Name))), new DirectoryEntry(collectionComputersPath), collection.Name);
+                CreatePolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name))
+                    , new DirectoryEntry(collectionComputersPath), collection.Name);
+                CreateHelpDeskPolicy(runSpace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collection.Name);
+
+                SetUsersInCollection(organizationId, collection.Name, users);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+        }
+
+        #endregion
+
         private void AddRdsServerToDeployment(Runspace runSpace, RdsServer server)
         {
             Command cmd = new Command("Add-RDserver");
@@ -2723,6 +2829,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             cmd.Parameters.Add("CollectionName", collection.Name);            
             cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
 
+            if (string.IsNullOrEmpty(collection.Settings.ClientDeviceRedirectionOptions))
+            {
+                collection.Settings.ClientDeviceRedirectionOptions = "None";
+            }
+
             var properties = collection.Settings.GetType().GetProperties();
 
             foreach(var prop in properties)
@@ -2733,7 +2844,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                     if (value != null)
                     {
-                    cmd.Parameters.Add(prop.Name, value);
+                        cmd.Parameters.Add(prop.Name, value);
                     }
                 }
             }

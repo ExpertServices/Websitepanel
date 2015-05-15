@@ -8,6 +8,7 @@
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/SendToControl.ascx" TagName="SendToControl" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -105,12 +106,17 @@
                                 </wsp:EmailAddress>
                             </td>
 						</tr>
-						<tr>
+                        <tr>
+                            <td colspan="2">
+                                <wsp:SendToControl id="sendToControl" runat="server" ValidationGroup="CreateMailbox" ControlToHide="PasswordBlock"></wsp:SendToControl>
+                            </td>
+                        </tr>
+						<tr id="PasswordBlock" runat="server" Visible="false">
 							<td class="FormLabel150" valign="top"><asp:Localize ID="locPassword" runat="server" meta:resourcekey="locPassword" Text="Password: *"></asp:Localize></td>
 							<td>
-                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="CreateMailbox" AllowGeneratePassword="true">
+                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="CreateMailbox" AllowGeneratePassword="false">
                                 </wsp:PasswordControl>
-						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
+						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" Visible="False"/>
                             </td>
 						</tr>
 						<tr>

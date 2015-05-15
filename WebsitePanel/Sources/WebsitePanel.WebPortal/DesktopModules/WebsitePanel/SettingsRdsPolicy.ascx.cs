@@ -53,6 +53,7 @@ namespace WebsitePanel.Portal
             cbDisableCmdUsers.Checked = Convert.ToBoolean(settings[RdsServerSettings.DISABLE_CMD_USERS]);
 
             ddTreshold.SelectedValue = settings[RdsServerSettings.DRIVE_SPACE_THRESHOLD_VALUE];
+            cbAllowImport.Checked = Convert.ToBoolean(settings[RdsServerSettings.ALLOWCONNECTIONSIMPORT]);
         }
 
         public void SaveSettings(UserSettings settings)
@@ -81,6 +82,7 @@ namespace WebsitePanel.Portal
             settings[RdsServerSettings.RDS_CONTROL_WITHOUT_PERMISSION_Users] = cbControlSessionUsers.Checked.ToString();
             settings[RdsServerSettings.DISABLE_CMD_ADMINISTRATORS] = cbDisableCmdAdministrators.Checked.ToString();
             settings[RdsServerSettings.DISABLE_CMD_USERS] = cbDisableCmdUsers.Checked.ToString();
+            settings[RdsServerSettings.ALLOWCONNECTIONSIMPORT] = cbAllowImport.Checked.ToString();
         }
     }
 }

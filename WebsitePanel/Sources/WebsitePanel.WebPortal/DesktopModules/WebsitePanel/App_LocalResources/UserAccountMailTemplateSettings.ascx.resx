@@ -159,4 +159,7 @@
   <data name="lnkOrganizationUserPasswordResetPincodeLetter.Text" xml:space="preserve">
     <value>Organization User Password Reset Pincode Letter</value>
   </data>
+  <data name="lnkOrganizationUserPasswordRequestLetter.Text" xml:space="preserve">
+    <value>Organization User Password Request Letter</value>
+  </data>
 </root>
