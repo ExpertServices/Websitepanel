@@ -520,12 +520,12 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
 			return settings;
 		}
 
-		private CommandParams PrepeareAccountParams(UserInfo userInfo)
+		private CommandParams PrepeareAccountParams(UserInfo userInfo, string password)
 		{
 			CommandParams args = new CommandParams();
 
 			args[CommandParams.USERNAME] = userInfo.Username;
-			args[CommandParams.PASSWORD] = userInfo.Password;
+			args[CommandParams.PASSWORD] = password;
 			args[CommandParams.FIRST_NAME] = userInfo.FirstName;
 			args[CommandParams.LAST_NAME] = userInfo.LastName;
 			args[CommandParams.EMAIL] = userInfo.Email;

@@ -45,7 +45,7 @@ $.validator.addMethod("numberscount", function (value, element, count) {
 $.validator.unobtrusive.adapters.addSingleVal("symbolscount", "count");
 
 $.validator.addMethod("symbolscount", function (value, element, count) {
-    if (value.replace(/[a-zA-Z0-9_]/g, "").length < count) {
+    if (value.replace(/[^~!@#$%^&*_\-+'\|\\(){}\[\]:;\"'<>,.?/]/g, "").length < count) {
         
         return false;
     }

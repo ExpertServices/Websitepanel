@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using WebsitePanel.Providers.HostedSolution;
@@ -53,9 +54,9 @@ namespace WebsitePanel.WebDavPortal.CustomAttributes
 
                     if (settings.PasswordComplexityEnabled)
                     {
-                        var symbolsCount = valueString.Count(Char.IsSymbol);
                         var numbersCount = valueString.Count(Char.IsDigit);
                         var upperLetterCount = valueString.Count(Char.IsUpper);
+                        var symbolsCount = Regex.Matches(valueString, @"[~!@#$%^&*_\-+'\|\\(){}\[\]:;\""'<>,.?/]").Count;
 
                         if (upperLetterCount < settings.UppercaseLettersCount)
                         {

@@ -431,7 +431,7 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
 
                 // load user info
-                UserInfo user = UserController.GetUser(userId);
+                UserInfoInternal user = UserController.GetUser(userId);
 
                 if (createFtpAccount)
                 {
@@ -2095,7 +2095,7 @@ namespace WebsitePanel.EnterpriseServer
             items["user"] = user;
 
             // get reseller details
-            UserInfo reseller = UserController.GetUser(user.OwnerId);
+            UserInfoInternal reseller = UserController.GetUser(user.OwnerId);
             if (reseller != null)
             {
                 reseller.Password = "";
@@ -2132,7 +2132,7 @@ namespace WebsitePanel.EnterpriseServer
             items["user"] = user;
 
             // get reseller details
-            UserInfo reseller = UserController.GetUser(user.OwnerId);
+            UserInfoInternal reseller = UserController.GetUser(user.OwnerId);
             if (reseller != null)
             {
                 reseller.Password = "";

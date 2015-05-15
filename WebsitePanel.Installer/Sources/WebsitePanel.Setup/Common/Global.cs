@@ -39,6 +39,7 @@ namespace WebsitePanel.Setup
 		public const string DefaultInstallPathRoot = @"C:\WebsitePanel";
 		public const string LoopbackIPv4 = "127.0.0.1";
 		public const string InstallerProductCode = "cfg core";
+        public const string DefaultProductName = "WebsitePanel";
 
 		public abstract class Parameters
 		{

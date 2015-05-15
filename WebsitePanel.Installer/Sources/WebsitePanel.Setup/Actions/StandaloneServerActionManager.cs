@@ -651,12 +651,11 @@ namespace WebsitePanel.Setup.Actions
 				user.IsPeer = false;
 				user.HtmlMail = true;
 				user.Username = loginName;
-				user.Password = password;
 				user.FirstName = firstName;
 				user.LastName = lastName;
 				user.Email = email;
 
-				int userId = ES.Services.Users.AddUser(user, false);
+				int userId = ES.Services.Users.AddUser(user, false, password);
 				if (userId > 0)
 				{
 					Log.WriteEnd("Added user account");

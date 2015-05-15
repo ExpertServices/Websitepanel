@@ -840,20 +840,23 @@ namespace WebsitePanel.EnterpriseServer
 
 		/// <remarks/>
 		[System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/AddUser", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-		public int AddUser(UserInfo user, bool sendLetter)
+		public int AddUser(UserInfo user, bool sendLetter, string password)
 		{
 			object[] results = this.Invoke("AddUser", new object[] {
                         user,
-                        sendLetter});
+                        sendLetter,
+                        password
+            });
 			return ((int)(results[0]));
 		}
 
 		/// <remarks/>
-		public System.IAsyncResult BeginAddUser(UserInfo user, bool sendLetter, System.AsyncCallback callback, object asyncState)
+		public System.IAsyncResult BeginAddUser(UserInfo user, bool sendLetter, string password, System.AsyncCallback callback, object asyncState)
 		{
 			return this.BeginInvoke("AddUser", new object[] {
                         user,
-                        sendLetter}, callback, asyncState);
+                        sendLetter,
+                        password}, callback, asyncState);
 		}
 
 		/// <remarks/>
@@ -864,13 +867,13 @@ namespace WebsitePanel.EnterpriseServer
 		}
 
 		/// <remarks/>
-		public void AddUserAsync(UserInfo user, bool sendLetter)
+		public void AddUserAsync(UserInfo user, bool sendLetter, string password)
 		{
-			this.AddUserAsync(user, sendLetter, null);
+			this.AddUserAsync(user, sendLetter, password, null);
 		}
 
 		/// <remarks/>
-		public void AddUserAsync(UserInfo user, bool sendLetter, object userState)
+		public void AddUserAsync(UserInfo user, bool sendLetter, string password, object userState)
 		{
 			if ((this.AddUserOperationCompleted == null))
 			{
@@ -878,7 +881,8 @@ namespace WebsitePanel.EnterpriseServer
 			}
 			this.InvokeAsync("AddUser", new object[] {
                         user,
-                        sendLetter}, this.AddUserOperationCompleted, userState);
+                        sendLetter,
+                        password}, this.AddUserOperationCompleted, userState);
 		}
 
 		private void OnAddUserOperationCompleted(object arg)
