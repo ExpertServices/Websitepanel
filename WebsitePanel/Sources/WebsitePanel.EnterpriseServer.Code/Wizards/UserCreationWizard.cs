@@ -119,11 +119,11 @@ namespace WebsitePanel.EnterpriseServer
             user.Email = email;
             user.SecondaryEmail = secondaryEmail;
             user.Username = username;
-            user.Password = password;
+//            user.Password = password;
             user.HtmlMail = htmlMail;
 
             // add a new user
-            createdUserId = UserController.AddUser(user, false);
+            createdUserId = UserController.AddUser(user, false, password);
             if (createdUserId < 0)
             {
                 // exit

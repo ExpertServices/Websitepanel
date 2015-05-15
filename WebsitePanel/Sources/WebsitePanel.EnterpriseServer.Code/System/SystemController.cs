@@ -202,5 +202,15 @@ namespace WebsitePanel.EnterpriseServer
 				TaskManager.CompleteTask();
 			}
 		}
+
+        public static bool CheckIsTwilioEnabled()
+        {
+            var settings = SystemController.GetSystemSettingsActive(SystemSettings.TWILIO_SETTINGS, false);
+
+            return settings != null
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(SystemSettings.TWILIO_ACCOUNTSID_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(SystemSettings.TWILIO_AUTHTOKEN_KEY, string.Empty))
+                && !string.IsNullOrEmpty(settings.GetValueOrDefault(SystemSettings.TWILIO_PHONEFROM_KEY, string.Empty));
+        }
 	}
 }

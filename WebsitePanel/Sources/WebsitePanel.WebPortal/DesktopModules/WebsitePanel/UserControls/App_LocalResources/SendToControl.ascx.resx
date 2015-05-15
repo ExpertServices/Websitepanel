@@ -117,49 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="btnResetPassoword.Text" xml:space="preserve">
+    <value>Send Password Reset Email</value>
   </data>
-  <data name="lnkAccountLetter.Text" xml:space="preserve">
-    <value>User Account Summary Letter</value>
+  <data name="chkSaveAsMobile.Text" xml:space="preserve">
+    <value>Save as user mobile</value>
   </data>
-  <data name="lnkExchangeMailboxSetup.Text" xml:space="preserve">
-    <value>Exchange Mailbox Setup Letter</value>
+  <data name="locEmailAddress.Text" xml:space="preserve">
+    <value>Email: *</value>
   </data>
-  <data name="lnkOrganizationUserSummaryLetter.Text" xml:space="preserve">
-    <value>Organization User Summary Letter</value>
+  <data name="locMobile.Text" xml:space="preserve">
+    <value>Mobile: *</value>
   </data>
-  <data name="lnkPackageLetter.Text" xml:space="preserve">
-    <value>Hosting Space Summary Letter</value>
+  <data name="locReason.Text" xml:space="preserve">
+    <value>Reason:</value>
   </data>
-  <data name="lnkPasswordReminder.Text" xml:space="preserve">
-    <value>Password Reminder Letter</value>
+  <data name="locSendTo.Text" xml:space="preserve">
+    <value>Send to:</value>
   </data>
-  <data name="lnkHostedSolutionReport.Text" xml:space="preserve">
-    <value>Enterprise Solution Report</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Reset Password</value>
   </data>
-  <data name="lnkVpsSummaryLetter.Text" xml:space="preserve">
-    <value>VPS Summary Letter</value>
+  <data name="rbtnEmail.Text" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="lnkDomainExpirationLetter.Text" xml:space="preserve">
-    <value>Domain Expiration Letter</value>
+  <data name="rbtnMobile.Text" xml:space="preserve">
+    <value>Mobile</value>
   </data>
-  <data name="lnkDomainLookupLetter.Text" xml:space="preserve">
-    <value>Domain MX and NS Letter</value>
-  </data>
-  <data name="lnkRdsSetupLetter.Text" xml:space="preserve">
-    <value>RDS Setup Letter</value>
-  </data>
-  <data name="lnkUserPasswordExpirationLetter.Text" xml:space="preserve">
-    <value>Organization User Password Expiration Letter</value>
-  </data>
-  <data name="lnkOrganizationUserPasswordResetLetter.Text" xml:space="preserve">
-    <value>Organization User Password Reset Letter</value>
-  </data>
-  <data name="lnkOrganizationUserPasswordResetPincodeLetter.Text" xml:space="preserve">
-    <value>Organization User Password Reset Pincode Letter</value>
-  </data>
-  <data name="lnkOrganizationUserPasswordRequestLetter.Text" xml:space="preserve">
-    <value>Organization User Password Request Letter</value>
+  <data name="chkSendPasswordResetEmail.Text" xml:space="preserve">
+    <value>Send Password Request</value>
   </data>
 </root>

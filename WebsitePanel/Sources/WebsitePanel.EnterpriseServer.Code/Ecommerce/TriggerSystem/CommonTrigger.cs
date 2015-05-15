@@ -113,7 +113,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
                     // create user account
                     ES.UserInfo userInfo = new ES.UserInfo();
                     userInfo.Username = account[ContractAccount.USERNAME];
-                    userInfo.Password = account[ContractAccount.PASSWORD];
+//                    userInfo.Password = account[ContractAccount.PASSWORD];
                     userInfo.Email = account[ContractAccount.EMAIL];
                     userInfo.FirstName = account[ContractAccount.FIRST_NAME];
                     userInfo.LastName = account[ContractAccount.LAST_NAME];
@@ -133,7 +133,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
                     userInfo.OwnerId = contract.ResellerId;
                     userInfo.Created = DateTime.Now;
                     // create account
-                    int resultCode = ES.UserController.AddUser(userInfo, true);
+                    int resultCode = ES.UserController.AddUser(userInfo, true, account[ContractAccount.PASSWORD]);
                     //
                     if (resultCode > 0)
                     {

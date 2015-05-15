@@ -112,10 +112,12 @@ namespace WebsitePanel.EnterpriseServer
 				UserInfo user = PackageController.GetPackageOwner(item.PackageId);
 				if (user != null)
 				{
+                    UserInfoInternal userInternal = UserController.GetUserInternally(user.UserId);
+
                     site.StatisticsUrl = Utils.ReplaceStringVariable(site.StatisticsUrl, "username",
-                        HttpUtility.UrlEncode(user.Username));
+                        HttpUtility.UrlEncode(userInternal.Username));
 					site.StatisticsUrl = Utils.ReplaceStringVariable(site.StatisticsUrl, "password",
-                        HttpUtility.UrlEncode(user.Password));
+                        HttpUtility.UrlEncode(userInternal.Password));
 				}
             }
 

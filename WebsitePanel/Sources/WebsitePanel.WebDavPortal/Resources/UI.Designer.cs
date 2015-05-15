@@ -88,11 +88,11 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Address Inforamtion.
+        ///   Looks up a localized string similar to Address Information.
         /// </summary>
-        public static string AddressInforamtion {
+        public static string AddressInformation {
             get {
-                return ResourceManager.GetString("AddressInforamtion", resourceCulture);
+                return ResourceManager.GetString("AddressInformation", resourceCulture);
             }
         }
         
