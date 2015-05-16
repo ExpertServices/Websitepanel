@@ -30,6 +30,7 @@ using System;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -52,6 +53,14 @@ namespace WebsitePanel.Portal.RDS
             if (cntx.Quotas.ContainsKey(Quotas.RDS_COLLECTIONS))
             {
                 btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
+            }
+
+            var defaultSettings = ES.Services.Users.GetUserSettings(PanelSecurity.EffectiveUserId, UserSettings.RDS_POLICY);
+            var allowImport = Convert.ToBoolean(defaultSettings[RdsServerSettings.ALLOWCONNECTIONSIMPORT]);
+
+            if (!allowImport)
+            {
+                btnImportCollection.Visible = false;
             }
         }
 
@@ -80,6 +89,12 @@ namespace WebsitePanel.Portal.RDS
         protected void btnAddCollection_Click(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_create_collection",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
+        protected void btnImportCollection_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_import_collection",
                 "SpaceID=" + PanelSecurity.PackageId));
         }
 

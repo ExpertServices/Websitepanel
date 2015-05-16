@@ -117,52 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="cbAdministrators.Text" xml:space="preserve">
-    <value>Administrators</value>
+  <data name="btnResetPassoword.Text" xml:space="preserve">
+    <value>Send Password Reset Email</value>
   </data>
-  <data name="cbAllowImport.Text" xml:space="preserve">
-    <value>Allow</value>
+  <data name="chkSaveAsMobile.Text" xml:space="preserve">
+    <value>Save as user mobile</value>
   </data>
-  <data name="cbUsers.Text" xml:space="preserve">
-    <value>Users</value>
+  <data name="locEmailAddress.Text" xml:space="preserve">
+    <value>Email: *</value>
   </data>
-  <data name="secAllowImport.Text" xml:space="preserve">
-    <value>Connections Import</value>
+  <data name="locMobile.Text" xml:space="preserve">
+    <value>Mobile: *</value>
   </data>
-  <data name="secChangeDesktop.Text" xml:space="preserve">
-    <value>Changing Desktop Disabled</value>
+  <data name="locReason.Text" xml:space="preserve">
+    <value>Reason:</value>
   </data>
-  <data name="secControlSession.Text" xml:space="preserve">
-    <value>Control RDS Session without Users's Permission</value>
+  <data name="locSendTo.Text" xml:space="preserve">
+    <value>Send to:</value>
   </data>
-  <data name="secDisableCmd.Text" xml:space="preserve">
-    <value>Disable Command Prompt</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Reset Password</value>
   </data>
-  <data name="secDriveSpace.Text" xml:space="preserve">
-    <value>Drive Space Threshold</value>
+  <data name="rbtnEmail.Text" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="secHideCDrive.Text" xml:space="preserve">
-    <value>Hide C: Drive</value>
+  <data name="rbtnMobile.Text" xml:space="preserve">
+    <value>Mobile</value>
   </data>
-  <data name="secPowershellCommand.Text" xml:space="preserve">
-    <value>Remove "Powershell" Command</value>
-  </data>
-  <data name="secRunCommand.Text" xml:space="preserve">
-    <value>Remove "Run" Command</value>
-  </data>
-  <data name="secScreenSaver.Text" xml:space="preserve">
-    <value>Disable Screen Saver</value>
-  </data>
-  <data name="secShutdown.Text" xml:space="preserve">
-    <value>Remove Shutdown and Restart</value>
-  </data>
-  <data name="secTaskManager.Text" xml:space="preserve">
-    <value>Disable Task Manager</value>
-  </data>
-  <data name="secTimeout.Text" xml:space="preserve">
-    <value>Lock Screen Timeout (sec.)</value>
-  </data>
-  <data name="secViewSession.Text" xml:space="preserve">
-    <value>View RDS Session without Users's Permission</value>
+  <data name="chkSendPasswordResetEmail.Text" xml:space="preserve">
+    <value>Send Password Request</value>
   </data>
 </root>

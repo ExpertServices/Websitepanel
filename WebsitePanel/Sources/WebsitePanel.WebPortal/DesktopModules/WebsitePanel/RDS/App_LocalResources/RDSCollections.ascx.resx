@@ -150,4 +150,7 @@
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Remote Desktop Collections Created:</value>
   </data>
+  <data name="btnImportCollection.Text" xml:space="preserve">
+    <value>Import RDS Collection</value>
+  </data>
 </root>

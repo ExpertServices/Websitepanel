@@ -84,5 +84,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings);
         void ShadowSession(string sessionId, bool control);
         void MoveSessionHostsToCollectionOU(List<RdsServer> servers, string collectionName, string organizationId);
+        ImportedRdsCollection GetExistingCollection(string collectionName);
+        void ImportCollection(string organizationId, RdsCollection collection, List<string> users);
     }
 }

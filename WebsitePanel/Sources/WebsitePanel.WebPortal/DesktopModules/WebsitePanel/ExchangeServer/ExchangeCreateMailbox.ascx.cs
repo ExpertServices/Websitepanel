@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.Security;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
@@ -161,12 +162,19 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 string subscriberNumber = IsNewUser ? txtSubscriberNumber.Text.Trim() : userSelector.GetSubscriberNumber();
 
+                var passwordString = password.Password;
+
+                if (sendToControl.IsRequestSend && IsNewUser)
+                {
+                    passwordString = Membership.GeneratePassword(16, 3);
+                }
+
                 accountId = ES.Services.ExchangeServer.CreateMailbox(PanelRequest.ItemID, accountId, type,
                                     accountName,
                                     displayName,
                                     name,
                                     domain,
-                                    password.Password,
+                                    passwordString,
                                     chkSendInstructions.Checked,
                                     sendInstructionEmail.Text,
                                     Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
@@ -185,6 +193,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                     {
                         SetUserAttributes(accountId);
                     }
+                }
+
+                if (sendToControl.SendEmail && IsNewUser)
+                {
+                    ES.Services.Organizations.SendUserPasswordRequestEmail(PanelRequest.ItemID, accountId, "User creation", sendToControl.Email, true);
+                }
+                else if (sendToControl.SendMobile && IsNewUser)
+                {
+                    ES.Services.Organizations.SendUserPasswordRequestSms(PanelRequest.ItemID, accountId, "User creation", sendToControl.Mobile);
                 }
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "mailbox_settings",

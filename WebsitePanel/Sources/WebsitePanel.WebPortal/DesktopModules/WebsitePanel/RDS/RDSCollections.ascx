@@ -22,6 +22,8 @@
                         <div class="FormButtonsBarCleanLeft">
                             <asp:Button ID="btnAddCollection" runat="server" meta:resourcekey="btnAddCollection"
                                 Text="Create New RDS Collection" CssClass="Button1" OnClick="btnAddCollection_Click" />
+                            <asp:Button ID="btnImportCollection" runat="server" meta:resourcekey="btnImportCollection"
+                                Text="Import RDS Collection" CssClass="Button1" OnClick="btnImportCollection_Click" />
                         </div>
                         <div class="FormButtonsBarCleanRight">
                             <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
