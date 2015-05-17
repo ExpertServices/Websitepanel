@@ -382,7 +382,7 @@ namespace WebsitePanel.Portal
                         else return BusinessErrorCodes.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED;
                     }
 
-                    return 0;
+                    return authResult;
                 }
             }
             catch (Exception ex)

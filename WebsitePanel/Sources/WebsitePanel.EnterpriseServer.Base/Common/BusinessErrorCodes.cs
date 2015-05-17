@@ -67,6 +67,9 @@ namespace WebsitePanel.EnterpriseServer
 
         public const int ERROR_USER_ACCOUNT_DISABLED = -114;
         public const int ERROR_USER_ACCOUNT_LOCKEDOUT = -115;
+
+        public const int ERROR_USER_EXPIRED_ONETIMEPASSWORD = -116;
+
         #endregion
 
         #region Packages

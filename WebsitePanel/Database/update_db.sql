@@ -12445,3 +12445,135 @@ BEGIN
 	SELECT @item_type_id = ItemTypeId FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
 	UPDATE [dbo].[Quotas] SET ItemTypeID = @item_type_id WHERE QuotaId = 550
 END
+GO
+
+-- OneTimePassword
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Users' AND COLS.name='OneTimePasswordState')
+BEGIN
+ALTER TABLE [dbo].[Users] ADD
+	[OneTimePasswordState] int NULL
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SetUserOneTimePassword')
+DROP PROCEDURE SetUserOneTimePassword
+GO
+CREATE PROCEDURE [dbo].[SetUserOneTimePassword]
+(
+	@UserID int,
+	@Password nvarchar(200),
+	@OneTimePasswordState int
+)
+AS
+UPDATE Users
+SET Password = @Password, OneTimePasswordState = @OneTimePasswordState
+WHERE UserID = @UserID
+RETURN 
+GO
+
+ALTER PROCEDURE [dbo].[GetUserByUsernameInternally]
+(
+	@Username nvarchar(50)
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams],
+		U.OneTimePasswordState
+	FROM Users AS U
+	WHERE U.Username = @Username
+
+	RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetUserByIdInternally]
+(
+	@UserID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams],
+		U.OneTimePasswordState
+	FROM Users AS U
+	WHERE U.UserID = @UserID
+
+	RETURN
+GO
+
+ALTER PROCEDURE [dbo].[ChangeUserPassword]
+(
+	@ActorID int,
+	@UserID int,
+	@Password nvarchar(200)
+)
+AS
+
+-- check actor rights
+IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
+RETURN
+
+UPDATE Users
+SET Password = @Password, OneTimePasswordState = 0
+WHERE UserID = @UserID
+
+RETURN 
+GO
