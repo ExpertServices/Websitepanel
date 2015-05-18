@@ -172,7 +172,7 @@
     <value>Webdav Portal URL</value>
   </data>
   <data name="WebdavPortalSettings.Text" xml:space="preserve">
-    <value>Webdav Portal</value>
+    <value>Organization Password Reset Module</value>
   </data>
   <data name="chkEnablePasswordReset.Text" xml:space="preserve">
     <value>Yes</value>

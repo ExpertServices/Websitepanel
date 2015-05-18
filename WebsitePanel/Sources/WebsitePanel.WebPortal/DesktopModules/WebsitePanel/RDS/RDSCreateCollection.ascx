@@ -15,7 +15,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="imgAddRDSServer" SkinID="AddRDSServer48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Add Server To Organization"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create New RDS Collection"></asp:Localize>
 				</div>
 				<div class="FormContentRDS">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />

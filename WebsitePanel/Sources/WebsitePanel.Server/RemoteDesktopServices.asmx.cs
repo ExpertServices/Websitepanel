@@ -711,5 +711,37 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public ImportedRdsCollection GetExistingCollection(string collectionName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetExistingCollection", ProviderSettings.ProviderName);
+                return RDSProvider.GetExistingCollection(collectionName);
+                Log.WriteEnd("'{0}' GetExistingCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetExistingCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ImportCollection(string organizationId, RdsCollection collection, List<string> users)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ImportCollection", ProviderSettings.ProviderName);
+                RDSProvider.ImportCollection(organizationId, collection, users);
+                Log.WriteEnd("'{0}' ImportCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ImportCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

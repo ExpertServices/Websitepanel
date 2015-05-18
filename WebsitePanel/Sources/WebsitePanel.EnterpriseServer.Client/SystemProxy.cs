@@ -31,6 +31,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetSystemSettingsActiveOperationCompleted;
         
+        private System.Threading.SendOrPostCallback CheckIsTwilioEnabledOperationCompleted;
+        
         private System.Threading.SendOrPostCallback SetSystemSettingsOperationCompleted;
         
         /// <remarks/>
@@ -43,6 +45,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetSystemSettingsActiveCompletedEventHandler GetSystemSettingsActiveCompleted;
+        
+        /// <remarks/>
+        public event CheckIsTwilioEnabledCompletedEventHandler CheckIsTwilioEnabledCompleted;
         
         /// <remarks/>
         public event SetSystemSettingsCompletedEventHandler SetSystemSettingsCompleted;
@@ -129,6 +134,44 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.GetSystemSettingsActiveCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetSystemSettingsActiveCompleted(this, new GetSystemSettingsActiveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckIsTwilioEnabled", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckIsTwilioEnabled() {
+            object[] results = this.Invoke("CheckIsTwilioEnabled", new object[0]);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckIsTwilioEnabled(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckIsTwilioEnabled", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckIsTwilioEnabled(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckIsTwilioEnabledAsync() {
+            this.CheckIsTwilioEnabledAsync(null);
+        }
+        
+        /// <remarks/>
+        public void CheckIsTwilioEnabledAsync(object userState) {
+            if ((this.CheckIsTwilioEnabledOperationCompleted == null)) {
+                this.CheckIsTwilioEnabledOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckIsTwilioEnabledOperationCompleted);
+            }
+            this.InvokeAsync("CheckIsTwilioEnabled", new object[0], this.CheckIsTwilioEnabledOperationCompleted, userState);
+        }
+        
+        private void OnCheckIsTwilioEnabledOperationCompleted(object arg) {
+            if ((this.CheckIsTwilioEnabledCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckIsTwilioEnabledCompleted(this, new CheckIsTwilioEnabledCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -230,6 +273,32 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemSettings)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckIsTwilioEnabledCompletedEventHandler(object sender, CheckIsTwilioEnabledCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckIsTwilioEnabledCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckIsTwilioEnabledCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }

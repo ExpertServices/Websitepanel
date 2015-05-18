@@ -108,6 +108,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback MoveSessionHostsToCollectionOUOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetExistingCollectionOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ImportCollectionOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -229,6 +233,12 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event MoveSessionHostsToCollectionOUCompletedEventHandler MoveSessionHostsToCollectionOUCompleted;
+        
+        /// <remarks/>
+        public event GetExistingCollectionCompletedEventHandler GetExistingCollectionCompleted;
+        
+        /// <remarks/>
+        public event ImportCollectionCompletedEventHandler ImportCollectionCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1934,6 +1944,94 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetExistingCollection", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ImportedRdsCollection GetExistingCollection(string collectionName) {
+            object[] results = this.Invoke("GetExistingCollection", new object[] {
+                        collectionName});
+            return ((ImportedRdsCollection)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetExistingCollection(string collectionName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetExistingCollection", new object[] {
+                        collectionName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ImportedRdsCollection EndGetExistingCollection(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ImportedRdsCollection)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetExistingCollectionAsync(string collectionName) {
+            this.GetExistingCollectionAsync(collectionName, null);
+        }
+        
+        /// <remarks/>
+        public void GetExistingCollectionAsync(string collectionName, object userState) {
+            if ((this.GetExistingCollectionOperationCompleted == null)) {
+                this.GetExistingCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetExistingCollectionOperationCompleted);
+            }
+            this.InvokeAsync("GetExistingCollection", new object[] {
+                        collectionName}, this.GetExistingCollectionOperationCompleted, userState);
+        }
+        
+        private void OnGetExistingCollectionOperationCompleted(object arg) {
+            if ((this.GetExistingCollectionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetExistingCollectionCompleted(this, new GetExistingCollectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ImportCollection", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ImportCollection(string organizationId, RdsCollection collection, string[] users) {
+            this.Invoke("ImportCollection", new object[] {
+                        organizationId,
+                        collection,
+                        users});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginImportCollection(string organizationId, RdsCollection collection, string[] users, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ImportCollection", new object[] {
+                        organizationId,
+                        collection,
+                        users}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndImportCollection(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void ImportCollectionAsync(string organizationId, RdsCollection collection, string[] users) {
+            this.ImportCollectionAsync(organizationId, collection, users, null);
+        }
+        
+        /// <remarks/>
+        public void ImportCollectionAsync(string organizationId, RdsCollection collection, string[] users, object userState) {
+            if ((this.ImportCollectionOperationCompleted == null)) {
+                this.ImportCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnImportCollectionOperationCompleted);
+            }
+            this.InvokeAsync("ImportCollection", new object[] {
+                        organizationId,
+                        collection,
+                        users}, this.ImportCollectionOperationCompleted, userState);
+        }
+        
+        private void OnImportCollectionOperationCompleted(object arg) {
+            if ((this.ImportCollectionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ImportCollectionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2578,4 +2676,34 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void MoveSessionHostsToCollectionOUCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetExistingCollectionCompletedEventHandler(object sender, GetExistingCollectionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetExistingCollectionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetExistingCollectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ImportedRdsCollection Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ImportedRdsCollection)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ImportCollectionCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

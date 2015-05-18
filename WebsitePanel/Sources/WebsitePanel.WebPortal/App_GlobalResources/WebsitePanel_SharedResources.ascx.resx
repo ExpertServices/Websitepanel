@@ -4581,6 +4581,9 @@
   <data name="Error.ERROR_USER_ACCOUNT_SUSPENDED" xml:space="preserve">
     <value>User account is Suspended</value>
   </data>
+  <data name="Warning.USER_SHOULD_CHANGE_ONETIMEPASSWORD" xml:space="preserve">
+    <value>You should change your one time password.</value>
+  </data>
   <data name="VPS.VPS_CREATE_EMPTY_HOSTNAME_PATTERN" xml:space="preserve">
     <value>Hostname pattern is not specified. Could not create VPS with blank hostname.</value>
   </data>
@@ -5787,6 +5790,9 @@
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
+  <data name="Error.RDS_IMPORT_COLLECTION_NOT_FOUND" xml:space="preserve">
+    <value>Error importing rds collection. Collection not found</value>
+  </data>
   <data name="Quota.Exchange2013.ResourceMailboxes" xml:space="preserve">
     <value>Resource Mailboxes per Organization</value>
   </data>
@@ -5822,6 +5828,9 @@
   </data>
   <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
     <value>Collection not created</value>
+  </data>
+  <data name="ERROR.RDSCOLLECTION_NOT_IMPORTED" xml:space="preserve">
+    <value>Collection not imported</value>
   </data>
   <data name="ERROR.RDSSESSIONHOST_CERTIFICATE_NOT_INSTALLED" xml:space="preserve">
     <value>Session host certificate not installed</value>
