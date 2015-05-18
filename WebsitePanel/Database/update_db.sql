@@ -664,9 +664,17 @@ RAISERROR('You are not allowed to access this package', 16, 1)
 DECLARE @condition nvarchar(400)
 SET @condition = ' 1 = 1 '
 
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ScheduleName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + '''
+			OR FullName LIKE ''' + @FilterValue + '''
+			OR Email LIKE ''' + @FilterValue + ''')'
+END
 
 IF @SortColumn IS NULL OR @SortColumn = ''
 SET @SortColumn = 'S.ScheduleName ASC'
@@ -2515,9 +2523,18 @@ AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
 AND (@OrgID = 0 OR @OrgID <> 0 AND PA.OrgID = @OrgID)
 '
 
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ExternalIP LIKE ''' + @FilterValue + '''
+			OR InternalIP LIKE ''' + @FilterValue + '''
+			OR DefaultGateway LIKE ''' + @FilterValue + '''
+			OR ItemName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + ''')'
+END
 
 IF @SortColumn IS NULL OR @SortColumn = ''
 SET @SortColumn = 'IP.ExternalIP ASC'
@@ -6453,8 +6470,19 @@ WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
 AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
 '
 
-IF @FilterColumn <> '' AND @FilterValue <> ''
-SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+IF @FilterValue <> ''
+BEGIN
+	IF @FilterColumn <> ''
+	BEGIN
+		SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+	END
+	ELSE
+		SET @sql = @sql + '
+		AND (DomainName LIKE @FilterValue 
+		OR Username LIKE @FilterValue
+		OR ServerName LIKE @FilterValue
+		OR PackageName LIKE @FilterValue) '
+END
 
 IF @SortColumn <> '' AND @SortColumn IS NOT NULL
 SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
@@ -7618,8 +7646,19 @@ WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
 AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
 '
 
-IF @FilterColumn <> '' AND @FilterValue <> ''
-SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+IF @FilterValue <> ''
+BEGIN
+	IF @FilterColumn <> ''
+	BEGIN
+		SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+	END
+	ELSE
+		SET @sql = @sql + '
+		AND (DomainName LIKE @FilterValue 
+		OR Username LIKE @FilterValue
+		OR ServerName LIKE @FilterValue
+		OR PackageName LIKE @FilterValue) '
+END
 
 IF @SortColumn <> '' AND @SortColumn IS NOT NULL
 SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
@@ -8939,6 +8978,121 @@ UPDATE [dbo].[Providers] SET [EditorControl] = N'HyperV2012R2', [GroupID] = 33 W
 END
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetVirtualMachinesPagedForPC')
+DROP PROCEDURE GetVirtualMachinesPagedForPC
+GO
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPagedForPC]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.ItemTypeID = 35 -- VPS
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+'
+
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ItemName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + '''
+			OR ExternalIP LIKE ''' + @FilterValue + '''
+			OR IPAddress LIKE ''' + @FilterValue + ''')'
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+'
+
+--print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+RETURN
+GO
+
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetVirtualMachinesPaged2012')
 DROP PROCEDURE GetVirtualMachinesPaged2012
 GO
@@ -8966,9 +9120,17 @@ AND ((@Recursive = 0 AND P.PackageID = @PackageID)
 OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
 '
 
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ItemName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + '''
+			OR ExternalIP LIKE ''' + @FilterValue + '''
+			OR IPAddress LIKE ''' + @FilterValue + ''')'
+END
 
 IF @SortColumn IS NULL OR @SortColumn = ''
 SET @SortColumn = 'SI.ItemName ASC'
@@ -9041,6 +9203,117 @@ exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Rec
 RETURN 
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetVirtualMachinesPaged')
+DROP PROCEDURE GetVirtualMachinesPaged
+GO
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.ItemTypeID = 33 -- VPS
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+'
+
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ItemName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + '''
+			OR ExternalIP LIKE ''' + @FilterValue + '''
+			OR IPAddress LIKE ''' + @FilterValue + ''')'
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+'
+
+--print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+RETURN
+GO
 
 --ES OWA Editing
 IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'EnterpriseFoldersOwaPermissions')
@@ -10946,6 +11219,963 @@ GO
 SET QUOTED_IDENTIFIER OFF
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchTableByColumns')
+DROP PROCEDURE GetSearchTableByColumns
+GO
+CREATE PROCEDURE [dbo].[GetSearchTableByColumns]
+(
+	@PagedStored nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@MaximumRows int,
+	
+	@Recursive bit,
+	@PoolID int,
+	@ServerID int,
+	@ActorID int,
+	@StatusID int,
+	@PlanID int,
+	@OrgID int,
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL,
+	@PackageID int,
+	@VPSType nvarchar(100) = NULL,
+	@UserID int,
+	@RoleID int,
+	@FilterColumns nvarchar(200)
+)
+AS
+
+DECLARE @VPSTypeID int
+IF @VPSType <> '' AND @VPSType IS NOT NULL
+BEGIN
+	SET @VPSTypeID = CASE @VPSType
+		WHEN 'VPS' THEN 33
+		WHEN 'VPS2012' THEN 41
+		WHEN 'VPSForPC' THEN 35
+		ELSE 33
+		END
+END
+
+DECLARE @sql nvarchar(3000)
+SET @sql = CASE @PagedStored
+WHEN 'Domains' THEN '
+	DECLARE @Domains TABLE
+	(
+		DomainID int,
+		DomainName nvarchar(100),
+		Username nvarchar(100),
+		FullName nvarchar(100),
+		Email nvarchar(100)
+	)
+	INSERT INTO @Domains (DomainID, DomainName, Username, FullName, Email)
+	SELECT
+		D.DomainID,
+		D.DomainName,
+		U.Username,
+		U.FullName,
+		U.Email
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+	LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+	LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+	WHERE
+		(D.IsInstantAlias = 0 AND D.IsDomainPointer = 0)
+		AND ((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+		AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+	'
+WHEN 'IPAddresses' THEN '
+	DECLARE @IPAddresses TABLE
+	(
+		AddressesID int,
+		ExternalIP nvarchar(100),
+		InternalIP nvarchar(100),
+		DefaultGateway nvarchar(100),
+		ServerName nvarchar(100),
+		UserName nvarchar(100),
+		ItemName nvarchar(100)
+	)
+	DECLARE @IsAdmin bit
+	SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+	INSERT INTO @IPAddresses (AddressesID, ExternalIP, InternalIP, DefaultGateway, ServerName, UserName, ItemName)
+	SELECT
+		IP.AddressID,
+		IP.ExternalIP,
+		IP.InternalIP,
+		IP.DefaultGateway,
+		S.ServerName,
+		U.UserName,
+		SI.ItemName
+	FROM dbo.IPAddresses AS IP
+	LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+	LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	LEFT JOIN dbo.Users U ON P.UserID = U.UserID
+	WHERE
+		@IsAdmin = 1
+		AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+		AND (@ServerID = 0 OR @ServerID <> 0 AND IP.ServerID = @ServerID)
+	'
+WHEN 'Schedules' THEN '
+	DECLARE @Schedules TABLE
+	(
+		ScheduleID int,
+		ScheduleName nvarchar(100),
+		Username nvarchar(100),
+		FullName nvarchar(100),
+		Email nvarchar(100)
+	)
+	INSERT INTO @Schedules (ScheduleID, ScheduleName, Username, FullName, Email)
+	SELECT
+		S.ScheduleID,
+		S.ScheduleName,
+		U.Username,
+		U.FullName,
+		U.Email
+	FROM Schedule AS S
+	INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+	INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON S.PackageID = PT.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	'
+WHEN 'NestedPackages' THEN '
+	DECLARE @NestedPackages TABLE
+	(
+		PackageID int,
+		PackageName nvarchar(100),
+		Username nvarchar(100),
+		FullName nvarchar(100),
+		Email nvarchar(100)
+	)
+	INSERT INTO @NestedPackages (PackageID, PackageName, Username, FullName, Email)
+	SELECT
+		P.PackageID,
+		P.PackageName,
+		U.Username,
+		U.FullName,
+		U.Email
+	FROM Packages AS P
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+	INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+	WHERE
+		P.ParentPackageID = @PackageID
+		AND ((@StatusID = 0) OR (@StatusID > 0 AND P.StatusID = @StatusID))
+		AND ((@PlanID = 0) OR (@PlanID > 0 AND P.PlanID = @PlanID))
+		AND ((@ServerID = 0) OR (@ServerID > 0 AND P.ServerID = @ServerID))
+	'
+WHEN 'PackageIPAddresses' THEN '
+	DECLARE @PackageIPAddresses TABLE
+	(
+		PackageAddressID int,
+		ExternalIP nvarchar(100),
+		InternalIP nvarchar(100),
+		DefaultGateway nvarchar(100),
+		ItemName nvarchar(100),
+		UserName nvarchar(100)
+	)
+	INSERT INTO @PackageIPAddresses (PackageAddressID, ExternalIP, InternalIP, DefaultGateway, ItemName, UserName)
+	SELECT
+		PA.PackageAddressID,
+		IP.ExternalIP,
+		IP.InternalIP,
+		IP.DefaultGateway,
+		SI.ItemName,
+		U.UserName
+	FROM dbo.PackageIPAddresses PA
+	INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+	INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	INNER JOIN dbo.Users U ON U.UserID = P.UserID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	WHERE
+		((@Recursive = 0 AND PA.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, PA.PackageID) = 1))
+		AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+		AND (@OrgID = 0 OR @OrgID <> 0 AND PA.OrgID = @OrgID)
+	'
+WHEN 'ServiceItems' THEN '
+	IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+	RAISERROR(''You are not allowed to access this package'', 16, 1)
+	DECLARE @ServiceItems TABLE
+	(
+		ItemID int,
+		ItemName nvarchar(100),
+		Username nvarchar(100),
+		FullName nvarchar(100),
+		Email nvarchar(100)
+	)
+	DECLARE @GroupID int
+	SELECT @GroupID = GroupID FROM ResourceGroups
+	WHERE GroupName = @GroupName
+	DECLARE @ItemTypeID int
+	SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+	WHERE TypeName = @ItemTypeName
+	AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+	INSERT INTO @ServiceItems (ItemID, ItemName, Username, FullName, Email)
+	SELECT
+		SI.ItemID,
+		SI.ItemName,
+		U.Username,
+		U.FirstName,
+		U.Email
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+	INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+	INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+	WHERE
+		SI.ItemTypeID = @ItemTypeID
+		AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+			OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+		AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND IT.GroupID = @GroupID))
+		AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+	'
+WHEN 'Users' THEN '
+	DECLARE @Users TABLE
+	(
+		UserID int,
+		Username nvarchar(100),
+		FullName nvarchar(100),
+		Email nvarchar(100),
+		CompanyName nvarchar(100)
+	)
+	DECLARE @HasUserRights bit
+	SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
+	INSERT INTO @Users (UserID, Username, FullName, Email, CompanyName)
+	SELECT
+		U.UserID,
+		U.Username,
+		U.FullName,
+		U.Email,
+		U.CompanyName
+	FROM UsersDetailed AS U
+	WHERE 
+		U.UserID <> @UserID AND U.IsPeer = 0 AND
+		(
+			(@Recursive = 0 AND OwnerID = @UserID) OR
+			(@Recursive = 1 AND dbo.CheckUserParent(@UserID, U.UserID) = 1)
+		)
+		AND ((@StatusID = 0) OR (@StatusID > 0 AND U.StatusID = @StatusID))
+		AND ((@RoleID = 0) OR (@RoleID > 0 AND U.RoleID = @RoleID))
+		AND @HasUserRights = 1 
+	'
+WHEN 'VirtualMachines' THEN '
+	IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+	RAISERROR(''You are not allowed to access this package'', 16, 1)
+	DECLARE @VirtualMachines TABLE
+	(
+		ItemID int,
+		ItemName nvarchar(100),
+		Username nvarchar(100),
+		ExternalIP nvarchar(100),
+		IPAddress nvarchar(100)
+	)
+	INSERT INTO @VirtualMachines (ItemID, ItemName, Username, ExternalIP, IPAddress)
+	SELECT
+		SI.ItemID,
+		SI.ItemName,
+		U.Username,
+		EIP.ExternalIP,
+		PIP.IPAddress
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE
+		SI.ItemTypeID = ' + CAST(@VPSTypeID AS nvarchar(12)) + '
+		AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+	'
+WHEN 'PackagePrivateIPAddresses' THEN '
+	DECLARE @PackagePrivateIPAddresses TABLE
+	(
+		PrivateAddressID int,
+		IPAddress nvarchar(100),
+		ItemName nvarchar(100)
+	)
+	INSERT INTO @PackagePrivateIPAddresses (PrivateAddressID, IPAddress, ItemName)
+	SELECT
+		PA.PrivateAddressID,
+		PA.IPAddress,
+		SI.ItemName
+	FROM dbo.PrivateIPAddresses AS PA
+	INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+	WHERE SI.PackageID = @PackageID
+	'
+ELSE ''
+END + 'SELECT TOP ' + CAST(@MaximumRows AS nvarchar(12)) + ' MIN(ItemID) as [ItemID], TextSearch, ColumnType, COUNT(*) AS [Count]' + CASE @PagedStored
+WHEN 'Domains' THEN '
+	FROM(
+	SELECT D0.DomainID AS ItemID, D0.DomainName AS TextSearch, ''DomainName'' AS ColumnType
+	FROM @Domains AS D0
+	UNION
+	SELECT D1.DomainID AS ItemID, D1.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @Domains AS D1
+	UNION
+	SELECT D2.DomainID as ItemID, D2.FullName AS TextSearch, ''FullName'' AS ColumnType
+	FROM @Domains AS D2
+	UNION
+	SELECT D3.DomainID as ItemID, D3.Email AS TextSearch, ''Email'' AS ColumnType
+	FROM @Domains AS D3) AS D'
+WHEN 'IPAddresses' THEN '
+	FROM(
+	SELECT D0.AddressesID AS ItemID, D0.ExternalIP AS TextSearch, ''ExternalIP'' AS ColumnType
+	FROM @IPAddresses AS D0
+	UNION
+	SELECT D1.AddressesID AS ItemID, D1.InternalIP AS TextSearch, ''InternalIP'' AS ColumnType
+	FROM @IPAddresses AS D1
+	UNION
+	SELECT D2.AddressesID AS ItemID, D2.DefaultGateway AS TextSearch, ''DefaultGateway'' AS ColumnType
+	FROM @IPAddresses AS D2
+	UNION
+	SELECT D3.AddressesID AS ItemID, D3.ServerName AS TextSearch, ''ServerName'' AS ColumnType
+	FROM @IPAddresses AS D3
+	UNION
+	SELECT D4.AddressesID AS ItemID, D4.UserName AS TextSearch, ''UserName'' AS ColumnType
+	FROM @IPAddresses AS D4
+	UNION
+	SELECT D6.AddressesID AS ItemID, D6.ItemName AS TextSearch, ''ItemName'' AS ColumnType
+	FROM @IPAddresses AS D6) AS D'
+WHEN 'Schedules' THEN '
+	FROM(
+	SELECT D0.ScheduleID AS ItemID, D0.ScheduleName AS TextSearch, ''ScheduleName'' AS ColumnType
+	FROM @Schedules AS D0
+	UNION
+	SELECT D1.ScheduleID AS ItemID, D1.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @Schedules AS D1
+	UNION
+	SELECT D2.ScheduleID AS ItemID, D2.FullName AS TextSearch, ''FullName'' AS ColumnType
+	FROM @Schedules AS D2
+	UNION
+	SELECT D3.ScheduleID AS ItemID, D3.Email AS TextSearch, ''Email'' AS ColumnType
+	FROM @Schedules AS D3) AS D'
+WHEN 'NestedPackages' THEN '
+	FROM(
+	SELECT D0.PackageID AS ItemID, D0.PackageName AS TextSearch, ''PackageName'' AS ColumnType
+	FROM @NestedPackages AS D0
+	UNION
+	SELECT D1.PackageID AS ItemID, D1.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @NestedPackages AS D1
+	UNION
+	SELECT D2.PackageID as ItemID, D2.FullName AS TextSearch, ''FullName'' AS ColumnType
+	FROM @NestedPackages AS D2
+	UNION
+	SELECT D3.PackageID as ItemID, D3.Email AS TextSearch, ''Email'' AS ColumnType
+	FROM @NestedPackages AS D3) AS D'
+WHEN 'PackageIPAddresses' THEN '
+	FROM(
+	SELECT D0.PackageAddressID AS ItemID, D0.ExternalIP AS TextSearch, ''ExternalIP'' AS ColumnType
+	FROM @PackageIPAddresses AS D0
+	UNION
+	SELECT D1.PackageAddressID AS ItemID, D1.InternalIP AS TextSearch, ''InternalIP'' AS ColumnType
+	FROM @PackageIPAddresses AS D1
+	UNION
+	SELECT D2.PackageAddressID as ItemID, D2.DefaultGateway AS TextSearch, ''DefaultGateway'' AS ColumnType
+	FROM @PackageIPAddresses AS D2
+	UNION
+	SELECT D3.PackageAddressID as ItemID, D3.ItemName AS TextSearch, ''ItemName'' AS ColumnType
+	FROM @PackageIPAddresses AS D3
+	UNION
+	SELECT D5.PackageAddressID as ItemID, D5.UserName AS TextSearch, ''UserName'' AS ColumnType
+	FROM @PackageIPAddresses AS D5) AS D'
+WHEN 'ServiceItems' THEN '
+	FROM(
+	SELECT D0.ItemID AS ItemID, D0.ItemName AS TextSearch, ''ItemName'' AS ColumnType
+	FROM @ServiceItems AS D0
+	UNION
+	SELECT D1.ItemID AS ItemID, D1.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @ServiceItems AS D1
+	UNION
+	SELECT D2.ItemID as ItemID, D2.FullName AS TextSearch, ''FullName'' AS ColumnType
+	FROM @ServiceItems AS D2
+	UNION
+	SELECT D3.ItemID as ItemID, D3.Email AS TextSearch, ''Email'' AS ColumnType
+	FROM @ServiceItems AS D3) AS D'
+WHEN 'Users' THEN '
+	FROM(
+	SELECT D0.UserID AS ItemID, D0.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @Users AS D0
+	UNION
+	SELECT D1.UserID AS ItemID, D1.FullName AS TextSearch, ''FullName'' AS ColumnType
+	FROM @Users AS D1
+	UNION
+	SELECT D2.UserID as ItemID, D2.Email AS TextSearch, ''Email'' AS ColumnType
+	FROM @Users AS D2
+	UNION
+	SELECT D3.UserID as ItemID, D3.CompanyName AS TextSearch, ''CompanyName'' AS ColumnType
+	FROM @Users AS D3) AS D'
+WHEN 'VirtualMachines' THEN '
+	FROM(
+	SELECT D0.ItemID AS ItemID, D0.ItemName AS TextSearch, ''ItemName'' AS ColumnType
+	FROM @VirtualMachines AS D0
+	UNION
+	SELECT D1.ItemID AS ItemID, D1.ExternalIP AS TextSearch, ''ExternalIP'' AS ColumnType
+	FROM @VirtualMachines AS D1
+	UNION
+	SELECT D2.ItemID as ItemID, D2.Username AS TextSearch, ''Username'' AS ColumnType
+	FROM @VirtualMachines AS D2
+	UNION
+	SELECT D3.ItemID as ItemID, D3.IPAddress AS TextSearch, ''IPAddress'' AS ColumnType
+	FROM @VirtualMachines AS D3) AS D'
+WHEN 'PackagePrivateIPAddresses' THEN '
+	FROM(
+	SELECT D0.PrivateAddressID AS ItemID, D0.IPAddress AS TextSearch, ''IPAddress'' AS ColumnType
+	FROM @PackagePrivateIPAddresses AS D0
+	UNION
+	SELECT D1.PrivateAddressID AS ItemID, D1.ItemName AS TextSearch, ''ItemName'' AS ColumnType
+	FROM @PackagePrivateIPAddresses AS D1) AS D'
+END + '
+	WHERE (TextSearch LIKE @FilterValue)'
+IF @FilterColumns <> '' AND @FilterColumns IS NOT NULL
+	SET @sql = @sql + '
+		AND (ColumnType IN (' + @FilterColumns + '))'
+SET @sql = @sql + '
+	GROUP BY TextSearch, ColumnType
+	ORDER BY TextSearch'
+
+exec sp_executesql @sql, N'@FilterValue nvarchar(50), @Recursive bit, @PoolID int, @ServerID int, @ActorID int, @StatusID int, @PlanID int, @OrgID int, @ItemTypeName nvarchar(200), @GroupName nvarchar(100), @PackageID int, @VPSTypeID int, @UserID int, @RoleID int', 
+@FilterValue, @Recursive, @PoolID, @ServerID, @ActorID, @StatusID, @PlanID, @OrgID, @ItemTypeName, @GroupName, @PackageID, @VPSTypeID, @UserID, @RoleID
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackagePrivateIPAddressesPaged')
+DROP PROCEDURE GetPackagePrivateIPAddressesPaged
+GO
+CREATE PROCEDURE [dbo].[GetPackagePrivateIPAddressesPaged]
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+AS
+BEGIN
+
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.PackageID = @PackageID
+'
+
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (IPAddress LIKE ''' + @FilterValue + '''
+			OR ItemName LIKE ''' + @FilterValue + ''')'
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'PA.IPAddress ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(PA.PrivateAddressID)
+FROM dbo.PrivateIPAddresses AS PA
+INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	PrivateAddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		PA.PrivateAddressID
+	FROM dbo.PrivateIPAddresses AS PA
+	INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT PrivateAddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	PA.PrivateAddressID,
+	PA.IPAddress,
+	PA.ItemID,
+	SI.ItemName,
+	PA.IsPrimary
+FROM @Addresses AS TA
+INNER JOIN dbo.PrivateIPAddresses AS PA ON TA.PrivateAddressID = PA.PrivateAddressID
+INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int',
+@PackageID, @StartRow, @MaximumRows
+
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetNestedPackagesPaged')
+DROP PROCEDURE GetNestedPackagesPaged
+GO
+CREATE PROCEDURE [dbo].[GetNestedPackagesPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@StatusID int,
+	@PlanID int,
+	@ServerID int,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+SET @sql = '
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR(''You are not allowed to access this package'', 16, 1)
+
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @Packages TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	PackageID int
+)
+INSERT INTO @Packages (PackageID)
+SELECT
+	P.PackageID
+FROM Packages AS P
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE
+	P.ParentPackageID = @PackageID
+	AND ((@StatusID = 0) OR (@StatusID > 0 AND P.StatusID = @StatusID))
+	AND ((@PlanID = 0) OR (@PlanID > 0 AND P.PlanID = @PlanID))
+	AND ((@ServerID = 0) OR (@ServerID > 0 AND P.ServerID = @ServerID)) '
+
+IF @FilterValue <> ''
+BEGIN
+	IF @FilterColumn <> ''
+		SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+	ELSE
+		SET @sql = @sql + '
+			AND (Username LIKE @FilterValue
+			OR FullName LIKE @FilterValue
+			OR Email LIKE @FilterValue) '
+END
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(PackageID) FROM @Packages;
+SELECT
+	P.PackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PurchaseDate,
+	
+	dbo.GetItemComments(P.PackageID, ''PACKAGE'', @ActorID) AS Comments,
+	
+	-- server
+	P.ServerID,
+	ISNULL(S.ServerName, ''None'') AS ServerName,
+	ISNULL(S.Comments, '''') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	P.PlanID,
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Packages AS TP
+INNER JOIN Packages AS P ON TP.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE TP.ItemPosition BETWEEN @StartRow AND @EndRow'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ActorID int, @StatusID int, @PlanID int, @ServerID int',
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ActorID, @StatusID, @PlanID, @ServerID
+
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetUsersPaged')
+DROP PROCEDURE GetUsersPaged
+GO
+CREATE PROCEDURE [dbo].[GetUsersPaged]
+(
+	@ActorID int,
+	@UserID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@StatusID int,
+	@RoleID int,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+SET @sql = '
+
+DECLARE @HasUserRights bit
+SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
+
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @Users TABLE
+(
+	ItemPosition int IDENTITY(0,1),
+	UserID int
+)
+INSERT INTO @Users (UserID)
+SELECT
+	U.UserID
+FROM UsersDetailed AS U
+WHERE 
+	U.UserID <> @UserID AND U.IsPeer = 0 AND
+	(
+		(@Recursive = 0 AND OwnerID = @UserID) OR
+		(@Recursive = 1 AND dbo.CheckUserParent(@UserID, U.UserID) = 1)
+	)
+	AND ((@StatusID = 0) OR (@StatusID > 0 AND U.StatusID = @StatusID))
+	AND ((@RoleID = 0) OR (@RoleID > 0 AND U.RoleID = @RoleID))
+	AND @HasUserRights = 1 '
+
+IF @FilterValue <> ''
+BEGIN
+	IF @FilterColumn <> ''
+		SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+	ELSE
+		SET @sql = @sql + '
+			AND (Username LIKE @FilterValue
+			OR FullName LIKE @FilterValue
+			OR Email LIKE @FilterValue) '
+END
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(UserID) FROM @Users;
+SELECT
+	U.UserID,
+	U.RoleID,
+	U.StatusID,
+	U.SubscriberNumber,
+	U.LoginStatusId,
+	U.FailedLogins,
+	U.OwnerID,
+	U.Created,
+	U.Changed,
+	U.IsDemo,
+	dbo.GetItemComments(U.UserID, ''USER'', @ActorID) AS Comments,
+	U.IsPeer,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.Email,
+	U.FullName,
+	U.OwnerUsername,
+	U.OwnerFirstName,
+	U.OwnerLastName,
+	U.OwnerRoleID,
+	U.OwnerFullName,
+	U.OwnerEmail,
+	U.PackagesNumber,
+	U.CompanyName,
+	U.EcommerceEnabled
+FROM @Users AS TU
+INNER JOIN UsersDetailed AS U ON TU.UserID = U.UserID
+WHERE TU.ItemPosition BETWEEN @StartRow AND @EndRow'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @FilterValue nvarchar(50), @ActorID int, @Recursive bit, @StatusID int, @RoleID int',
+@StartRow, @MaximumRows, @UserID, @FilterValue, @ActorID, @Recursive, @StatusID, @RoleID
+
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetServiceItemsPaged')
+DROP PROCEDURE GetServiceItemsPaged
+GO
+CREATE PROCEDURE [dbo].[GetServiceItemsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @GroupID int
+SELECT @GroupID = GroupID FROM ResourceGroups
+WHERE GroupName = @GroupName
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+
+DECLARE @condition nvarchar(700)
+SET @condition = 'SI.ItemTypeID = @ItemTypeID
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND IT.GroupID = @GroupID))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ItemName LIKE ''' + @FilterValue + '''
+			OR Username ''' + @FilterValue + '''
+			OR FullName ''' + @FilterValue + '''
+			OR Email ''' + @FilterValue + ''')'
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+	INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+	INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	IT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	SI.CreatedDate,
+	RG.GroupName,
+
+	-- packages
+	P.PackageName,
+
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
+
+
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS TSI ON IP.ItemID = TSI.ItemID'
+
+--print @sql
+
+exec sp_executesql @sql, N'@ItemTypeID int, @PackageID int, @GroupID int, @StartRow int, @MaximumRows int, @Recursive bit, @ServerID int',
+@ItemTypeID, @PackageID, @GroupID, @StartRow, @MaximumRows, @Recursive, @ServerID
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetIPAddressesPaged')
+DROP PROCEDURE GetIPAddressesPaged
+GO
+CREATE PROCEDURE [dbo].[GetIPAddressesPaged]	
+(
+	@ActorID int,
+	@PoolID int,
+	@ServerID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+BEGIN
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+@IsAdmin = 1
+AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+AND (@ServerID = 0 OR @ServerID <> 0 AND IP.ServerID = @ServerID)
+'
+
+IF @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	ELSE
+		SET @condition = @condition + '
+			AND (ExternalIP LIKE ''' + @FilterValue + '''
+			OR InternalIP LIKE ''' + @FilterValue + '''
+			OR DefaultGateway LIKE ''' + @FilterValue + '''
+			OR ServerName LIKE ''' + @FilterValue + '''
+			OR ItemName LIKE ''' + @FilterValue + '''
+			OR Username LIKE ''' + @FilterValue + ''')'
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'IP.ExternalIP ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(IP.AddressID)
+FROM dbo.IPAddresses AS IP
+LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+LEFT JOIN dbo.Users U ON P.UserID = U.UserID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	AddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		IP.AddressID
+	FROM dbo.IPAddresses AS IP
+	LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+	LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	LEFT JOIN dbo.Users U ON U.UserID = P.UserID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT AddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	IP.AddressID,
+	IP.PoolID,
+	IP.ExternalIP,
+	IP.InternalIP,
+	IP.SubnetMask,
+	IP.DefaultGateway,
+	IP.Comments,
+
+	IP.ServerID,
+	S.ServerName,
+
+	PA.ItemID,
+	SI.ItemName,
+
+	PA.PackageID,
+	P.PackageName,
+
+	P.UserID,
+	U.UserName
+FROM @Addresses AS TA
+INNER JOIN dbo.IPAddresses AS IP ON TA.AddressID = IP.AddressID
+LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+LEFT JOIN dbo.Users U ON U.UserID = P.UserID
+'
+
+exec sp_executesql @sql, N'@IsAdmin bit, @PoolID int, @ServerID int, @StartRow int, @MaximumRows int',
+@IsAdmin, @PoolID, @ServerID, @StartRow, @MaximumRows
+
+END
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSearchObject')
 DROP PROCEDURE GetSearchObject
@@ -11215,3 +12445,135 @@ BEGIN
 	SELECT @item_type_id = ItemTypeId FROM ServiceItemTypes WHERE DisplayName = 'SharePointEnterpriseSiteCollection'
 	UPDATE [dbo].[Quotas] SET ItemTypeID = @item_type_id WHERE QuotaId = 550
 END
+GO
+
+-- OneTimePassword
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Users' AND COLS.name='OneTimePasswordState')
+BEGIN
+ALTER TABLE [dbo].[Users] ADD
+	[OneTimePasswordState] int NULL
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'SetUserOneTimePassword')
+DROP PROCEDURE SetUserOneTimePassword
+GO
+CREATE PROCEDURE [dbo].[SetUserOneTimePassword]
+(
+	@UserID int,
+	@Password nvarchar(200),
+	@OneTimePasswordState int
+)
+AS
+UPDATE Users
+SET Password = @Password, OneTimePasswordState = @OneTimePasswordState
+WHERE UserID = @UserID
+RETURN 
+GO
+
+ALTER PROCEDURE [dbo].[GetUserByUsernameInternally]
+(
+	@Username nvarchar(50)
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams],
+		U.OneTimePasswordState
+	FROM Users AS U
+	WHERE U.Username = @Username
+
+	RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetUserByIdInternally]
+(
+	@UserID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams],
+		U.OneTimePasswordState
+	FROM Users AS U
+	WHERE U.UserID = @UserID
+
+	RETURN
+GO
+
+ALTER PROCEDURE [dbo].[ChangeUserPassword]
+(
+	@ActorID int,
+	@UserID int,
+	@Password nvarchar(200)
+)
+AS
+
+-- check actor rights
+IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
+RETURN
+
+UPDATE Users
+SET Password = @Password, OneTimePasswordState = 0
+WHERE UserID = @UserID
+
+RETURN 
+GO
