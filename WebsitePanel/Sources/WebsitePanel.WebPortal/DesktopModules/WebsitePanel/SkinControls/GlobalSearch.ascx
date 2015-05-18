@@ -30,7 +30,7 @@
                     {
                         response($.map(data, function (item) {
                             return {
-                                label: item.TextSearch + " [" + item.FullType + "]",
+                                label: item.TextSearch + " [" + item.FullTypeLocalized + "]",
                                 code: item
                             };
                         }));

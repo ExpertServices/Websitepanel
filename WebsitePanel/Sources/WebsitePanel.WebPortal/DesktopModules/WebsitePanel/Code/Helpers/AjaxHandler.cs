@@ -101,7 +101,8 @@ namespace WebsitePanel.WebPortal
                     obj["TextSearch"] = row["PackageName"].ToString();
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
-                    obj["FullType"] = GetTypeDisplayName("Space");
+                    obj["FullType"] = "Space";
+                    obj["FullTypeLocalized"] = GetTypeDisplayName("Space");
                     obj["AccountID"] = row["AccountID"].ToString();
                     dataList.Add(obj);
                 }
@@ -127,7 +128,8 @@ namespace WebsitePanel.WebPortal
                     obj["TextSearch"] = row["TextSearch"].ToString();
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
-                    obj["FullType"] = GetTypeDisplayName(type);
+                    obj["FullType"] = type;
+                    obj["FullTypeLocalized"] = GetTypeDisplayName(type);
                     obj["AccountID"] = row["AccountID"].ToString();
                     if (String.Equals(type, "Users"))
                         dataList.Insert(currUser++, obj);
