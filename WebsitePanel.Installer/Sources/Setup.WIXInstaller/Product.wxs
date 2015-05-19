@@ -620,6 +620,7 @@
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
         <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
+        <SetProperty Id="ARPINSTALLLOCATION" Value="[WEBSITEPANELDIR]" After="InstallValidate" Sequence="execute" />
         <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
         <!--Exe sequence.-->
         <InstallExecuteSequence>
