@@ -12340,7 +12340,7 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 		EA.ItemID AS ItemID,
 		EA.AccountName as TextSearch,
 		''ExchangeAccount'' as ColumnType,
-		''ExchangeAccount'' as FullType,
+		''ExchangeAccountMailbox'' as FullType,
 		SI2.PackageID as PackageID,
 		EA.AccountID as AccountID
 	FROM @ItemsService AS I2
