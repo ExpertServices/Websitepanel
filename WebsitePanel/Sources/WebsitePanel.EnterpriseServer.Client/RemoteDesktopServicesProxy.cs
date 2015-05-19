@@ -20,8 +20,8 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Diagnostics;
     using WebsitePanel.Providers.RemoteDesktopServices;
     using WebsitePanel.Providers.Common;
-    using WebsitePanel.EnterpriseServer.Base.RDS;
     using WebsitePanel.Providers.HostedSolution;
+    using WebsitePanel.EnterpriseServer.Base.RDS;
     
     
     /// <remarks/>
@@ -138,6 +138,8 @@ namespace WebsitePanel.EnterpriseServer {
         private System.Threading.SendOrPostCallback UpdateRdsServerSettingsOperationCompleted;
         
         private System.Threading.SendOrPostCallback ShadowSessionOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ImportCollectionOperationCompleted;
         
         /// <remarks/>
         public esRemoteDesktopServices() {
@@ -305,6 +307,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event ShadowSessionCompletedEventHandler ShadowSessionCompleted;
+        
+        /// <remarks/>
+        public event ImportCollectionCompletedEventHandler ImportCollectionCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2724,6 +2729,50 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ImportCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject ImportCollection(int itemId, string collectionName) {
+            object[] results = this.Invoke("ImportCollection", new object[] {
+                        itemId,
+                        collectionName});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginImportCollection(int itemId, string collectionName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ImportCollection", new object[] {
+                        itemId,
+                        collectionName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndImportCollection(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ImportCollectionAsync(int itemId, string collectionName) {
+            this.ImportCollectionAsync(itemId, collectionName, null);
+        }
+        
+        /// <remarks/>
+        public void ImportCollectionAsync(int itemId, string collectionName, object userState) {
+            if ((this.ImportCollectionOperationCompleted == null)) {
+                this.ImportCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnImportCollectionOperationCompleted);
+            }
+            this.InvokeAsync("ImportCollection", new object[] {
+                        itemId,
+                        collectionName}, this.ImportCollectionOperationCompleted, userState);
+        }
+        
+        private void OnImportCollectionOperationCompleted(object arg) {
+            if ((this.ImportCollectionCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ImportCollectionCompleted(this, new ImportCollectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -4120,6 +4169,32 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal ShadowSessionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ImportCollectionCompletedEventHandler(object sender, ImportCollectionCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ImportCollectionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ImportCollectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

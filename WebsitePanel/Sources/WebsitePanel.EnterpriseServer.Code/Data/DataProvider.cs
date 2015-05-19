@@ -382,6 +382,15 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@password", password));
         }
 
+        public static void SetUserOneTimePassword(int userId, string password, int auths)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "SetUserOneTimePassword",
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@Password", password),
+                new SqlParameter("@OneTimePasswordState", auths));
+        }
+
         #endregion
 
         #region User Settings

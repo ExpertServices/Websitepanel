@@ -57,6 +57,8 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                int result = 0;
+
                 // try to get user from database
                 UserInfoInternal user = GetUserInternally(username);
 
@@ -99,16 +101,31 @@ namespace WebsitePanel.EnterpriseServer
 
 
                 // compare user passwords
-                if (CryptoUtils.SHA1(user.Password) != password)
+                if (CryptoUtils.SHA1(user.Password) == password)
+                {
+                    switch (user.OneTimePasswordState)
+                    {
+                        case OneTimePasswordStates.Active:
+                            result = BusinessSuccessCodes.SUCCESS_USER_ONETIMEPASSWORD;
+                            OneTimePasswordHelper.FireSuccessAuth(user);
+                            break;
+                        case OneTimePasswordStates.Expired:
+                            if (lockOut >= 0) DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, false);
+                            TaskManager.WriteWarning("Expired one time password");
+                            return BusinessErrorCodes.ERROR_USER_EXPIRED_ONETIMEPASSWORD;
+                            break;
+                    }
+                }
+                else
                 {
                     if (lockOut >= 0)
                         DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, false);
 
                     TaskManager.WriteWarning("Wrong password");
-                    return BusinessErrorCodes.ERROR_USER_WRONG_PASSWORD;
+                    return BusinessErrorCodes.ERROR_USER_WRONG_PASSWORD;  
                 }
-                else
-                    DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, true);
+                    
+                DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, true);
 
                 // check status
                 if (user.Status == UserStatus.Cancelled)
@@ -123,7 +140,7 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.ERROR_USER_ACCOUNT_PENDING;
                 }
 
-                return 0;
+                return result;
 
             }
             catch (Exception ex)
@@ -155,7 +172,7 @@ namespace WebsitePanel.EnterpriseServer
 				}
 
 				// compare user passwords
-				if (CryptoUtils.SHA1(user.Password) == password)
+                if (CryptoUtils.SHA1(user.Password) == password)
 					return new UserInfo(user);
 
 				return null;
@@ -210,7 +227,7 @@ namespace WebsitePanel.EnterpriseServer
 			try
 			{
 				// try to get user from database
-				UserInfo user = GetUserInternally(username);
+				UserInfoInternal user = GetUserInternally(username);
 				if (user == null)
 				{
 					TaskManager.WriteWarning("Account not found");
@@ -232,18 +249,20 @@ namespace WebsitePanel.EnterpriseServer
 
 				if (body == null || body == "")
 					return BusinessErrorCodes.ERROR_SETTINGS_PASSWORD_LETTER_EMPTY_BODY;
+                
+                // One Time Password feature
+                user.Password = OneTimePasswordHelper.SetOneTimePassword(user.UserId);
 
-				// set template context items
-				Hashtable items = new Hashtable();
-				items["user"] = user;
-				items["Email"] = true;
+                // set template context items
+                Hashtable items = new Hashtable();
+                items["user"] = user;
+                items["Email"] = true;
 
-				// get reseller details
+			    // get reseller details
 				UserInfoInternal reseller = UserController.GetUser(user.OwnerId);
 				if (reseller != null)
 				{
-					reseller.Password = "";
-					items["reseller"] = reseller;
+					items["reseller"] = new UserInfo(reseller);
 				}
 
 				subject = PackageController.EvaluateTemplate(subject, items);
@@ -264,51 +283,39 @@ namespace WebsitePanel.EnterpriseServer
 			}
 		}
 
+
         internal static UserInfoInternal GetUserInternally(int userId)
 		{
-			// try to get user from database
-            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
-				DataProvider.GetUserByIdInternally(userId));
-
-			if (user != null)
-				user.Password = CryptoUtils.Decrypt(user.Password);
-			return user;
+            return GetUser(DataProvider.GetUserByIdInternally(userId));
 		}
 
 		internal static UserInfoInternal GetUserInternally(string username)
 		{
-			// try to get user from database
-            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
-				DataProvider.GetUserByUsernameInternally(username));
-
-			if (user != null)
-			{
-				user.Password = CryptoUtils.Decrypt(user.Password);
-			}
-			return user;
+            return GetUser(DataProvider.GetUserByUsernameInternally(username));
 		}
 
         public static UserInfoInternal GetUser(int userId)
 		{
-			// try to get user from database
-            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
-				DataProvider.GetUserById(SecurityContext.User.UserId, userId));
-
-			if (user != null)
-				user.Password = CryptoUtils.Decrypt(user.Password);
-			return user;
+            return GetUser(DataProvider.GetUserById(SecurityContext.User.UserId, userId));
 		}
 
         public static UserInfoInternal GetUser(string username)
 		{
-			// try to get user from database
-            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(
-				DataProvider.GetUserByUsername(SecurityContext.User.UserId, username));
-
-			if (user != null)
-				user.Password = CryptoUtils.Decrypt(user.Password);
-			return user;
+            return GetUser(DataProvider.GetUserByUsername(SecurityContext.User.UserId, username));
 		}
+
+        private static UserInfoInternal GetUser(IDataReader reader)
+        {
+            // try to get user from database
+            UserInfoInternal user = ObjectUtils.FillObjectFromDataReader<UserInfoInternal>(reader);
+            
+            if (user != null)
+            {
+                user.Password = CryptoUtils.Decrypt(user.Password);
+            }
+
+            return user;
+        }
 
 		public static List<UserInfo> GetUserParents(int userId)
 		{

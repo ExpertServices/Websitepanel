@@ -102,6 +102,7 @@ namespace WebsitePanel.WebPortal
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
                     obj["FullType"] = "Space";
+                    obj["FullTypeLocalized"] = GetTypeDisplayName("Space");
                     obj["AccountID"] = row["AccountID"].ToString();
                     dataList.Add(obj);
                 }
@@ -117,17 +118,23 @@ namespace WebsitePanel.WebPortal
                     String.Format("%{0}%", filterValue), 0, 0, "", iNumResults, columnType, fullType);
                 DataTable dt = dsObjectItems.Tables[2];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
+                int currUser = 0;
                 for (int i = 0; i < dt.Rows.Count; ++i)
                 {
                     DataRow row = dt.Rows[i];
+                    string type = row["FullType"].ToString();
                     Dictionary<string, string> obj = new Dictionary<string, string>();
                     obj["ColumnType"] = row["ColumnType"].ToString();
                     obj["TextSearch"] = row["TextSearch"].ToString();
                     obj["ItemID"] = row["ItemID"].ToString();
                     obj["PackageID"] = row["PackageID"].ToString();
-                    obj["FullType"] = row["FullType"].ToString();
+                    obj["FullType"] = type;
+                    obj["FullTypeLocalized"] = GetTypeDisplayName(type);
                     obj["AccountID"] = row["AccountID"].ToString();
-                    dataList.Add(obj);
+                    if (String.Equals(type, "Users"))
+                        dataList.Insert(currUser++, obj);
+                    else
+                        dataList.Add(obj);
                 }
 
                 var jsonSerialiser = new JavaScriptSerializer();
@@ -135,6 +142,15 @@ namespace WebsitePanel.WebPortal
                 context.Response.ContentType = "text/plain";
                 context.Response.Write(json);
             }
+        }
+
+        protected const string ModuleName = "WebsitePanel";
+
+        protected string GetTypeDisplayName(string type)
+        {
+            return PortalUtils.GetSharedLocalizedString(ModuleName, "ServiceItemType." + type)
+                ?? PortalUtils.GetSharedLocalizedString(ModuleName, "UserItemType." + type)
+                ?? type;
         }
     }
 };

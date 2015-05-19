@@ -120,8 +120,14 @@
   <data name="cbAdministrators.Text" xml:space="preserve">
     <value>Administrators</value>
   </data>
+  <data name="cbAllowImport.Text" xml:space="preserve">
+    <value>Allow</value>
+  </data>
   <data name="cbUsers.Text" xml:space="preserve">
     <value>Users</value>
+  </data>
+  <data name="secAllowImport.Text" xml:space="preserve">
+    <value>Connections Import</value>
   </data>
   <data name="secChangeDesktop.Text" xml:space="preserve">
     <value>Changing Desktop Disabled</value>

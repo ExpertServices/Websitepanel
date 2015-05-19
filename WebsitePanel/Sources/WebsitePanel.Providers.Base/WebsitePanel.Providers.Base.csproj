@@ -134,10 +134,12 @@
     <Compile Include="OS\Quota.cs" />
     <Compile Include="OS\QuotaType.cs" />
     <Compile Include="OS\SystemFilesPaged.cs" />
+    <Compile Include="RemoteDesktopServices\ImportedRdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="RemoteDesktopServices\RdsCertificate.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsCollectionSetting.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionSettings.cs" />
     <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />

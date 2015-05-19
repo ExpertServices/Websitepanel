@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.Security;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.HostedSolution;
@@ -98,10 +99,17 @@ namespace WebsitePanel.Portal.HostedSolution
 
             try
             {
+                var passwordString = password.Password;
+
+                if (sendToControl.IsRequestSend)
+                {
+                    passwordString = Membership.GeneratePassword(16, 3);
+                }
+
                 int accountId = ES.Services.Organizations.CreateUser(PanelRequest.ItemID, txtDisplayName.Text.Trim(),
                     email.AccountName.ToLower(),
                     email.DomainName.ToLower(),
-                    password.Password,
+                    passwordString,
                     txtSubscriberNumber.Text.Trim(),
                     chkSendInstructions.Checked,
                     sendInstructionEmail.Text);
@@ -117,6 +125,15 @@ namespace WebsitePanel.Portal.HostedSolution
                     {
                         SetUserAttributes(accountId);
                     }
+                }
+
+                if (sendToControl.SendEmail)
+                {
+                    ES.Services.Organizations.SendUserPasswordRequestEmail(PanelRequest.ItemID, accountId, "User creation", sendToControl.Email, true);
+                }
+                else if (sendToControl.SendMobile)
+                {
+                    ES.Services.Organizations.SendUserPasswordRequestSms(PanelRequest.ItemID, accountId, "User creation", sendToControl.Mobile);
                 }
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "edit_user",

@@ -58,6 +58,15 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.Button btnAddCollection;
         
         /// <summary>
+        /// btnImportCollection control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnImportCollection;
+        
+        /// <summary>
         /// SearchPanel control.
         /// </summary>
         /// <remarks>
