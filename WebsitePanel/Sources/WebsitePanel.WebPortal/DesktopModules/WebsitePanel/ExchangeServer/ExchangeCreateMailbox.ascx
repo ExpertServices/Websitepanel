@@ -73,7 +73,7 @@
 							<td>
 								<asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100"  onKeyUp="buildDisplayName();"></asp:TextBox>
 								&nbsp;
-								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
+								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Middle Initial:" />
 								<asp:TextBox ID="txtInitials" runat="server" MaxLength="6" CssClass="TextBox100"  onKeyUp="buildDisplayName();"></asp:TextBox>
 							</td>
 						</tr>

@@ -430,7 +430,7 @@ namespace WebsitePanel.WebDavPortal.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initials.
+        ///   Looks up a localized string similar to Middle Initial.
         /// </summary>
         public static string Initials {
             get {

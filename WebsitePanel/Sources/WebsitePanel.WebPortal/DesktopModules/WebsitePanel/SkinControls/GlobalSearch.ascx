@@ -30,7 +30,7 @@
                     {
                         response($.map(data, function (item) {
                             return {
-                                label: item.TextSearch + " [" + item.FullType + "]",
+                                label: item.TextSearch + " [" + item.FullTypeLocalized + "]",
                                 code: item
                             };
                         }));
@@ -50,6 +50,10 @@
                 $ImgBtn.attr('disabled', 'disabled');
             }
         });
+        if (document.referrer.search("pid=Login") > 0) {
+            $("#<%= tbSearch.ClientID %>").focus();
+        }
+
     });//]]>
 </script>
 

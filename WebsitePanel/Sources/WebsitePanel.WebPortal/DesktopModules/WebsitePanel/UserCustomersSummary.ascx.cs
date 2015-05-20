@@ -47,11 +47,11 @@ namespace WebsitePanel.Portal
 
             if (!IsPostBack)
             {
-                searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
+                /*searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
                 searchBox.AddCriteria("FullName", GetLocalizedString("SearchField.Name"));
                 searchBox.AddCriteria("Email", GetLocalizedString("SearchField.EMail"));
                 searchBox.AddCriteria("CompanyName", GetLocalizedString("SearchField.CompanyName"));
-                searchBox.Focus();
+                searchBox.Focus();*/
             }
         }
 

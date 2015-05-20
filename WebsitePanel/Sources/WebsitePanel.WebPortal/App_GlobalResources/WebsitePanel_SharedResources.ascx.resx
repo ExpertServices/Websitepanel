@@ -4581,6 +4581,9 @@
   <data name="Error.ERROR_USER_ACCOUNT_SUSPENDED" xml:space="preserve">
     <value>User account is Suspended</value>
   </data>
+  <data name="Warning.USER_SHOULD_CHANGE_ONETIMEPASSWORD" xml:space="preserve">
+    <value>You should change your one time password.</value>
+  </data>
   <data name="VPS.VPS_CREATE_EMPTY_HOSTNAME_PATTERN" xml:space="preserve">
     <value>Hostname pattern is not specified. Could not create VPS with blank hostname.</value>
   </data>
@@ -5288,6 +5291,12 @@
   </data>
   <data name="UserItemType.ExchangeAccount" xml:space="preserve">
     <value>Exchange Account</value>
+  </data>
+  <data name="UserItemType.ExchangeAccountMailbox" xml:space="preserve">
+    <value>Exchange Mailbox</value>
+  </data>
+  <data name="UserItemType.Users" xml:space="preserve">
+    <value>Account Home</value>
   </data>
   <data name="Error.WEB_PUB_DISABLE" xml:space="preserve">
     <value>Could not disable access to Web Publishing feature for the account specified</value>

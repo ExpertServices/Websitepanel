@@ -28,9 +28,10 @@
 
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-﻿using WebsitePanel.Providers.Virtualization;
+using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -45,6 +46,7 @@ namespace WebsitePanel.Portal.VPS2012
                 searchBox.AddCriteria("ExternalIP", GetLocalizedString("SearchField.ExternalIP"));
                 searchBox.AddCriteria("IPAddress", GetLocalizedString("SearchField.IPAddress"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
             // toggle columns
             bool isUserSelected = PanelSecurity.SelectedUser.Role == WebsitePanel.EnterpriseServer.UserRole.User;
@@ -152,6 +154,17 @@ namespace WebsitePanel.Portal.VPS2012
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "vps_tools_move",
                     "ItemID=" + itemId));
             }
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'VirtualMachines'");
+            res.Append(", RedirectUrl: '" + GetServerEditUrl("{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
+            res.Append(", Recursive: true");
+            res.Append(", VPSTypeID: 'VPS2012'");
+            return res.ToString();
         }
     }
 }

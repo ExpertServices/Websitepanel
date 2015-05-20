@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
+using System.Text;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -46,6 +47,7 @@ namespace WebsitePanel.Portal.VPS2012
                 searchBox.AddCriteria("IPAddress", GetLocalizedString("SearchField.IPAddress"));
                 searchBox.AddCriteria("ItemName", GetLocalizedString("SearchField.ItemName"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         public string GetServerEditUrl(string itemID)
@@ -61,6 +63,16 @@ namespace WebsitePanel.Portal.VPS2012
                 messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOXES", e.Exception);
                 e.ExceptionHandled = true;
             }
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'PackagePrivateIPAddresses'");
+            res.Append(", RedirectUrl: '" + GetServerEditUrl("{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
+            res.Append(", VPSTypeID: 'VPS2012'");
+            return res.ToString();
         }
     }
 }

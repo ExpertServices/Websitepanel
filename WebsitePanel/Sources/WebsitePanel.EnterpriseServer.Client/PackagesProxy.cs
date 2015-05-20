@@ -943,6 +943,32 @@ namespace WebsitePanel.EnterpriseServer {
             return ((System.Data.DataSet)(results[0]));
         }
 
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetSearchTableByColumns", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public System.Data.DataSet GetSearchTableByColumns(string PagedStored, string FilterValue, int MaximumRows,
+            bool Recursive, int PoolID, int ServerID, int StatusID, int PlanID, int OrgID,
+            string ItemTypeName, string GroupName, int PackageID, string VPSType, int RoleID, int UserID,
+            string FilterColumns)
+        {
+            object[] results = this.Invoke("GetSearchTableByColumns", new object[] {
+                PagedStored,
+                FilterValue,
+                MaximumRows, 
+                Recursive,
+                PoolID,
+                ServerID,
+                StatusID,
+                PlanID,
+                OrgID,
+                ItemTypeName,
+                GroupName, 
+                PackageID,
+                VPSType, 
+                RoleID, 
+                UserID,
+                FilterColumns
+            });
+            return ((System.Data.DataSet)(results[0]));
+        }
         //TODO END
 
         /// <remarks/>

@@ -80,6 +80,11 @@ namespace WebsitePanel.Portal
                     if (!String.IsNullOrEmpty(changePasswordWarningText))
                         lblChangePasswordWarning.Text = changePasswordWarningText;
                 }
+
+                if (PanelRequest.GetBool("onetimepassword"))
+                {
+                    ShowWarningMessage("USER_SHOULD_CHANGE_ONETIMEPASSWORD");
+                }
             }
             catch (Exception ex)
             {
