@@ -5292,6 +5292,9 @@
   <data name="UserItemType.ExchangeAccount" xml:space="preserve">
     <value>Exchange Account</value>
   </data>
+  <data name="UserItemType.ExchangeAccountMailbox" xml:space="preserve">
+    <value>Exchange Mailbox</value>
+  </data>
   <data name="UserItemType.Users" xml:space="preserve">
     <value>Account Home</value>
   </data>

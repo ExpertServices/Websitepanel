@@ -118,7 +118,6 @@ namespace WebsitePanel.WebPortal
                     String.Format("%{0}%", filterValue), 0, 0, "", iNumResults, columnType, fullType);
                 DataTable dt = dsObjectItems.Tables[2];
                 List<Dictionary<string, string>> dataList = new List<Dictionary<string, string>>();
-                int currUser = 0;
                 for (int i = 0; i < dt.Rows.Count; ++i)
                 {
                     DataRow row = dt.Rows[i];
@@ -131,10 +130,7 @@ namespace WebsitePanel.WebPortal
                     obj["FullType"] = type;
                     obj["FullTypeLocalized"] = GetTypeDisplayName(type);
                     obj["AccountID"] = row["AccountID"].ToString();
-                    if (String.Equals(type, "Users"))
-                        dataList.Insert(currUser++, obj);
-                    else
-                        dataList.Add(obj);
+                    dataList.Add(obj);
                 }
 
                 var jsonSerialiser = new JavaScriptSerializer();
