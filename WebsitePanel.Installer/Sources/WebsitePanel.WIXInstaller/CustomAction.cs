@@ -159,7 +159,7 @@ namespace WebsitePanel.WIXInstaller
             };
 
             var Ctx = session;
-            Ctx.AttachToSetupLog(); 
+            Ctx.AttachToSetupLog();
 
             PopUpDebugger();
 
@@ -181,6 +181,9 @@ namespace WebsitePanel.WIXInstaller
                 {
                     AppConfig.LoadComponentSettings(CtxVars);
 
+                    SetProperty(Ctx, "COMPFOUND_SERVER_ID", CtxVars.ComponentId);
+                    SetProperty(Ctx, "COMPFOUND_SERVER_MAIN_CFG", CfgPath);
+
                     SetProperty(Ctx, "PI_SERVER_IP", CtxVars.WebSiteIP);
                     SetProperty(Ctx, "PI_SERVER_PORT", CtxVars.WebSitePort);
                     SetProperty(Ctx, "PI_SERVER_HOST", CtxVars.WebSiteDomain);
@@ -199,6 +202,9 @@ namespace WebsitePanel.WIXInstaller
                 if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
                 {
                     AppConfig.LoadComponentSettings(CtxVars);
+
+                    SetProperty(Ctx, "COMPFOUND_ESERVER_ID", CtxVars.ComponentId);
+                    SetProperty(Ctx, "COMPFOUND_ESERVER_MAIN_CFG", CfgPath);
 
                     SetProperty(Ctx, "PI_ESERVER_IP", CtxVars.WebSiteIP);
                     SetProperty(Ctx, "PI_ESERVER_PORT", CtxVars.WebSitePort);
@@ -220,7 +226,7 @@ namespace WebsitePanel.WIXInstaller
                         SetProperty(Ctx, "DB_LOGIN", ConnStr.UserID);
                         SetProperty(Ctx, "DB_PASSWORD", ConnStr.Password);
                     }
-                    
+
                     var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                     bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
 
@@ -230,6 +236,9 @@ namespace WebsitePanel.WIXInstaller
                 if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
                 {
                     AppConfig.LoadComponentSettings(CtxVars);
+
+                    SetProperty(Ctx, "COMPFOUND_PORTAL_ID", CtxVars.ComponentId);
+                    SetProperty(Ctx, "COMPFOUND_PORTAL_MAIN_CFG", CfgPath);
 
                     SetProperty(Ctx, "PI_PORTAL_IP", CtxVars.WebSiteIP);
                     SetProperty(Ctx, "PI_PORTAL_PORT", CtxVars.WebSitePort);
@@ -242,7 +251,7 @@ namespace WebsitePanel.WIXInstaller
 
                     SetProperty(Ctx, "PI_PORTAL_INSTALL_DIR", CtxVars.InstallFolder);
                     SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
-                    
+
                     var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                     bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
 
@@ -496,7 +505,7 @@ namespace WebsitePanel.WIXInstaller
                                                                                    GetConnectionString(session["DB_SERVER"], "master", session["DB_LOGIN"], session["DB_PASSWORD"]);
             string msg;
             bool Result = CheckConnection(ConnStr, out msg);
-            session["DB_CONN_CORRECT"] = Result ? YesNo.Yes: YesNo.No;
+            session["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
             session["DB_CONN"] = Result ? ConnStr : "";
             session["DB_CONN_MSG"] = msg;
             return ActionResult.Success;
@@ -799,7 +808,7 @@ namespace WebsitePanel.WIXInstaller
         private static string GetProperty(Session Ctx, string Property)
         {
             if (Ctx.CustomActionData.ContainsKey(Property))
-                return Ctx[Property];
+                return Ctx.CustomActionData[Property];
             else
                 return string.Empty;
         }
@@ -816,11 +825,17 @@ namespace WebsitePanel.WIXInstaller
         {
             var CtxVars = new SetupVariables();
             WiXSetup.FillFromSession(Ctx.CustomActionData, CtxVars);
+            AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = GetProperty(Ctx, "MainConfig") });
             CtxVars.IISVersion = Tool.GetWebServerVersion();
+            CtxVars.ComponentId = GetProperty(Ctx, "ComponentId");
+            CtxVars.Version = AppConfig.GetComponentSettingStringValue(CtxVars.ComponentId, Global.Parameters.Release);
+            CtxVars.SpecialBaseDirectory = Directory.GetParent(GetProperty(Ctx, "MainConfig")).FullName;
+            CtxVars.FileNameMap = new Dictionary<string, string>();
+            CtxVars.FileNameMap.Add(new FileInfo(GetProperty(Ctx, "MainConfig")).Name, BackupRestore.MainConfig);
             SetupScript Result = new ExpressScript(CtxVars);
             Result.Actions.Add(new InstallAction(ActionTypes.StopApplicationPool) { SetupVariables = CtxVars });
             Result.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = CtxVars });
-            Result.Actions.Add(new InstallAction(ActionTypes.DeleteDirectory) { SetupVariables = CtxVars });
+            Result.Actions.Add(new InstallAction(ActionTypes.DeleteDirectory) { SetupVariables = CtxVars, Path = CtxVars.InstallFolder });
             return Result;
         }
     }

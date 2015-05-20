@@ -163,6 +163,8 @@ namespace WebsitePanel.Setup.Internal
 			    Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdminPassword));
 
             Dst.BaseDirectory = Utils.GetStringSetupParameter(Hash, Global.Parameters.BaseDirectory);
+            Dst.ComponentId = Utils.GetStringSetupParameter(Hash, Global.Parameters.ComponentId);
+            Dst.ComponentExists = string.IsNullOrWhiteSpace(Dst.ComponentId) ? false : true;
         }
         public static string GetFullConfigPath(SetupVariables Ctx)
         {
@@ -2739,7 +2741,7 @@ namespace WebsitePanel.Setup.Internal
                             BackupDatabase(action.ConnectionString, action.Name);
                             break;
                         case ActionTypes.BackupConfig:
-                            BackupConfig(action.Path, destinationDirectory);
+                            BackupConfig(action.Path, destinationDirectory, action.SetupVariables != null ? action.SetupVariables.FileNameMap : null);
                             break;
                     }
                 }                
@@ -2755,7 +2757,7 @@ namespace WebsitePanel.Setup.Internal
             }
         }
 
-        private void BackupConfig(string path, string backupDirectory)
+        private void BackupConfig(string path, string backupDirectory, IDictionary<string, string> NameMap = null)
         {
             try
             {
@@ -2772,7 +2774,7 @@ namespace WebsitePanel.Setup.Internal
                 string[] files = Directory.GetFiles(path, "*.config", SearchOption.TopDirectoryOnly);
                 foreach (string file in files)
                 {
-                    FileUtils.CopyFileToFolder(file, destination);
+                    FileUtils.CopyFileToFolder(file, destination, GetMappedFileName(file, NameMap));
                 }
                 Log.WriteEnd("Backed up system configuration");
                 InstallLog.AppendLine("- Backed up system configuration");
@@ -2784,6 +2786,17 @@ namespace WebsitePanel.Setup.Internal
                 Log.WriteError("Backup error", ex);
                 throw;
             }
+        }
+
+        private string GetMappedFileName(string FullFileName, IDictionary<string, string> Map)
+        {
+            if (Map == null)
+                return "";
+            string Key = new FileInfo(FullFileName).Name;
+            if (Map.Keys.Contains(Key))
+                return Map[Key];
+            else
+                return "";
         }
 
         private void BackupDatabase(string connectionString, string database)
@@ -2881,10 +2894,14 @@ namespace WebsitePanel.Setup.Internal
             }
             //config
             action = new InstallAction(ActionTypes.BackupConfig);
-            action.Description = "Backing up configuration settings...";
             action.Path = Context.BaseDirectory;
+            action.Description = "Backing up configuration settings...";
+            if (!string.IsNullOrWhiteSpace(Context.SpecialBaseDirectory) )
+            {
+                action.Path = Context.SpecialBaseDirectory;
+                action.SetupVariables = Context;
+            }            
             list.Add(action);
-
             return list;
         }
         private void UpdateWebSiteBindings()
@@ -4225,6 +4242,12 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
+                    if (Context.ComponentExists)
+                    {
+                        Context.UpdateVersion = Context.Release;
+                        AppConfig.LoadComponentSettings(Context);
+                        new RestoreScript(Context).Run();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -4303,6 +4326,12 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
+                    if(Context.ComponentExists)
+                    {
+                        Context.UpdateVersion = Context.Release;
+                        AppConfig.LoadComponentSettings(Context);
+                        new RestoreScript(Context).Run();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -4381,6 +4410,12 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
+                    if (Context.ComponentExists)
+                    {
+                        Context.UpdateVersion = Context.Release;
+                        AppConfig.LoadComponentSettings(Context);
+                        new RestoreScript(Context).Run();
+                    }
                 }
                 catch (Exception ex)
                 {

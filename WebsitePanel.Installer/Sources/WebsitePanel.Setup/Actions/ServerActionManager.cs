@@ -151,6 +151,8 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
+            if (vars.ComponentExists)
+                return;
 			// Exit with an error if Windows account with the same name already exists
 			if (SecurityUtils.UserExists(vars.UserDomain, vars.UserAccount))
 				throw new Exception(UserAccountExists);
@@ -394,7 +396,7 @@ namespace WebsitePanel.Setup.Actions
 			}
 
 			// This flag is the opposite of poolExists flag
-			vars.NewWebApplicationPool = !poolExists;
+			vars.NewWebApplicationPool = !poolExists || vars.ComponentExists;
 
 			if (poolExists)
 			{
@@ -501,6 +503,9 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
+            if (vars.ComponentExists)
+                return;
+
 			var siteName = vars.ComponentFullName;
 			var ip = vars.WebSiteIP;
 			var port = vars.WebSitePort;
@@ -774,6 +779,9 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
+            if (vars.ComponentExists)
+                return;
+
 			try
 			{
 				Begin(LogStartInstallMessage);

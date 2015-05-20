@@ -335,10 +335,10 @@ namespace WebsitePanel.Setup
 			return files;
 		}
 
-		public static void CopyFileToFolder(string sourceFile, string destinationFolder)
+		public static void CopyFileToFolder(string sourceFile, string destinationFolder, string destinationFileName = "")
 		{
 			string fileName = Path.GetFileName(sourceFile);
-			string destinationFile = Path.Combine(destinationFolder, fileName);
+			string destinationFile = Path.Combine(destinationFolder, string.IsNullOrWhiteSpace(destinationFileName) ? fileName : destinationFileName);
 			CopyFile(new FileInfo(sourceFile), destinationFile);
 		}
 

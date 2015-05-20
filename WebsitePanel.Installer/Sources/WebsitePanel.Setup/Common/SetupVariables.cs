@@ -249,6 +249,11 @@ namespace WebsitePanel.Setup
 
 		public string BaseDirectory { get; set; }
 
+        public string SpecialBaseDirectory { get; set; }
+        public IDictionary<string, string> FileNameMap { get; set; }
+
+        public bool ComponentExists { get; set; }
+
 		public string UpdateVersion { get; set; }
 
 		public string EnterpriseServerURL { get; set; }
