@@ -5,7 +5,7 @@
   <?define SERVERBUILDPATH = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server\bin"?>
   <Fragment>
       <ComponentGroup Id="SchedulerServiceFiles">
-          <Component Id="cmpSchedulerServiceFiles" Directory="INSTALLSERVICEFOLDER" Guid="{5E9F9A14-DB8E-4555-8D40-67110698F046}">
+          <Component Id="cmpSchedulerServiceFiles" Directory="PI_SCHEDULER_INSTALL_DIR" Guid="{5E9F9A14-DB8E-4555-8D40-67110698F046}">
             <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
             <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
             <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>

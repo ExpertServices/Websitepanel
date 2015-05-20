@@ -2859,7 +2859,6 @@ namespace WebsitePanel.Setup.Internal
         {
             List<InstallAction> list = new List<InstallAction>();
             InstallAction action = null;
-
             //database
             string connectionString = AppConfig.GetComponentSettingStringValue(componentId, "InstallConnectionString");
             if (!String.IsNullOrEmpty(connectionString))
@@ -2871,7 +2870,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Description = string.Format("Backing up database {0}...", database);
                 list.Add(action);
             }
-
             //directory
             string path = AppConfig.GetComponentSettingStringValue(componentId, "InstallFolder");
             if (!string.IsNullOrEmpty(path))
@@ -2881,7 +2879,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Description = string.Format("Backing up directory {0}...", path);
                 list.Add(action);
             }
-
             //config
             action = new InstallAction(ActionTypes.BackupConfig);
             action.Description = "Backing up configuration settings...";
@@ -2889,9 +2886,7 @@ namespace WebsitePanel.Setup.Internal
             list.Add(action);
 
             return list;
-
         }
-
         private void UpdateWebSiteBindings()
         {
             string component = Context.ComponentFullName;

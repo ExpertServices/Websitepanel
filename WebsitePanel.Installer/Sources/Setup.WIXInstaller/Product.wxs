@@ -10,38 +10,38 @@
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed."/>
-        <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WEBSITEPANELDIR" AllowAdvertise="no" Display="expand"
+        <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WSP_INSTALL_DIR" AllowAdvertise="no" Display="expand"
                  Description="WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers to automate the provisioning of a full suite of services on Windows servers.">
             <ComponentGroupRef Id="WebsitePanelFiles" />
-            <Feature Id="ServerFeature" Title="$(var.ServerTitle)" Level="1" ConfigurableDirectory="INSTALLSERVERFOLDER" AllowAdvertise="no"
+            <Feature Id="ServerFeature" Title="$(var.ServerTitle)" Level="1" ConfigurableDirectory="PI_SERVER_INSTALL_DIR" AllowAdvertise="no"
                      Description="$(var.ServerDescription)">
                 <ComponentGroupRef Id="ServerFiles" />
             </Feature>
-            <Feature Id="EnterpriseServerFeature" Title="$(var.EServerTitle)" Level="1" ConfigurableDirectory="INSTALLENTERPRISESERVERFOLDER" AllowAdvertise="no"
+            <Feature Id="EnterpriseServerFeature" Title="$(var.EServerTitle)" Level="1" ConfigurableDirectory="PI_ESERVER_INSTALL_DIR" AllowAdvertise="no"
                      Description="$(var.ServerDescription)">
                 <ComponentGroupRef Id="EnterpriseServerFiles" />
                 <ComponentGroupRef Id="DatabaseInstallation"/>
             </Feature>
-            <Feature Id="PortalFeature" Title="$(var.PortalTitle)" Level="1" ConfigurableDirectory="INSTALLPORTALFOLDER" AllowAdvertise="no"
+            <Feature Id="PortalFeature" Title="$(var.PortalTitle)" Level="1" ConfigurableDirectory="PI_PORTAL_INSTALL_DIR" AllowAdvertise="no"
                      Description="$(var.PortalDescription)">
                 <ComponentGroupRef Id="PortalFiles" />
             </Feature>
-            <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="INSTALLSERVICEFOLDER" AllowAdvertise="no" Description="WebsitePanel Scheduler Service">
+            <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1" ConfigurableDirectory="PI_SCHEDULER_INSTALL_DIR" AllowAdvertise="no" Description="WebsitePanel Scheduler Service">
                 <ComponentGroupRef Id="SchedulerServiceFiles" />
             </Feature>
-            <Feature Id ="WDPortalFeature" Title="WebDAV Portal" Level="100" ConfigurableDirectory="INSTALLWEBDAVPORTALFOLDER" AllowAdvertise ="no"
+            <Feature Id ="WDPortalFeature" Title="WebDAV Portal" Level="100" ConfigurableDirectory="PI_WDPORTAL_INSTALL_DIR" AllowAdvertise ="no"
                      Description="WebsitePanel WebDAV Portal">
                 <ComponentGroupRef Id="WebDavPortalFiles"/>
             </Feature>
         </Feature>
         <!--Destinations.-->
         <Directory Id="TARGETDIR" Name="SourceDir">
-            <Directory Id="WEBSITEPANELDIR" Name="WebsitePanel">
-                <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
-                <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
-                <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
-                <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />
-                <Directory Id="INSTALLWEBDAVPORTALFOLDER" Name="WebDavPortal"/>
+            <Directory Id="WSP_INSTALL_DIR" Name="WebsitePanel">                
+                <Directory Id="PI_SERVER_INSTALL_DIR" Name="Server" />
+                <Directory Id="PI_ESERVER_INSTALL_DIR" Name="Enterprise Server" />
+                <Directory Id="PI_PORTAL_INSTALL_DIR" Name="Portal" />
+                <Directory Id="PI_SCHEDULER_INSTALL_DIR" Name="SchedulerService" />
+                <Directory Id="PI_WDPORTAL_INSTALL_DIR" Name="WebDavPortal"/>
             </Directory>
         </Directory>
         <EnsureTable Id="ComboBox"/>
@@ -566,10 +566,7 @@
         <Property Id="COMPFOUND_WDPORTAL" Secure="yes" Value="1" />
         <Property Id="COMPFOUND_SCHEDULER" Secure="yes" Value="1" />
         <!--CustomActions.-->
-      <!--  <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
-        <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' /> -->
         <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" />
-      <!--  <CustomAction Id='CA_PropertyFinalizeInstall' Property='CA_FinalizeInstall' Value='ConnectionString=[CONNECTIONSTRING];PreviousConnectionString=[PREVIOUSCONNECTIONSTRING];ServiceFolder=[SERVICEFOLDER];PreviousCryptoKey=[PREVIOUSCRYPTOKEY]' Return="check"/> -->
         <CustomAction Id="CA_PropertyFinalizeInstall" Property="CA_FinalizeInstall" Value="" Return="check"/>
         <CustomAction Id="CA_FinalizeInstall" BinaryKey ="Assembly_CA" DllEntry="FinalizeInstall" Impersonate="no" Execute="deferred"  Return="check" HideTarget="yes"/>
         <CustomAction Id="CA_PreInstallationAction" BinaryKey="Assembly_CA" DllEntry="PreInstallationAction" />
@@ -595,39 +592,54 @@
         <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
         <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no" />
         <!--Run corresponding install scripts.-->
+        <!-- Prepare and backup when upgrading from old to new installer type.
+             Yes, session variables and custom action data are identical for corresponding WebsitePanel components in prepare and install scripts.
+             Prepare scripts must be run before normal installation process and file copying.-->
+        <CustomAction Id="CA_PropertyOnServerPrepare" Property="CA_OnServerPrepare" Value ="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[PI_SERVER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnServerPrepare" BinaryKey="Assembly_CA" DllEntry="OnServerPrepare" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyOnEServerPrepare" Property="CA_OnEServerPrepare" Value ="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterprise server;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[PI_ESERVER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnEServerPrepare" BinaryKey="Assembly_CA" DllEntry="OnEServerPrepare" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <CustomAction Id="CA_PropertyOnPortalPrepare" Property="CA_OnPortalPrepare" Value ="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[PI_PORTAL_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_OnPortalPrepare" BinaryKey="Assembly_CA" DllEntry="OnPortalPrepare" Impersonate="no" Execute="deferred" HideTarget="no" />
+        <!--Install scripts.-->
         <!--Server.-->
-        <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLSERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[PI_SERVER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--EServer.-->
-        <CustomAction Id="CA_PropertyOnEServerInstall" Property="CA_OnEServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterprise server;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLENTERPRISESERVERFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnEServerInstall" Property="CA_OnEServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.EServerTitle);ComponentCode=enterprise server;ComponentDescription=$(var.EServerDescription);Version=$(var.VERSION);InstallationFolder=[PI_ESERVER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_ESERVER_IP];WebSitePort=[PI_ESERVER_PORT];WebSiteDomain=[PI_ESERVER_HOST];UserDomain=[PI_ESERVER_DOMAIN];UserAccount=[PI_ESERVER_LOGIN];UserPassword=[PI_ESERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnEServerInstall" BinaryKey ="Assembly_CA" DllEntry="OnEServerInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--Portal.-->
-        <CustomAction Id="CA_PropertyOnPortalInstall" Property="CA_OnPortalInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[INSTALLPORTALFOLDER];InstallerFolder=[WEBSITEPANELDIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnPortalInstall" Property="CA_OnPortalInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[PI_PORTAL_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnPortalInstall" BinaryKey ="Assembly_CA" DllEntry="OnPortalInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--Run corresponding uninstall scripts.-->
-        <CustomAction Id="CA_PropertyOnServerRemove" Property="CA_OnServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=server;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnServerRemove" Property="CA_OnServerRemove" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=server;BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnServerRemove" BinaryKey="Assembly_CA" DllEntry="OnServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
-        <CustomAction Id="CA_PropertyOnEServerRemove" Property="CA_OnEServerRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterprise server;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnEServerRemove" Property="CA_OnEServerRemove" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=enterprise server;BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnEServerRemove" BinaryKey="Assembly_CA" DllEntry="OnEServerRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
-        <CustomAction Id="CA_PropertyOnPortalRemove" Property="CA_OnPortalRemove" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=portal;BaseDirectory=[WEBSITEPANELDIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
+        <CustomAction Id="CA_PropertyOnPortalRemove" Property="CA_OnPortalRemove" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=portal;BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
         <CustomAction Id="CA_OnPortalRemove" BinaryKey="Assembly_CA" DllEntry="OnPortalRemove" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!--Maintenance mode.-->
-        <CustomAction Id="CA_PropertyMaintenanceServer" Property="CA_MaintenanceServer" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=server;BaseDirectory=[WEBSITEPANELDIR];ServerPassword=[SERVER_ACCESS_PASSWORD]" />
+        <CustomAction Id="CA_PropertyMaintenanceServer" Property="CA_MaintenanceServer" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=server;BaseDirectory=[WSP_INSTALL_DIR];ServerPassword=[SERVER_ACCESS_PASSWORD]" />
         <CustomAction Id="CA_MaintenanceServer" BinaryKey="Assembly_CA" DllEntry="MaintenanceServer" Impersonate="no" Execute="deferred" HideTarget="no" />
-        <CustomAction Id="CA_PropertyMaintenanceEServer" Property="CA_MaintenanceEServer" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=enterprise server;BaseDirectory=[WEBSITEPANELDIR];ServerAdminPassword=[SERVERADMIN_PASSWORD];" />
+        <CustomAction Id="CA_PropertyMaintenanceEServer" Property="CA_MaintenanceEServer" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=enterprise server;BaseDirectory=[WSP_INSTALL_DIR];ServerAdminPassword=[SERVERADMIN_PASSWORD];" />
         <CustomAction Id="CA_MaintenanceEServer" BinaryKey="Assembly_CA" DllEntry="MaintenanceEServer" Impersonate="no" Execute="deferred" HideTarget="no" />
-        <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WEBSITEPANELDIR];ComponentCode=portal;BaseDirectory=[WEBSITEPANELDIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
+        <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=portal;BaseDirectory=[WSP_INSTALL_DIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
-        <SetProperty Id="WEBSITEPANELDIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
-        <SetProperty Id="ARPINSTALLLOCATION" Value="[WEBSITEPANELDIR]" After="InstallValidate" Sequence="execute" />
+        <SetProperty Id="WSP_INSTALL_DIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
+        <SetProperty Id="ARPINSTALLLOCATION" Value="[WSP_INSTALL_DIR]" After="InstallValidate" Sequence="execute" />
         <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
         <!--Exe sequence.-->
         <InstallExecuteSequence>
+            <!--Preinstall.-->
             <Custom Action="CA_InstallWebFeatures" Before="CostInitialize"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
-            <!--<Custom Action="CA_PropertyFinalizeInstall" After='InstallValidate'/>
-            <Custom Action="CA_FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
-            <Custom Action="CA_FinalizeInstall" After="InstallFiles" >NOT Installed or REINSTALL</Custom>-->
+            <!--Preparation when "old to new installer update".-->
+            <Custom Action="CA_PropertyOnServerPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_PropertyOnEServerPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnEServerPrepare" After="CA_PropertyOnEServerPrepare"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_PropertyOnPortalPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
             <!--First Install. [Installed] property not used here because we distinguish per feature basis.-->
             <Custom Action="CA_PropertyOnServerInstall" After="InstallValidate"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerInstall" After="InstallFiles"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
@@ -650,7 +662,7 @@
             <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <!---->
-            <!--<Custom Action="CA_PreFillSettings" After="SetWEBSITEPANELDIR">1</Custom>-->
+            <!--<Custom Action="CA_PreFillSettings" After="SetWSP_INSTALL_DIR">1</Custom>-->
         </InstallExecuteSequence>
         <InstallUISequence>
             <Custom Action="CA_PreFillSettings" Before="CA_InstallWebFeatures" />
@@ -669,10 +681,10 @@
             <ComponentRef Id="UpdateDatabaseSql"/>
             <ComponentRef Id="UpdateDatabaseWin"/>
         </ComponentGroup>
-        <DirectoryRef Id="INSTALLENTERPRISESERVERFOLDER">
+        <DirectoryRef Id="PI_ESERVER_INSTALL_DIR">
             <Component Id="InstallDatabaseSql" Guid="{81FB6008-A445-464F-8A0E-2EE076027FF3}">
                 <CreateFolder />
-                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND NOT(DB_AUTH = "Windows Authentication")</Condition>
+                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND NOT(DB_AUTH = "Windows Authentication") AND (COMPFOUND_ESERVER="0")</Condition>
                 <util:User Id="SqlUser" Name="[DB_LOGIN]" Password="[DB_PASSWORD]" CreateUser="no" />
                 <sql:SqlDatabase Id="SqlDatabaseInstallSql" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
                                  DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
@@ -696,7 +708,7 @@
             </Component>
             <Component Id="InstallDatabaseWin" Guid="{C50FC58C-3EF3-452D-BA9B-C9513B4D941A}">
                 <CreateFolder />
-                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication")</Condition>
+                <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication") AND (COMPFOUND_ESERVER="0")</Condition>
                 <sql:SqlDatabase Id="SqlDatabaseInstallWin" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="no" CreateOnUninstall="no"
                                  DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
                                  Server="[DB_SERVER]"
@@ -719,12 +731,12 @@
     </Fragment>
     <Fragment>
         <ComponentGroup Id="WebsitePanelFiles">
-            <Component Id ="comp_WebsitePanel_config" Directory="WEBSITEPANELDIR" Guid="{28CD1ADB-562C-4E38-A3B6-325D3A2718B1}">
+            <Component Id ="comp_WebsitePanel_config" Directory="WSP_INSTALL_DIR" Guid="{28CD1ADB-562C-4E38-A3B6-325D3A2718B1}">
                 <File Id="file_WebsitePanel_config" KeyPath="yes" Source="WebsitePanel.config" />
             </Component>
-            <Component Id="comp_WebsitePanel_reg_locator" Directory="WEBSITEPANELDIR" Guid="{CC35E1B5-3E29-4AD1-991C-2904E4DCB099}">
+            <Component Id="comp_WebsitePanel_reg_locator" Directory="WSP_INSTALL_DIR" Guid="{CC35E1B5-3E29-4AD1-991C-2904E4DCB099}">
                 <RegistryValue Root='HKLM' Key='SOFTWARE\[ProductName]'
-                                           Name='Base' Value='[WEBSITEPANELDIR]'
+                                           Name='Base' Value='[WSP_INSTALL_DIR]'
                                            Type='string' />                
             </Component>
         </ComponentGroup>
