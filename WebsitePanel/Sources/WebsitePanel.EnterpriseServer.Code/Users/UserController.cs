@@ -101,7 +101,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
                 // compare user passwords
-                if (CryptoUtils.SHA1(user.Password) == password)
+                if ((CryptoUtils.SHA1(user.Password) == password) || (user.Password == password))
                 {
                     switch (user.OneTimePasswordState)
                     {
@@ -172,7 +172,7 @@ namespace WebsitePanel.EnterpriseServer
 				}
 
 				// compare user passwords
-                if (CryptoUtils.SHA1(user.Password) == password)
+                if ((CryptoUtils.SHA1(user.Password) == password) || (user.Password == password))
 					return new UserInfo(user);
 
 				return null;
