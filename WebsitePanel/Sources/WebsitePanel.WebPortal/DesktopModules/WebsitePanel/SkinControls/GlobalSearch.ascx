@@ -50,6 +50,10 @@
                 $ImgBtn.attr('disabled', 'disabled');
             }
         });
+        if (document.referrer.search("pid=Login") > 0) {
+            $("#<%= tbSearch.ClientID %>").focus();
+        }
+
     });//]]>
 </script>
 

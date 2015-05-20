@@ -12274,7 +12274,8 @@ SELECT U3.UserID as ItemID, U3.FirstName + '' '' + U3.LastName as TextSearch, @c
 FROM dbo.Users AS U3) as U
 WHERE TextSearch<>'' '' OR ISNULL(TextSearch, 0) > 0
 )
- AS U ON TU.UserID = U.ItemID'
+ AS U ON TU.UserID = U.ItemID
+ ORDER BY TextSearch'
 
 SET @sqlUsers = @sqlUsers + ' open @curValue'
 
@@ -12346,7 +12347,7 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	FROM @ItemsService AS I2
 	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
 	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
-';
+	ORDER BY TextSearch';
 	
 SET @sqlSpace = @sqlSpace + ' open @curValue'
 
@@ -12373,20 +12374,20 @@ DECLARE @ItemsAll TABLE
 		AccountID int
 	)
 
-FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 WHILE @@FETCH_STATUS = 0
 BEGIN
 INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
 VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
-FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 END
 
-FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 WHILE @@FETCH_STATUS = 0
 BEGIN
 INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
 VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
-FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+FETCH NEXT FROM @curSpaceValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
 END
 
 DECLARE @ItemsReturn TABLE
@@ -12413,8 +12414,6 @@ SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
 IF @FilterValue <> ''
 SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
 
-IF @SortColumn <> '' AND @SortColumn IS NOT NULL
-SET @sqlReturn = @sqlReturn + ' ORDER BY ' + @SortColumn + ' '
 SET @sqlReturn = @sqlReturn + '
 SELECT COUNT(ItemID) FROM @ItemsReturn;
 SELECT DISTINCT(ColumnType) FROM @ItemsReturn WHERE (1 = 1) ';
