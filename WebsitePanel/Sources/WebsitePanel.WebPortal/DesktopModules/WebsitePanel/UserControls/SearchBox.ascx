@@ -19,15 +19,21 @@
                     type: "post",
                     dataType: "json",
                     data: {
-                        term: request.term,
-                        fullType: 'Users'
-//                        columnType: "'" + $("#ddlFilterColumn").val() + "'"
+                        fullType: "TableSearch",
+                        FilterValue: request.term,
+                        FilterColumns: "<%= GetCriterias() %>",
+                        <%= AjaxData %>
                     },
                     url: "AjaxHandler.ashx",
                     success: function (data) {
                         response($.map(data, function (item) {
+                            var type = $('#<%= ddlFilterColumn.ClientID %> option[value="' + item.ColumnType + '"]').text();
+                            if (type == null) {
+                                type = item.ColumnType;
+                            }
+                            $('#<%= ddlFilterColumn.ClientID %> :selected').removeAttr('selected')
                             return {
-                                label: item.TextSearch + " [" + item.ColumnType + "]",
+                                label: item.TextSearch + " [" + type + "]",
                                 code: item
                             };
                         }));
@@ -36,13 +42,13 @@
             },
             select: function (event, ui) {
                 var item = ui.item;
-                $("#ddlFilterColumn").val(item.code.ColumnType);
-                $("#tbSearchFullType").val(item.code.FullType);
-                $("#tbSearchText").val(item.code.TextSearch);
-                $("#tbObjectId").val(item.code.ItemID);
-                $("#tbPackageId").val(item.code.PackageID);
-                $("#tbAccountId").val(item.code.AccountID);
-                $("#<%= cmdSearch.ClientID %>").trigger("click");
+                if (item.code.url != null)
+                    window.location.href = item.code.url;
+                else {
+                    $("#ddlFilterColumn").val(item.code.ColumnType);
+                    $("#tbSearchText").val(item.code.TextSearch);
+                    $("#<%= cmdSearch.ClientID %>").trigger("click");
+                }
             }
         });
     });//]]>
@@ -111,8 +117,8 @@
                                     runat="server"
                                     SkinID="SearchButton"
                                     CausesValidation="false"
-                                    OnClick="cmdSearch_Click"
                                     style="vertical-align: middle;"
+                                    meta:resourcekey="cmdSearch"
                                 />                 
                             </div>
                         </td>

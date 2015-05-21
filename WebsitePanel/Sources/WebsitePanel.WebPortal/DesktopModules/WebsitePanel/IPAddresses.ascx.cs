@@ -65,8 +65,9 @@ namespace WebsitePanel.Portal
                 searchBox.AddCriteria("DefaultGateway", GetLocalizedString("SearchField.DefaultGateway"));
 				searchBox.AddCriteria("ServerName", GetLocalizedString("SearchField.Server"));
                 searchBox.AddCriteria("ItemName", GetLocalizedString("SearchField.ItemName"));
-				searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
+                searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
             // toggle columns
             bool vps = ddlPools.SelectedIndex > 1;
@@ -176,6 +177,16 @@ namespace WebsitePanel.Portal
             }
 
             return items.ToArray();
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'IPAddresses'");
+            res.Append(", RedirectUrl: '" + EditUrl("AddressID", "{0}", "edit_ip", "ReturnUrl=" + GetReturnUrl()).Substring(2) + "'");
+            res.Append(", PoolID: $('#" + ddlPools.ClientID + "').val()");
+            res.Append(", ServerID: 0");
+            return res.ToString();
         }
     }
 }

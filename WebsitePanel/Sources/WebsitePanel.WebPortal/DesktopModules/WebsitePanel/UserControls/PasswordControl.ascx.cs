@@ -277,7 +277,9 @@ namespace WebsitePanel.Portal
                     return ((matches != null) && matches.length >= minMatches);
                 }
                 ", true);
-               
+
+
+                Page.ClientScript.RegisterClientScriptInclude("jqueryui-tooltip", ResolveUrl("~/JavaScript/jquery.poshytip.min.js"));
             }
             
         }

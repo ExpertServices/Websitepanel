@@ -58,8 +58,9 @@ namespace WebsitePanel.Portal
                 searchBox.AddCriteria("ExternalIP", GetLocalizedString("SearchField.ExternalIP"));
 				searchBox.AddCriteria("ServerName", GetLocalizedString("SearchField.Server"));
                 searchBox.AddCriteria("ItemName", GetLocalizedString("SearchField.ItemName"));
-				searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
+                searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
         }
         protected void odsIPAddresses_Selected(object sender, ObjectDataSourceStatusEventArgs e)
@@ -152,6 +153,16 @@ namespace WebsitePanel.Portal
             }
 
             return items.ToArray();
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'IPAddresses'");
+            res.Append(", RedirectUrl: '" + EditUrl("AddressID", "{0}", "edit_phone").Substring(2) + "'");
+            res.Append(", PoolID: 'PhoneNumbers'");
+            res.Append(", ServerID: 0");
+            return res.ToString();
         }
     }
 }

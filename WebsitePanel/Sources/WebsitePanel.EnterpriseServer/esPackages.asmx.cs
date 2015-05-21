@@ -149,6 +149,17 @@ namespace WebsitePanel.EnterpriseServer
         {
             return PackageController.GetSearchObject(userId, filterColumn, filterValue, statusId, roleId, sortColumn, 0, maximumRows, colType, fullType, true);
         }
+
+        [WebMethod]
+        public DataSet GetSearchTableByColumns(string PagedStored, string FilterValue, int MaximumRows, 
+            bool Recursive, int PoolID, int ServerID, int StatusID, int PlanID, int OrgID,
+            string ItemTypeName, string GroupName, int PackageID, string VPSType, int RoleID, int UserID,
+            string FilterColumns)
+        {
+            return PackageController.GetSearchTableByColumns(PagedStored, FilterValue, MaximumRows, 
+                Recursive, PoolID, ServerID, StatusID, PlanID, OrgID, ItemTypeName, GroupName,
+                PackageID, VPSType, RoleID, UserID, FilterColumns);
+        }
         //TODO END
 
         [WebMethod]
