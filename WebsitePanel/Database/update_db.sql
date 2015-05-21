@@ -12232,12 +12232,8 @@ DECLARE @Users TABLE
 	UserID int
 )
 INSERT INTO @Users (UserID)
-SELECT '
-
-IF @OnlyFind = 1
-SET @sqlUsers = @sqlUsers + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
-
-SET @sqlUsers = @sqlUsers + 'U.UserID
+SELECT 
+	U.UserID
 FROM UsersDetailed AS U
 WHERE 
 	U.UserID <> @UserID AND U.IsPeer = 0 AND
@@ -12249,8 +12245,12 @@ WHERE
 	AND ((@RoleID = 0) OR (@RoleID > 0 AND U.RoleID = @RoleID))
 	AND @HasUserRights = 1  
 SET @curValue = cursor local for
-SELECT
-	U.ItemID,
+SELECT '
+
+IF @OnlyFind = 1
+SET @sqlUsers = @sqlUsers + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlUsers = @sqlUsers + 'U.ItemID,
 	U.TextSearch,
 	U.ColumnType,
 	''Users'' as FullType,
@@ -12274,8 +12274,10 @@ SELECT U3.UserID as ItemID, U3.FirstName + '' '' + U3.LastName as TextSearch, @c
 FROM dbo.Users AS U3) as U
 WHERE TextSearch<>'' '' OR ISNULL(TextSearch, 0) > 0
 )
- AS U ON TU.UserID = U.ItemID
- ORDER BY TextSearch'
+ AS U ON TU.UserID = U.ItemID'
+IF @FilterValue <> ''
+	SET @sqlUsers = @sqlUsers + ' WHERE TextSearch LIKE ''' + @FilterValue + ''''
+SET @sqlUsers = @sqlUsers + ' ORDER BY TextSearch'
 
 SET @sqlUsers = @sqlUsers + ' open @curValue'
 
@@ -12288,12 +12290,8 @@ SET @sqlSpace = '
 		ItemID int
 	)
 	INSERT INTO @ItemsService (ItemID)
-	SELECT '
-
-IF @OnlyFind = 1
-SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
-
-SET @sqlSpace = @sqlSpace +	'SI.ItemID
+	SELECT
+		SI.ItemID
 	FROM ServiceItems AS SI
 	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
 	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
@@ -12313,8 +12311,12 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 		dbo.CheckUserParent(@UserID, P.UserID) = 1
 		
 	SET @curValue = cursor local for
-	SELECT
-		
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'
 		SI.ItemID as ItemID,
 		SI.ItemName as TextSearch,
 		STYPE.DisplayName as ColumnType,
@@ -12324,9 +12326,17 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	FROM @ItemsService AS I
 	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
 	INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
-	WHERE STYPE.Searchable = 1
+	WHERE (STYPE.Searchable = 1)'
+IF @FilterValue <> ''
+	SET @sqlSpace = @sqlSpace + ' AND (SI.ItemName LIKE ''' + @FilterValue + ''')'
+SET @sqlSpace = @sqlSpace + '
 	UNION (
-	SELECT		
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'
 		D.DomainID AS ItemID,
 		D.DomainName as TextSearch,
 		''Domain'' as ColumnType,
@@ -12335,9 +12345,17 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 		0 as AccountID
 	FROM @ItemsDomain AS I
 	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
-	WHERE D.IsDomainPointer=0
+	WHERE (D.IsDomainPointer=0)'
+IF @FilterValue <> ''
+	SET @sqlSpace = @sqlSpace + ' AND (D.DomainName LIKE ''' + @FilterValue + ''')'
+SET @sqlSpace = @sqlSpace + '
 	UNION
-	SELECT
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'
 		EA.ItemID AS ItemID,
 		EA.DisplayName as TextSearch,
 		''ExchangeAccount'' as ColumnType,
@@ -12346,9 +12364,17 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 		EA.AccountID as AccountID
 	FROM @ItemsService AS I2
 	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
-	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
+	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID'
+IF @FilterValue <> ''
+	SET @sqlSpace = @sqlSpace + ' WHERE (EA.DisplayName LIKE ''' + @FilterValue + ''')'
+SET @sqlSpace = @sqlSpace + '
 	UNION
-	SELECT
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'
 		EA4.ItemID AS ItemID,
 		EA4.PrimaryEmailAddress as TextSearch,
 		''ExchangeAccount'' as ColumnType,
@@ -12357,9 +12383,17 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 		EA4.AccountID as AccountID
 	FROM @ItemsService AS I4
 	INNER JOIN ServiceItems AS SI4 ON I4.ItemID = SI4.ItemID
-	INNER JOIN ExchangeAccounts AS EA4 ON I4.ItemID = EA4.ItemID
+	INNER JOIN ExchangeAccounts AS EA4 ON I4.ItemID = EA4.ItemID'
+IF @FilterValue <> ''
+	SET @sqlSpace = @sqlSpace + ' WHERE (EA4.PrimaryEmailAddress LIKE ''' + @FilterValue + ''')'
+SET @sqlSpace = @sqlSpace + '
 	UNION
-	SELECT
+	SELECT '
+
+IF @OnlyFind = 1
+SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
+
+SET @sqlSpace = @sqlSpace +	'
 		EA3.ItemID AS ItemID,
 		EAEA.EmailAddress as TextSearch,
 		''ExchangeAccount'' as ColumnType,
@@ -12369,8 +12403,10 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	FROM @ItemsService AS I3
 	INNER JOIN ServiceItems AS SI3 ON I3.ItemID = SI3.ItemID
 	INNER JOIN ExchangeAccounts AS EA3 ON I3.ItemID = EA3.ItemID
-	INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID)
-	ORDER BY TextSearch';
+	INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID'
+IF @FilterValue <> ''
+	SET @sqlSpace = @sqlSpace + ' WHERE (EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
+SET @sqlSpace = @sqlSpace + ') ORDER BY TextSearch';
 	
 SET @sqlSpace = @sqlSpace + ' open @curValue'
 
@@ -12433,9 +12469,6 @@ SET @sqlReturn = @sqlReturn + ' AND IA.ColumnType in ( ' + @ColType + ' ) ';
 
 IF @FullType <> ''
 SET @sqlReturn = @sqlReturn + ' AND IA.FullType = ''' + @FullType + '''';
-
-IF @FilterValue <> ''
-SET @sqlReturn = @sqlReturn + ' AND IA.' + @FilterColumn + ' LIKE @FilterValue '
 
 SET @sqlReturn = @sqlReturn + '
 SELECT COUNT(ItemID) FROM @ItemsReturn;
