@@ -232,7 +232,7 @@ namespace WebsitePanel.Setup.Actions
 	{
 		void IInstallAction.Run(SetupVariables vars)
 		{
-			try
+            try
 			{
 				//
 				Log.WriteStart(String.Format("Creating database user {0}", vars.Database));

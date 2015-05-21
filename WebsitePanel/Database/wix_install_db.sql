@@ -44364,7 +44364,7 @@ Hello #user.FirstName#,
 </p>
 
 <p>
-Please, find below details of your control panel account.
+Please, find below details of your control panel account. The one time password was generated for you. You should change the password after login. 
 </p>
 
 <h1>Control Panel URL</h1>
@@ -44373,7 +44373,7 @@ Please, find below details of your control panel account.
         <tr>
             <th>Control Panel URL</th>
             <th>Username</th>
-            <th>Password</th>
+            <th>One Time Password</th>
         </tr>
     </thead>
     <tbody>
@@ -44411,11 +44411,11 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
 
 Hello #user.FirstName#,
 
-Please, find below details of your control panel account.
+Please, find below details of your control panel account. The one time password was generated for you. You should change the password after login.
 
 Control Panel URL: http://panel.AcmeHosting.com
 Username: #user.Username#
-Password: #user.Password#
+One Time Password: #user.Password#
 
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
 
