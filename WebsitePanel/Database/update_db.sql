@@ -12394,15 +12394,14 @@ IF @OnlyFind = 1
 SET @sqlSpace = @sqlSpace + 'TOP ' + CAST(@MaximumRows AS varchar(12)) + ' '
 
 SET @sqlSpace = @sqlSpace +	'
-		EA3.ItemID AS ItemID,
+		I3.ItemID AS ItemID,
 		EAEA.EmailAddress as TextSearch,
 		''ExchangeAccount'' as ColumnType,
 		''ExchangeAccount'' as FullType,
 		SI3.PackageID as PackageID,
-		EA3.AccountID as AccountID
+		0 as AccountID
 	FROM @ItemsService AS I3
 	INNER JOIN ServiceItems AS SI3 ON I3.ItemID = SI3.ItemID
-	INNER JOIN ExchangeAccounts AS EA3 ON I3.ItemID = EA3.ItemID
 	INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID'
 IF @FilterValue <> ''
 	SET @sqlSpace = @sqlSpace + ' WHERE (EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
