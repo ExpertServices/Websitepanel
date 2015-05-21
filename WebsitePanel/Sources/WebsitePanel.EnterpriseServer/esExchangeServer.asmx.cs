@@ -781,12 +781,14 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public ResultObject SetPicture(string accountName, byte[] picture)
         {
+            return null;
             // return ExchangeServerController.SetPicture(accountName, picture);
         }
 
         [WebMethod]
         public BytesResult GetPicture(string accountName)
         {
+            return null;
             // return ExchangeServerController.GetPicture(accountName);
         }
 
