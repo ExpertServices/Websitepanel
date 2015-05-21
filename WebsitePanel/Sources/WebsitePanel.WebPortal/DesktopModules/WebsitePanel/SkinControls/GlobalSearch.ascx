@@ -50,7 +50,7 @@
                 $ImgBtn.attr('disabled', 'disabled');
             }
         });
-        if (document.referrer.search("pid=Login") > 0) {
+        if (document.referrer.search("pid=Login") > 0 || window.location.href.search("pid=SearchObject") > 0) {
             $("#<%= tbSearch.ClientID %>").focus();
         }
 

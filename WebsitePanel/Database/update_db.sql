@@ -12216,7 +12216,7 @@ SET @columnFullName = 'FullName'
 DECLARE @curUsers cursor
 DECLARE @curSpace cursor
 
-DECLARE @sqlSpace nvarchar(2000)
+DECLARE @sqlSpace nvarchar(3000)
 DECLARE @sqlUsers nvarchar(2000)
 DECLARE @sqlReturn nvarchar(4000)
 
@@ -12325,7 +12325,7 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
 	INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
 	WHERE STYPE.Searchable = 1
-	UNION
+	UNION (
 	SELECT		
 		D.DomainID AS ItemID,
 		D.DomainName as TextSearch,
@@ -12339,14 +12339,37 @@ SET @sqlSpace = @sqlSpace +	'SI.ItemID
 	UNION
 	SELECT
 		EA.ItemID AS ItemID,
-		EA.AccountName as TextSearch,
+		EA.DisplayName as TextSearch,
 		''ExchangeAccount'' as ColumnType,
-		''ExchangeAccountMailbox'' as FullType,
+		''ExchangeAccount'' as FullType,
 		SI2.PackageID as PackageID,
 		EA.AccountID as AccountID
 	FROM @ItemsService AS I2
 	INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
 	INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID
+	UNION
+	SELECT
+		EA4.ItemID AS ItemID,
+		EA4.PrimaryEmailAddress as TextSearch,
+		''ExchangeAccount'' as ColumnType,
+		''ExchangeAccount'' as FullType,
+		SI4.PackageID as PackageID,
+		EA4.AccountID as AccountID
+	FROM @ItemsService AS I4
+	INNER JOIN ServiceItems AS SI4 ON I4.ItemID = SI4.ItemID
+	INNER JOIN ExchangeAccounts AS EA4 ON I4.ItemID = EA4.ItemID
+	UNION
+	SELECT
+		EA3.ItemID AS ItemID,
+		EAEA.EmailAddress as TextSearch,
+		''ExchangeAccount'' as ColumnType,
+		''ExchangeAccount'' as FullType,
+		SI3.PackageID as PackageID,
+		EA3.AccountID as AccountID
+	FROM @ItemsService AS I3
+	INNER JOIN ServiceItems AS SI3 ON I3.ItemID = SI3.ItemID
+	INNER JOIN ExchangeAccounts AS EA3 ON I3.ItemID = EA3.ItemID
+	INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID)
 	ORDER BY TextSearch';
 	
 SET @sqlSpace = @sqlSpace + ' open @curValue'
