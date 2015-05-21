@@ -8,14 +8,46 @@ namespace WebsitePanel.Setup.Internal
 {
     public static class XmlDocumentMerge
     {
+        public class AttrTag
+        {
+            public AttrTag()
+                : this(null)
+            {
+
+            }
+            public AttrTag(params string[] Attributes)
+            {
+                this.Attributes = Attributes;
+                Priority = Attributes == null ? 0 : (ulong)Attributes.LongLength;
+            }
+            public ulong Priority { get; private set; }
+            public string[] Attributes;
+        }
+        public class FrozenAttrTag
+        {
+            public FrozenAttrTag()
+                : this(false)
+            {
+
+            }
+            public FrozenAttrTag(bool Relative)
+            {
+                IsRelative = Relative;
+            }
+            public string Path { get; set; }
+            public IList<string> Attributes { get; set; }
+            public bool IsRelative { get; private set; }
+        }
         const string SuccessFormat = "Success: {0}.";
         const string ErrorFormat = "Error: {0}.";
         const string MergeCompleted = "XmlDocumentMerge completed";
         static XmlDocumentMerge()
         {
-            KeyAttributes = new List<string> { "name", "id", "key" };
+            KeyAttributes = new List<string>();
+            FrozenAttributes = new List<FrozenAttrTag>();
         }
-        public static List<string> KeyAttributes { get; set; }
+        public static IList<string> KeyAttributes { get; set; }
+        public static IList<FrozenAttrTag> FrozenAttributes { get; set; }
         public static string Process(string Src, string Dst, string SaveTo = "")
         {
             var Result = string.Empty;
@@ -83,57 +115,97 @@ namespace WebsitePanel.Setup.Internal
         }
         private static string NodeView(XPathNavigator Navi)
         {
-            foreach (var Attr in KeyAttributes)
+            foreach (var Item in GetProcessingChain(KeyAttributes))
             {
-                var Value = Navi.GetAttribute(Attr, string.Empty);
-                if (!string.IsNullOrWhiteSpace(Value))
-                    return string.Format("{0}[@{1}='{2}']", Navi.Name, Attr, Value);
+                string Result = string.Empty;
+                foreach (var Attr in Item.Attributes)
+                {
+                    var Value = Navi.GetAttribute(Attr, string.Empty);
+                    if (string.IsNullOrWhiteSpace(Value))
+                    {
+                        Result = string.Empty;
+                        continue;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(Result))
+                            Result = string.Format("@{0}='{1}'", Attr, Value);
+                        else
+                            Result = string.Format("{0} and @{1}='{2}'", Result, Attr, Value);
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(Result))
+                    return string.Format("{0}[{1}]", Navi.Name, Result);
             }
             return Navi.Name;
         }
         private static void Merge(XPathNavigator DstNavi, XmlDocument SrcDoc, string Parent)
         {
-            if (DstNavi.NodeType == XPathNodeType.Element)
+            var Current = NodePath(Parent, NodeView(DstNavi));
+            if (!string.IsNullOrWhiteSpace(Current))
             {
-                var SrcElem = SrcDoc.SelectSingleNode(NodePath(Parent, NodeView(DstNavi)));
-                if (SrcElem != null)
+                if (DstNavi.NodeType == XPathNodeType.Element)
                 {
-                    if (DstNavi.MoveToFirstAttribute())
+                    var SrcElem = SrcDoc.SelectSingleNode(Current);
+                    if (SrcElem != null)
                     {
-                        do
+                        var Frozen = GetFrozenAttributes(Current, FrozenAttributes);
+                        if (DstNavi.MoveToFirstAttribute())
                         {
-                            var SrcElemAttr = SrcElem.Attributes[DstNavi.LocalName];
-                            if (SrcElemAttr != null)
-                                DstNavi.SetValue(SrcElemAttr.Value);
+                            do
+                            {
+                                var SrcElemAttr = SrcElem.Attributes[DstNavi.LocalName];
+                                if (SrcElemAttr != null && CanProcess(DstNavi.LocalName, Frozen))
+                                    DstNavi.SetValue(SrcElemAttr.Value);
+                            }
+                            while (DstNavi.MoveToNextAttribute());
+                            DstNavi.MoveToParent();
                         }
-                        while (DstNavi.MoveToNextAttribute());
-                        DstNavi.MoveToParent();
                     }
                 }
-            }
-            else if (DstNavi.NodeType == XPathNodeType.Text)
-            {
-                var SrcElem = SrcDoc.SelectSingleNode(NodePath(Parent, NodeView(DstNavi)));
-                if (SrcElem != null)
-                    DstNavi.SetValue(SrcElem.InnerText);
-            }
-            var Here = NodeView(DstNavi);
-            if (DstNavi.MoveToFirstChild())
-            {
-                do
+                else if (DstNavi.NodeType == XPathNodeType.Text)
                 {
-                    Merge(DstNavi, SrcDoc, NodePath(Parent, Here));
+                    var SrcElem = SrcDoc.SelectSingleNode(Current);
+                    if (SrcElem != null)
+                        DstNavi.SetValue(SrcElem.InnerText);
                 }
-                while (DstNavi.MoveToNext());
-                DstNavi.MoveToParent();
+                if (DstNavi.MoveToFirstChild())
+                {
+                    do
+                    {
+                        Merge(DstNavi, SrcDoc, Current);
+                    }
+                    while (DstNavi.MoveToNext());
+                    DstNavi.MoveToParent();
+                }
+                else if (DstNavi.NodeType == XPathNodeType.Element)
+                {
+                    var SrcElem = SrcDoc.SelectSingleNode(Current);
+                    if (SrcElem != null && !string.IsNullOrWhiteSpace(SrcElem.InnerXml))
+                        foreach (XmlNode Child in SrcElem.ChildNodes)
+                            DstNavi.AppendChild(Child.CloneNode(true).CreateNavigator());
+                }
             }
-            else if (DstNavi.NodeType == XPathNodeType.Element)
-            {
-                var SrcElem = SrcDoc.SelectSingleNode(NodePath(Parent, Here));
-                if (SrcElem != null && !string.IsNullOrWhiteSpace(SrcElem.InnerXml))
-                    foreach (XmlNode Child in SrcElem.ChildNodes)
-                        DstNavi.AppendChild(Child.CloneNode(true).CreateNavigator());
-            }
+        }
+        private static IList<AttrTag> GetProcessingChain(IEnumerable<string> Attributes)
+        {
+            var Delimiter = ";";
+            var Chain = new List<AttrTag>();
+            foreach (var Attribute in Attributes)
+                Chain.Add(new AttrTag(Attribute.Split(new string[] { Delimiter }, StringSplitOptions.RemoveEmptyEntries)));
+            Chain.Sort(delegate(AttrTag a, AttrTag b) { return a.Priority == b.Priority ? 0 : a.Priority > b.Priority ? -1 : 1; });
+            return Chain;
+        }
+        private static FrozenAttrTag GetFrozenAttributes(string Path, IEnumerable<FrozenAttrTag> Frozens)
+        {
+            foreach (var Frozen in Frozens)
+                if (Frozen.IsRelative ? Path.IndexOf(Frozen.Path, 1) == -1 : Path.StartsWith(Frozen.Path))
+                    return Frozen;
+            return null;
+        }
+        private static bool CanProcess(string Name, FrozenAttrTag Frozen)
+        {
+            return Frozen == null ? true : !Frozen.Attributes.Contains(Name);
         }
     }
 }
