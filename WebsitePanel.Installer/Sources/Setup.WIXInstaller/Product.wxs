@@ -707,15 +707,21 @@
             <Component Id="UpdateDatabaseSql" Guid="{089C02F9-D598-435E-8DA9-FC8AED00495C}">
                 <Condition>NOT (Remove="ALL") AND NOT(DB_AUTH = "Windows Authentication")</Condition>
                 <CreateFolder />
-                <sql:SqlString  Id="SqlVersionUpdateSql" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
-                                                           BEGIN
-	                                                           INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
-                                                           END"
-                                                    SqlDb="SqlDatabaseInstallWin" Sequence="2"  User="SqlUser"
-                                                    ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
-                <sql:SqlScript Id="SqlUpdateScriptSql" BinaryKey="UpdateDB" SqlDb="SqlDatabaseInstallSql" Sequence="3" User="SqlUser"
-                               ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
-            </Component>
+                <util:User Id="SqlUpdateUser" Name="[DB_LOGIN]" Password="[DB_PASSWORD]" CreateUser="no" />
+                <sql:SqlDatabase Id="SqlDatabaseUpdateSql" ConfirmOverwrite="yes" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="yes" CreateOnUninstall="no"
+                                 DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
+                                 Server="[DB_SERVER]"
+                                 Database="[DB_DATABASE]"
+                                 User="SqlUpdateUser">
+                    <sql:SqlString  Id="SqlVersionUpdateSql" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
+                                                               BEGIN
+	                                                               INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
+                                                               END"
+                                                        Sequence="2" ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+                    <sql:SqlScript Id="SqlUpdateScriptSql" BinaryKey="UpdateDB" Sequence="3"
+                                   ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+                </sql:SqlDatabase>
+            </Component>            
             <Component Id="InstallDatabaseWin" Guid="{C50FC58C-3EF3-452D-BA9B-C9513B4D941A}">
                 <CreateFolder />
                 <Condition>(NOT Installed AND NOT WIX_UPGRADE_DETECTED) AND (DB_AUTH = "Windows Authentication") AND (COMPFOUND_ESERVER="0")</Condition>
@@ -729,13 +735,18 @@
             <Component Id="UpdateDatabaseWin" Guid="{A2770B5C-DA46-4125-950F-73A640EB312B}">
                 <Condition>NOT (Remove="ALL") AND (DB_AUTH = "Windows Authentication")</Condition>
                 <CreateFolder />
-                <sql:SqlString  Id="SqlVersionUpdateWin" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
+                <sql:SqlDatabase Id="SqlDatabaseUpdateWin" ConfirmOverwrite="no" ContinueOnError="no" CreateOnInstall="yes" CreateOnReinstall="yes" CreateOnUninstall="no"
+                                 DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
+                                 Server="[DB_SERVER]"
+                                 Database="[DB_DATABASE]">
+                    <sql:SqlString  Id="SqlVersionUpdateWin" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
                                                            BEGIN
 	                                                           INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
                                                            END"
-                                                    SqlDb="SqlDatabaseInstallWin" Sequence="11"  ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
-                <sql:SqlScript Id="SqlUpdateScriptWin" BinaryKey="UpdateDB" SqlDb="SqlDatabaseInstallWin" Sequence="12"
-                                   ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no" />
+                                                         Sequence="11"  ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
+                    <sql:SqlScript Id="SqlUpdateScriptWin" BinaryKey="UpdateDB"  Sequence="12"
+                                       ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no" />
+                </sql:SqlDatabase>
             </Component>
         </DirectoryRef>
     </Fragment>

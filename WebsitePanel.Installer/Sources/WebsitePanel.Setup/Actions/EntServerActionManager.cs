@@ -63,9 +63,6 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
 			try
 			{
 				OnInstallProgressChanged(LogStartInstallMessage, 0);
@@ -235,10 +232,7 @@ namespace WebsitePanel.Setup.Actions
 	{
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
-			try
+            try
 			{
 				//
 				Log.WriteStart(String.Format("Creating database user {0}", vars.Database));
@@ -336,9 +330,6 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
 			try
 			{
 				Log.WriteStart("Updating serveradmin password");
@@ -398,9 +389,6 @@ namespace WebsitePanel.Setup.Actions
 	{
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
 			Log.WriteStart("Updating web.config file (connection string)");
 			var file = Path.Combine(vars.InstallationFolder, vars.ConfigurationFile);
 			vars.ConnectionString = String.Format(vars.ConnectionString, vars.DatabaseServer, vars.Database, vars.Database, vars.DatabaseUserPassword);

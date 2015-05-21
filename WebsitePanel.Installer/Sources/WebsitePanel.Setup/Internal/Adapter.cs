@@ -198,7 +198,7 @@ namespace WebsitePanel.Setup.Internal
             var mup = "MODE_UP";
             var mrup = "MODE_RUP";
             var Result = ModeExtension.Normal;
-            if (Src.Keys.Contains(mup) && !string.IsNullOrWhiteSpace(Src[mup]))
+            if ((Src.Keys.Contains(mup) && !string.IsNullOrWhiteSpace(Src[mup])) || (Src.Keys.Contains("ComponentId") && !string.IsNullOrWhiteSpace(Src["ComponentId"])))
                 Result = ModeExtension.Restore;
             else if (Src.Keys.Contains(mrup) && !string.IsNullOrWhiteSpace(Src[mrup]))
                 Result = ModeExtension.Backup;
@@ -3943,7 +3943,7 @@ namespace WebsitePanel.Setup.Internal
                 XmlDocumentMerge.KeyAttributes = new List<string> { "name", "id", "key", "pageID", "localName", "xmlns", "privatePath", "moduleDefinitionID", "ref", "verb;path", "controlRenderingCompatibilityVersion;clientIDMode" };
                 XmlDocumentMerge.FrozenAttributes = new List<XmlDocumentMerge.FrozenAttrTag>
                 {
-                    new XmlDocumentMerge.FrozenAttrTag() { Path="configuration/microsoft.web.services3/security/securityTokenManager/add", Attributes = new List<string>() {"localName"} },
+                    new XmlDocumentMerge.FrozenAttrTag() { Path="configuration/microsoft.web.services3/security/securityTokenManager/add", Attributes = new List<string>() {"type"} },
                     new XmlDocumentMerge.FrozenAttrTag(true) { Path="compilation", Attributes = new List<string>() {"targetFramework"} },
                     new XmlDocumentMerge.FrozenAttrTag() { Path="configuration/startup/supportedRuntime", Attributes = new List<string>() {"version", "sku" } }
                 };
@@ -4242,12 +4242,6 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
-                    if (Context.ComponentExists)
-                    {
-                        Context.UpdateVersion = Context.Release;
-                        AppConfig.LoadComponentSettings(Context);
-                        new RestoreScript(Context).Run();
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -4326,12 +4320,6 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
-                    if(Context.ComponentExists)
-                    {
-                        Context.UpdateVersion = Context.Release;
-                        AppConfig.LoadComponentSettings(Context);
-                        new RestoreScript(Context).Run();
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -4410,12 +4398,6 @@ namespace WebsitePanel.Setup.Internal
                         WiXThrow = true;
                     });
                     sam.Start();
-                    if (Context.ComponentExists)
-                    {
-                        Context.UpdateVersion = Context.Release;
-                        AppConfig.LoadComponentSettings(Context);
-                        new RestoreScript(Context).Run();
-                    }
                 }
                 catch (Exception ex)
                 {

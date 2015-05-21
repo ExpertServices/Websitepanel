@@ -219,13 +219,14 @@ namespace WebsitePanel.WIXInstaller
                     var ConnStr = new SqlConnectionStringBuilder(CtxVars.DbInstallConnectionString);
                     SetProperty(Ctx, "DB_CONN", ConnStr.ToString());
                     SetProperty(Ctx, "DB_SERVER", ConnStr.DataSource);
-                    SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
                     SetProperty(Ctx, "DB_AUTH", ConnStr.IntegratedSecurity ? SQL_AUTH_WINDOWS : SQL_AUTH_SERVER);
                     if (!ConnStr.IntegratedSecurity)
                     {
                         SetProperty(Ctx, "DB_LOGIN", ConnStr.UserID);
                         SetProperty(Ctx, "DB_PASSWORD", ConnStr.Password);
                     }
+                    ConnStr = new SqlConnectionStringBuilder(CtxVars.ConnectionString);
+                    SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
 
                     var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                     bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);

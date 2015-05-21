@@ -151,8 +151,6 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
 			// Exit with an error if Windows account with the same name already exists
 			if (SecurityUtils.UserExists(vars.UserDomain, vars.UserAccount))
 				throw new Exception(UserAccountExists);
@@ -503,10 +501,7 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
-			var siteName = vars.ComponentFullName;
+            var siteName = vars.ComponentFullName;
 			var ip = vars.WebSiteIP;
 			var port = vars.WebSitePort;
 			var domain = vars.WebSiteDomain;
@@ -779,10 +774,7 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-            if (vars.ComponentExists)
-                return;
-
-			try
+            try
 			{
 				Begin(LogStartInstallMessage);
 				//
