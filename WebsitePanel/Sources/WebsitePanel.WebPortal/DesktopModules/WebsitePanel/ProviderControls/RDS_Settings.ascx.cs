@@ -32,13 +32,14 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.RDS;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.RemoteDesktopServices;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
     public partial class RDS_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
-    {
+    {        
         protected void Page_Load(object sender, EventArgs e)
         {
             FillCertificateInfo();
@@ -98,6 +99,11 @@ namespace WebsitePanel.Portal.ProviderControls
                 txtCentralNPS.Enabled = false;
                 txtCentralNPS.Text = string.Empty;
             }
+
+            if (!string.IsNullOrEmpty(settings[RdsServerSettings.ALLOWCOLLECTIONSIMPORT]))
+            {
+                cbCollectionsImport.Checked = Convert.ToBoolean(settings[RdsServerSettings.ALLOWCOLLECTIONSIMPORT]);
+            }
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
@@ -108,6 +114,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
             settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
             settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+            settings[RdsServerSettings.ALLOWCOLLECTIONSIMPORT] = cbCollectionsImport.Checked.ToString();
 
             settings["GWServrsList"] = GWServers;
 

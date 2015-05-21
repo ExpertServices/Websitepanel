@@ -147,4 +147,7 @@
   <data name="lblComputersRootOU.Text" xml:space="preserve">
     <value>Computers Root OU:</value>
   </data>
+  <data name="cbCollectionsImport.Text" xml:space="preserve">
+    <value>Allow Collections Import</value>
+  </data>
 </root>

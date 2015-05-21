@@ -235,7 +235,7 @@
     <value>Info</value>
   </data>
   <data name="Initials" xml:space="preserve">
-    <value>Initials</value>
+    <value>Middle Initial</value>
   </data>
   <data name="ItemExist" xml:space="preserve">
     <value>File already exist</value>

@@ -166,7 +166,7 @@
     <value>Home Phone:</value>
   </data>
   <data name="locInitials.Text" xml:space="preserve">
-    <value>Initials:</value>
+    <value>Middle Initial:</value>
   </data>
   <data name="locJobTitle.Text" xml:space="preserve">
     <value>Job Title:</value>

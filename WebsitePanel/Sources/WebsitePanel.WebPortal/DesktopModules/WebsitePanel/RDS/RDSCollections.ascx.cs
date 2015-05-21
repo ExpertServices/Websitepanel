@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
@@ -55,14 +56,18 @@ namespace WebsitePanel.Portal.RDS
                 btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
             }
 
-            var defaultSettings = ES.Services.Users.GetUserSettings(PanelSecurity.EffectiveUserId, UserSettings.RDS_POLICY);
-            var allowImport = Convert.ToBoolean(defaultSettings[RdsServerSettings.ALLOWCONNECTIONSIMPORT]);
+            var serviceId = ES.Services.RDS.GetRemoteDesktopServiceId(PanelRequest.ItemID);
+            var settings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
+            
+            var allowImport = Convert.ToBoolean(settings[RdsServerSettings.ALLOWCOLLECTIONSIMPORT]);
 
             if (!allowImport)
             {
                 btnImportCollection.Visible = false;
             }
         }
+
+
 
         private void BindQuota(PackageContext cntx)
         {            
@@ -141,6 +146,17 @@ namespace WebsitePanel.Portal.RDS
         public string GetCollectionEditUrl(string collectionId)
         {
             return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID);
+        }
+
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
         }
     }
 }
