@@ -57,6 +57,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public const string WEBDAV_PASSWORD_RESET_ENABLED_KEY = "WebdavPswResetEnabled";
         public const string WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN = "WebdavPswdResetLinkLifeSpan";
+        public const string WEBDAV_OWA_ENABLED_KEY = "WebdavOwaEnabled";
+        public const string WEBDAV_OWA_URL = "WebdavOwaUrl";
 
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";

@@ -167,6 +167,9 @@ namespace WebsitePanel.Portal
                 chkEnablePasswordReset.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY], false);
                 txtWebdavPortalUrl.Text = settings[WEBDAV_PORTAL_URL];
                 txtPasswordResetLinkLifeSpan.Text = settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN];
+
+                chkEnableOwa.Checked = Utils.ParseBool(settings[WSP.SystemSettings.WEBDAV_OWA_ENABLED_KEY], false);
+                txtOwaUrl.Text = settings[WSP.SystemSettings.WEBDAV_OWA_URL];
             }
 
             // Twilio portal
@@ -264,6 +267,10 @@ namespace WebsitePanel.Portal
                 settings[WEBDAV_PORTAL_URL] = txtWebdavPortalUrl.Text;
                 settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_ENABLED_KEY] = chkEnablePasswordReset.Checked.ToString();
                 settings[WSP.SystemSettings.WEBDAV_PASSWORD_RESET_LINK_LIFE_SPAN] = txtPasswordResetLinkLifeSpan.Text;
+
+                settings[WSP.SystemSettings.WEBDAV_OWA_ENABLED_KEY] = chkEnableOwa.Checked.ToString();
+                settings[WSP.SystemSettings.WEBDAV_OWA_URL] = txtOwaUrl.Text;
+
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WEBDAV_PORTAL_SETTINGS, settings);
 
                 if (result < 0)
