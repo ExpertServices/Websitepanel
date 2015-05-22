@@ -392,5 +392,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             return RemoteDesktopServicesController.ImportCollection(itemId, collectionName);
         }
+
+        [WebMethod]
+        public int GetRemoteDesktopServiceId(int itemId)
+        {
+            return RemoteDesktopServicesController.GetRemoteDesktopServiceId(itemId);
+        }
     }
 }

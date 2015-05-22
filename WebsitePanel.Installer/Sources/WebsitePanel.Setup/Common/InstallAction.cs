@@ -89,7 +89,8 @@ namespace WebsitePanel.Setup
 		SwitchEntServer2AspNet40,
 		SwitchWebPortal2AspNet40,
         ConfigureSecureSessionModuleInWebConfig,
-        RestoreConfig
+        RestoreConfig,
+        UpdateXml
 	}
 	
 	public class InstallAction

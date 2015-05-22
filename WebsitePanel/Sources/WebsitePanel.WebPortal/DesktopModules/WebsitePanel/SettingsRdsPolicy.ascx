@@ -181,14 +181,3 @@
     </table>
     <br />
 </asp:Panel>
-<wsp:CollapsiblePanel id="secAllowImport" runat="server" TargetControlID="allowImportPanel" meta:resourcekey="secAllowImport" Text="Connections Import"/>
-<asp:Panel ID="allowImportPanel" runat="server" Height="0" style="overflow:hidden;">
-    <table>
-        <tr>
-            <td>
-                <asp:CheckBox runat="server" Text="Users" ID="cbAllowImport" meta:resourcekey="cbAllowImport" Checked="false" />
-            </td>                     
-        </tr>
-    </table>
-    <br />
-</asp:Panel>

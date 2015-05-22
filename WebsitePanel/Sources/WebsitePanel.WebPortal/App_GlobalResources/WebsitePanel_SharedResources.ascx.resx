@@ -4368,6 +4368,12 @@
   <data name="ServiceItemType.VirtualSwitch" xml:space="preserve">
     <value>Virtual Switch</value>
   </data>
+  <data name="ServiceItemType.SharePointFoundationSiteCollection" xml:space="preserve">
+    <value>SharePoint Foundation Site Collection</value>
+  </data>
+  <data name="ServiceItemType.SharePointEnterpriseSiteCollection" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collection</value>
+  </data>
   <data name="TaskActivity.VPS_ADD_EXTERNAL_IP" xml:space="preserve">
     <value>Assigning external IP addresses</value>
   </data>
@@ -5291,9 +5297,6 @@
   </data>
   <data name="UserItemType.ExchangeAccount" xml:space="preserve">
     <value>Exchange Account</value>
-  </data>
-  <data name="UserItemType.ExchangeAccountMailbox" xml:space="preserve">
-    <value>Exchange Mailbox</value>
   </data>
   <data name="UserItemType.Users" xml:space="preserve">
     <value>Account Home</value>

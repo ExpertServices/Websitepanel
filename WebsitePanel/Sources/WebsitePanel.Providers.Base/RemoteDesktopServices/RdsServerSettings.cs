@@ -48,7 +48,7 @@ namespace WebsitePanel.EnterpriseServer.Base.RDS
         public const string DISABLE_CMD = "DisableCMD";
         public const string DISABLE_CMD_ADMINISTRATORS = "DisableCMDAdministrators";
         public const string DISABLE_CMD_USERS = "DisableCMDUsers";
-        public const string ALLOWCONNECTIONSIMPORT = "AllowConnectionsImport";
+        public const string ALLOWCOLLECTIONSIMPORT = "AllowCollectionsImport";
 
         public string SettingsName { get; set; }
         public int ServerId { get; set; }

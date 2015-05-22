@@ -285,10 +285,22 @@ namespace WebsitePanel.Import.Enterprise
 					case "group":
 						if (child.Properties["mail"] != null)
 							email = (string)child.Properties["mail"].Value;
-						if ((typeProp != null) && (typeProp.Value != null) && (1073741833 == (int)typeProp.Value))
+
+                        bool isDistributionList = false;
+
+                        if ((typeProp != null) && (typeProp.Value != null) && (1073741833 == (int)typeProp.Value))
+                            isDistributionList = true;
+
+                        if (typeDetails == 262144)
+                            isDistributionList = true;
+
+                        if (typeDetails == 0)
+                            isDistributionList = true;
+
+                        if (isDistributionList)
 						{
 							//Universal Security Group
-							type = "Mail-Enabled Universal Security Group";
+                            type = "Distribution List";
 							//email
 							PropertyValueCollection proxyAddresses = child.Properties["proxyAddresses"];
 							if (proxyAddresses != null)

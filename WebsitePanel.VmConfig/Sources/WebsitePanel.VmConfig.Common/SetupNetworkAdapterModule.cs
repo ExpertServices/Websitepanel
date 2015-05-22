@@ -91,7 +91,7 @@ namespace WebsitePanel.VmConfig
 					}
 					
 					attempts++;
-					Log.WriteError(string.Format("Attempt #{0} to find network adapter failed!", attempts));
+                    Log.WriteError(string.Format("Attempt #{0} to find network adapter (mac: {1}) failed!", attempts, macAddress));
 					// wait 1 min
 					System.Threading.Thread.Sleep(60000);
 					//repeat loop

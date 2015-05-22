@@ -57,7 +57,12 @@
             </asp:Panel>        
 </fieldset>
 <fieldset>
-<table>       
+<table>
+    <tr>
+        <td colspan="2">
+            <asp:CheckBox runat="server" Text="Allow Collections Import" ID="cbCollectionsImport" meta:resourcekey="cbCollectionsImport" Checked="false" />
+        </td>                   
+    </tr>   
     <tr>
         <td class="SubHead" width="200" nowrap>
             <asp:Label runat="server" ID="lblConnectionBroker" meta:resourcekey="lblConnectionBroker" Text="Connection Broker:"/>

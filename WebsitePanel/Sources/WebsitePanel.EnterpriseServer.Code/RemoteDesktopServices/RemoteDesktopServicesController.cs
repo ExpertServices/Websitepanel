@@ -56,6 +56,11 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
+        public static int GetRemoteDesktopServiceId(int itemId)
+        {
+            return GetRdsServiceId(itemId);
+        }
+
         public static RdsCollection GetRdsCollection(int collectionId)
         {
             return GetRdsCollectionInternal(collectionId);
