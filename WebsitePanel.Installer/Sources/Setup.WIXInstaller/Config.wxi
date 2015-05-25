@@ -9,6 +9,4 @@
     <?define PortalTitle="Portal"?>
     <?define PortalDescription="WebsitePanel Portal is a control panel itself with user interface which allows managing user accounts, hosting spaces, web sites, FTP accounts, files, etc."?>
     <?define VERSION="$(var.Version)"?>
-    <?define sql_release_version = "$(var.Version)"?> <!--N'${release.version}'-->
-    <?define sql_build_date = "$(var.BuildDate)"?> <!-- '${release.date}T00:00:00' - ISO 8601 Format (YYYY-MM-DDTHH:MM:SS) -->
 </Include>
