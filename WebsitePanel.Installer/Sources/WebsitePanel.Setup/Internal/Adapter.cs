@@ -135,6 +135,7 @@ namespace WebsitePanel.Setup.Internal
             //Dst.IISVersion = Utils.GetVersionSetupParameter(Hash, "IISVersion");
             Dst.SetupXml = Utils.GetStringSetupParameter(Hash, "SetupXml");
             Dst.ServerPassword = Utils.GetStringSetupParameter(Hash, Global.Parameters.ServerPassword);
+            Dst.UpdateServerPassword = true;
 
             Dst.WebSiteIP = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSiteIP);
             Dst.WebSitePort = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSitePort);
@@ -2191,38 +2192,41 @@ namespace WebsitePanel.Setup.Internal
                     Log.WriteEnd(Msg);
                     InstallLog.AppendLine(Msg);
                 }
-                try
+                else
                 {
-                    string domain = Context.UserDomain;
-                    if (string.IsNullOrEmpty(domain))
-                        domain = ".";
+                    try
+                    {
+                        string domain = Context.UserDomain;
+                        if (string.IsNullOrEmpty(domain))
+                            domain = ".";
 
-                    string arguments = string.Empty;
-                    if (Context.UseUserCredentials)
-                        arguments = string.Format("/i /LogFile=\"\" /user={0}\\{1} /password={2}", domain, Context.UserAccount, Context.UserPassword);
-                    else
-                        arguments = "/i /LogFile= ''";
+                        string arguments = string.Empty;
+                        if (Context.UseUserCredentials)
+                            arguments = string.Format("/i /LogFile=\"\" /user={0}\\{1} /password={2}", domain, Context.UserAccount, Context.UserPassword);
+                        else
+                            arguments = "/i /LogFile= ''";
 
-                    ManagedInstallerClass.InstallHelper(new[] { arguments, path });
-                    //add rollback action
-                    RollBack.RegisterWindowsService(path, service);
-                    var Msg = string.Format("Registered \"{0}\" Windows service ", service);
-                    //update log
-                    Log.WriteEnd(Msg);
-                    //update install log
-                    InstallLog.AppendLine(Msg);
+                        ManagedInstallerClass.InstallHelper(new[] { arguments, path });
+                        //add rollback action
+                        RollBack.RegisterWindowsService(path, service);
+                        var Msg = string.Format("Registered \"{0}\" Windows service ", service);
+                        //update log
+                        Log.WriteEnd(Msg);
+                        //update install log
+                        InstallLog.AppendLine(Msg);
 
-                    // update config setings
-                    AppConfig.EnsureComponentConfig(componentId);
-                    AppConfig.SetComponentSettingStringValue(componentId, "ServiceName", service);
-                    AppConfig.SetComponentSettingStringValue(componentId, "ServiceFile", path);
-                    AppConfig.SaveConfiguration();
-                }
-                catch (Exception ex)
-                {
-                    Log.WriteError(string.Format("Unable to register \"{0}\" Windows service.", service), null);
-                    InstallLog.AppendLine(string.Format("- Failed to register \"{0}\" windows service ", service));
-                }                
+                        // update config setings
+                        AppConfig.EnsureComponentConfig(componentId);
+                        AppConfig.SetComponentSettingStringValue(componentId, "ServiceName", service);
+                        AppConfig.SetComponentSettingStringValue(componentId, "ServiceFile", path);
+                        AppConfig.SaveConfiguration();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteError(string.Format("Unable to register \"{0}\" Windows service.", service), null);
+                        InstallLog.AppendLine(string.Format("- Failed to register \"{0}\" windows service ", service));
+                    }
+                }            
             }
             catch (Exception ex)
             {
@@ -3213,7 +3217,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
 
                 string path = Path.Combine(Context.InstallationFolder, Context.ConfigurationFile);
-                string hash = Context.ServerPassword;
+                string hash = Utils.ComputeSHA1(Context.ServerPassword);
 
                 if (!File.Exists(path))
                 {
@@ -4429,6 +4433,7 @@ namespace WebsitePanel.Setup.Internal
                     break;
                 case ModeExtension.Backup:
                     Script = new BackupScript(Context);
+                    Script.Actions.Add(new InstallAction(ActionTypes.StopWindowsService));
                     break;
                 default:
                     throw new NotImplementedException("Uninstall " + ModeExtension.ToString());
