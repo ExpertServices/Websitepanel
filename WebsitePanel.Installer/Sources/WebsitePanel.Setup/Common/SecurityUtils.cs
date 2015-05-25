@@ -398,7 +398,7 @@ namespace WebsitePanel.Setup
 		/// <summary>
 		/// Check for existing user
 		/// </summary>
-		internal static bool UserExists(string domain, string userName)
+        public static bool UserExists(string domain, string userName)
 		{
 			bool found = false;
 			// check whether user account already exists

@@ -768,7 +768,7 @@ namespace WebsitePanel.Setup
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		internal static bool ApplicationPoolExists(string name)
+		public static bool ApplicationPoolExists(string name)
 		{
 			WmiHelper wmi = new WmiHelper("root\\MicrosoftIISv2");
 			return(wmi.ExecuteQuery(
@@ -780,7 +780,7 @@ namespace WebsitePanel.Setup
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		internal static bool IIS7ApplicationPoolExists(string name)
+		public static bool IIS7ApplicationPoolExists(string name)
 		{
 			ServerManager serverManager = new ServerManager();
 			bool ret = (serverManager.ApplicationPools[name] != null);

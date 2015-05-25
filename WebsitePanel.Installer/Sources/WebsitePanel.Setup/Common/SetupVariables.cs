@@ -249,6 +249,12 @@ namespace WebsitePanel.Setup
 
 		public string BaseDirectory { get; set; }
 
+        public string SpecialBaseDirectory { get; set; }
+        public IDictionary<string, string> FileNameMap { get; set; }
+        public IDictionary<string, string> SessionVariables { get; set; }
+        public IDictionary<string, string[]> XmlData { get; set; } // XPath, Value.
+        public bool ComponentExists { get; set; }
+
 		public string UpdateVersion { get; set; }
 
 		public string EnterpriseServerURL { get; set; }
@@ -278,7 +284,8 @@ namespace WebsitePanel.Setup
 		public string ServiceName { get; set; }
 
 		public string ConfigurationFile { get; set; }
-
+        private bool m_UseUserCredentials = true;
+        public bool UseUserCredentials { get { return m_UseUserCredentials; } set { m_UseUserCredentials = value; } }
 		public string ServiceFile { get; set; }
 
 		public string LicenseKey { get; set; }
