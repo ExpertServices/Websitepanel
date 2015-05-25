@@ -779,17 +779,15 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Picture
         [WebMethod]
-        public ResultObject SetPicture(string accountName, byte[] picture)
+        public ResultObject SetPicture(int itemId, int accountId, byte[] picture)
         {
-            return null;
-            // return ExchangeServerController.SetPicture(accountName, picture);
+            return ExchangeServerController.SetPicture(itemId, accountId, picture);
         }
 
         [WebMethod]
-        public BytesResult GetPicture(string accountName)
+        public BytesResult GetPicture(int itemId, int accountId)
         {
-            return null;
-            // return ExchangeServerController.GetPicture(accountName);
+            return ExchangeServerController.GetPicture(itemId, accountId);
         }
 
         #endregion

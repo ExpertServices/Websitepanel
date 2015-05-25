@@ -346,6 +346,9 @@
     <Compile Include="SettingsUserPasswordRequestLetter.ascx.designer.cs">
       <DependentUpon>SettingsUserPasswordRequestLetter.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ThumbnailPhoto.ashx.cs">
+      <DependentUpon>ThumbnailPhoto.ashx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\SendToControl.ascx.cs">
       <DependentUpon>SendToControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -7509,6 +7512,7 @@
     <Content Include="VPSForPC\VirtualMachineSnapshotImage.ashx" />
     <Content Include="VPS2012\VirtualMachineImage.ashx" />
     <Content Include="VPS2012\VirtualMachineSnapshotImage.ashx" />
+    <Content Include="ThumbnailPhoto.ashx" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
