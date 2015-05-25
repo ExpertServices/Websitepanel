@@ -33,6 +33,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.HostedSolution
@@ -47,12 +48,45 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 BindSettings();
 
+                BindPicture();
+
                 MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
                 UserTabsId.Visible = (PanelRequest.Context == "User");
 
                 if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
                     buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
             }
+            else
+            {
+                if (upThumbnailphoto.HasFile)
+                    SavePicture(upThumbnailphoto.FileBytes);
+            }
+        }
+
+        private void BindPicture()
+        {
+            try
+            {
+                // get settings
+                OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
+                    PanelRequest.AccountID);
+
+                if ((user.AccountType== ExchangeAccountType.Mailbox) ||
+                    (user.AccountType== ExchangeAccountType.Room) ||
+                    (user.AccountType== ExchangeAccountType.SharedMailbox) ||
+                    (user.AccountType== ExchangeAccountType.Equipment))
+                {
+                    imgThumbnailphoto.Visible = true;
+                    imgThumbnailphoto.ImageUrl = "~/DesktopModules/WebsitePanel/ThumbnailPhoto.ashx" + "?" + "ItemID=" + PanelRequest.ItemID +
+                        "&AccountID=" + PanelRequest.AccountID;
+                }
+                else
+                {
+                    imgThumbnailphoto.Visible = false;
+                }
+
+            }
+            catch { } // skip
         }
 
         private void BindSettings()
@@ -450,5 +484,35 @@ namespace WebsitePanel.Portal.HostedSolution
                 "Context=" + ((PanelRequest.Context == "Mailbox") ? "Mailbox" : "User"),
                 "AccountID=" + PanelRequest.AccountID));
         }
+
+        private void SavePicture(byte[] picture)
+        {
+            try
+            {
+                ResultObject result = ES.Services.ExchangeServer.SetPicture(
+                    PanelRequest.ItemID, PanelRequest.AccountID,
+                    picture);
+                if (!result.IsSuccess)
+                {
+                    messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
+                    return;
+                }
+
+                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_USER_SETTINGS", ex);
+            }
+
+            BindPicture();
+        }
+
+        protected void btnClearThumbnailphoto_Click(object sender, EventArgs e)
+        {
+            SavePicture(null);
+        }
+
+
     }
 }

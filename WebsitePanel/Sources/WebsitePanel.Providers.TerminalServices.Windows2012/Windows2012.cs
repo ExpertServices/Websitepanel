@@ -1702,6 +1702,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {
+                Log.WriteStart(string.Format("Starting collection import: {0}", collection.Name));
                 runSpace = OpenRunspace();                                                
                 var orgPath = GetOrganizationPath(organizationId);
                 CheckOrCreateAdGroup(GetComputerGroupPath(organizationId, collection.Name), orgPath, GetComputersGroupName(collection.Name), RdsCollectionComputersGroupDescription);
@@ -1742,7 +1743,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     MoveSessionHostToCollectionOU(rdsServer.Name, collection.Name, organizationId);
                     AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, helpDeskGroupSamAccountName);
                     AddAdGroupToLocalAdmins(runSpace, rdsServer.FqdName, localAdminsGroupSamAccountName);
+
+                    Log.WriteStart(string.Format("Adding server {0} to AD Group, OrgId: {1}", rdsServer.Name, organizationId));
                     AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
+                    Log.WriteStart(string.Format("Server {0} added to AD Group, OrgId: {1}", rdsServer.Name, organizationId));
                 }
 
                 string collectionComputersPath = GetComputerGroupPath(organizationId, collection.Name);
@@ -1753,6 +1757,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 CreateHelpDeskPolicy(runSpace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collection.Name);
 
                 SetUsersInCollection(organizationId, collection.Name, users);
+
+                Log.WriteStart(string.Format("Collection imported: {0}", collection.Name));
             }
             finally
             {
@@ -1849,22 +1855,35 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         private void AddComputerToCollectionAdComputerGroup(string organizationId, string collectionName, RdsServer server)
         {            
-            var computerGroupName = GetComputersGroupName( collectionName);
+            var computerGroupName = GetComputersGroupName( collectionName);            
             var computerObject = GetComputerObject(server.Name);
+
+            Log.WriteStart(string.Format("ComputerGroupName: {0}\r\nServerName: {1}\r\nCollectionName: {2}", computerGroupName, server.Name, collectionName));
 
             if (computerObject != null)
             {                
                 var samName = (string)ActiveDirectoryUtils.GetADObjectProperty(computerObject, "sAMAccountName");
+                Log.WriteStart(string.Format("sAMAccountName: {0}\r\nPath: {1}\r\n", samName, computerObject.Path));
 
                 if (!ActiveDirectoryUtils.IsComputerInGroup(samName, computerGroupName))
                 {
-                    ActiveDirectoryUtils.AddObjectToGroup(computerObject.Path, GetComputerGroupPath(organizationId, collectionName));
+                    string groupPath = GetComputerGroupPath(organizationId, collectionName);
+                    Log.WriteStart(string.Format("ComputerGroupPath: {0}", groupPath));
+                    ActiveDirectoryUtils.AddObjectToGroup(computerObject.Path, groupPath);
+                    Log.WriteStart(string.Format("{0} added to {1}", computerObject.Path, groupPath));
                 }
 
                 if (!ActiveDirectoryUtils.IsComputerInGroup(samName, RDSHelpDeskComputerGroup))
                 {
-                    ActiveDirectoryUtils.AddObjectToGroup(computerObject.Path, GetHelpDeskGroupPath(RDSHelpDeskComputerGroup));
+                    string helpDeskGroupPath = GetHelpDeskGroupPath(RDSHelpDeskComputerGroup);
+                    Log.WriteStart(string.Format("HelpDeskGroupPath: {0}", helpDeskGroupPath));
+                    ActiveDirectoryUtils.AddObjectToGroup(computerObject.Path, helpDeskGroupPath);
+                    Log.WriteStart(string.Format("{0} added to {1}", computerObject.Path, helpDeskGroupPath));
                 }
+            }
+            else
+            {
+                Log.WriteStart(string.Format("ComputerObject IS NULL"));
             }
 
             SetRDServerNewConnectionAllowed(false, server);

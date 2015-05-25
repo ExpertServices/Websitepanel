@@ -48,6 +48,8 @@ using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
 using Microsoft.Exchange.Data.Directory.Recipient;
 using Microsoft.Win32;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
 
 using Microsoft.Exchange.Data;
 using Microsoft.Exchange.Data.Directory;
@@ -501,6 +503,21 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, ResultObject res, bool setIsSuccess)
+        {
+            object[] errors;
+            Collection<PSObject> ret = ExecuteShellCommand(runSpace, cmd, out errors);
+            if (errors.Length > 0)
+            {
+                foreach (object error in errors)
+                    res.ErrorCodes.Add(error.ToString());
+                if (setIsSuccess)
+                    res.IsSuccess = false;
+            }
+            return ret;
+        }
+
+
         #endregion
 
         #region Storage
@@ -536,6 +553,66 @@ namespace WebsitePanel.Providers.HostedSolution
         }
         #endregion
 
+        #region Picture
+        public virtual ResultObject SetPicture(string accountName, byte[] picture)
+        {
+            ExchangeLog.LogStart("SetPicture");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd;
+                cmd = new Command("Import-RecipientDataProperty");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("Picture", true);
+                cmd.Parameters.Add("FileData", picture);
+                ExecuteShellCommand(runSpace, cmd, res, true);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetPicture");
+
+            return res;
+        }
+        public virtual BytesResult GetPicture(string accountName)
+        {
+            ExchangeLog.LogStart("GetPicture");
+
+            BytesResult res = new BytesResult() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd;
+
+                cmd = new Command("Export-RecipientDataProperty");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("Picture", true);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, res, true);
+
+                if (result.Count > 0)
+                {
+                    res.Value =
+                    ((Microsoft.Exchange.Data.BinaryFileDataObject)
+                     (result[0].ImmediateBaseObject)).FileData;
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("GetPicture");
+
+            return res;
+        }
+        #endregion
 
         public override bool IsInstalled()
         {

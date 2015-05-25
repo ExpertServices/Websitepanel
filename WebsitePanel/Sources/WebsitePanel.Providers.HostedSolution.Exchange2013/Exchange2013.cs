@@ -49,6 +49,7 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
 
 using Microsoft.Exchange.Data.Directory.Recipient;
 using Microsoft.Win32;
@@ -7967,6 +7968,67 @@ namespace WebsitePanel.Providers.HostedSolution
             return 0;
         }
 
+        #endregion
+
+        #region Picture
+        public virtual ResultObject SetPicture(string accountName, byte[] picture)
+        {
+            ExchangeLog.LogStart("SetPicture");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd;
+                cmd = new Command("Import-RecipientDataProperty");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("Picture", true);
+                cmd.Parameters.Add("FileData", picture);
+                ExecuteShellCommand(runSpace, cmd, res);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetPicture");
+
+            return res;
+        }
+        public virtual BytesResult GetPicture(string accountName)
+        {
+            ExchangeLog.LogStart("GetPicture");
+
+            BytesResult res = new BytesResult() { IsSuccess = true };
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd;
+
+                cmd = new Command("Export-RecipientDataProperty");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("Picture", true);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, res);
+
+                if (result.Count > 0)
+                {
+                    res.Value =
+                    ((Microsoft.Exchange.Data.BinaryFileDataObject)
+                     (result[0].ImmediateBaseObject)).FileData;
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("GetPicture");
+
+            return res;
+        }
         #endregion
 
     }

@@ -343,7 +343,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static ResultObject ImportCollectionInternal(int itemId, string collectionName)
         {
-            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "SHADOW_RDS_SESSION");
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "IMPORT_RDS_COLLECTION");
 
             try
             {
