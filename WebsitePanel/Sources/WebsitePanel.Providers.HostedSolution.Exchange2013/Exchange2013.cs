@@ -7981,9 +7981,7 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 runSpace = OpenRunspace();
-
                 Command cmd;
-
                 cmd = new Command("Import-RecipientDataProperty");
                 cmd.Parameters.Add("Identity", accountName);
                 cmd.Parameters.Add("Picture", true);
@@ -8018,7 +8016,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 if (result.Count > 0)
                 {
-                    //res.Value = ;
+                    res.Value =
+                    ((Microsoft.Exchange.Data.BinaryFileDataObject)
+                     (result[0].ImmediateBaseObject)).FileData;
                 }
             }
             finally
