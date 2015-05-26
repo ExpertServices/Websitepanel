@@ -26,7 +26,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using AjaxControlToolkit;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
@@ -41,31 +43,16 @@ namespace WebsitePanel.Portal.RDS
         
         protected void Page_Load(object sender, EventArgs e)
         {
-            users.Module = Module;        
+            users.Module = Module;
+            users.OnRefreshClicked -= OnRefreshClicked;
+            users.OnRefreshClicked += OnRefreshClicked;
 
             if (!IsPostBack)
             {                
                 BindQuota();
-                var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
-                var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-                var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
-
-                foreach (var user in collectionUsers)
-                {
-                    if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
-                    {
-                        user.IsVIP = true;
-                    }
-                    else
-                    {
-                        user.IsVIP = false;
-                    }
-                }
-                
-                litCollectionName.Text = collection.DisplayName;
-                users.SetUsers(collectionUsers);
+                users.BindUsers();
             }
-        }
+        }        
 
         private void BindQuota()
         {
@@ -85,6 +72,11 @@ namespace WebsitePanel.Portal.RDS
                 int rdsUsersCount = ES.Services.RDS.GetOrganizationRdsUsersCount(PanelRequest.ItemID);
                 users.ButtonAddEnabled = (!(cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue <= rdsUsersCount) || (cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue == -1));
             }
+        }
+
+        private void OnRefreshClicked(object sender, EventArgs e)
+        {           
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();
         }
 
         private bool SaveRdsUsers()

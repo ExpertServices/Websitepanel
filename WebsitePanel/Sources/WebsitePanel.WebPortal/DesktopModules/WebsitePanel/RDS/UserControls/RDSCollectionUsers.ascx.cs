@@ -41,6 +41,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
     public partial class RDSCollectionUsers : WebsitePanelControlBase
 	{
         public const string DirectionString = "DirectionString";
+        public event EventHandler OnRefreshClicked;
 
         public bool ButtonAddEnabled
         {
@@ -100,9 +101,16 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
 		protected void btnDelete_Click(object sender, EventArgs e)
 		{
-            List<OrganizationUser> selectedAccounts = GetGridViewUsers(SelectedState.Unselected);
+            if (CheckDeletedUsers())
+            {
+                List<OrganizationUser> selectedAccounts = GetGridViewUsers(SelectedState.Unselected);
+                BindAccounts(selectedAccounts.ToArray(), false);
+            }
 
-			BindAccounts(selectedAccounts.ToArray(), false);
+            if (OnRefreshClicked != null)
+            {
+                OnRefreshClicked(sender, new EventArgs());
+            }  
 		}
 
 		protected void btnAddSelected_Click(object sender, EventArgs e)
@@ -134,9 +142,66 @@ namespace WebsitePanel.Portal.RDS.UserControls
             return GetThemedImage("Exchange/" + imgName);
         }
 
+        public bool CheckDeletedUsers()
+        {
+            var rdsUsers = GetGridViewUsers(SelectedState.Selected);
+            var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+            var organizationUsers = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+            var applicationUsers = ES.Services.RDS.GetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, null);
+            var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Select(a => a.Split('\\').Last().ToLower()).Contains(x.SamAccountName.Split('\\').Last().ToLower()));
+
+            var deletedUsers = new List<OrganizationUser>();
+
+            deletedUsers.AddRange(rdsUsers.Where(r => localAdmins.Select(l => l.AccountName.ToLower()).Contains(r.AccountName.ToLower())));
+            remoteAppUsers = remoteAppUsers.Where(r => !localAdmins.Select(l => l.AccountName.ToLower()).Contains(r.AccountName.ToLower()));
+            deletedUsers.AddRange(rdsUsers.Where(r => remoteAppUsers.Select(l => l.AccountName.ToLower()).Contains(r.AccountName.ToLower())));
+            deletedUsers = deletedUsers.Distinct().ToList();
+
+            if (deletedUsers.Any())
+            {                
+                ltUsers.Text = string.Join("<br/>", deletedUsers.Select(d => d.DisplayName));                
+                DeleteWarningModal.Show();
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public void BindUsers()
+        {
+            var collectionUsers = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
+            var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+            var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
+
+            foreach (var user in collectionUsers)
+            {
+                if (localAdmins.Select(l => l.AccountName).Contains(user.AccountName))
+                {
+                    user.IsVIP = true;
+                }
+                else
+                {
+                    user.IsVIP = false;
+                }
+            }
+            
+            SetUsers(collectionUsers);
+        }
+
 		protected void BindPopupAccounts()
 		{
-            OrganizationUser[] accounts = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+            OrganizationUser[] accounts;
+
+            if (PanelRequest.Ctl == "rds_collection_edit_users")
+            {
+                accounts = ES.Services.Organizations.GetOrganizationUsersPaged(PanelRequest.ItemID, null, null, null, 0, Int32.MaxValue).PageUsers;
+            }
+            else
+            {
+                accounts = ES.Services.RDS.GetRdsCollectionUsers(PanelRequest.CollectionID);
+            }
+
             var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
 
             foreach (var user in accounts)
