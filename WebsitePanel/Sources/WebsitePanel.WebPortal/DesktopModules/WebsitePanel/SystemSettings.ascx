@@ -104,6 +104,22 @@
 		</table>
     </asp:Panel>
     
+    <wsp:CollapsiblePanel ID="OwaSettings" runat="server" TargetControlID="PanelOwaSettings" meta:resourcekey="OwaSettings" Text="Office Web Apps" />
+    <asp:Panel ID="PanelOwaSettings" runat="server" Height="0" style="overflow:hidden;">
+        <table>
+            <tr>
+				<td class="SubHead"><asp:Localize ID="locEnableOwa" runat="server" meta:resourcekey="locEnableOwa" /></td>
+				<td class="Normal">
+					<asp:CheckBox ID="chkEnableOwa" runat="server" Text="Yes" meta:resourcekey="chkEnableOwa" />
+				</td>
+			</tr>
+            <tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="locOwaUrl" runat="server" meta:resourcekey="locOwaUrl" />
+				<td><asp:TextBox runat="server" ID="txtOwaUrl" Width="450px" /></td>
+			</tr>
+		</table>
+    </asp:Panel>
+    
     <wsp:CollapsiblePanel ID="TwilioSettings" runat="server" TargetControlID="PanelTwilioSettings" meta:resourcekey="TwilioSettings" Text="Webdav Portal" />
     <asp:Panel ID="PanelTwilioSettings" runat="server" Height="0" style="overflow:hidden;">
         <table>
