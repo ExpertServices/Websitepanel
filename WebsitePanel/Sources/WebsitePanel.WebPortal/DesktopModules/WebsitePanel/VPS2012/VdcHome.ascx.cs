@@ -54,7 +54,8 @@ namespace WebsitePanel.Portal.VPS2012
             gvServers.Columns[4].Visible = !isUserSelected;
 
             // replication
-            gvServers.Columns[5].Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
+            gvServers.Columns[5].Visible = false;
+            btnReplicaStates.Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
 
             // check package quotas
             bool manageAllowed = VirtualMachines2012Helper.IsVirtualMachineManagementAllowed(PanelSecurity.PackageId);
@@ -117,6 +118,11 @@ namespace WebsitePanel.Portal.VPS2012
         protected void btnImport_Click(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "vdc_import_server"));
+        }
+
+        protected void btnReplicaStates_Click(object sender, EventArgs e)
+        {
+            gvServers.Columns[5].Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
         }
 
         protected void gvServers_RowCommand(object sender, GridViewCommandEventArgs e)
