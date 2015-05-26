@@ -1596,7 +1596,14 @@ namespace WebsitePanel.EnterpriseServer
 
             var rds = RemoteDesktopServicesHelpers.GetRemoteDesktopServices(RemoteDesktopServicesHelpers.GetRemoteDesktopServiceID(org.PackageId));
             var collection = ObjectUtils.FillObjectFromDataReader<RdsCollection>(DataProvider.GetRDSCollectionById(collectionId));
-            var users = rds.GetApplicationUsers(collection.Name, remoteApp.Alias);
+            string alias = "";
+
+            if (remoteApp != null)
+            {
+                alias = remoteApp.Alias;
+            }
+
+            var users = rds.GetApplicationUsers(collection.Name, alias);
             result.AddRange(users);
 
             return result;

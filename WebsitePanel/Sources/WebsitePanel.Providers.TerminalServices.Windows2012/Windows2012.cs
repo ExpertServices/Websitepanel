@@ -709,7 +709,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 Command cmd = new Command("Get-RDRemoteApp");
                 cmd.Parameters.Add("CollectionName", collectionName);
                 cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
-                cmd.Parameters.Add("Alias", applicationName);
+
+                if (!string.IsNullOrEmpty(applicationName))
+                {
+                    cmd.Parameters.Add("Alias", applicationName);
+                }
 
                 var application = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
 

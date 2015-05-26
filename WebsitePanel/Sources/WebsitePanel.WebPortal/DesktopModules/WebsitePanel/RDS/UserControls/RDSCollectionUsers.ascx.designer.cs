@@ -139,6 +139,87 @@ namespace WebsitePanel.Portal.RDS.UserControls {
         protected global::System.Web.UI.WebControls.Button btnCancelAdd;
         
         /// <summary>
+        /// DeleteWarningPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel DeleteWarningPanel;
+        
+        /// <summary>
+        /// lcDeleteWarningHeader control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lcDeleteWarningHeader;
+        
+        /// <summary>
+        /// deleteWarningUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel deleteWarningUpdatePanel;
+        
+        /// <summary>
+        /// panelDeleteWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelDeleteWarning;
+        
+        /// <summary>
+        /// locDeleteWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDeleteWarning;
+        
+        /// <summary>
+        /// ltUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltUsers;
+        
+        /// <summary>
+        /// btnCancelDeleteWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelDeleteWarning;
+        
+        /// <summary>
+        /// btnDeleteWarningFake control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnDeleteWarningFake;
+        
+        /// <summary>
+        /// DeleteWarningModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.ModalPopupExtender DeleteWarningModal;
+        
+        /// <summary>
         /// btnAddAccountsFake control.
         /// </summary>
         /// <remarks>
