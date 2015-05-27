@@ -77,7 +77,7 @@
 							<td>
 								<asp:label ID="lblFirstName" runat="server"></asp:label>
 								&nbsp;
-								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
+								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Middle Initial:" />
 								<asp:Label ID="lblInitials" runat="server"></asp:Label>
 							</td>
 						</tr>

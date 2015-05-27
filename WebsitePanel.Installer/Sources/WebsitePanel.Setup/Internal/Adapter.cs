@@ -7,8 +7,10 @@ using System.Configuration.Install;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.ServiceProcess;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -133,6 +135,7 @@ namespace WebsitePanel.Setup.Internal
             //Dst.IISVersion = Utils.GetVersionSetupParameter(Hash, "IISVersion");
             Dst.SetupXml = Utils.GetStringSetupParameter(Hash, "SetupXml");
             Dst.ServerPassword = Utils.GetStringSetupParameter(Hash, Global.Parameters.ServerPassword);
+            Dst.UpdateServerPassword = true;
 
             Dst.WebSiteIP = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSiteIP);
             Dst.WebSitePort = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSitePort);
@@ -163,6 +166,11 @@ namespace WebsitePanel.Setup.Internal
 			    Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdminPassword));
 
             Dst.BaseDirectory = Utils.GetStringSetupParameter(Hash, Global.Parameters.BaseDirectory);
+            Dst.ComponentId = Utils.GetStringSetupParameter(Hash, Global.Parameters.ComponentId);
+            Dst.ComponentExists = string.IsNullOrWhiteSpace(Dst.ComponentId) ? false : true;
+
+            Dst.UpdateVersion = Utils.GetStringSetupParameter(Hash, "Version");
+            Dst.SessionVariables = Src;
         }
         public static string GetFullConfigPath(SetupVariables Ctx)
         {
@@ -196,7 +204,7 @@ namespace WebsitePanel.Setup.Internal
             var mup = "MODE_UP";
             var mrup = "MODE_RUP";
             var Result = ModeExtension.Normal;
-            if (Src.Keys.Contains(mup) && !string.IsNullOrWhiteSpace(Src[mup]))
+            if ((Src.Keys.Contains(mup) && !string.IsNullOrWhiteSpace(Src[mup])) || (Src.Keys.Contains("ComponentId") && !string.IsNullOrWhiteSpace(Src["ComponentId"])))
                 Result = ModeExtension.Restore;
             else if (Src.Keys.Contains(mrup) && !string.IsNullOrWhiteSpace(Src[mrup]))
                 Result = ModeExtension.Backup;
@@ -403,6 +411,9 @@ namespace WebsitePanel.Setup.Internal
                             break;
                         case ActionTypes.RestoreConfig:
                             RestoreXmlConfigs(Execute.SetupVariables);
+                            break;
+                        case ActionTypes.UpdateXml:
+                            UpdateXml(Execute.Path, Execute.SetupVariables.XmlData);
                             break;
                     }
                 }
@@ -2165,39 +2176,57 @@ namespace WebsitePanel.Setup.Internal
             try
             {
                 string componentId = Context.ComponentId;
-                string path = Path.Combine(Context.InstallationFolder, Context.ServiceFile);
+                string path = Context.ServiceFile; // FullFileName.
                 string service = Context.ServiceName;
+
+                Log.WriteStart(string.Format("Registering \"{0}\" windows service", service));  
+              
                 if (!File.Exists(path))
                 {
                     Log.WriteError(string.Format("File {0} not found", path), null);
                     return;
                 }
-
-                Log.WriteStart(string.Format("Registering \"{0}\" windows service", service));
-                string domain = Context.UserDomain;
-                if (string.IsNullOrEmpty(domain))
-                    domain = ".";
-                string arguments = string.Format("/i /LogFile=\"\" /user={0}\\{1} /password={2}",
-                    domain, Context.UserAccount, Context.UserPassword);
-                int exitCode = Utils.RunProcess(path, arguments);
-                if (exitCode == 0)
+                if (ServiceController.GetServices().Any(s => s.DisplayName.Equals(service, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    //add rollback action
-                    RollBack.RegisterWindowsService(path, service);
-
-                    //update log
-                    Log.WriteEnd("Registered windows service");
-                    //update install log
-                    InstallLog.AppendLine(string.Format("- Registered \"{0}\" Windows service ", service));
+                    var Msg = string.Format("Service \"{0}\" already installed.", service);
+                    Log.WriteEnd(Msg);
+                    InstallLog.AppendLine(Msg);
                 }
                 else
                 {
-                    Log.WriteError(string.Format("Unable to register \"{0}\" Windows service. Error code: {1}", service, exitCode), null);
-                    InstallLog.AppendLine(string.Format("- Failed to register \"{0}\" windows service ", service));
-                }
-                // update config setings
-                AppConfig.SetComponentSettingStringValue(componentId, "ServiceName", Context.ServiceName);
-                AppConfig.SetComponentSettingStringValue(componentId, "ServiceFile", Context.ServiceFile);
+                    try
+                    {
+                        string domain = Context.UserDomain;
+                        if (string.IsNullOrEmpty(domain))
+                            domain = ".";
+
+                        string arguments = string.Empty;
+                        if (Context.UseUserCredentials)
+                            arguments = string.Format("/i /LogFile=\"\" /user={0}\\{1} /password={2}", domain, Context.UserAccount, Context.UserPassword);
+                        else
+                            arguments = "/i /LogFile= ''";
+
+                        ManagedInstallerClass.InstallHelper(new[] { arguments, path });
+                        //add rollback action
+                        RollBack.RegisterWindowsService(path, service);
+                        var Msg = string.Format("Registered \"{0}\" Windows service ", service);
+                        //update log
+                        Log.WriteEnd(Msg);
+                        //update install log
+                        InstallLog.AppendLine(Msg);
+
+                        // update config setings
+                        AppConfig.EnsureComponentConfig(componentId);
+                        AppConfig.SetComponentSettingStringValue(componentId, "ServiceName", service);
+                        AppConfig.SetComponentSettingStringValue(componentId, "ServiceFile", path);
+                        AppConfig.SaveConfiguration();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteError(string.Format("Unable to register \"{0}\" Windows service.", service), null);
+                        InstallLog.AppendLine(string.Format("- Failed to register \"{0}\" windows service ", service));
+                    }
+                }            
             }
             catch (Exception ex)
             {
@@ -2739,7 +2768,7 @@ namespace WebsitePanel.Setup.Internal
                             BackupDatabase(action.ConnectionString, action.Name);
                             break;
                         case ActionTypes.BackupConfig:
-                            BackupConfig(action.Path, destinationDirectory);
+                            BackupConfig(action.Path, destinationDirectory, action.SetupVariables != null ? action.SetupVariables.FileNameMap : null);
                             break;
                     }
                 }                
@@ -2755,7 +2784,7 @@ namespace WebsitePanel.Setup.Internal
             }
         }
 
-        private void BackupConfig(string path, string backupDirectory)
+        private void BackupConfig(string path, string backupDirectory, IDictionary<string, string> NameMap = null)
         {
             try
             {
@@ -2772,7 +2801,7 @@ namespace WebsitePanel.Setup.Internal
                 string[] files = Directory.GetFiles(path, "*.config", SearchOption.TopDirectoryOnly);
                 foreach (string file in files)
                 {
-                    FileUtils.CopyFileToFolder(file, destination);
+                    FileUtils.CopyFileToFolder(file, destination, GetMappedFileName(file, NameMap));
                 }
                 Log.WriteEnd("Backed up system configuration");
                 InstallLog.AppendLine("- Backed up system configuration");
@@ -2784,6 +2813,17 @@ namespace WebsitePanel.Setup.Internal
                 Log.WriteError("Backup error", ex);
                 throw;
             }
+        }
+
+        private string GetMappedFileName(string FullFileName, IDictionary<string, string> Map)
+        {
+            if (Map == null)
+                return "";
+            string Key = new FileInfo(FullFileName).Name;
+            if (Map.Keys.Contains(Key))
+                return Map[Key];
+            else
+                return "";
         }
 
         private void BackupDatabase(string connectionString, string database)
@@ -2859,7 +2899,6 @@ namespace WebsitePanel.Setup.Internal
         {
             List<InstallAction> list = new List<InstallAction>();
             InstallAction action = null;
-
             //database
             string connectionString = AppConfig.GetComponentSettingStringValue(componentId, "InstallConnectionString");
             if (!String.IsNullOrEmpty(connectionString))
@@ -2871,7 +2910,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Description = string.Format("Backing up database {0}...", database);
                 list.Add(action);
             }
-
             //directory
             string path = AppConfig.GetComponentSettingStringValue(componentId, "InstallFolder");
             if (!string.IsNullOrEmpty(path))
@@ -2881,17 +2919,18 @@ namespace WebsitePanel.Setup.Internal
                 action.Description = string.Format("Backing up directory {0}...", path);
                 list.Add(action);
             }
-
             //config
             action = new InstallAction(ActionTypes.BackupConfig);
-            action.Description = "Backing up configuration settings...";
             action.Path = Context.BaseDirectory;
+            action.Description = "Backing up configuration settings...";
+            if (!string.IsNullOrWhiteSpace(Context.SpecialBaseDirectory) )
+            {
+                action.Path = Context.SpecialBaseDirectory;
+                action.SetupVariables = Context;
+            }            
             list.Add(action);
-
             return list;
-
         }
-
         private void UpdateWebSiteBindings()
         {
             string component = Context.ComponentFullName;
@@ -3178,7 +3217,7 @@ namespace WebsitePanel.Setup.Internal
                     return;
 
                 string path = Path.Combine(Context.InstallationFolder, Context.ConfigurationFile);
-                string hash = Context.ServerPassword;
+                string hash = Utils.ComputeSHA1(Context.ServerPassword);
 
                 if (!File.Exists(path))
                 {
@@ -3781,9 +3820,9 @@ namespace WebsitePanel.Setup.Internal
                 {
                     //update settings
                     AppConfig.SetComponentSettingStringValue(componentId, "Release", Context.UpdateVersion);
-                    AppConfig.SetComponentSettingStringValue(componentId, "Installer", Context.Installer);
-                    AppConfig.SetComponentSettingStringValue(componentId, "InstallerType", Context.InstallerType);
-                    AppConfig.SetComponentSettingStringValue(componentId, "InstallerPath", Context.InstallerPath);
+                    AppConfig.SetComponentSettingStringValue(componentId, "Installer", Context.SessionVariables["Installer"]);
+                    AppConfig.SetComponentSettingStringValue(componentId, "InstallerType", Context.SessionVariables["InstallerType"]);
+                    AppConfig.SetComponentSettingStringValue(componentId, "InstallerPath", Context.SessionVariables["InstallerPath"]);
                 }
 
                 Log.WriteInfo("Saving system configuration");
@@ -3928,6 +3967,13 @@ namespace WebsitePanel.Setup.Internal
         {
             try
             {
+                XmlDocumentMerge.KeyAttributes = new List<string> { "name", "id", "key", "pageID", "localName", "xmlns", "privatePath", "moduleDefinitionID", "ref", "verb;path", "controlRenderingCompatibilityVersion;clientIDMode" };
+                XmlDocumentMerge.FrozenAttributes = new List<XmlDocumentMerge.FrozenAttrTag>
+                {
+                    new XmlDocumentMerge.FrozenAttrTag() { Path="configuration/microsoft.web.services3/security/securityTokenManager/add", Attributes = new List<string>() {"type"} },
+                    new XmlDocumentMerge.FrozenAttrTag(true) { Path="compilation", Attributes = new List<string>() {"targetFramework"} },
+                    new XmlDocumentMerge.FrozenAttrTag() { Path="configuration/startup/supportedRuntime", Attributes = new List<string>() {"version", "sku" } }
+                };
                 Log.WriteStart("RestoreXmlConfigs");
                 var Backup = BackupRestore.Find(Ctx.InstallerFolder, Global.DefaultProductName, Ctx.ComponentName);                
                 switch(Ctx.ComponentCode)
@@ -3940,21 +3986,13 @@ namespace WebsitePanel.Setup.Internal
                     case Global.EntServer.ComponentCode:
                     {
                         Backup.XmlFiles.Add("Web.config");
+                        Backup.XmlFiles.Add(@"bin\WebsitePanel.SchedulerService.exe.config");
                     }
                     break;
                     case Global.WebPortal.ComponentCode:
                     {
                         Backup.XmlFiles.Add("Web.config");
-                        Backup.XmlFiles.Add(@"App_Data\Countries.config");
-                        Backup.XmlFiles.Add(@"App_Data\CountryStates.config");
-                        Backup.XmlFiles.Add(@"App_Data\Ecommerce_Modules.config");
-                        Backup.XmlFiles.Add(@"App_Data\Ecommerce_Pages.config");
-                        Backup.XmlFiles.Add(@"App_Data\ESModule_ControlsHierarchy.config");
-                        Backup.XmlFiles.Add(@"App_Data\ModulesData.config");
                         Backup.XmlFiles.Add(@"App_Data\SiteSettings.config");
-                        Backup.XmlFiles.Add(@"App_Data\SupportedLocales.config");
-                        Backup.XmlFiles.Add(@"App_Data\SupportedThemes.config");
-                        Backup.XmlFiles.Add(@"App_Data\WebsitePanel_Modules.config");
                         Backup.XmlFiles.Add(@"App_Data\WebsitePanel_Pages.config");
                     }
                     break;
@@ -3978,6 +4016,52 @@ namespace WebsitePanel.Setup.Internal
                 throw;
             }
         }
+        private void UpdateXml(string FullFileName, IDictionary<string, string[]> Data)
+        {
+            var Msg = "Update xml files.";
+            try
+            {
+                Log.WriteStart(Msg);
+                if (!File.Exists(FullFileName))
+                    throw new FileNotFoundException(FullFileName);
+                var Doc = new XmlDocument();
+                Doc.Load(FullFileName);
+                foreach(var Key in Data.Keys)
+                {
+                    var Node = Doc.SelectSingleNode(Key) as XmlElement;
+                    if (Node == null)
+                    {
+                        Log.WriteInfo(string.Format("XPath \"{0}\" not found.", Key));
+                    }
+                    else
+                    {
+                        var Value = Data[Key];
+                        switch (Value.Length)
+                        {
+                            case 1:
+                                Node.Value = Value[0];
+                                break;
+                            case 2:
+                                Node.SetAttribute(Value[0], Value[1]);
+                                break;
+                            default:
+                                Log.WriteError(string.Format("Bad xml value for \"{0}\".", Key));
+                                break;
+                        }
+                    }
+                }
+                Doc.Save(FullFileName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+                throw;
+            }
+            finally
+            {
+                Log.WriteEnd(Msg);
+            }
+        }
     }
     public class UninstallScript : SetupScript // UninstallPage
     {
@@ -3989,7 +4073,6 @@ namespace WebsitePanel.Setup.Internal
         {
             var list = base.GetActions(componentId);
             InstallAction action = null;
-
             //windows service
             string serviceName = AppConfig.GetComponentSettingStringValue(componentId, "ServiceName");
             string serviceFile = AppConfig.GetComponentSettingStringValue(componentId, "ServiceFile");
@@ -3997,16 +4080,18 @@ namespace WebsitePanel.Setup.Internal
             if (!string.IsNullOrEmpty(serviceName) && !string.IsNullOrEmpty(serviceFile))
             {
                 action = new InstallAction(ActionTypes.UnregisterWindowsService);
-                action.Path = Path.Combine(installFolder, serviceFile);
+                action.Path = serviceFile; // FullFileName.
                 action.Name = serviceName;
                 action.Description = "Removing Windows service...";
                 action.Log = string.Format("- Remove {0} Windows service", serviceName);
                 list.Add(action);
             }
-
             //database
             bool deleteDatabase = AppConfig.GetComponentSettingBooleanValue(componentId, "NewDatabase");
-            if (deleteDatabase)
+            bool allowDelete = true;
+            if (Context.InstallerType.ToLowerInvariant().Equals("msi")) // DB handled by MSI (WiX) by default.
+                allowDelete = false;
+            if (deleteDatabase && allowDelete)
             {
                 string connectionString = AppConfig.GetComponentSettingStringValue(componentId, "InstallConnectionString");
                 string database = AppConfig.GetComponentSettingStringValue(componentId, "Database");
@@ -4042,7 +4127,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Log = string.Format("- Delete {0} database login", loginName);
                 list.Add(action);
             }
-
             //virtual directory
             bool deleteVirtualDirectory = AppConfig.GetComponentSettingBooleanValue(componentId, "NewVirtualDirectory");
             if (deleteVirtualDirectory)
@@ -4056,7 +4140,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Log = string.Format("- Delete {0} virtual directory...", virtualDirectory);
                 list.Add(action);
             }
-
             //web site
             bool deleteWebSite = AppConfig.GetComponentSettingBooleanValue(componentId, "NewWebSite");
             if (deleteWebSite)
@@ -4068,7 +4151,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Log = string.Format("- Delete {0} web site", siteId);
                 list.Add(action);
             }
-
             //application pool
             bool deleteAppPool = AppConfig.GetComponentSettingBooleanValue(componentId, "NewApplicationPool");
             if (deleteAppPool)
@@ -4082,7 +4164,6 @@ namespace WebsitePanel.Setup.Internal
                 action.Log = string.Format("- Delete {0} application pool", appPoolName);
                 list.Add(action);
             }
-
             //user account
             bool deleteUserAccount = AppConfig.GetComponentSettingBooleanValue(componentId, "NewUserAccount");
             if (deleteUserAccount)
@@ -4100,7 +4181,6 @@ namespace WebsitePanel.Setup.Internal
                     action.Log = string.Format("- Remove {0} user account membership", username);
                     list.Add(action);
                 }
-
                 action = new InstallAction(ActionTypes.DeleteUserAccount);
                 action.Name = username;
                 action.Domain = domain;
@@ -4242,7 +4322,6 @@ namespace WebsitePanel.Setup.Internal
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
-                Context.UpdateVersion = Context.Release;
                 AppConfig.LoadComponentSettings(Context);
                 new RestoreScript(Context).Run();
             }
@@ -4320,9 +4399,24 @@ namespace WebsitePanel.Setup.Internal
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
-                Context.UpdateVersion = Context.Release;
+                Context.UseUserCredentials = false;
                 AppConfig.LoadComponentSettings(Context);
-                new RestoreScript(Context).Run();
+                if (string.IsNullOrWhiteSpace(Context.ServiceName) || string.IsNullOrWhiteSpace(Context.ServiceFile))
+                {
+                    Context.ServiceName = Global.Parameters.SchedulerServiceName;
+                    Context.ServiceFile = Path.Combine(Context.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName);
+                }                
+                SetupScript Script = new RestoreScript(Context);
+                Script.Run();
+                Script = new ExpressScript(Context);
+                var XmlUp = new Dictionary<string, string[]>();
+                XmlUp.Add("configuration/connectionStrings/add[@name='EnterpriseServer']", new string[] {"connectionString", Context.ConnectionString});
+                XmlUp.Add("configuration/appSettings/add[@key='WebsitePanel.CryptoKey']", new string[] {"value", Context.CryptoKey });
+                Context.XmlData = XmlUp;
+                Script.Actions.Add(new InstallAction(ActionTypes.UpdateXml) { SetupVariables = Context, Path = string.Format("{0}.config", Context.ServiceFile) });
+                Script.Actions.Add(new InstallAction(ActionTypes.RegisterWindowsService));
+                Script.Actions.Add(new InstallAction(ActionTypes.StartWindowsService));                
+                Script.Run();                
             }
             else
                 throw new NotImplementedException("Install " + ModeExtension.ToString());
@@ -4339,6 +4433,7 @@ namespace WebsitePanel.Setup.Internal
                     break;
                 case ModeExtension.Backup:
                     Script = new BackupScript(Context);
+                    Script.Actions.Add(new InstallAction(ActionTypes.StopWindowsService));
                     break;
                 default:
                     throw new NotImplementedException("Uninstall " + ModeExtension.ToString());
@@ -4398,7 +4493,6 @@ namespace WebsitePanel.Setup.Internal
             else if (ModeExtension == ModeExtension.Restore)
             {
                 Context.ComponentId = GetComponentID(Context);
-                Context.UpdateVersion = Context.Release;
                 AppConfig.LoadComponentSettings(Context);
                 new RestoreScript(Context).Run();
             }

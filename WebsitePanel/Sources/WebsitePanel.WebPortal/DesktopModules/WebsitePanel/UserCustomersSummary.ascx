@@ -9,9 +9,9 @@
 			runat="server" CssClass="Button1"></asp:Button>
 	</div>
 	<div class="Right">
-		<asp:Panel ID="tblSearch" runat="server" CssClass="NormalBold">
+		<%-- <asp:Panel ID="tblSearch" runat="server" CssClass="NormalBold">
             <uc1:SearchBox ID="searchBox" runat="server" />
-		</asp:Panel>
+		</asp:Panel> --%>
 	</div>
 </div>
 <div class="FormBody">

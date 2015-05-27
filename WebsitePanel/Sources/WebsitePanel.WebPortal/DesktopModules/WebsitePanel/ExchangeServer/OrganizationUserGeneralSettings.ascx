@@ -38,83 +38,107 @@
                     <uc1:MailboxTabs ID="MailboxTabsId" runat="server" SelectedTab="edit_user" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     
-					<table>
-						<tr>
-						    <td class="FormLabel150"> <asp:Localize ID="locUserPrincipalName" runat="server" meta:resourcekey="locUserPrincipalName" Text="Login Name:"></asp:Localize></td>
-						    <td>
-                                <asp:Label runat="server" ID="lblUserPrincipalName" />
-                                <wsp:EmailAddress id="upn" runat="server" ValidationGroup="CreateMailbox"></wsp:EmailAddress>
-                                <asp:DropDownList ID="ddlEmailAddresses" runat="server" CssClass="NormalTextBox"></asp:DropDownList>
-						    </td>
+                    <table>
+                        <tr>
                             <td>
-                                <asp:Button id="btnSetUserPrincipalName" runat="server" Text="Set Login" CssClass="Button1"
-							meta:resourcekey="btnSetUserPrincipalName" OnClick="btnSetUserPrincipalName_Click"></asp:Button>
-                            </td>
-                            <td>
-                                <asp:CheckBox ID="chkInherit" runat="server" meta:resourcekey="chkInherit" Text="Services inherit Login Name" checked="true"/>
-                            </td>
-						</tr>					   
+					            <table>
+						        <tr>
+						            <td class="FormLabel150"> <asp:Localize ID="locUserPrincipalName" runat="server" meta:resourcekey="locUserPrincipalName" Text="Login Name:"></asp:Localize></td>
+						            <td>
+                                        <asp:Label runat="server" ID="lblUserPrincipalName" />
+                                        <wsp:EmailAddress id="upn" runat="server" ValidationGroup="CreateMailbox"></wsp:EmailAddress>
+                                        <asp:DropDownList ID="ddlEmailAddresses" runat="server" CssClass="NormalTextBox"></asp:DropDownList>
+						            </td>
+                                    <td>
+                                        <asp:Button id="btnSetUserPrincipalName" runat="server" Text="Set Login" CssClass="Button1"
+							        meta:resourcekey="btnSetUserPrincipalName" OnClick="btnSetUserPrincipalName_Click"></asp:Button>
+                                    </td>
+                                    <td>
+                                        <asp:CheckBox ID="chkInherit" runat="server" meta:resourcekey="chkInherit" Text="Services inherit Login Name" checked="true"/>
+                                    </td>
+						        </tr>					   
 
-						<tr>
-							<td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
-							<td>
-								<asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
-								<asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
-									ErrorMessage="Enter Display Name" ValidationGroup="EditMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
-							</td>
-						</tr>
+						        <tr>
+							        <td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
+							        <td>
+								        <asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+								        <asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
+									        ErrorMessage="Enter Display Name" ValidationGroup="EditMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+							        </td>
+						        </tr>
 						
-						<tr>
-							<td class="FormLabel150" valign="top"><asp:Localize ID="locPassword" runat="server" meta:resourcekey="locPassword" Text="Password:"></asp:Localize></td>
-							<td>
-                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="ValidatePassword">
-                                </wsp:PasswordControl>
+						        <tr>
+							        <td class="FormLabel150" valign="top"><asp:Localize ID="locPassword" runat="server" meta:resourcekey="locPassword" Text="Password:"></asp:Localize></td>
+							        <td>
+                                        <wsp:PasswordControl id="password" runat="server" ValidationGroup="ValidatePassword">
+                                        </wsp:PasswordControl>
+                                    </td>
+                                    <td>
+                                        <asp:Button id="btnSetUserPassword" runat="server" Text="Set Password" CssClass="Button1"
+							        meta:resourcekey="btnSetUserPassword" OnClick="btnSetUserPassword_Click" ValidationGroup="ValidatePassword"></asp:Button>
+					                    <asp:ValidationSummary ID="ValidationSummary2" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="ValidatePassword" />
+                                        <asp:Button id="btnResetUserPassword" runat="server" Text="Reset Password" CssClass="Button1"
+							        meta:resourcekey="btnResetUserPassword" OnClick="btnResetUserPassword_Click"></asp:Button>
+                                    </td>
+						        </tr>
+						
+						        <tr>
+						            <td></td>
+						            <td>
+						                <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
+						                <br />
+						                <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
+						                <br />
+						                <asp:CheckBox ID="chkLocked" runat="server" meta:resourcekey="chkLocked" Text="Lock User" />
+						                <br />
+						            </td>
+						        </tr>
+						        <tr>
+							        <td class="FormLabel150"><asp:Localize ID="locFirstName" runat="server" meta:resourcekey="locFirstName" Text="First Name:"></asp:Localize></td>
+							        <td>
+								        <asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100"></asp:TextBox>
+								        &nbsp;
+								        <asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Middle Initial:" />
+								        <asp:TextBox ID="txtInitials" runat="server" MaxLength="6" CssClass="TextBox100"></asp:TextBox>
+							        </td>
+						        </tr>
+						        <tr>
+							        <td class="FormLabel150"><asp:Localize ID="locLastName" runat="server" meta:resourcekey="locLastName" Text="Last Name:"></asp:Localize></td>
+							        <td>
+								        <asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox200"></asp:TextBox>
+							        </td>
+						        </tr>
+						        <tr>
+						            <td class="FormLabel150" valign="top"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" ></asp:Localize></td>
+						            <td><asp:TextBox runat="server" ID="txtSubscriberNumber"  CssClass="TextBox200"/></td>
+						        </tr>
+						        <tr>
+						            <td class="FormLabel150" valign="top"><asp:Localize ID="locExternalEmailAddress" runat="server" meta:resourcekey="locExternalEmailAddress" ></asp:Localize></td>
+						            <td><asp:TextBox runat="server" ID="txtExternalEmailAddress"  CssClass="TextBox200"/></td>
+						        </tr>
+
+					        </table>
                             </td>
                             <td>
-                                <asp:Button id="btnSetUserPassword" runat="server" Text="Set Password" CssClass="Button1"
-							meta:resourcekey="btnSetUserPassword" OnClick="btnSetUserPassword_Click" ValidationGroup="ValidatePassword"></asp:Button>
-					            <asp:ValidationSummary ID="ValidationSummary2" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="ValidatePassword" />
-                                <asp:Button id="btnResetUserPassword" runat="server" Text="Reset Password" CssClass="Button1"
-							meta:resourcekey="btnResetUserPassword" OnClick="btnResetUserPassword_Click"></asp:Button>
-                            </td>
-						</tr>
-						
-						<tr>
-						    <td></td>
-						    <td>
-						        <asp:CheckBox ID="chkUserMustChangePassword" runat="server" meta:resourcekey="chkUserMustChangePassword" Text="User must change password at next login" />
-						        <br />
-						        <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
-						        <br />
-						        <asp:CheckBox ID="chkLocked" runat="server" meta:resourcekey="chkLocked" Text="Lock User" />
-						        <br />
-						    </td>
-						</tr>
-						<tr>
-							<td class="FormLabel150"><asp:Localize ID="locFirstName" runat="server" meta:resourcekey="locFirstName" Text="First Name:"></asp:Localize></td>
-							<td>
-								<asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100"></asp:TextBox>
-								&nbsp;
-								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
-								<asp:TextBox ID="txtInitials" runat="server" MaxLength="6" CssClass="TextBox100"></asp:TextBox>
-							</td>
-						</tr>
-						<tr>
-							<td class="FormLabel150"><asp:Localize ID="locLastName" runat="server" meta:resourcekey="locLastName" Text="Last Name:"></asp:Localize></td>
-							<td>
-								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox200"></asp:TextBox>
-							</td>
-						</tr>
-						<tr>
-						    <td class="FormLabel150" valign="top"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" ></asp:Localize></td>
-						    <td><asp:TextBox runat="server" ID="txtSubscriberNumber"  CssClass="TextBox200"/></td>
-						</tr>
-						<tr>
-						    <td class="FormLabel150" valign="top"><asp:Localize ID="locExternalEmailAddress" runat="server" meta:resourcekey="locExternalEmailAddress" ></asp:Localize></td>
-						    <td><asp:TextBox runat="server" ID="txtExternalEmailAddress"  CssClass="TextBox200"/></td>
-						</tr>
+                                <asp:Panel ID="pnlThumbnailphoto" runat="server" HorizontalAlign="Right" Width="200px">
+                                    <div class="FormLabel150">
+                                        <asp:Localize ID="locThumbnailphoto" runat="server" meta:resourcekey="locThumbnailphoto" Text="Thumbnail photo:"></asp:Localize>
+                                    </div>
+                                    <asp:Image ID="imgThumbnailphoto" runat="server" />
+                                    <br />
+                                    <asp:FileUpload ID="upThumbnailphoto" ClientIDMode="Static" runat="server" Style="display: none;" 
+                                        onchange="__doPostBack('<%= btnLoadThumbnailphoto.ClientID %>', '')" />
+                                    <asp:Button ID="btnLoadThumbnailphoto" runat="server" meta:resourcekey="btnLoadThumbnailphoto" 
+                                        CssClass="CommandButton" Text="Load"
+                                        OnClientClick="$('#upThumbnailphoto').click(); return false;" />
+                                    <asp:Button ID="btnClearThumbnailphoto" runat="server" meta:resourcekey="btnClearThumbnailphoto" 
+                                        CssClass="CommandButton" Text="Clear" 
+                                        OnClick="btnClearThumbnailphoto_Click" />
 
-					</table>
+                                </asp:Panel>
+                            </td>
+                        </tr>
+                    </table>
                     <table>
 					    <tr>
 						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
@@ -282,8 +306,6 @@
 						</tr>					   
 					    </table>
 					</asp:Panel>
-												
-													
 					
 				    <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
@@ -293,5 +315,7 @@
 				</div>
 			</div>
 		</div>
+
 	</div>
 </div>
+

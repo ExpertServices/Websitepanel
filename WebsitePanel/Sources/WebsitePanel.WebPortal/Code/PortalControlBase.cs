@@ -73,28 +73,31 @@ namespace WebsitePanel.WebPortal
 
 		public string EditUrl(string keyName, string keyValue, string controlKey, params string[] additionalParams)
 		{
-			List<string> url = new List<string>();
+            return EditUrlStat(Request[DefaultPage.PAGE_ID_PARAM], ModuleID, keyName, keyValue, controlKey, additionalParams);
+		}
 
-            string pageId = Request[DefaultPage.PAGE_ID_PARAM];
+        public static string EditUrlStat(string pageId, int ModuleID, string keyName, string keyValue, string controlKey, string[] additionalParams)
+        {
+            List<string> url = new List<string>();
 
             if (!String.IsNullOrEmpty(pageId))
-			    url.Add(String.Concat(DefaultPage.PAGE_ID_PARAM, "=", pageId));
+                url.Add(String.Concat(DefaultPage.PAGE_ID_PARAM, "=", pageId));
 
-			url.Add(String.Concat(DefaultPage.MODULE_ID_PARAM, "=", ModuleID));
-			url.Add(String.Concat(DefaultPage.CONTROL_ID_PARAM, "=", controlKey));
+            url.Add(String.Concat(DefaultPage.MODULE_ID_PARAM, "=", ModuleID));
+            url.Add(String.Concat(DefaultPage.CONTROL_ID_PARAM, "=", controlKey));
 
-			if (!String.IsNullOrEmpty(keyName) && !String.IsNullOrEmpty(keyValue))
-			{
-				url.Add(String.Concat(keyName, "=", keyValue));
-			}
+            if (!String.IsNullOrEmpty(keyName) && !String.IsNullOrEmpty(keyValue))
+            {
+                url.Add(String.Concat(keyName, "=", keyValue));
+            }
 
-			if (additionalParams != null)
-			{
-				foreach(string additionalParam in additionalParams)
-					url.Add(additionalParam);
-			}
+            if (additionalParams != null)
+            {
+                foreach (string additionalParam in additionalParams)
+                    url.Add(additionalParam);
+            }
 
-			return "~/Default.aspx?" + String.Join("&", url.ToArray());
-		}
+            return "~/Default.aspx?" + String.Join("&", url.ToArray());
+        }
     }
 }

@@ -26,53 +26,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using WebsitePanel.Providers.Virtualization;
-using WebsitePanel.WebPortal;
-using WebsitePanel.EnterpriseServer;
 using System.Text;
 
-namespace WebsitePanel.Portal.VPS
+namespace WebsitePanel.EnterpriseServer
 {
-    public partial class VdcPrivateNetwork : WebsitePanelModuleBase
+    public class BusinessSuccessCodes
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                searchBox.AddCriteria("IPAddress", GetLocalizedString("SearchField.IPAddress"));
-                searchBox.AddCriteria("ItemName", GetLocalizedString("SearchField.ItemName"));
-            }
-            searchBox.AjaxData = this.GetSearchBoxAjaxData();
-        }
+        #region Users
+        
+        public const int SUCCESS_USER_ONETIMEPASSWORD = 100;
 
-        public string GetServerEditUrl(string itemID)
-        {
-            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "vps_general",
-                    "ItemID=" + itemID);
-        }
-
-        protected void odsPrivateAddressesPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-        {
-            if (e.Exception != null)
-            {
-                messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOXES", e.Exception);
-                e.ExceptionHandled = true;
-            }
-        }
-
-        public string GetSearchBoxAjaxData()
-        {
-            StringBuilder res = new StringBuilder();
-            res.Append("PagedStored: 'PackagePrivateIPAddresses'");
-            res.Append(", RedirectUrl: '" + GetServerEditUrl("{0}").Substring(2) + "'");
-            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
-            res.Append(", VPSTypeID: 'VPS'");
-            return res.ToString();
-        }
-    }
+        #endregion
+	}
 }

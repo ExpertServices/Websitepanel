@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,18 +16,23 @@ namespace WebsitePanel.WebDavPortal.FileOperations
 {
     public class FileOpenerManager
     {
-        private readonly IDictionary<string, FileOpenerType> _officeOperationTypes = new Dictionary<string, FileOpenerType>();
         private readonly IDictionary<string, FileOpenerType> _operationTypes = new Dictionary<string, FileOpenerType>();
+
+        private readonly Lazy<IDictionary<string, FileOpenerType>> _officeOperationTypes = new Lazy<IDictionary<string, FileOpenerType>>(
+            () =>
+            {
+                if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
+                {
+                    return 
+                        WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension,
+                            y => FileOpenerType.OfficeOnline);
+                }
+
+                return new Dictionary<string, FileOpenerType>();
+            });
 
         public FileOpenerManager()
         {
-            if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
-            {
-                _officeOperationTypes.AddRange(
-                    WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension,
-                        y => FileOpenerType.OfficeOnline));
-            }
-
             _operationTypes.AddRange(
                     WebDavAppConfigManager.Instance.FileOpener.ToDictionary(x => x.Extension,
                         y => FileOpenerType.Open));
@@ -94,7 +100,7 @@ namespace WebsitePanel.WebDavPortal.FileOperations
             get
             {
                 FileOpenerType result;
-                if (_officeOperationTypes.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
+                if (_officeOperationTypes.Value.TryGetValue(fileExtension, out result) && CheckBrowserSupport())
                 {
                     return result;
                 }

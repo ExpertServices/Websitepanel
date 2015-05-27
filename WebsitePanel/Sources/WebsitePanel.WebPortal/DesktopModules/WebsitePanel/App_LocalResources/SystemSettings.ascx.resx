@@ -195,4 +195,16 @@
   <data name="lblPasswordResetLinkLifeSpan.Text" xml:space="preserve">
     <value>Password Reset Link Life Span (hours):</value>
   </data>
+  <data name="OwaSettings.Text" xml:space="preserve">
+    <value>Office Web Apps</value>
+  </data>
+  <data name="locEnableOwa.Text" xml:space="preserve">
+    <value>Enable OWA:</value>
+  </data>
+  <data name="chkEnableOwa.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="locOwaUrl.Text" xml:space="preserve">
+    <value>OWA URL:</value>
+  </data>
 </root>

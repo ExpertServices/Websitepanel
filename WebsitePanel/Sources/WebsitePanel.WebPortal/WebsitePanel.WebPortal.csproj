@@ -241,6 +241,7 @@
     <Content Include="Error.htm" />
     <Content Include="JavaScript\jquery-1.4.4.min.js" />
     <Content Include="JavaScript\jquery-ui-1.8.9.min.js" />
+    <Content Include="JavaScript\jquery.poshytip.min.js" />
     <Content Include="JavaScript\jquery.window.js" />
   </ItemGroup>
   <ItemGroup>

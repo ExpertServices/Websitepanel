@@ -38,6 +38,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using System.Text;
 
 namespace WebsitePanel.Portal.UserControls
 {
@@ -130,6 +131,7 @@ namespace WebsitePanel.Portal.UserControls
                 searchBox.AddCriteria("FullName", GetLocalizedString("SearchField.FullName"));
                 searchBox.AddCriteria("Email", GetLocalizedString("SearchField.EMail"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         public string GetUrl(object param1, object param2)
@@ -234,6 +236,20 @@ namespace WebsitePanel.Portal.UserControls
                     }
                     break;
             }
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            String spaceId = (String.IsNullOrEmpty(Request["SpaceID"]) ? "-1" : Request["SpaceID"]);
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'ServiceItems'");
+            res.Append(", RedirectUrl: '" + GetItemEditUrl(spaceId, "{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + spaceId);
+            res.Append(", ItemTypeName: $('#" + litTypeName.ClientID + "').val()");
+            res.Append(", GroupName: $('#" + litGroupName.ClientID + "').val()");
+            res.Append(", ServerID: " + (String.IsNullOrEmpty(Request["ServerID"]) ? "0" : Request["ServerID"]));
+            res.Append(", Recursive: ($('#" + chkRecursive.ClientID + "').val() == 'on')");
+            return res.ToString();
         }
 
     }

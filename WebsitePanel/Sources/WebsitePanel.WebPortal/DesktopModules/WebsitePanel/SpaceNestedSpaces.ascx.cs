@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using System.Text;
 
 namespace WebsitePanel.Portal
 {
@@ -60,6 +61,7 @@ namespace WebsitePanel.Portal
                 if (Request["StatusID"] != null)
                     Utils.SelectListItem(ddlStatus, Request["StatusID"]);
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         public string GetUserHomePageUrl(int userId)
@@ -86,6 +88,19 @@ namespace WebsitePanel.Portal
                 //this.DisableControls = true;
                 e.ExceptionHandled = true;
             }
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'NestedPackages'");
+            res.Append(", RedirectUrl: '" + NavigateURL(PortalUtils.SPACE_ID_PARAM, "{0}").Substring(2) + "'");
+
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
+            res.Append(", StatusID: $('#" + ddlStatus.ClientID + "').val()");
+            res.Append(", PlanID: " + (String.IsNullOrEmpty(Request["PlanID"]) ? "0" : Request["PlanID"]));
+            res.Append(", ServerID: " + (String.IsNullOrEmpty(Request["ServerID"]) ? "0" : Request["ServerID"]));
+            return res.ToString();
         }
     }
 }

@@ -38,6 +38,8 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.WebPortal;
+using System.Text;
 
 namespace WebsitePanel.Portal
 {
@@ -68,7 +70,8 @@ namespace WebsitePanel.Portal
 
                 gvUsers.Sort("Username", System.Web.UI.WebControls.SortDirection.Ascending);
 
-			}
+            }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
             searchBox.Focus();
         }
@@ -123,6 +126,19 @@ namespace WebsitePanel.Portal
             }
 
             return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            string userHomePageId = PortalConfiguration.SiteSettings["UserHomePage"];
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'Users'");
+            res.Append(", RedirectUrl: '" + NavigatePageURL(userHomePageId, PortalUtils.USER_ID_PARAM, "{0}").Substring(2) + "'");
+            res.Append(", UserID: " + (String.IsNullOrEmpty(Request["UserID"]) ? "0" : Request["UserID"]));
+            res.Append(", StatusID: $('#" + ddlStatus.ClientID + "').val()");
+            res.Append(", RoleID: $('#" + ddlRole.ClientID + "').val()");
+            res.Append(", Recursive: false");
+            return res.ToString();
         }
 
 	}

@@ -228,21 +228,31 @@ namespace WebsitePanel.Providers.Virtualization
 
             try
             {
-                Command cmd = new Command("Get-VM");
+                HostedSolutionLog.LogInfo("Before Get-VM command");
 
+                Command cmd = new Command("Get-VM");
                 Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
+                HostedSolutionLog.LogInfo("After Get-VM command");
                 foreach (PSObject current in result)
                 {
-                    VirtualMachine vm = new VirtualMachine
-                    {
-                        VirtualMachineId = current.GetProperty("Id").ToString(),
-                        Name = current.GetString("Name"),
-                        State = current.GetEnum<VirtualMachineState>("State"),
-                        Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds),
-                        ReplicationState = current.GetEnum<ReplicationState>("ReplicationState")
-                    };
+                    HostedSolutionLog.LogInfo("- start VM -");
+                    var vm = new VirtualMachine();
+                    HostedSolutionLog.LogInfo("create");
+                    vm.VirtualMachineId = current.GetProperty("Id").ToString();
+                    HostedSolutionLog.LogInfo("VirtualMachineId {0}", vm.VirtualMachineId);
+                    vm.Name = current.GetString("Name");
+                    HostedSolutionLog.LogInfo("Name {0}", vm.Name);
+                    vm.State = current.GetEnum<VirtualMachineState>("State");
+                    HostedSolutionLog.LogInfo("State {0}", vm.State);
+                    vm.Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
+                    HostedSolutionLog.LogInfo("Uptime {0}", vm.Uptime);
+                    vm.ReplicationState = current.GetEnum<ReplicationState>("ReplicationState");
+                    HostedSolutionLog.LogInfo("ReplicationState {0}", vm.ReplicationState);
                     vmachines.Add(vm);
+                    HostedSolutionLog.LogInfo("- end VM -");
                 }
+                HostedSolutionLog.LogInfo("Finish");
             }
             catch (Exception ex)
             {

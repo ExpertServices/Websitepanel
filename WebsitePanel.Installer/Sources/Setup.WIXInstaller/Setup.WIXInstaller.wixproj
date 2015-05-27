@@ -14,19 +14,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;BUILD=debug;Version=$(Version);BuildDate=$(ReleaseDate)</DefineConstants>
+    <DefineConstants>Debug;BUILD=debug;Version=$(Version)</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
     <SuppressIces>
     </SuppressIces>
     <CompilerAdditionalOptions>
     </CompilerAdditionalOptions>
-    <LinkerAdditionalOptions> 
+    <LinkerAdditionalOptions>
     </LinkerAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>BUILD=release;Version=$(Version);BuildDate=$(ReleaseDate)</DefineConstants>
+    <DefineConstants>BUILD=release;Version=$(Version)</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CustomVerifyReadyDlg.wxs" />
@@ -45,10 +45,6 @@
     <WixExtension Include="WixUIExtension">
       <HintPath>..\..\..\tools\WIX\WixUIExtension.dll</HintPath>
       <Name>WixUIExtension</Name>
-    </WixExtension>
-    <WixExtension Include="WixIIsExtension">
-      <HintPath>..\..\..\tools\WIX\WixIIsExtension.dll</HintPath>
-      <Name>WixIIsExtension</Name>
     </WixExtension>
     <WixExtension Include="WixSqlExtension">
       <HintPath>..\..\..\tools\WIX\WixSqlExtension.dll</HintPath>

@@ -28,6 +28,7 @@
 
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -82,6 +83,7 @@ namespace WebsitePanel.Portal.UserControls
                 searchBox.AddCriteria("ItemName", GetLocalizedString("SearchField.ItemName"));
                 searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
             bool isUserSelected = PanelSecurity.SelectedUser.Role == WebsitePanel.EnterpriseServer.UserRole.User;
             bool isUserLogged = PanelSecurity.EffectiveUser.Role == WebsitePanel.EnterpriseServer.UserRole.User;
@@ -168,6 +170,18 @@ namespace WebsitePanel.Portal.UserControls
         protected void odsExternalAddressesPaged_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
         {
             e.InputParameters["pool"] = Pool;
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'PackageIPAddresses'");
+            res.Append(", RedirectUrl: '" + GetItemEditUrl("{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
+            res.Append(", OrgID: " + (String.IsNullOrEmpty(Request["ItemID"]) ? "0" : Request["ItemID"]));
+            res.Append(", PoolID: " + Pool != null ? Pool.ToString() : "0");
+            res.Append(", Recursive: true");
+            return res.ToString();
         }
     }
 }
