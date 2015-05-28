@@ -62,16 +62,7 @@
 	            <br />
 	        </td>
 	    </tr>
-	    <tr>
-		    <td class="SubHead">
-		        <asp:Localize ID="locOSTemplatesPath" runat="server" meta:resourcekey="locOSTemplatesPath" Text="OS Templates path:"></asp:Localize>
-		    </td>
-		    <td>
-                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtOSTemplatesPath"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="TemplatesPathValidator" runat="server" ControlToValidate="txtOSTemplatesPath"
-                    Text="*" meta:resourcekey="TemplatesPathValidator" Display="Dynamic" SetFocusOnError="true" />
-            </td>
-	    </tr>
+	  
 	    <tr>
 		    <td class="SubHead">
 		        <asp:Localize ID="locExportedVpsPath" runat="server" meta:resourcekey="locExportedVpsPath" Text="Exported VPS path:"></asp:Localize>
@@ -80,16 +71,6 @@
                 <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtExportedVpsPath"></asp:TextBox>
                 <asp:RequiredFieldValidator ID="ExportedVpsPathValidator" runat="server" ControlToValidate="txtExportedVpsPath"
                     Text="*" meta:resourcekey="ExportedVpsPathValidator" Display="Dynamic" SetFocusOnError="true" />
-            </td>
-	    </tr>
-        <tr>
-		    <td class="SubHead" style="width:200px;">
-		        <asp:Localize ID="locDvdIsoPath" runat="server" meta:resourcekey="locDvdIsoPath" Text="Path to DVD ISO files:"></asp:Localize>
-		    </td>
-		    <td>
-                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtDvdLibraryPath"></asp:TextBox>
-                <asp:RequiredFieldValidator ID="DvdLibraryPathValidator" runat="server" ControlToValidate="txtDvdLibraryPath"
-                    Text="*" meta:resourcekey="DvdLibraryPathValidator" Display="Dynamic" SetFocusOnError="true" />
             </td>
 	    </tr>
 	 </table>
@@ -134,6 +115,165 @@
             </td>
 	    </tr>
 	 </table>
+</fieldset>
+<br />
+
+<fieldset>
+    <legend>
+        <asp:Localize ID="locTemplates" runat="server" meta:resourcekey="locTemplates" Text="OS Templates"></asp:Localize>
+    </legend>
+    <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
+          <tr>
+		    <td class="SubHead">
+		        <asp:Localize ID="locOSTemplatesPath" runat="server" meta:resourcekey="locOSTemplatesPath" Text="OS Templates path:"></asp:Localize>
+		    </td>
+		    <td>
+                <asp:TextBox Width="300px" CssClass="NormalTextBox" Runat="server" ID="txtOSTemplatesPath"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="TemplatesPathValidator" runat="server" ControlToValidate="txtOSTemplatesPath"
+                    Text="*" meta:resourcekey="TemplatesPathValidator" Display="Dynamic" SetFocusOnError="true" />
+            </td>
+	    </tr>
+    </table>
+    <div style="margin-top: 15px;margin-bottom: 25px;margin-left: 10px;">
+        <asp:Button ID="btnAddOsTemplate" runat="server" meta:resourcekey="btnAddOsTemplate"
+            CssClass="Button1" Text="Add OS Template" CausesValidation="false"
+            OnClick="btnAddOsTemplate_Click" />
+    </div>
+    <asp:Repeater ID="repOsTemplates" runat="server">
+        <HeaderTemplate>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
+                <tr>
+                    <td class="SubHead" style="width: 200px;">
+                        <asp:Localize ID="locTemplateName" runat="server" meta:resourcekey="locTemplateName" Text="Name:"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtTemplateName" Text='<%# Eval("Name") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="TemplateNameValidator" runat="server" ControlToValidate="txtTemplateName"
+                            Text="*" meta:resourcekey="TemplateNameValidator" Display="Dynamic" SetFocusOnError="true" />
+                    </td>
+                    <td rowspan="3">
+                        <asp:CheckBox ID="chkLegacyNetworkAdapter" runat="server" Checked='<%# Eval("LegacyNetworkAdapter") %>' meta:resourcekey="chkLegacyNetworkAdapter" Text="Use legacy adapter" /><br />
+                        <%--<asp:CheckBox ID="chkRemoteDesktop" runat="server" Checked='<%# Eval("RemoteDesktop") %>' meta:resourcekey="chkRemoteDesktop" Text="Remote desktop" /><br/>--%>
+                        <asp:CheckBox ID="chkCanSetComputerName" runat="server" Checked='<%# Eval("ProvisionComputerName") %>' meta:resourcekey="chkCanSetComputerName" Text="Can set a computer name" /><br />
+                        <asp:CheckBox ID="chkCanSetAdminPass" runat="server" Checked='<%# Eval("ProvisionAdministratorPassword") %>' meta:resourcekey="chkCanSetAdminPass" Text="Can set an Administrator password" /><br />
+                        <asp:CheckBox ID="chkCanSetNetwork" runat="server" Checked='<%# Eval("ProvisionNetworkAdapters") %>' meta:resourcekey="chkCanSetNetwork" Text="Can set Ip addresses" /><br />
+                    </td>
+                    <td rowspan="3">
+                        <asp:Button ID="btnRemoveOsTemplate" runat="server" meta:resourcekey="btnRemoveOsTemplate"
+                            CssClass="Button1" Text="Remove" CausesValidation="false"
+                            CommandName="Remove" CommandArgument="<%# Container.ItemIndex %>" OnCommand="btnRemoveOsTemplate_OnCommand" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead">
+                        <asp:Localize ID="locTemplateFileName" runat="server" meta:resourcekey="locTemplateFileName" Text="File name (with extension):"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtTemplateFileName" Text='<%# Eval("Path") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="TemplateFileNameValidator" runat="server" ControlToValidate="txtTemplateFileName"
+                            Text="*" meta:resourcekey="TemplateFileNameValidator" Display="Dynamic" SetFocusOnError="true" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead">
+                        <asp:Localize ID="locProcessVolume" runat="server" meta:resourcekey="locProcessVolume" Text="Index of the volume to expand:"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtProcessVolume" Text='<%# Eval("ProcessVolume") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="valProcessVolume" runat="server" ControlToValidate="txtProcessVolume"
+                            Text="*" meta:resourcekey="valProcessVolume" Display="Dynamic" SetFocusOnError="true" />
+                        <asp:CompareValidator runat="server" ID="vcmProcessVolume" ControlToValidate="txtProcessVolume"
+                            Type="Integer" Operator="GreaterThanEqual" Display="Dynamic" ValueToCompare="0" meta:resourcekey="vcmProcessVolume" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead">
+                        <asp:Localize ID="locSysprep" runat="server" meta:resourcekey="locSysprep" Text="Sysprep files:"></asp:Localize>
+                    </td>
+                    <td colspan="2">
+                        <asp:TextBox Width="470px" CssClass="NormalTextBox" runat="server" ID="txtSysprep" Text='<%# string.Join(";", (string[])Eval("SysprepFiles")) %>'></asp:TextBox>
+                    </td>
+                </tr>
+            </table>
+        </ItemTemplate>
+        <SeparatorTemplate>
+            <br/>
+            <%--<hr style="margin-bottom: 20px; margin-top: 10px; margin-left: 10px; margin-right: 10px;"/>--%>
+        </SeparatorTemplate>
+    </asp:Repeater>
+</fieldset>
+<br />
+
+<fieldset>
+    <legend>
+        <asp:Localize ID="locDvdLibrary" runat="server" meta:resourcekey="locDvdLibrary" Text="DVD Library"></asp:Localize>
+    </legend>
+    <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
+        <tr>
+            <td class="SubHead" style="width: 200px;">
+                <asp:Localize ID="locDvdIsoPath" runat="server" meta:resourcekey="locDvdIsoPath" Text="Path to DVD ISO files:"></asp:Localize>
+            </td>
+            <td>
+                <asp:TextBox Width="300px" CssClass="NormalTextBox" runat="server" ID="txtDvdLibraryPath"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="DvdLibraryPathValidator" runat="server" ControlToValidate="txtDvdLibraryPath"
+                    Text="*" meta:resourcekey="DvdLibraryPathValidator" Display="Dynamic" SetFocusOnError="true" />
+            </td>
+        </tr>
+    </table>
+    <div style="margin-top: 15px;margin-bottom: 25px;margin-left: 10px;">
+        <asp:Button ID="btnAddDvd" runat="server" meta:resourcekey="btnAddDvd"
+            CssClass="Button1" Text="Add DVD" CausesValidation="false"
+            OnClick="btnAddDvd_Click" />
+    </div>
+    <asp:Repeater ID="repDvdLibrary" runat="server">
+        <HeaderTemplate>
+        </HeaderTemplate>
+        <ItemTemplate>
+            <table cellpadding="2" cellspacing="0" width="100%" style="margin: 10px;">
+                <tr>
+                    <td class="SubHead" style="width: 200px;">
+                        <asp:Localize ID="locDvdName" runat="server" meta:resourcekey="locDvdName" Text="Name:"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtDvdName" Text='<%# Eval("Name") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="DvdNameValidator" runat="server" ControlToValidate="txtDvdName"
+                            Text="*" meta:resourcekey="DvdNameValidator" Display="Dynamic" SetFocusOnError="true" />
+                    </td>
+                    <td rowspan="3">
+                        <asp:Button ID="btnRemoveDvd" runat="server" meta:resourcekey="btnRemoveDvd"
+                            CssClass="Button1" Text="Remove" CausesValidation="false"
+                            CommandName="Remove" CommandArgument="<%# Container.ItemIndex %>" OnCommand="btnRemoveDvd_OnCommand" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead">
+                        <asp:Localize ID="locDvdDescription" runat="server" meta:resourcekey="locDvdDescription" Text="Description:"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtDvdDescription" Text='<%# Eval("Description") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="DvdDescriptionValidator" runat="server" ControlToValidate="txtDvdDescription"
+                            Text="*" meta:resourcekey="DvdDescriptionValidator" Display="Dynamic" SetFocusOnError="true" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="SubHead">
+                        <asp:Localize ID="locDvdFileName" runat="server" meta:resourcekey="locDvdFileName" Text="File name (with extension):"></asp:Localize>
+                    </td>
+                    <td>
+                        <asp:TextBox CssClass="NormalTextBox" runat="server" ID="txtDvdFileName" Text='<%# Eval("Path") %>'></asp:TextBox>
+                        <asp:RequiredFieldValidator ID="DvdFileNameValidator" runat="server" ControlToValidate="txtDvdFileName"
+                            Text="*" meta:resourcekey="DvdFileNameValidator" Display="Dynamic" SetFocusOnError="true" />
+                    </td>
+                </tr>
+            </table>
+        </ItemTemplate>
+        <SeparatorTemplate>
+            <br/>
+            <%--<hr style="margin-bottom: 20px; margin-top: 10px; margin-left: 10px; margin-right: 10px;"/>--%>
+        </SeparatorTemplate>
+    </asp:Repeater>
 </fieldset>
 <br />
 

@@ -12631,3 +12631,58 @@ WHERE UserID = @UserID
 
 RETURN 
 GO
+
+-- HyperV for config file
+alter table ServiceProperties 
+alter column PropertyValue nvarchar(MAX) NULL
+Go
+
+
+
+
+
+ALTER PROCEDURE [dbo].[UpdateServiceProperties]
+(
+	@ServiceID int,
+	@Xml ntext
+)
+AS
+
+-- delete old properties
+BEGIN TRAN
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceProperties
+WHERE ServiceID = @ServiceID 
+AND PropertyName COLLATE Latin1_General_CI_AS IN
+(
+	SELECT PropertyName
+	FROM OPENXML(@idoc, '/properties/property', 1)
+	WITH (PropertyName nvarchar(50) '@name')
+)
+
+INSERT INTO ServiceProperties
+(
+	ServiceID,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@ServiceID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(MAX) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN 
+Go
