@@ -379,7 +379,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 string collectionComputersPath = GetComputerGroupPath(organizationId, collection.Name);
                 CreatePolicy(runSpace, organizationId, string.Format("{0}-administrators", collection.Name),
                     new DirectoryEntry(GetGroupPath(organizationId, collection.Name, GetLocalAdminsGroupName(collection.Name))), new DirectoryEntry(collectionComputersPath), collection.Name);
-                CreatePolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name))
+                CreateUsersPolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name))
                     , new DirectoryEntry(collectionComputersPath), collection.Name);
                 CreateHelpDeskPolicy(runSpace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collection.Name);
             }                   
@@ -709,7 +709,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 Command cmd = new Command("Get-RDRemoteApp");
                 cmd.Parameters.Add("CollectionName", collectionName);
                 cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
-                cmd.Parameters.Add("Alias", applicationName);
+
+                if (!string.IsNullOrEmpty(applicationName))
+                {
+                    cmd.Parameters.Add("Alias", applicationName);
+                }
 
                 var application = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
 
@@ -1137,7 +1141,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 CreatePolicy(runspace, organizationId, string.Format("{0}-administrators", collectionName),
                     new DirectoryEntry(GetGroupPath(organizationId, collectionName, GetLocalAdminsGroupName(collectionName))), new DirectoryEntry(collectionComputersPath), collectionName);
-                CreatePolicy(runspace, organizationId, string.Format("{0}-users", collectionName),
+                CreateUsersPolicy(runspace, organizationId, string.Format("{0}-users", collectionName),
                     new DirectoryEntry(GetUsersGroupPath(organizationId, collectionName)), new DirectoryEntry(collectionComputersPath), collectionName);
                 CreateHelpDeskPolicy(runspace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collectionName);                
                 RemoveRegistryValue(runspace, ScreenSaverGpoKey, administratorsGpo);
@@ -1329,6 +1333,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
         }
 
+        private string CreateUsersPolicy(Runspace runspace, string organizationId, string gpoName, DirectoryEntry entry, DirectoryEntry collectionComputersEntry, string collectionName)
+        {
+            string gpoId = CreatePolicy(runspace, organizationId, gpoName, entry, collectionComputersEntry, collectionName);
+            ExcludeAdminsFromUsersPolicy(runspace, gpoId, collectionName);
+            return gpoId;
+        }
+
         private string CreatePolicy(Runspace runspace, string organizationId, string gpoName, DirectoryEntry entry, DirectoryEntry collectionComputersEntry, string collectionName)
         {
             string gpoId = GetPolicyId(runspace, gpoName);
@@ -1358,6 +1369,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             cmd.Parameters.Add("Name", gpoName);
 
             Collection<PSObject> result = ExecuteRemoteShellCommand(runspace, PrimaryDomainController, cmd);
+        }
+
+        private void ExcludeAdminsFromUsersPolicy(Runspace runspace, string gpoId, string collectionName)
+        {
+            var scripts = new List<string>
+            {
+                string.Format("$adgpo = [ADSI]\"{0}\"", GetGpoPath(gpoId)),
+                string.Format("$rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule([System.Security.Principal.NTAccount]\"{0}\\{1}\",\"ExtendedRight\",\"Deny\",[GUID]\"edacfd8f-ffb3-11d1-b41d-00a0c968f939\")",
+                    RootDomain.Split('.').First(), GetLocalAdminsGroupName(collectionName)),
+                string.Format("$acl = $adgpo.ObjectSecurity"),
+                string.Format("$acl.AddAccessRule($rule)"),
+                string.Format("$adgpo.CommitChanges()")
+            };
+
+            object[] errors = null;
+            ExecuteRemoteShellCommand(runspace, PrimaryDomainController, scripts, out errors);
         }
 
         private void SetPolicyPermissions(Runspace runspace, string gpoName, DirectoryEntry entry, DirectoryEntry collectionComputersEntry)
@@ -1752,7 +1779,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 string collectionComputersPath = GetComputerGroupPath(organizationId, collection.Name);
                 CreatePolicy(runSpace, organizationId, string.Format("{0}-administrators", collection.Name),
                     new DirectoryEntry(GetGroupPath(organizationId, collection.Name, GetLocalAdminsGroupName(collection.Name))), new DirectoryEntry(collectionComputersPath), collection.Name);
-                CreatePolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name))
+                CreateUsersPolicy(runSpace, organizationId, string.Format("{0}-users", collection.Name), new DirectoryEntry(GetUsersGroupPath(organizationId, collection.Name))
                     , new DirectoryEntry(collectionComputersPath), collection.Name);
                 CreateHelpDeskPolicy(runSpace, new DirectoryEntry(GetHelpDeskGroupPath(RDSHelpDeskGroup)), new DirectoryEntry(collectionComputersPath), organizationId, collection.Name);
 
@@ -2430,6 +2457,19 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             AppendProtocol(sb);
             AppendDomainController(sb);
             AppendDomainPath(sb, RootDomain);        
+
+            return sb.ToString();
+        }
+
+        private string GetGpoPath(string gpoId)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            AppendProtocol(sb);
+            AppendCNPath(sb, gpoId);
+            AppendCNPath(sb, "Policies");
+            AppendCNPath(sb, "System");
+            AppendDomainPath(sb, RootDomain);
 
             return sb.ToString();
         }

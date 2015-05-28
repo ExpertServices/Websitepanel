@@ -33,6 +33,7 @@ using System.Web.Services.Protocols;
 using System.Collections.Generic;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Server.Utils;
 using Microsoft.Web.Services3;
 using WebsitePanel.Providers.Common;
@@ -1389,6 +1390,46 @@ namespace WebsitePanel.Server
 
         #endregion
 
+        #region Picture
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetPicture(string accountName, byte[] picture)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("SetPicture");
+                res = ES.SetPicture(accountName, picture);
+                LogEnd("SetPicture");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetPicture", ex);
+                throw;
+            }
+            return res;
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public BytesResult GetPicture(string accountName)
+        {
+            BytesResult res = null;
+            try
+            {
+                LogStart("GetPicture");
+                res = ES.GetPicture(accountName);
+                LogEnd("SetPicture");
+            }
+            catch (Exception ex)
+            {
+                LogError("GetPicture", ex);
+                throw;
+            }
+            return res;
+        }
+
+
+        #endregion
         protected void LogStart(string func)
 		{
 			Log.WriteStart("'{0}' {1}", ProviderSettings.ProviderName, func);

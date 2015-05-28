@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using WebsitePanel.EnterpriseServer;
 using WebsitePanel.WebDavPortal.WebConfigSections;
 
 namespace WebsitePanel.WebDav.Core.Config.Entities
@@ -11,15 +12,30 @@ namespace WebsitePanel.WebDav.Core.Config.Entities
 
         public OfficeOnlineCollection()
         {
-            IsEnabled = ConfigSection.OfficeOnline.IsEnabled;
-            Url = ConfigSection.OfficeOnline.Url;
             NewFilePath = ConfigSection.OfficeOnline.CobaltNewFilePath;
             CobaltFileTtl = ConfigSection.OfficeOnline.CobaltFileTtl;
             _officeExtensions = ConfigSection.OfficeOnline.Cast<OfficeOnlineElement>().ToList();
         }
 
-        public bool IsEnabled { get; private set; }
-        public string Url { get; private set; }
+        public bool IsEnabled {
+            get
+            {
+                return GetWebdavSystemSettigns().GetValueOrDefault(EnterpriseServer.SystemSettings.WEBDAV_OWA_ENABLED_KEY, false);
+            }
+        }
+        public string Url
+        {
+            get
+            {
+                return GetWebdavSystemSettigns().GetValueOrDefault(EnterpriseServer.SystemSettings.WEBDAV_OWA_URL, string.Empty);
+            }
+        }
+
+        private SystemSettings GetWebdavSystemSettigns()
+        {
+            return WspContext.Services.Organizations.GetWebDavSystemSettings() ?? new SystemSettings();
+        }
+
         public string NewFilePath { get; private set; }
         public int CobaltFileTtl { get; private set; }
 

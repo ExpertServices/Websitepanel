@@ -126,6 +126,9 @@
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="btnCancelDeleteWarning.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="btnDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -152,5 +155,11 @@
   </data>
   <data name="headerAddAccounts.Text" xml:space="preserve">
     <value>Enabled Users</value>
+  </data>
+  <data name="headerDeleteWarning.Text" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="locDeleteWarning.Text" xml:space="preserve">
+    <value>Unable to remove the following user(s) since they are local admins&lt;br/&gt;or they were granted access to remote applications</value>
   </data>
 </root>

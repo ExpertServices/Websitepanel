@@ -5862,6 +5862,9 @@
   <data name="ERROR.RDSLOCALADMINS_NOT_ADDED" xml:space="preserve">
     <value>Local admins not added</value>
   </data>
+  <data name="ERROR.RDS_USERS_NOT_DELETED" xml:space="preserve">
+    <value>Unable to remove the following user(s) since they are local admins or they were granted access to remote applications:</value>
+  </data>
   <data name="ERROR.REMOTE_DESKTOP_SERVICES_LOG_OFF_USER" xml:space="preserve">
     <value>RDS User logging off error</value>
   </data>
