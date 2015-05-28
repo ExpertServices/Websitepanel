@@ -477,8 +477,8 @@
         <Binary Id="bannrbmp" SourceFile="bannrbmp.bmp" />
         <Binary Id="passmark" SourceFile="passmark.ico" />
         <Binary Id="failmark" SourceFile="failmark.ico" />
-        <Binary Id="InstallDB" SourceFile="$(var.PROJECTPATH)\Database\wix_install_db.sql" />
-        <Binary Id="UpdateDB" SourceFile="$(var.PROJECTPATH)\Database\wix_update_db.sql" />
+        <Binary Id="InstallDB" SourceFile="$(var.PROJECTPATH)\Deploy\$(var.BUILD)\Database\wix_install_db.sql" />
+        <Binary Id="UpdateDB" SourceFile="$(var.PROJECTPATH)\Deploy\$(var.BUILD)\Database\wix_update_db.sql" />
         <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
         <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
         <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
@@ -643,13 +643,13 @@
         <InstallExecuteSequence>
             <!--Preinstall.-->
             <Custom Action="CA_InstallWebFeatures" Before="CostInitialize"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
-            <!--Preparation when "old to new installer update".-->
-            <Custom Action="CA_PropertyOnServerPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_PropertyOnEServerPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_OnEServerPrepare" After="CA_PropertyOnEServerPrepare"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_PropertyOnPortalPrepare" Before="InstallFiles"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <!--Preparation when "old to new installer update". Also disabled in Maintenance mode.-->
+            <Custom Action="CA_PropertyOnServerPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnEServerPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_OnEServerPrepare" After="CA_PropertyOnEServerPrepare"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3)]]></Custom>
+            <Custom Action="CA_PropertyOnPortalPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&PortalFeature=-1 AND !PortalFeature=3)]]></Custom>
+            <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&PortalFeature=-1 AND !PortalFeature=3)]]></Custom>
             <!--First Install. [Installed] property not used here because we distinguish per feature basis.-->
             <Custom Action="CA_PropertyOnServerInstall" After="InstallValidate"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerInstall" After="InstallFiles"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
@@ -713,12 +713,7 @@
                                  Server="[DB_SERVER]"
                                  Database="[DB_DATABASE]"
                                  User="SqlUpdateUser">
-                    <sql:SqlString  Id="SqlVersionUpdateSql" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
-                                                               BEGIN
-	                                                               INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
-                                                               END"
-                                                        Sequence="2" ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
-                    <sql:SqlScript Id="SqlUpdateScriptSql" BinaryKey="UpdateDB" Sequence="3"
+                    <sql:SqlScript Id="SqlUpdateScriptSql" BinaryKey="UpdateDB" Sequence="2"
                                    ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
                 </sql:SqlDatabase>
             </Component>            
@@ -739,12 +734,7 @@
                                  DropOnInstall="no" DropOnReinstall="no" DropOnUninstall="no"
                                  Server="[DB_SERVER]"
                                  Database="[DB_DATABASE]">
-                    <sql:SqlString  Id="SqlVersionUpdateWin" SQL="IF NOT EXISTS (SELECT * FROM dbo.Versions WHERE DatabaseVersion = '$(var.sql_release_version)')
-                                                           BEGIN
-	                                                           INSERT dbo.Versions (DatabaseVersion, BuildDate) VALUES ('$(var.sql_release_version)', '$(var.sql_build_date)')
-                                                           END"
-                                                         Sequence="11"  ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no"/>
-                    <sql:SqlScript Id="SqlUpdateScriptWin" BinaryKey="UpdateDB"  Sequence="12"
+                    <sql:SqlScript Id="SqlUpdateScriptWin" BinaryKey="UpdateDB"  Sequence="11" 
                                        ContinueOnError="no" ExecuteOnInstall="yes" ExecuteOnReinstall="yes" ExecuteOnUninstall="no" />
                 </sql:SqlDatabase>
             </Component>
@@ -758,7 +748,9 @@
             <Component Id="comp_WebsitePanel_reg_locator" Directory="WSP_INSTALL_DIR" Guid="{CC35E1B5-3E29-4AD1-991C-2904E4DCB099}">
                 <RegistryValue Root='HKLM' Key='SOFTWARE\[ProductName]'
                                            Name='Base' Value='[WSP_INSTALL_DIR]'
-                                           Type='string' />                
+                                           Type='string' />
+
+                <RemoveFolder Id='CleanUpWSP' On='uninstall'/>
             </Component>
         </ComponentGroup>
     </Fragment>

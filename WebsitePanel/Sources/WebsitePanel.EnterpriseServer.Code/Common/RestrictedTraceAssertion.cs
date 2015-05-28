@@ -112,6 +112,15 @@ namespace WebsitePanel.EnterpriseServer
             filename = file;
         }
 
+        void stripContent(XmlElement el, String tagName)
+        {
+            XmlNodeList passwords = el.GetElementsByTagName(tagName);
+            for (int i = 0; i < passwords.Count; ++i)
+            {
+                XmlNode node = passwords.Item(i);
+                node.InnerXml = "*****";
+            }
+        }
         public override SoapFilterResult ProcessMessage(SoapEnvelope envelope)
         {
             XmlDocument dom = null;
@@ -137,12 +146,16 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             XmlNode newNode = dom.ImportNode(envelope.DocumentElement, true);
-            XmlNodeList passwords = (newNode as XmlElement).GetElementsByTagName("password");
+            XmlElement el = newNode as XmlElement;
+            stripContent(el, "password");
+            stripContent(el, "Password");
+            stripContent(el, "AnonymousUserPassword");
+/*            XmlNodeList passwords = (newNode as XmlElement).GetElementsByTagName("password");
             for (int i = 0; i < passwords.Count; ++i)
             {
                 XmlNode node = passwords.Item(i);
                 node.InnerXml = "*****";
-            }
+            } */
 
             rootNode.AppendChild(newNode);
 
