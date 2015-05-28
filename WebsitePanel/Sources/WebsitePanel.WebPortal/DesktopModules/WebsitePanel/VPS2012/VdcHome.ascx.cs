@@ -88,6 +88,9 @@ namespace WebsitePanel.Portal.VPS2012
         private VirtualMachine[] _machines;
         public string GetReplicationStatus(int itemID)
         {
+            if (!gvServers.Columns[5].Visible)
+                return "";
+
             if (_machines == null)
             {
                 var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(itemID);
