@@ -61,7 +61,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
             // general settings
             txtVpsRootFolder.Text = settings["RootFolder"];
-            txtOSTemplatesPath.Text = settings["OsTemplatesPath"];
             txtExportedVpsPath.Text = settings["ExportedVpsPath"];
 
             // CPU
@@ -69,8 +68,15 @@ namespace WebsitePanel.Portal.ProviderControls
             txtCpuReserve.Text = settings["CpuReserve"];
             txtCpuWeight.Text = settings["CpuWeight"];
 
+            // OS Templates
+            txtOSTemplatesPath.Text = settings["OsTemplatesPath"];
+            repOsTemplates.DataSource = new ConfigFile(settings["OsTemplates"]).LibraryItems; //ES.Services.VPS2012.GetOperatingSystemTemplatesByServiceId(PanelRequest.ServiceId).ToList();
+            repOsTemplates.DataBind();
+
             // DVD library
             txtDvdLibraryPath.Text = settings["DvdLibraryPath"];
+            repDvdLibrary.DataSource = new ConfigFile(settings["DvdLibrary"]).LibraryItems;
+            repDvdLibrary.DataBind();
 
             // VHD type
             radioVirtualDiskType.SelectedValue = settings["VirtualDiskType"];
@@ -132,7 +138,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
             // general settings
             settings["RootFolder"] = txtVpsRootFolder.Text.Trim();
-            settings["OsTemplatesPath"] = txtOSTemplatesPath.Text.Trim();
             settings["ExportedVpsPath"] = txtExportedVpsPath.Text.Trim();
 
             // CPU
@@ -140,7 +145,12 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["CpuReserve"] = txtCpuReserve.Text.Trim();
             settings["CpuWeight"] = txtCpuWeight.Text.Trim();
 
+            // OS Templates
+            settings["OsTemplates"] = GetConfigXml(GetOsTemplates());
+            settings["OsTemplatesPath"] = txtOSTemplatesPath.Text.Trim();
+
             // DVD library
+            settings["DvdLibrary"] = GetConfigXml(GetDvds());
             settings["DvdLibraryPath"] = txtDvdLibraryPath.Text.Trim();
 
             // VHD type
@@ -301,7 +311,7 @@ namespace WebsitePanel.Portal.ProviderControls
             ReplicaPathErrorTr.Visible = ReplicaErrorTr.Visible = false;
             if (IsReplicaServer) BindCertificates();
             if (EnabledReplica) BindReplicaServices();
-        }
+         }
 
         protected void radioServer_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -334,6 +344,7 @@ namespace WebsitePanel.Portal.ProviderControls
             SetUnsetReplication();
         }
 
+
         private void SetUnsetReplication()
         {
             if (!IsReplicaServer)
@@ -353,6 +364,119 @@ namespace WebsitePanel.Portal.ProviderControls
 
             if (!result.IsSuccess)
                 ReplicaErrorTr.Visible = true;
+        }
+
+        // OS Templates
+        protected void btnAddOsTemplate_Click(object sender, EventArgs e)
+        {
+            var templates = GetOsTemplates();
+
+            templates.Add(new LibraryItem());
+
+            RebindOsTemplate(templates);
+        }
+
+        protected void btnRemoveOsTemplate_OnCommand(object sender, CommandEventArgs e)
+        {
+            var templates = GetOsTemplates();
+
+            templates.RemoveAt(Convert.ToInt32(e.CommandArgument));
+
+            RebindOsTemplate(templates);
+        }
+
+        private List<LibraryItem> GetOsTemplates()
+        {
+            var result = new List<LibraryItem>();
+
+            foreach (RepeaterItem item in repOsTemplates.Items)
+            {
+                var template = new LibraryItem();
+                int processVolume;
+
+                template.Name = GetTextBoxText(item, "txtTemplateName");
+                template.Path = GetTextBoxText(item, "txtTemplateFileName");
+
+                int.TryParse(GetTextBoxText(item, "txtProcessVolume"), out processVolume);
+                template.ProcessVolume = processVolume;
+
+                template.LegacyNetworkAdapter = GetCheckBoxValue(item, "chkLegacyNetworkAdapter");
+                template.RemoteDesktop = true; // obsolete
+                template.ProvisionComputerName = GetCheckBoxValue(item, "chkCanSetComputerName");
+                template.ProvisionAdministratorPassword = GetCheckBoxValue(item, "chkCanSetAdminPass");
+                template.ProvisionNetworkAdapters = GetCheckBoxValue(item, "chkCanSetNetwork");
+
+                var syspreps = GetTextBoxText(item, "txtSysprep").Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+                template.SysprepFiles = syspreps.Select(s=>s.Trim()).ToArray();
+
+                result.Add(template);
+            }
+
+            return result;
+        }
+        private void RebindOsTemplate(List<LibraryItem> templates)
+        {
+            repOsTemplates.DataSource = templates;
+            repOsTemplates.DataBind();
+        }
+
+        private string GetConfigXml(List<LibraryItem> items)
+        {
+            var templates = items.ToArray();
+            return new ConfigFile(templates).Xml;
+        }
+
+        private string GetTextBoxText(RepeaterItem item, string name)
+        {
+            return (item.FindControl(name) as TextBox).Text;
+        }
+
+        private bool GetCheckBoxValue(RepeaterItem item, string name)
+        {
+            return (item.FindControl(name) as CheckBox).Checked;
+        }
+
+        // DVD Library
+        protected void btnAddDvd_Click(object sender, EventArgs e)
+        {
+            var dvds = GetDvds();
+
+            dvds.Add(new LibraryItem());
+
+            RebindDvds(dvds);
+        }
+
+        protected void btnRemoveDvd_OnCommand(object sender, CommandEventArgs e)
+        {
+            var dvds = GetDvds();
+
+            dvds.RemoveAt(Convert.ToInt32(e.CommandArgument));
+
+            RebindDvds(dvds);
+        }
+
+        private List<LibraryItem> GetDvds()
+        {
+            var result = new List<LibraryItem>();
+
+            foreach (RepeaterItem item in repDvdLibrary.Items)
+            {
+                var dvd = new LibraryItem();
+
+                dvd.Name = GetTextBoxText(item, "txtDvdName");
+                dvd.Description = GetTextBoxText(item, "txtDvdDescription");
+                dvd.Path = GetTextBoxText(item, "txtDvdFileName");
+
+                result.Add(dvd);
+            }
+
+            return result;
+        }
+        
+        private void RebindDvds(List<LibraryItem> dvds)
+        {
+            repDvdLibrary.DataSource = dvds;
+            repDvdLibrary.DataBind();
         }
     }
 }

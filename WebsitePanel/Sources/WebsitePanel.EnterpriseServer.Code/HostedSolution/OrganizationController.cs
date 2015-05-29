@@ -1945,10 +1945,9 @@ namespace WebsitePanel.EnterpriseServer
             SendUserPasswordEmail(owner, user, reason, mailTo, logoUrl, UserSettings.USER_PASSWORD_REQUEST_LETTER, "USER_PASSWORD_REQUEST_LETTER", finalStep);
         }
 
-        public static void SendUserExpirationPasswordEmail(UserInfo owner, OrganizationUser user, string reason,
-            string mailTo, string logoUrl)
+        public static void SendUserExpirationPasswordEmail(UserInfo owner, OrganizationUser user, string reason, string mailTo, string logoUrl)
         {
-            SendUserPasswordEmail(owner, user, reason, user.PrimaryEmailAddress, logoUrl, UserSettings.USER_PASSWORD_EXPIRATION_LETTER, "USER_PASSWORD_EXPIRATION_LETTER", false);
+            SendUserPasswordEmail(owner, user, reason, user.PrimaryEmailAddress, logoUrl, UserSettings.USER_PASSWORD_EXPIRATION_LETTER, "USER_PASSWORD_EXPIRATION_LETTER", true);
         }
 
         public static void SendUserPasswordEmail(UserInfo owner, OrganizationUser user, string reason, string mailTo, string logoUrl, string settingsName, string taskName, bool finalStep)

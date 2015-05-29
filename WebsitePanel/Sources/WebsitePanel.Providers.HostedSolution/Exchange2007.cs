@@ -48,6 +48,7 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers.ResultObjects;
 using Microsoft.Exchange.Data.Directory.Recipient;
 using Microsoft.Win32;
 
@@ -7146,5 +7147,17 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #endregion
 
+        #region Picture
+        public virtual ResultObject SetPicture(string accountName, byte[] picture)
+        {
+            // not implemented
+            return null;
+        }
+        public virtual BytesResult GetPicture(string accountName)
+        {
+            // not implemented
+            return null;
+        }
+        #endregion
     }
 }

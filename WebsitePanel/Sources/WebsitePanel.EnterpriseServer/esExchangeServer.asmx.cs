@@ -768,8 +768,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ExchangeServerController.SetExchangeAccountDisclaimerId(itemId, AccountID, ExchangeDisclaimerId);
         }
-        [WebMethod]
 
+        [WebMethod]
         public int GetExchangeAccountDisclaimerId(int itemId, int AccountID)
         {
             return ExchangeServerController.GetExchangeAccountDisclaimerId(itemId, AccountID);
@@ -777,5 +777,19 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Picture
+        [WebMethod]
+        public ResultObject SetPicture(int itemId, int accountId, byte[] picture)
+        {
+            return ExchangeServerController.SetPicture(itemId, accountId, picture);
+        }
+
+        [WebMethod]
+        public BytesResult GetPicture(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetPicture(itemId, accountId);
+        }
+
+        #endregion
     }
 }

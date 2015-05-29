@@ -25,6 +25,11 @@
                         <div class="Right">
                             <wsp:SearchBox ID="searchBox" runat="server" />
                         </div>
+                        <div class="Right" style="margin-right: 20px">
+                            <asp:Button ID="btnReplicaStates" runat="server" meta:resourcekey="btnReplicaStates"
+                                Text="Show Replication Statuses" CssClass="Button1" CausesValidation="False"
+                                OnClick="btnReplicaStates_Click" />
+                        </div>
                     </div>
 
 			        <asp:GridView ID="gvServers" runat="server" AutoGenerateColumns="False" EnableViewState="true"

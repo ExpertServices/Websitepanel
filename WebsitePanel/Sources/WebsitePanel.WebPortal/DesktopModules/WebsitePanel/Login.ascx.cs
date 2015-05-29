@@ -186,6 +186,11 @@ namespace WebsitePanel.Portal
             {
                 ShowWarningMessage("WrongLogin");
             }
+            else if (loginStatus == BusinessSuccessCodes.SUCCESS_USER_ONETIMEPASSWORD)
+            {
+                // One time password should be changed after login
+                Response.Redirect(EditUrl("UserID", PanelSecurity.LoggedUserId.ToString(), "change_onetimepassword", "onetimepassword=true"), true);
+            }
             else
             {
                 // redirect by shortcut

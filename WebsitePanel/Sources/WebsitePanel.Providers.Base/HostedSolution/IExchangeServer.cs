@@ -28,6 +28,7 @@
 
 using System.Collections.Generic;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -151,5 +152,9 @@ namespace WebsitePanel.Providers.HostedSolution
         ResultObject RemoveRetentionPolicyTag(string Identity);
         ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks);
         ResultObject RemoveRetentionPolicy(string Identity);
+
+        // Picture
+        ResultObject SetPicture(string accountName, byte[] picture);
+        BytesResult GetPicture(string accountName);
     }
 }

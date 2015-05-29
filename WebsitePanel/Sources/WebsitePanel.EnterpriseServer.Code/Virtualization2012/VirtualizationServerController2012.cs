@@ -165,12 +165,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             // load service settings
             StringDictionary settings = ServerController.GetServiceSettings(serviceId);
-            string path = settings["OsTemplatesPath"];
+            string xml = settings["OsTemplates"];
 
-            // get proxy
-            VirtualizationServer2012 vs = GetVirtualizationProxy(serviceId);
+            var config = new ConfigFile(xml);
 
-            return vs.GetLibraryItems(path);
+            return config.LibraryItems;
         }
         #endregion
 
@@ -601,10 +600,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string GetCorrectTemplateFilePath(string templatesPath, string osTemplateFile)
         {
-            if (osTemplateFile.Trim().EndsWith(".vhdx"))
-                return Path.Combine(templatesPath, osTemplateFile);
-
-            return Path.Combine(templatesPath, osTemplateFile + ".vhd");
+            return Path.Combine(templatesPath, osTemplateFile);
         }
 
         internal static void CreateVirtualMachineInternal(string taskId, VirtualMachine vm, LibraryItem osTemplate,
@@ -2159,12 +2155,11 @@ namespace WebsitePanel.EnterpriseServer
 
             // load service settings
             StringDictionary settings = ServerController.GetServiceSettings(vm.ServiceId);
-            string path = settings["DvdLibraryPath"];
+            string xml = settings["DvdLibrary"];
 
-            // get proxy
-            VirtualizationServer2012 vs = GetVirtualizationProxy(vm.ServiceId);
+            var config = new ConfigFile(xml);
 
-            return vs.GetLibraryItems(path);
+            return config.LibraryItems;
         }
 
         public static ResultObject InsertDvdDisk(int itemId, string isoPath)

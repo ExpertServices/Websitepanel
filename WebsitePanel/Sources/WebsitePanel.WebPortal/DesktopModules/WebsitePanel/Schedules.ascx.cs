@@ -38,6 +38,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using System.Text;
 
 namespace WebsitePanel.Portal
 {
@@ -67,6 +68,7 @@ namespace WebsitePanel.Portal
                 gvSchedules.Columns[gvSchedules.Columns.Count - 1].Visible = !isUser;
                 gvSchedules.Columns[gvSchedules.Columns.Count - 2].Visible = !isUser;
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         protected void odsSchedules_Selected(object sender, ObjectDataSourceStatusEventArgs e)
@@ -162,6 +164,16 @@ namespace WebsitePanel.Portal
         protected void btnRefresh_Click(object sender, EventArgs e)
         {
             RedirectToBrowsePage();
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'Schedules'");
+            res.Append(", RedirectUrl: '" + EditUrl("ScheduleID", "{0}", "edit", "SpaceID=" + PanelSecurity.PackageId).Substring(2) + "'");
+            res.Append(", PackageID: " + PanelSecurity.PackageId.ToString());
+            res.Append(", Recursive: ($('#" + chkRecursive.ClientID + "').val() == 'on')");
+            return res.ToString();
         }
     }
 }

@@ -541,25 +541,6 @@ namespace WebsitePanel.Server
         }
         #endregion
 
-        #region Library
-        [WebMethod, SoapHeader("settings")]
-        public LibraryItem[] GetLibraryItems(string path)
-        {
-            try
-            {
-                Log.WriteStart("'{0}' GetLibraryItems", ProviderSettings.ProviderName);
-                LibraryItem[] result = VirtualizationProvider.GetLibraryItems(path);
-                Log.WriteEnd("'{0}' GetLibraryItems", ProviderSettings.ProviderName);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteError(String.Format("'{0}' GetLibraryItems", ProviderSettings.ProviderName), ex);
-                throw;
-            }
-        }
-        #endregion
-
         #region KVP items
         [WebMethod, SoapHeader("settings")]
         public List<KvpExchangeDataItem> GetKVPItems(string vmId)

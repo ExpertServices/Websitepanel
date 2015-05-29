@@ -69,6 +69,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Common\BusinessSuccessCodes.cs" />
     <Compile Include="Common\BusinessErrorCodes.cs" />
     <Compile Include="Common\GenericStringResult.cs">
       <SubType>Code</SubType>
@@ -165,6 +166,7 @@
     <Compile Include="Tasks\BackgroundTask.cs" />
     <Compile Include="Tasks\BackgroundTaskLogRecord.cs" />
     <Compile Include="Tasks\BackgroundTaskStatus.cs" />
+    <Compile Include="Users\OneTimePasswordStates.cs" />
     <Compile Include="Users\UserInfo.cs" />
     <Compile Include="Users\UserLoginStatus.cs" />
     <Compile Include="Users\UsernamePolicy.cs" />

@@ -22,24 +22,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Button btnCreate;
         
         /// <summary>
-        /// tblSearch control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel tblSearch;
-        
-        /// <summary>
-        /// searchBox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.SearchBox searchBox;
-        
-        /// <summary>
         /// allCustomers control.
         /// </summary>
         /// <remarks>

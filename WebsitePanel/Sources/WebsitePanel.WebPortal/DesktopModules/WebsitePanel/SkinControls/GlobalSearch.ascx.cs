@@ -152,7 +152,7 @@ namespace WebsitePanel.Portal.SkinControls
                     case TYPE_EXCHANGEACCOUNT:
                         res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
                             PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_user",//"mid="+this.ModuleID.ToString(),
-                            "AccountID="+this.tbAccountId.Text,"Context=User",
+                            "AccountID=" + this.tbAccountId.Text, "Context=Mailbox",
                             "moduleDefId=ExchangeServer");
                         break;
                     default:

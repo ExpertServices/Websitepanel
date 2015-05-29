@@ -301,6 +301,60 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtWebdavPortalUrl;
         
         /// <summary>
+        /// OwaSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel OwaSettings;
+        
+        /// <summary>
+        /// PanelOwaSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelOwaSettings;
+        
+        /// <summary>
+        /// locEnableOwa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locEnableOwa;
+        
+        /// <summary>
+        /// chkEnableOwa control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableOwa;
+        
+        /// <summary>
+        /// locOwaUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locOwaUrl;
+        
+        /// <summary>
+        /// txtOwaUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtOwaUrl;
+        
+        /// <summary>
         /// TwilioSettings control.
         /// </summary>
         /// <remarks>

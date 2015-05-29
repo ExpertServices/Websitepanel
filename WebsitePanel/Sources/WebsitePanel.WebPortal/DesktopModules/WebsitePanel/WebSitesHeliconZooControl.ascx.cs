@@ -61,9 +61,9 @@ namespace WebsitePanel.Portal
             ViewState["WebSiteId"] = site.SiteId;
             ViewState["WebSitePackageId"] = site.PackageId;
 
-            BindEngines(site);
             try
             {
+                BindEngines(site);
                 BindInstalledApplications();
             }
             catch (Exception ex)

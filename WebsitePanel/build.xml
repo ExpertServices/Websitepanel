@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 	<PropertyGroup>
 		<Version>2.1.0</Version>
 		<FileVersion>$(BUILD_NUMBER)</FileVersion>
@@ -366,10 +366,10 @@
     <Target Name="WiXCreateRedistFileListBuild" DependsOnTargets="CreateFixDefaultPublicFolderMailboxBuild" >
         <RemoveDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
         <MakeDir Directories="$(WiXInstallerBuild)\ComponentsFiles" />
-        <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr INSTALLENTERPRISESERVERFOLDER' />
-        <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr INSTALLSERVERFOLDER' />
-        <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr INSTALLPORTALFOLDER' />
-        <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr INSTALLWEBDAVPORTALFOLDER' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr PI_ESERVER_INSTALL_DIR' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr PI_SERVER_INSTALL_DIR' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr PI_PORTAL_INSTALL_DIR' />
+        <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr PI_WDPORTAL_INSTALL_DIR' />
     </Target>
 
     <Target Name="Build" DependsOnTargets="WiXCreateRedistFileListBuild">
@@ -617,7 +617,6 @@
 
 	<!-- Compile and deploy Setup.dll -->
 	<Target Name="CreateSetupDLL" DependsOnTargets="ScriptEnterpriseServerDatabase">
-
 		<!-- Compile Setup.dll -->
 		<MSBuild Projects="$(SetupTrunkFolder)\Sources\WebsitePanel.Installer.sln"  Properties="Configuration=$(BuildConfiguration)" />
 
@@ -649,8 +648,37 @@
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.dll" DestinationFolder="$(StandaloneInstall)\Setup" />
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.pdb" DestinationFolder="$(StandaloneInstall)\Setup" Condition="'$(BuildConfiguration)' == 'Debug'" />
 	</Target>
+    
+    <UsingTask TaskName="RegExpReplace" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+        <ParameterGroup>
+          <Path ParameterType="System.String" Required="true" />
+          <Pattern ParameterType="System.String" Required="true" />
+          <Replacement ParameterType="System.String" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.Text.RegularExpressions"/>
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+                    var Text = File.ReadAllText(Path);
+                    var RegExp = new Regex(Pattern);
+                    Text = RegExp.Replace(Text, Replacement);
+                    File.WriteAllText(Path, Text);
+                ]]>
+            </Code>
+        </Task>
+  </UsingTask>
+
+  <Target Name='Demo' >
+    <TokenReplace Path="C:\Project\Target.config" Token="$MyToken$" Replacement="MyValue"/>
+  </Target>
 
     <Target Name="CreateStandaloneFullMsi" DependsOnTargets="CreateSetupDLL">
+        <Copy SourceFiles="$(TrunkFolder)\Database\install_db.sql" DestinationFiles="$(DatabaseFolder)\wix_install_db.sql"  />
+		<Copy SourceFiles="$(UpdateFolder)\update_db.sql" DestinationFiles="$(DatabaseFolder)\wix_update_db.sql" />
+
+        <RegExpReplace Path="$(DatabaseFolder)\wix_install_db.sql" Pattern="USE \[\${install\.database}\]" Replacement="-- WiX" />
+        <RegExpReplace Path="$(DatabaseFolder)\wix_update_db.sql" Pattern="USE \[\${install\.database}\]" Replacement="-- WiX" />
+        <MSBuild Projects='$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.WIXInstaller\WebsitePanel.WIXInstaller.csproj' Properties='Configuration=$(BuildConfiguration)' Targets='Build' />
         <MSBuild Projects='$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIXInstaller\Setup.WIXInstaller.wixproj' Properties='Configuration=$(BuildConfiguration)' Targets='Build'>
            <Output TaskParameter="TargetOutputs" ItemName="StandaloneFullMsi" />	 
         </MSBuild>    			

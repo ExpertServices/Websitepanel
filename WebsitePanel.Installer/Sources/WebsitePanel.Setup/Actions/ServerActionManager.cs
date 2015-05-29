@@ -394,7 +394,7 @@ namespace WebsitePanel.Setup.Actions
 			}
 
 			// This flag is the opposite of poolExists flag
-			vars.NewWebApplicationPool = !poolExists;
+			vars.NewWebApplicationPool = !poolExists || vars.ComponentExists;
 
 			if (poolExists)
 			{
@@ -501,7 +501,7 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-			var siteName = vars.ComponentFullName;
+            var siteName = vars.ComponentFullName;
 			var ip = vars.WebSiteIP;
 			var port = vars.WebSitePort;
 			var domain = vars.WebSiteDomain;
@@ -774,31 +774,22 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-			try
+            try
 			{
 				Begin(LogStartInstallMessage);
-				//
 				Log.WriteStart("Updating configuration file (server password)");
 				Log.WriteInfo(String.Format("Server password is: '{0}'", vars.ServerPassword));
 				Log.WriteInfo("Single quotes are added for clarity purposes");
-				//
 				string file = Path.Combine(vars.InstallationFolder, vars.ConfigurationFile);
 				string hash = Utils.ComputeSHA1(vars.ServerPassword);
-				// load file
-				string content = string.Empty;
-				using (StreamReader reader = new StreamReader(file))
-				{
-					content = reader.ReadToEnd();
-				}
-
-				// expand variables
-				content = Utils.ReplaceScriptVariable(content, "installer.server.password", hash);
-
-				// save file
-				using (StreamWriter writer = new StreamWriter(file))
-				{
-					writer.Write(content);
-				}
+                var XmlDoc = new XmlDocument();
+                XmlDoc.Load(file);
+                var Node = XmlDoc.SelectSingleNode("configuration/websitepanel.server/security/password") as XmlElement;
+                if (Node == null)
+                    throw new Exception("Unable to set a server access password. Check structure of configuration file.");
+                else
+                    Node.SetAttribute("value", hash);
+                XmlDoc.Save(file);			
 			}
 			catch (Exception ex)
 			{

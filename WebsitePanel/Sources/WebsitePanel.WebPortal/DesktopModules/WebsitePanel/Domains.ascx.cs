@@ -40,6 +40,7 @@ using System.Linq;
 
 using WebsitePanel.EnterpriseServer;
 using System.Collections.Generic;
+using System.Text;
 
 namespace WebsitePanel.Portal
 {
@@ -71,10 +72,14 @@ namespace WebsitePanel.Portal
                     || PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Os, Quotas.OS_DOMAINPOINTERS);
 
                 searchBox.AddCriteria("DomainName", GetLocalizedString("SearchField.DomainName"));
-                searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
-                searchBox.AddCriteria("FullName", GetLocalizedString("SearchField.FullName"));
-                searchBox.AddCriteria("Email", GetLocalizedString("SearchField.Email"));
+                if ((PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked)
+                {
+                    searchBox.AddCriteria("Username", GetLocalizedString("SearchField.Username"));
+                    searchBox.AddCriteria("FullName", GetLocalizedString("SearchField.FullName"));
+                    searchBox.AddCriteria("Email", GetLocalizedString("SearchField.Email"));
+                }
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         public string GetItemEditUrl(object packageId, object itemId)
@@ -113,7 +118,7 @@ namespace WebsitePanel.Portal
         {
             var expirationDate = expirationDateObject as DateTime?;
             var lastUpdateDate = LastUpdateDateObject as DateTime?;
-
+           
             if (expirationDate != null && expirationDate < DateTime.Now)
             {
                 return GetLocalizedString("DomainExpirationDate.Expired");
@@ -239,5 +244,16 @@ namespace WebsitePanel.Portal
 				//gvDomains.DataBind();
 			}
 		}
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'Domains'");
+            res.Append(", RedirectUrl: '" + GetItemEditUrl(Request["SpaceID"] ?? "-1", "{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "-1" : Request["SpaceID"]));
+            res.Append(", ServerID: " + (String.IsNullOrEmpty(Request["ServerID"]) ? "0" : Request["ServerID"]));
+            res.Append(", Recursive: ($('#" + chkRecursive.ClientID + "').val() == 'on')");
+            return res.ToString();
+        }
     }
 }

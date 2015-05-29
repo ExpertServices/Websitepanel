@@ -315,6 +315,7 @@
     <Compile Include="Virtualization\ConcreteJobState.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Virtualization\Config\ConfigFile.cs" />
     <Compile Include="Virtualization\ControllerType.cs" />
     <Compile Include="Virtualization\IVirtualizationServer2012.cs" />
     <Compile Include="Virtualization\IVirtualizationServer.cs">
@@ -325,7 +326,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Virtualization\KvpExchangeDataItem.cs" />
-    <Compile Include="Virtualization\LibraryItem.cs" />
+    <Compile Include="Virtualization\Config\LibraryItem.cs" />
     <Compile Include="Virtualization\LogicalDisk.cs" />
     <Compile Include="Virtualization\DvdDriveInfo.cs" />
     <Compile Include="Virtualization\MonitoredObjectAlert.cs" />

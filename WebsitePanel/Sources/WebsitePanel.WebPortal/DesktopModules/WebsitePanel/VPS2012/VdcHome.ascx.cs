@@ -28,9 +28,10 @@
 
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-﻿using WebsitePanel.Providers.Virtualization;
+using WebsitePanel.Providers.Virtualization;
 
 namespace WebsitePanel.Portal.VPS2012
 {
@@ -45,6 +46,7 @@ namespace WebsitePanel.Portal.VPS2012
                 searchBox.AddCriteria("ExternalIP", GetLocalizedString("SearchField.ExternalIP"));
                 searchBox.AddCriteria("IPAddress", GetLocalizedString("SearchField.IPAddress"));
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
 
             // toggle columns
             bool isUserSelected = PanelSecurity.SelectedUser.Role == WebsitePanel.EnterpriseServer.UserRole.User;
@@ -52,7 +54,8 @@ namespace WebsitePanel.Portal.VPS2012
             gvServers.Columns[4].Visible = !isUserSelected;
 
             // replication
-            gvServers.Columns[5].Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
+            gvServers.Columns[5].Visible = false;
+            btnReplicaStates.Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
 
             // check package quotas
             bool manageAllowed = VirtualMachines2012Helper.IsVirtualMachineManagementAllowed(PanelSecurity.PackageId);
@@ -85,6 +88,9 @@ namespace WebsitePanel.Portal.VPS2012
         private VirtualMachine[] _machines;
         public string GetReplicationStatus(int itemID)
         {
+            if (!gvServers.Columns[5].Visible)
+                return "";
+
             if (_machines == null)
             {
                 var packageVm = ES.Services.VPS2012.GetVirtualMachineItem(itemID);
@@ -115,6 +121,11 @@ namespace WebsitePanel.Portal.VPS2012
         protected void btnImport_Click(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "vdc_import_server"));
+        }
+
+        protected void btnReplicaStates_Click(object sender, EventArgs e)
+        {
+            gvServers.Columns[5].Visible = PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS2012_REPLICATION_ENABLED);
         }
 
         protected void gvServers_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -152,6 +163,17 @@ namespace WebsitePanel.Portal.VPS2012
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "vps_tools_move",
                     "ItemID=" + itemId));
             }
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'VirtualMachines'");
+            res.Append(", RedirectUrl: '" + GetServerEditUrl("{0}").Substring(2) + "'");
+            res.Append(", PackageID: " + (String.IsNullOrEmpty(Request["SpaceID"]) ? "0" : Request["SpaceID"]));
+            res.Append(", Recursive: true");
+            res.Append(", VPSTypeID: 'VPS2012'");
+            return res.ToString();
         }
     }
 }

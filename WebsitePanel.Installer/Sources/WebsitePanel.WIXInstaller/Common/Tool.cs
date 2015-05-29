@@ -43,6 +43,13 @@ namespace WebsitePanel.WIXInstaller.Common
             Result |= CheckAspNetRegValue(LMKey);
             return Result;
         }
+        public static bool AppPoolExists(string Pool)
+        {
+            if (GetWebServerVersion().Major > MINIMUM_WEBSERVER_MAJOR_VERSION)
+                return WebUtils.IIS7ApplicationPoolExists(Pool);
+            else
+                return WebUtils.ApplicationPoolExists(Pool);
+        }
         public static bool CheckAspNetRegValue(RegistryKey BaseKey)
         {
             var WebComponentsKey = "SOFTWARE\\Microsoft\\InetStp\\Components";

@@ -160,6 +160,31 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@FullType", fullType),
                 new SqlParameter("@OnlyFind", onlyFind));
         }
+        public static DataSet GetSearchTableByColumns(string PagedStored, string FilterValue, int MaximumRows,
+            bool Recursive, int PoolID, int ServerID, int ActorID, int StatusID, int PlanID, int OrgID,
+            string ItemTypeName, string GroupName, int PackageID, string VPSType, int RoleID, int UserID,
+            string FilterColumns)
+        {
+            return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetSearchTableByColumns",
+                new SqlParameter("@PagedStored", PagedStored),
+                new SqlParameter("@FilterValue", FilterValue),
+                new SqlParameter("@MaximumRows", MaximumRows),
+                new SqlParameter("@Recursive", Recursive),
+                new SqlParameter("@PoolID", PoolID),
+                new SqlParameter("@ServerID", ServerID),
+                new SqlParameter("@ActorID", ActorID),
+                new SqlParameter("@StatusID", StatusID),
+                new SqlParameter("@PlanID", PlanID),
+                new SqlParameter("@OrgID", OrgID),
+                new SqlParameter("@ItemTypeName", ItemTypeName),
+                new SqlParameter("@GroupName", GroupName),
+                new SqlParameter("@PackageID", PackageID),
+                new SqlParameter("@VPSType", VPSType),
+                new SqlParameter("@RoleID", RoleID),
+                new SqlParameter("@UserID", UserID),
+                new SqlParameter("@FilterColumns", FilterColumns));
+        }
 
         //TODO END
 
@@ -355,6 +380,15 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ActorId", actorId),
                 new SqlParameter("@UserID", userId),
                 new SqlParameter("@password", password));
+        }
+
+        public static void SetUserOneTimePassword(int userId, string password, int auths)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "SetUserOneTimePassword",
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@Password", password),
+                new SqlParameter("@OneTimePasswordState", auths));
         }
 
         #endregion

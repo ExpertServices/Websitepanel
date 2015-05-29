@@ -228,21 +228,31 @@ namespace WebsitePanel.Providers.Virtualization
 
             try
             {
-                Command cmd = new Command("Get-VM");
+                HostedSolutionLog.LogInfo("Before Get-VM command");
 
+                Command cmd = new Command("Get-VM");
                 Collection<PSObject> result = PowerShell.Execute(cmd, true);
+
+                HostedSolutionLog.LogInfo("After Get-VM command");
                 foreach (PSObject current in result)
                 {
-                    VirtualMachine vm = new VirtualMachine
-                    {
-                        VirtualMachineId = current.GetProperty("Id").ToString(),
-                        Name = current.GetString("Name"),
-                        State = current.GetEnum<VirtualMachineState>("State"),
-                        Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds),
-                        ReplicationState = current.GetEnum<ReplicationState>("ReplicationState")
-                    };
+                    HostedSolutionLog.LogInfo("- start VM -");
+                    var vm = new VirtualMachine();
+                    HostedSolutionLog.LogInfo("create");
+                    vm.VirtualMachineId = current.GetProperty("Id").ToString();
+                    HostedSolutionLog.LogInfo("VirtualMachineId {0}", vm.VirtualMachineId);
+                    vm.Name = current.GetString("Name");
+                    HostedSolutionLog.LogInfo("Name {0}", vm.Name);
+                    vm.State = current.GetEnum<VirtualMachineState>("State");
+                    HostedSolutionLog.LogInfo("State {0}", vm.State);
+                    vm.Uptime = Convert.ToInt64(current.GetProperty<TimeSpan>("UpTime").TotalMilliseconds);
+                    HostedSolutionLog.LogInfo("Uptime {0}", vm.Uptime);
+                    vm.ReplicationState = current.GetEnum<ReplicationState>("ReplicationState");
+                    HostedSolutionLog.LogInfo("ReplicationState {0}", vm.ReplicationState);
                     vmachines.Add(vm);
+                    HostedSolutionLog.LogInfo("- end VM -");
                 }
+                HostedSolutionLog.LogInfo("Finish");
             }
             catch (Exception ex)
             {
@@ -865,87 +875,6 @@ namespace WebsitePanel.Providers.Virtualization
             HostedSolutionLog.LogEnd("DeleteSwitch");
             return ReturnCode.OK;
         }
-        #endregion
-
-        #region Library
-        public LibraryItem[] GetLibraryItems(string path)
-        {
-            path = Path.Combine(FileUtils.EvaluateSystemVariables(path), Constants.LIBRARY_INDEX_FILE_NAME);
-
-            // convert to UNC if it is a remote computer
-            path = VdsHelper.ConvertToUNC(ServerNameSettings, path);
-
-            if (!File.Exists(path))
-            {
-                HostedSolutionLog.LogWarning("The folder does not contain 'index.xml' file: {0}", path);
-                return null;
-            }
-
-            // create list
-            List<LibraryItem> items = new List<LibraryItem>();
-
-            // load xml
-            XmlDocument xml = new XmlDocument();
-            xml.Load(path);
-
-            XmlNodeList nodeItems = xml.SelectNodes("/items/item");
-
-            if (nodeItems.Count == 0)
-                HostedSolutionLog.LogWarning("index.xml found, but contains 0 items: {0}", path);
-
-            foreach (XmlNode nodeItem in nodeItems)
-            {
-                LibraryItem item = new LibraryItem();
-                item.Path = nodeItem.Attributes["path"].Value;
-
-                // optional attributes
-                if (nodeItem.Attributes["diskSize"] != null)
-                    item.DiskSize = Int32.Parse(nodeItem.Attributes["diskSize"].Value);
-
-                if (nodeItem.Attributes["legacyNetworkAdapter"] != null)
-                    item.LegacyNetworkAdapter = Boolean.Parse(nodeItem.Attributes["legacyNetworkAdapter"].Value);
-
-                item.ProcessVolume = 0; // process (extend and sysprep) 1st volume by default
-                if (nodeItem.Attributes["processVolume"] != null)
-                    item.ProcessVolume = Int32.Parse(nodeItem.Attributes["processVolume"].Value);
-
-                if (nodeItem.Attributes["remoteDesktop"] != null)
-                    item.RemoteDesktop = Boolean.Parse(nodeItem.Attributes["remoteDesktop"].Value);
-
-                // inner nodes
-                item.Name = nodeItem.SelectSingleNode("name").InnerText;
-                item.Description = nodeItem.SelectSingleNode("description").InnerText;
-
-                // sysprep files
-                XmlNodeList nodesSyspep = nodeItem.SelectNodes("provisioning/sysprep");
-                List<string> sysprepFiles = new List<string>();
-                foreach (XmlNode nodeSyspep in nodesSyspep)
-                {
-                    if (nodeSyspep.Attributes["file"] != null)
-                        sysprepFiles.Add(nodeSyspep.Attributes["file"].Value);
-                }
-                item.SysprepFiles = sysprepFiles.ToArray();
-
-                // vmconfig
-                XmlNode nodeVmConfig = nodeItem.SelectSingleNode("provisioning/vmconfig");
-                if (nodeVmConfig != null)
-                {
-                    if (nodeVmConfig.Attributes["computerName"] != null)
-                        item.ProvisionComputerName = Boolean.Parse(nodeVmConfig.Attributes["computerName"].Value);
-
-                    if (nodeVmConfig.Attributes["administratorPassword"] != null)
-                        item.ProvisionAdministratorPassword = Boolean.Parse(nodeVmConfig.Attributes["administratorPassword"].Value);
-
-                    if (nodeVmConfig.Attributes["networkAdapters"] != null)
-                        item.ProvisionNetworkAdapters = Boolean.Parse(nodeVmConfig.Attributes["networkAdapters"].Value);
-                }
-
-                items.Add(item);
-            }
-
-            return items.ToArray();
-        }
-
         #endregion
 
         #region KVP

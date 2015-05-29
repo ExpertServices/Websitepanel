@@ -44,6 +44,7 @@ namespace WebsitePanel.EnterpriseServer
     /// </summary>
     [WebService(Namespace = "http://smbsaas/websitepanel/enterpriseserver")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [Policy("CommonPolicy")]
     [ToolboxItem(false)]
     public class esAuthentication : System.Web.Services.WebService
     {

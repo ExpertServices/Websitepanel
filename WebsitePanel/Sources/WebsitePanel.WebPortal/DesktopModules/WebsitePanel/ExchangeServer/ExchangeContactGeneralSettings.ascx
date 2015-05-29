@@ -61,7 +61,7 @@
 							<td>
 								<asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100"></asp:TextBox>
 								&nbsp;
-								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
+								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Middle Initial:" />
 								<asp:TextBox ID="txtInitials" runat="server" CssClass="TextBox100"></asp:TextBox>
 							</td>
 						</tr>

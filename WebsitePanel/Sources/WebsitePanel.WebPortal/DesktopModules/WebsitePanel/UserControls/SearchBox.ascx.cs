@@ -41,6 +41,8 @@ namespace WebsitePanel.Portal
 {
     public partial class SearchBox : WebsitePanelControlBase
     {
+        public string AjaxData { get; set; }
+
         public string FilterColumn
         {
             get
@@ -88,6 +90,18 @@ namespace WebsitePanel.Portal
         public void AddCriteria(string columnName, string columnTitle)
         {
             ddlFilterColumn.Items.Add(new ListItem(columnTitle, columnName));
+        }
+
+        public string GetCriterias()
+        {
+            string res = null;
+            foreach (ListItem itm in ddlFilterColumn.Items)
+            {
+                if (res != null)
+                    res += ", ";
+                res = res + "'" + itm.Value + "'";
+            }
+            return res;
         }
 
         public override void Focus()

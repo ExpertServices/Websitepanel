@@ -189,4 +189,7 @@
   <data name="gvReplication.HeaderText" xml:space="preserve">
     <value>Replication status</value>
   </data>
+  <data name="btnReplicaStates.Text" xml:space="preserve">
+    <value>Show Replication Statuses</value>
+  </data>
 </root>

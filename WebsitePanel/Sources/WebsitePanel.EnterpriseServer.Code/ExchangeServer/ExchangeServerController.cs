@@ -34,6 +34,8 @@ using System.Data;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading;
+using System.Drawing;
+using System.IO;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.Common;
@@ -47,6 +49,8 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class ExchangeServerController
     {
+        public const int MAX_THUMBNAILPHOTO_SIZE = 96;
+
         #region Organizations
         public static DataSet GetRawExchangeOrganizationsPaged(int packageId, bool recursive,
             string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
@@ -6033,6 +6037,125 @@ namespace WebsitePanel.EnterpriseServer
         }
         #endregion
 
+        #region Pictures
 
+        // proportional resizing
+        private static Bitmap ResizeBitmap(Bitmap srcBitmap, Size newSize)
+        {
+            try
+            {
+                Bitmap destBitmap = new Bitmap(newSize.Width, newSize.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+                Rectangle srcRect = new Rectangle(0, 0, srcBitmap.Width, srcBitmap.Height);
+                Rectangle destRect = new Rectangle(0, 0, destBitmap.Width, destBitmap.Height);
+
+                float kWidth = Convert.ToSingle(srcBitmap.Width) / Convert.ToSingle(destBitmap.Width);
+                float kHeight = Convert.ToSingle(srcBitmap.Height) / Convert.ToSingle(destBitmap.Height);
+
+                if (kHeight > kWidth)
+                {
+                    int l = (srcBitmap.Height - Convert.ToInt32(kWidth * destBitmap.Height));
+                    srcRect.Y = l / 2;
+                    srcRect.Height = srcBitmap.Height - l;
+                }
+                else if (kHeight < kWidth)
+                {
+                    int l = (srcBitmap.Width - Convert.ToInt32(kHeight * destBitmap.Width));
+                    srcRect.X = l / 2;
+                    srcRect.Width = srcBitmap.Width - l;
+                }
+
+                Graphics g = Graphics.FromImage(destBitmap);
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+                g.DrawImage(srcBitmap, destRect, srcRect, GraphicsUnit.Pixel);
+                g.Dispose();
+
+                return destBitmap;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+        public static ResultObject SetPicture(int itemId, int accountID, byte[] picture)
+        {
+            ResultObject res = TaskManager.StartResultTask<ResultObject>("EXCHANGE", "SET_PICTURE", itemId);
+
+            Organization org = GetOrganization(itemId);
+            if (org == null)
+                throw new ApplicationException("Organization is null");
+
+            ExchangeAccount account = GetAccount(itemId, accountID);
+
+            try
+            {
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                    Bitmap bitmap;
+
+                    if (picture == null)
+                        bitmap = new Bitmap(1, 1);
+                    else
+                        bitmap = new Bitmap(new MemoryStream(picture));
+
+                    MemoryStream pictureStream = new MemoryStream();
+
+                    if ((bitmap.Width > MAX_THUMBNAILPHOTO_SIZE) || (bitmap.Height > MAX_THUMBNAILPHOTO_SIZE))
+                        bitmap = ResizeBitmap(bitmap, new Size(MAX_THUMBNAILPHOTO_SIZE, MAX_THUMBNAILPHOTO_SIZE));
+
+                    bitmap.Save(pictureStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                    res = exchange.SetPicture(account.AccountName, pictureStream.ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
+            }
+
+            TaskManager.CompleteResultTask();
+            return res;
+
+        }
+
+        public static BytesResult GetPicture(int itemId, int accountID)
+        {
+            BytesResult res = TaskManager.StartResultTask<BytesResult>("EXCHANGE", "GET_PICTURE", itemId);
+
+            Organization org = GetOrganization(itemId);
+            if (org == null)
+                throw new ApplicationException("Organization is null");
+
+            ExchangeAccount account = GetAccount(itemId, accountID);
+
+            try
+            {
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+                    res = exchange.GetPicture(account.AccountName);
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
+            }
+
+            TaskManager.CompleteResultTask();
+            return res;
+
+        }
+
+        #endregion
     }
 }

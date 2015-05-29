@@ -443,4 +443,76 @@ The following substitution variables can be used in the pattern:&lt;br/&gt;
   <data name="locReplicaServer.Text" xml:space="preserve">
     <value>Replication Server:</value>
   </data>
+  <data name="btnAddDvd.Text" xml:space="preserve">
+    <value>Add DVD</value>
+  </data>
+  <data name="btnAddOsTemplate.Text" xml:space="preserve">
+    <value>Add OS Template</value>
+  </data>
+  <data name="btnRemoveDvd.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="btnRemoveOsTemplate.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="chkCanSetAdminPass.Text" xml:space="preserve">
+    <value>Can set an Administrator password</value>
+  </data>
+  <data name="chkCanSetComputerName.Text" xml:space="preserve">
+    <value>Can set a computer name</value>
+  </data>
+  <data name="chkCanSetNetwork.Text" xml:space="preserve">
+    <value>Can set Ip addresses</value>
+  </data>
+  <data name="chkLegacyNetworkAdapter.Text" xml:space="preserve">
+    <value>Use legacy adapter</value>
+  </data>
+  <data name="DvdDescriptionValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter DVD description</value>
+  </data>
+  <data name="DvdFileNameValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter DVD file name</value>
+  </data>
+  <data name="DvdNameValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter DVD name</value>
+  </data>
+  <data name="locDvdDescription.Text" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="locDvdFileName.Text" xml:space="preserve">
+    <value>File name (with extension):</value>
+  </data>
+  <data name="locDvdLibrary.Text" xml:space="preserve">
+    <value>DVD Library</value>
+  </data>
+  <data name="locDvdName.Text" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="locProcessVolume.Text" xml:space="preserve">
+    <value>Index of the volume to expand:</value>
+  </data>
+  <data name="locSysprep.Text" xml:space="preserve">
+    <value>Sysprep files (separated by ';'):</value>
+  </data>
+  <data name="locTemplateFileName.Text" xml:space="preserve">
+    <value>File name (with extension):</value>
+  </data>
+  <data name="locTemplateName.Text" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="locTemplates.Text" xml:space="preserve">
+    <value>OS Templates</value>
+  </data>
+  <data name="TemplateFileNameValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter OS template file name</value>
+  </data>
+  <data name="TemplateNameValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter OS template name</value>
+  </data>
+  <data name="valProcessVolume.ErrorMessage" xml:space="preserve">
+    <value>Enter OS template process volume</value>
+  </data>
+  <data name="vcmProcessVolume.ErrorMessage" xml:space="preserve">
+    <value>Process volume should be a positive number</value>
+  </data>
 </root>

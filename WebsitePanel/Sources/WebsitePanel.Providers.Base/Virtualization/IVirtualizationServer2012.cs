@@ -77,9 +77,6 @@ namespace WebsitePanel.Providers.Virtualization
         JobResult RemoveKVPItems(string vmId, string[] itemNames);
         JobResult ModifyKVPItems(string vmId, KvpExchangeDataItem[] items);
 
-        // Library
-        LibraryItem[] GetLibraryItems(string path);
-
         // Storage
         VirtualHardDiskInfo GetVirtualHardDiskInfo(string vhdPath);
         MountedDiskInfo MountVirtualHardDisk(string vhdPath);

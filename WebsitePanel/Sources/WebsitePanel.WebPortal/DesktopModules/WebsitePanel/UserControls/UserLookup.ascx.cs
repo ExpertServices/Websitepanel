@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using System.Text;
 
 namespace WebsitePanel.Portal
 {
@@ -71,6 +72,7 @@ namespace WebsitePanel.Portal
                 if (!AllowEmptySelection)
                     RemoveMenuItem("switch_empty");
             }
+            searchBox.AjaxData = this.GetSearchBoxAjaxData();
         }
 
         private void RemoveMenuItem(string name)
@@ -139,6 +141,17 @@ namespace WebsitePanel.Portal
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             ToggleSearchPanel(false);
+        }
+
+        public string GetSearchBoxAjaxData()
+        {
+            StringBuilder res = new StringBuilder();
+            res.Append("PagedStored: 'Users'");
+            res.Append(", UserID: " + PanelSecurity.EffectiveUserId.ToString());
+	        res.Append(", StatusID: 0");
+            res.Append(", RoleID: 0");
+            res.Append(", Recursive: true");
+            return res.ToString();
         }
     }
 }
