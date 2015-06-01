@@ -241,8 +241,7 @@ namespace WebsitePanel.Portal
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("wspValidationFunctions"))
             {
-                Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "wspValidationFunctions", @"
-                            
+              Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "wspValidationFunctions", @"
                 
                 function wspValidatePasswordNumbers(source, args)
                 {
@@ -279,9 +278,12 @@ namespace WebsitePanel.Portal
                 ", true);
 
 
-                Page.ClientScript.RegisterClientScriptInclude("jqueryui-tooltip", ResolveUrl("~/JavaScript/jquery.poshytip.min.js"));
             }
-            
+
+            if (!Page.ClientScript.IsClientScriptIncludeRegistered("jqueryui-tooltip"))
+            {
+                  Page.ClientScript.RegisterClientScriptInclude(this.GetType(),"jqueryui-tooltip", ResolveUrl("~/JavaScript/jquery.poshytip.min.js"));
+            }
         }
 
         private void ToggleControls()
