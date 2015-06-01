@@ -9764,6 +9764,8 @@ SELECT
 	EA.PrimaryEmailAddress,
 	EA.SubscriberNumber,
 	EA.UserPrincipalName,
+	EA.LevelID,
+	EA.IsVIP,
 	(CASE WHEN LU.AccountID IS NULL THEN ''false'' ELSE ''true'' END) as IsLyncUser
 FROM ExchangeAccounts AS EA
 LEFT JOIN LyncUsers AS LU

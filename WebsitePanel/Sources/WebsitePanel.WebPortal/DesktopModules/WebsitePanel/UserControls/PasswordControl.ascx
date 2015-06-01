@@ -71,8 +71,8 @@
 
 
 <script>
-   
-    $(document).ready(function () {
+
+    function BindPopup() {
         $('#<%=txtPassword.ClientID%>').poshytip({
             className: 'tip-bluesimple',
             showOn: 'focus',
@@ -84,5 +84,15 @@
                 return $('#password-hint-popup').html();
             }
         });
+    };
+
+    $(document).ready(function () {
+        BindPopup();
+    });
+
+    var prm = Sys.WebForms.PageRequestManager.getInstance();
+
+    prm.add_endRequest(function () {
+        BindPopup();
     });
 </script>
