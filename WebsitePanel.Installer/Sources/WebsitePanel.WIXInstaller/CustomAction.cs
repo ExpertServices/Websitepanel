@@ -168,8 +168,8 @@ namespace WebsitePanel.WIXInstaller
             {
                 var Current = SesCtx["ProductVersion"];
                 var Found =  string.IsNullOrWhiteSpace(CtxVars.Version) ? "0.0.0" : CtxVars.Version;
-                if ((new Version(Found) >= new Version(Current)) && !CtxVars.InstallerType.ToLowerInvariant().Equals("msi"))
-                    throw new InvalidOperationException("New version must be reater than previous always.");
+                if ((new Version(Found) > new Version(Current)) && !CtxVars.InstallerType.ToLowerInvariant().Equals("msi"))
+                    throw new InvalidOperationException("New version must be greater than previous always.");
             };
 
             var Ctx = session;

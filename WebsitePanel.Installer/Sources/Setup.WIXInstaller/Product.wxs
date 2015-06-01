@@ -9,7 +9,7 @@
         <Package InstallerVersion="200" Compressed="yes" />
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
-        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed."/>
+        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
         <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WSP_INSTALL_DIR" AllowAdvertise="no" Display="expand"
                  Description="WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers to automate the provisioning of a full suite of services on Windows servers.">
             <ComponentGroupRef Id="WebsitePanelFiles" />
@@ -636,9 +636,12 @@
         <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=portal;BaseDirectory=[WSP_INSTALL_DIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
+        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
+        <!---->
         <SetProperty Id="WSP_INSTALL_DIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
         <SetProperty Id="ARPINSTALLLOCATION" Value="[WSP_INSTALL_DIR]" After="InstallValidate" Sequence="execute" />
-        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
+        <SetProperty Id="PI_ESERVER_URL" Value="http://[PI_ESERVER_IP]:[PI_ESERVER_PORT]/" Before="CostInitialize" />
+        <SetProperty Id="REINSTALLMODE" Value="amus" After="CostInitialize">1</SetProperty>        
         <!--Exe sequence.-->
         <InstallExecuteSequence>
             <!--Preinstall.-->
@@ -682,7 +685,6 @@
             <Custom Action="CA_FillIpListUI" After="CostInitialize" />
             <Custom Action="CA_SqlServerListUI" After="CostInitialize" />
         </InstallUISequence>
-        <SetProperty Id="PI_ESERVER_URL" Value="http://[PI_ESERVER_IP]:[PI_ESERVER_PORT]/" Before="CostInitialize" />
     </Product>
     <Fragment>
         <ComponentGroup Id="DatabaseInstallation">
