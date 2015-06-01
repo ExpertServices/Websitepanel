@@ -2313,15 +2313,18 @@ namespace WebsitePanel.Setup.Internal
         {
             try
             {
+                Log.WriteStart("Starting IIS Application Pool");
                 string componentId = Context.ComponentId;
                 string appPool = AppConfig.GetComponentSettingStringValue(componentId, "ApplicationPool");
                 if (string.IsNullOrEmpty(appPool))
+                {
+                    Log.WriteInfo("ApplicatonPool name is empty string value.");
                     return;
+                }
 
                 Version iisVersion = Context.IISVersion;
                 bool iis7 = (iisVersion.Major >= 7);
 
-                Log.WriteStart("Starting IIS Application Pool");
                 Log.WriteInfo(string.Format("Starting \"{0}\"", appPool));
                 if (iis7)
                     WebUtils.StartIIS7ApplicationPool(appPool);
@@ -3998,14 +4001,29 @@ namespace WebsitePanel.Setup.Internal
                     break;
                 }                
                 var MainCfg = Path.Combine(Ctx.InstallerFolder, BackupRestore.MainConfig);
-                if (!BackupRestore.HaveChild(MainCfg, "//components"))
+                if (string.IsNullOrWhiteSpace(WiXSetup.GetComponentID(MainCfg, Ctx.ComponentCode)))
                 {
-                    Log.WriteInfo("Restoring main config...");
-                    XmlDocumentMerge.Process(Backup.BackupMainConfigFile, MainCfg);
-                    Context.ComponentId = WiXSetup.GetComponentID(Ctx);
-                    AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = MainCfg });
-                    AppConfig.LoadComponentSettings(Ctx);
-                }                
+                    try
+                    {
+                        Log.WriteInfo(string.Format("Restoring main config section for '{0}' component...", Ctx.ComponentCode));
+                        var Current = new XmlDocument();
+                        Current.Load(MainCfg);
+                        var Components = Current.SelectSingleNode("//components");
+                        var XmlPath = string.Format("//component[.//add/@key='ComponentCode' and .//add/@value='{0}']", Ctx.ComponentCode);
+                        var Previous = new XmlDocument();
+                        Previous.Load(Backup.BackupMainConfigFile);
+                        var PreviousComponent = Previous.SelectSingleNode(XmlPath);
+                        Components.CreateNavigator().AppendChild(PreviousComponent.CloneNode(true).CreateNavigator());
+                        Current.Save(MainCfg);
+                        Context.ComponentId = WiXSetup.GetComponentID(Ctx);
+                        AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = MainCfg });
+                        AppConfig.LoadComponentSettings(Ctx);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.WriteError("Error in main or backup xml config files.", ex);
+                    }
+                }
                 Log.WriteInfo(string.Format("Restoring xml config for component - {0}.", Ctx.ComponentFullName));
                 Backup.Restore();
                 Log.WriteEnd("RestoreXmlConfigs");
