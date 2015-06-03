@@ -2052,9 +2052,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         private static string GetRdsServerStatusInternal(int? itemId, string fqdnName)
-        {
-            return "Online";
-
+        {            
             var result = "Unavailable";
             var serviceId = GetRdsServiceId(itemId);
 
