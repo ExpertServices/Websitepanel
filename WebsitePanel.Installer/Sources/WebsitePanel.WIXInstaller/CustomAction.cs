@@ -1,4 +1,3 @@
-using Microsoft.Deployment.WindowsInstaller;
 // Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
@@ -42,11 +41,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
-using WebsitePanel.WIXInstaller.Common;
-using WebsitePanel.WIXInstaller.Common.Util;
+using Microsoft.Deployment.WindowsInstaller;
 
 using WebsitePanel.Setup;
 using WebsitePanel.Setup.Internal;
+using WebsitePanel.WIXInstaller.Common;
+using WebsitePanel.WIXInstaller.Common.Util;
 
 namespace WebsitePanel.WIXInstaller
 {
