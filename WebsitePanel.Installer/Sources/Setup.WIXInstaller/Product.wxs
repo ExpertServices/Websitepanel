@@ -471,6 +471,9 @@
             <Publish Dialog="FinishDlg" Control="Next" Event="NewDialog" Value="FinishDlg">1</Publish>
             <!--ValidateDlg-->
             <Publish Dialog="ValidateDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
+            <!--ExitDialog-->
+            <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
+            <!---->
             <ProgressText Action="CA_InstallWebFeatures">Please wait while [ProductName] Installer configures IIS &amp; ASP.NET, this may take a few minutes. Thanks!</ProgressText>
         </UI>
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
@@ -488,6 +491,9 @@
         <WixVariable Id="BUILDSPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server" />
         <WixVariable Id="BUILDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Portal" />
         <WixVariable Id="BUILDWDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\WebDavPortal" />
+        <!---->
+        <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open installation log file." />
+        <Property Id="WixShellExecTarget" Value="[TempFolder]\WSPInstallation.log.txt" />
         <!--Add/Remove props. Public properties should be always in CAPS.-->
         <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
         <!--UI props.-->
@@ -630,6 +636,8 @@
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
         <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
+        <!---->
+        <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
         <!---->
         <SetProperty Id="WSP_INSTALL_DIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
         <SetProperty Id="ARPINSTALLLOCATION" Value="[WSP_INSTALL_DIR]" After="InstallValidate" Sequence="execute" />
