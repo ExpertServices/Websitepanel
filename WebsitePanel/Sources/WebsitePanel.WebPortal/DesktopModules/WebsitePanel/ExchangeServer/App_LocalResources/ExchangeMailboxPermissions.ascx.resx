@@ -135,4 +135,7 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Permissions</value>
   </data>
+  <data name="secOnBehalfOf.Text" xml:space="preserve">
+    <value>Send on Behalf</value>
+  </data>
 </root>

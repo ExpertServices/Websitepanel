@@ -345,7 +345,6 @@
     <Content Include="bin\WebsitePanel.Portal.Modules.dll.config" />
     <Content Include="bin\WebsitePanel.WebPortal.dll.config" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
-    <Content Include="RdsServerStatusHandler.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\TopPane.ascx" />
