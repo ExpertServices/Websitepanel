@@ -44,6 +44,17 @@
                         <uc2:AccountsList id="fullAccessPermission" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
                         </uc2:AccountsList>                                            
                     </asp:Panel>
+                    
+                    <wsp:CollapsiblePanel id="secOnBehalfOf" runat="server"
+                        TargetControlID="panelOnBehalfOf" meta:resourcekey="secOnBehalfOf" Text="Send on Behalf">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelOnBehalfOf">
+                        <asp:Label runat="server" ID="Label2" meta:resourcekey="grandPermission" /><br /><br />
+                        <uc2:AccountsList id="onBehalfOfPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
+                        </uc2:AccountsList>                                            
+                    </asp:Panel>
+
                     <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
                             OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />

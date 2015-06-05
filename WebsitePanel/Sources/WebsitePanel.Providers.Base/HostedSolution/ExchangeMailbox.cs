@@ -406,6 +406,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			set { fullAccessAccounts = value; }
 		}
 
+	    public ExchangeAccount[] OnBehalfOfAccounts { get; set; }
 
         public bool EnableLitigationHold
         {

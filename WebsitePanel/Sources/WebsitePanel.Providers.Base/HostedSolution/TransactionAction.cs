@@ -67,6 +67,8 @@ namespace WebsitePanel.Providers.HostedSolution
             set { account = value; }
 
         }
+        
+        public string[] Accounts { get; set; }
 
         public enum TransactionActionTypes
         {
@@ -94,7 +96,8 @@ namespace WebsitePanel.Providers.HostedSolution
             LyncNewUser,
             LyncNewConferencingPolicy,
             LyncNewExternalAccessPolicy,
-            LyncNewMobilityPolicy
+            LyncNewMobilityPolicy,
+            ResetMailboxOnBehalfPermissions
         };
     }
 }

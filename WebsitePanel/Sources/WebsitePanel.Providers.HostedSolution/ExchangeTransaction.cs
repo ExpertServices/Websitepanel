@@ -180,6 +180,15 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
+        public void ResetMailboxOnBehalfPermissions(string id, string[] accounts)
+        {
+            TransactionAction action = new TransactionAction();
+            action.ActionType = TransactionAction.TransactionActionTypes.ResetMailboxOnBehalfPermissions;
+            action.Accounts = accounts;
+            action.Id = id;
+            Actions.Add(action);
+        }
+
         public void AddMailBoxFullAccessPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
