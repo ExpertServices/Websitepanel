@@ -24,7 +24,7 @@
     </ContentTemplate>    
 </asp:UpdatePanel>
 
-<div class="FormButtonsBar">
+<div class="FormButtonsBar"> 
             <div class="Left">
                 <asp:Button ID="btnAddRDSServer" runat="server"
                     meta:resourcekey="btnAddRDSServer" Text="Add RDS Server" CssClass="Button3"
