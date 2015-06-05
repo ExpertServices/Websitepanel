@@ -39,6 +39,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 using Microsoft.Deployment.WindowsInstaller;
 
@@ -178,6 +179,13 @@ namespace WebsitePanel.WIXInstaller
             PopUpDebugger();
 
             Log.WriteStart("PreFillSettings");
+
+            TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
+            TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
+            TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
+            TryApllyNewPassword(Ctx, "SERVER_ACCESS_PASSWORD");
+            TryApllyNewPassword(Ctx, "SERVERADMIN_PASSWORD");
+
             var WSP = Ctx["WSP_INSTALL_DIR"];
             var DirList = new List<string>();
             DirList.Add(WSP);
@@ -209,6 +217,9 @@ namespace WebsitePanel.WIXInstaller
 
                         SetProperty(Ctx, "PI_SERVER_INSTALL_DIR", CtxVars.InstallFolder);
                         SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
+                                                
+                        Ctx["SERVER_ACCESS_PASSWORD"] = string.Empty;
+                        Ctx["SERVER_ACCESS_PASSWORD_CONFIRM"] = string.Empty;
 
                         var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                         bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
@@ -245,6 +256,25 @@ namespace WebsitePanel.WIXInstaller
                         }
                         ConnStr = new SqlConnectionStringBuilder(CtxVars.ConnectionString);
                         SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
+
+                        try
+                        {
+                            var SqlQuery = string.Format("USE [{0}]; SELECT [dbo].[Users].[Password] FROM [dbo].[Users] WHERE [dbo].[Users].[UserID] = 1;", ConnStr.InitialCatalog);
+                            using (var Reader = SqlUtils.ExecuteSql(CtxVars.DbInstallConnectionString, SqlQuery).CreateDataReader())
+                            {
+                                if (Reader.Read())
+                                {
+                                    var Hash = Reader[0].ToString();
+                                    var Password = IsEnctyptionEnabled(string.Format(@"{0}\Web.config", CtxVars.InstallationFolder)) ? Utils.Decrypt(CtxVars.CryptoKey, Hash) : Hash;
+                                    Ctx["SERVERADMIN_PASSWORD"] = Password;
+                                    Ctx["SERVERADMIN_PASSWORD_CONFIRM"] = Password;
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            // Nothing to do.
+                        }
 
                         var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                         bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
@@ -287,11 +317,6 @@ namespace WebsitePanel.WIXInstaller
                     return ActionResult.Failure;
                 }
             }
-            TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
-            TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
-            TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVER_ACCESS_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVERADMIN_PASSWORD");
             Log.WriteEnd("PreFillSettings");
             return ActionResult.Success;
         }
@@ -905,6 +930,18 @@ namespace WebsitePanel.WIXInstaller
                         Cancel.Token.ThrowIfCancellationRequested();
                 }
             }, Cancel.Token);
+        }
+
+        private static bool IsEnctyptionEnabled(string Cfg)
+        {
+            var doc = new XmlDocument();
+            doc.Load(Cfg);
+            string xPath = "configuration/appSettings/add[@key=\"WebsitePanel.EncryptionEnabled\"]";
+            XmlElement encryptionNode = doc.SelectSingleNode(xPath) as XmlElement;
+            bool encryptionEnabled = false;
+            if (encryptionNode != null)
+                bool.TryParse(encryptionNode.GetAttribute("value"), out encryptionEnabled);
+            return encryptionEnabled;
         }
     }
     public static class SessionExtension

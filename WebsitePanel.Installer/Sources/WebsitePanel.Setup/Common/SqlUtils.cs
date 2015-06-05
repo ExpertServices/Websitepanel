@@ -235,6 +235,11 @@ namespace WebsitePanel.Setup
 			}
 		}
 
+        public static DataSet ExecuteSql(string Conn, string Query)
+        {
+            return ExecuteQuery(Conn, Query);
+        }
+
 		/// <summary>
 		/// Checks if the database exists.
 		/// </summary>
