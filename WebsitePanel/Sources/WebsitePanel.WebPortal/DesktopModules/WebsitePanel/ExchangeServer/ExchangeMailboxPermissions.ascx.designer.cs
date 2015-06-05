@@ -67,42 +67,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// secSendAsPermission control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secSendAsPermission;
-        
-        /// <summary>
-        /// panelSendAsPermission control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel panelSendAsPermission;
-        
-        /// <summary>
-        /// lblSendAsPermission control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblSendAsPermission;
-        
-        /// <summary>
-        /// sendAsPermission control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList sendAsPermission;
-        
-        /// <summary>
         /// secFullAccessPermission control.
         /// </summary>
         /// <remarks>
@@ -137,6 +101,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList fullAccessPermission;
+        
+        /// <summary>
+        /// secSendAsPermission control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secSendAsPermission;
+        
+        /// <summary>
+        /// panelSendAsPermission control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelSendAsPermission;
+        
+        /// <summary>
+        /// lblSendAsPermission control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSendAsPermission;
+        
+        /// <summary>
+        /// sendAsPermission control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList sendAsPermission;
         
         /// <summary>
         /// secOnBehalfOf control.
