@@ -25,16 +25,7 @@
 				<div class="FormBody">
                     <wsp:MailboxTabs id="tabs" runat="server" SelectedTab="mailbox_permissions" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />                    					
-					<wsp:CollapsiblePanel id="secSendAsPermission" runat="server"
-                        TargetControlID="panelSendAsPermission" meta:resourcekey="secSendAsPermission" Text="Send As Permission">
-                    </wsp:CollapsiblePanel>		
-                    
-                    <asp:Panel runat="server" ID="panelSendAsPermission">
-                        <asp:Label runat="server" ID="lblSendAsPermission" meta:resourcekey="grandPermission" /><br /><br />
-                        <uc2:AccountsList id="sendAsPermission" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true"  >
-                        </uc2:AccountsList>                                           
-                    </asp:Panel>
-                                        
+					
                     <wsp:CollapsiblePanel id="secFullAccessPermission" runat="server"
                         TargetControlID="panelFullAccessPermission" meta:resourcekey="secFullAccessPermission" Text="Full Access Permission">
                     </wsp:CollapsiblePanel>		
@@ -45,6 +36,16 @@
                         </uc2:AccountsList>                                            
                     </asp:Panel>
                     
+                    <wsp:CollapsiblePanel id="secSendAsPermission" runat="server"
+                        TargetControlID="panelSendAsPermission" meta:resourcekey="secSendAsPermission" Text="Send As Permission">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelSendAsPermission">
+                        <asp:Label runat="server" ID="lblSendAsPermission" meta:resourcekey="grandPermission" /><br /><br />
+                        <uc2:AccountsList id="sendAsPermission" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true"  >
+                        </uc2:AccountsList>                                           
+                    </asp:Panel>
+
                     <wsp:CollapsiblePanel id="secOnBehalfOf" runat="server"
                         TargetControlID="panelOnBehalfOf" meta:resourcekey="secOnBehalfOf" Text="Send on Behalf">
                     </wsp:CollapsiblePanel>		
