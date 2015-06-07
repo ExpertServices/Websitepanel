@@ -680,7 +680,7 @@
         </InstallExecuteSequence>
         <InstallUISequence>
             <Custom Action="CA_PreFillSettings" Before="CA_InstallWebFeatures" />
-            <Custom Action="CA_InstallWebFeatures" Before="CA_PrereqCheck" />
+            <Custom Action="CA_InstallWebFeatures" After="CA_PrereqCheckUI" />
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
             <Custom Action="CA_FillIpListUI" After="CostInitialize" />
