@@ -359,16 +359,6 @@
                 ItemName="WebsitePanelInstallerMsi" />	
 		</MSBuild>		
 		
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.SchedulerServiceInstaller\WebsitePanel.SchedulerServiceInstaller.csproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false"/>
-				
-		<XmlUpdate XmlFileName="$(EnterpriseServerBuild)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
-		<XmlUpdate XmlFileName="$(EnterpriseServerBuild)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />
-		
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.SchedulerService\Setup.SchedulerService.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
-			<Output
-                TaskParameter="TargetOutputs"
-                ItemName="WebsitePanelInstallerMsi" />	
-		</MSBuild>
 		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
 	</Target>
 
@@ -448,8 +438,6 @@
 		<MakeDir Directories="$(EnterpriseServerInstall)"/>
 		<Copy SourceFiles="@(EnterpriseServerDeployFiles)" DestinationFolder="$(EnterpriseServerInstall)\%(RecursiveDir)" />
 		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
-		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
-		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />
 		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />		
 	</Target>	
 
