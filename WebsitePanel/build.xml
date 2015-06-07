@@ -30,14 +30,14 @@
 		<WebDavPortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebDavPortal</WebDavPortalSrc>
 		<ServerSrc>$(TrunkFolder)\Sources\WebsitePanel.Server</ServerSrc>
 		<EnterpriseServerSrc>$(TrunkFolder)\Sources\WebsitePanel.EnterpriseServer</EnterpriseServerSrc>
-		<SchedulerServiceSrc>$(TrunkFolder)\Sources\WebsitePanel.SchedulerService</SchedulerServiceSrc>
+		<SchedulerServiceSrc>$(TrunkFolder)\Sources\WebsitePanel.SchedulerService\bin\</SchedulerServiceSrc>
 		<ImportCsvSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.CsvBulk\bin\$(BuildConfiguration)</ImportCsvSrc>
 		<HyperVUtilsSrc>$(RootFolder)\WebsitePanel.HyperV.Utils\Sources\WebsitePanel.HyperV.Utils\bin\$(BuildConfiguration)</HyperVUtilsSrc>
 		<VMConfigSrc>$(RootFolder)\WebsitePanel.VmConfig\Sources\WebsitePanel.VmConfig\bin\$(BuildConfiguration)</VMConfigSrc>
 		<ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
 		<AWStatsViewerSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer</AWStatsViewerSrc>
 		<WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
-    <FixDefaultPublicFolderMailboxSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.FixDefaultPublicFolderMailbox\bin\$(BuildConfiguration)</FixDefaultPublicFolderMailboxSrc>
+		<FixDefaultPublicFolderMailboxSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.FixDefaultPublicFolderMailbox\bin\$(BuildConfiguration)</FixDefaultPublicFolderMailboxSrc>
 
     <ServerBuild>$(BuildFolder)\Server</ServerBuild>
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
@@ -175,6 +175,7 @@
 			<EnterpriseServerBuildExclude Include="$(EnterpriseServerSrc)\**\*.suo" />
 			<EnterpriseServerBuildExclude Include="$(EnterpriseServerSrc)\**\*.cs" />
 			<EnterpriseServerBuildExclude Include="$(EnterpriseServerSrc)\**\*.csproj" />
+			<EnterpriseServerBuildExclude Include="$(EnterpriseServerSrc)\**\*.metaproj" />
 			<EnterpriseServerBuildFiles Include="$(EnterpriseServerSrc)\**\*.*" Exclude="@(EnterpriseServerBuildExclude)"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(EnterpriseServerBuildFiles)" DestinationFolder="$(EnterpriseServerBuild)\%(RecursiveDir)" />
@@ -217,8 +218,25 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(WebDavPortalBuildFiles)" DestinationFolder="$(WebDavPortalBuild)\%(RecursiveDir)" />
 	</Target>	
+	
+	<Target Name="CreateSchedulerBuild" DependsOnTargets="CreateWebDavPortalBuild">
+		<ItemGroup>
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\.svn\**" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\obj\**" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\bin\*.xml" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\Release\**" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\Debug\**" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\*.user" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\*.suo" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\*.cs" />
+			<SchBuildExclude Include="$(SchedulerServiceSrc)\**\*.csproj" />
+			<SchedulerServiceBuildFiles Include="$(SchedulerServiceSrc)\**\*.*" Exclude="@(SchBuildExclude)" />
+		</ItemGroup>
+		<Copy SourceFiles="@(SchedulerServiceBuildFiles)" DestinationFolder="$(SchedulerServiceBuild)\%(RecursiveDir)" />
+	</Target>	
 
-	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreateWebDavPortalBuild">
+	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreateSchedulerBuild">
 		<ItemGroup>
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.vshost.*" />
@@ -369,6 +387,7 @@
         <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr PI_ESERVER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr PI_SERVER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr PI_PORTAL_INSTALL_DIR' />
+		<Exec Command='"$(WIX)bin\heat.exe" dir $(SchedulerServiceBuild) -o $(WiXInstallerBuild)\ComponentsFiles\SchedulerService.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg SchedulerServiceBuildFiles -dr PI_SCHEDULER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr PI_WDPORTAL_INSTALL_DIR' />
     </Target>
 
