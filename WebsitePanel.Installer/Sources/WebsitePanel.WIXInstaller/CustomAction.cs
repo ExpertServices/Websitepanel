@@ -587,12 +587,16 @@ namespace WebsitePanel.WIXInstaller
             session[Prop.REQ_OS] = ros == CheckStatuses.Success ? YesNo.Yes : YesNo.No;
             session[Prop.REQ_IIS] = riis == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
             session[Prop.REQ_ASPNET] = raspnet == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
+
             return ActionResult.Success;
         }
         [CustomAction]
         public static ActionResult PrereqCheckUI(Session session)
         {
             var ListView = new ListViewCtrl(session, "REQCHECKLIST");
+            AddCheck(ListView, session, Prop.REQ_NETFRAMEWORK20);
+            AddCheck(ListView, session, Prop.REQ_NETFRAMEWORK35);
+            AddCheck(ListView, session, Prop.REQ_NETFRAMEWORK40FULL);
             AddCheck(ListView, session, Prop.REQ_OS);
             AddCheck(ListView, session, Prop.REQ_IIS);
             AddCheck(ListView, session, Prop.REQ_ASPNET);

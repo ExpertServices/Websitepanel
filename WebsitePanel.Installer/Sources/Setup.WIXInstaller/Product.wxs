@@ -515,8 +515,11 @@
         <Property Id="PI_PREREQ_OS" Secure="yes" Value="0" />
         <Property Id="PI_PREREQ_OS_TITLE" Value="Operating System" />
         <PropertyRef Id="NETFRAMEWORK20"/>
+        <Property Id="NETFRAMEWORK20_TITLE" Value="Micrsoft .NET Framework 2.0"/>
         <PropertyRef Id="NETFRAMEWORK35"/>
+        <Property Id="NETFRAMEWORK35_TITLE" Value="Micrsoft .NET Framework 3.5"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
+        <Property Id="NETFRAMEWORK40FULL_TITLE" Value="Micrsoft .NET Framework 4.0"/>
         <Property Id="PI_PREREQ_ASPNET" Secure="yes" Value="0"/>
         <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
         <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
