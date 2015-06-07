@@ -587,10 +587,6 @@ namespace WebsitePanel.WIXInstaller
             session[Prop.REQ_OS] = ros == CheckStatuses.Success ? YesNo.Yes : YesNo.No;
             session[Prop.REQ_IIS] = riis == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
             session[Prop.REQ_ASPNET] = raspnet == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
-            session[Prop.REQ_SERVER] = YesNo.Yes;
-            session[Prop.REQ_ESERVER] = YesNo.Yes;
-            session[Prop.REQ_PORTAL] = YesNo.Yes;
-            session[Prop.REQ_WDPORTAL] = YesNo.Yes;
             return ActionResult.Success;
         }
         [CustomAction]
@@ -600,10 +596,6 @@ namespace WebsitePanel.WIXInstaller
             AddCheck(ListView, session, Prop.REQ_OS);
             AddCheck(ListView, session, Prop.REQ_IIS);
             AddCheck(ListView, session, Prop.REQ_ASPNET);
-            AddCheck(ListView, session, Prop.REQ_SERVER);
-            AddCheck(ListView, session, Prop.REQ_ESERVER);
-            AddCheck(ListView, session, Prop.REQ_PORTAL);
-            AddCheck(ListView, session, Prop.REQ_WDPORTAL);
             return ActionResult.Success;
         }
         [CustomAction]
