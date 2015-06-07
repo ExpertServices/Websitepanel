@@ -4657,9 +4657,9 @@ namespace WebsitePanel.Setup.Internal
 			new SaveAspNetDbConnectionStringAction(),
 			new SaveComponentConfigSettingsAction(),
 			new SaveEntServerConfigSettingsAction(),
-            new SaveSchedulerServiceConnectionStringAction(),
-            new SaveSchedulerServiceCryptoKeyAction(),
-            new InstallSchedulerServiceAction()
+            // new SaveSchedulerServiceConnectionStringAction(),
+            // new SaveSchedulerServiceCryptoKeyAction(),
+            // new InstallSchedulerServiceAction()
 		};
         public WiXEnterpriseServerActionManager(SetupVariables sessionVars)
             : base(sessionVars)
