@@ -349,20 +349,7 @@
 		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.Updater\WebsitePanel.Updater.csproj" Properties="Configuration=$(BuildConfiguration)" />
     
 		<!-- build MSI package -->
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
-			<Output
-                TaskParameter="TargetOutputs"
-                ItemName="WebsitePanelInstallerMsi" />	
-		</MSBuild>		
-		
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.SchedulerServiceInstaller\WebsitePanel.SchedulerServiceInstaller.csproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false"/>
 
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.SchedulerService\Setup.SchedulerService.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
-			<Output
-                TaskParameter="TargetOutputs"
-                ItemName="WebsitePanelInstallerMsi" />	
-		</MSBuild>
-		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
 	</Target>
 
   <Target Name="CreateFixDefaultPublicFolderMailboxBuild" DependsOnTargets="CreateSetupBuild">
@@ -380,10 +367,25 @@
         <Exec Command='"$(WIX)bin\heat.exe" dir $(EnterpriseServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\EnterpriseServerFiles.wxs -gg -sreg -srd -var wix.BUILDESPATH -cg EnterpriseServerFiles -dr PI_ESERVER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(ServerBuild) -o $(WiXInstallerBuild)\ComponentsFiles\ServerFiles.wxs -gg -sreg -srd -var wix.BUILDSPATH -cg ServerFiles -dr PI_SERVER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(PortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\PortalFiles.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg PortalFiles -dr PI_PORTAL_INSTALL_DIR' />
-		<Exec Command='"$(WIX)bin\heat.exe" dir $(SchedulerServiceBuild) -o $(WiXInstallerBuild)\ComponentsFiles\SchedulerService.wxs -gg -sreg -srd -var wix.BUILDPPATH -cg SchedulerServiceBuildFiles -dr PI_SCHEDULER_INSTALL_DIR' />
+		<Exec Command='"$(WIX)bin\heat.exe" dir $(SchedulerServiceBuild) -o $(WiXInstallerBuild)\ComponentsFiles\SchedulerServiceFiles.wxs -gg -sreg -srd -var wix.BUILDSRVPATH -cg SchedulerServiceFiles -dr PI_SCHEDULER_INSTALL_DIR' />
         <Exec Command='"$(WIX)bin\heat.exe" dir $(WebDavPortalBuild) -o $(WiXInstallerBuild)\ComponentsFiles\WebDavPortalFiles.wxs -gg -sreg -srd -var wix.BUILDWDPPATH -cg WebDavPortalFiles -dr PI_WDPORTAL_INSTALL_DIR' />
-    </Target>
 
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
+			<Output
+                TaskParameter="TargetOutputs"
+                ItemName="WebsitePanelInstallerMsi" />	
+		</MSBuild>		
+		
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.SchedulerServiceInstaller\WebsitePanel.SchedulerServiceInstaller.csproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false"/>
+
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.SchedulerService\Setup.SchedulerService.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
+			<Output
+                TaskParameter="TargetOutputs"
+                ItemName="WebsitePanelInstallerMsi" />	
+		</MSBuild>
+		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />    
+		</Target>
+		
     <Target Name="Build" DependsOnTargets="WiXCreateRedistFileListBuild">
 		<!-- Do nothing -->
 	</Target>
@@ -683,6 +685,7 @@
   </Target>
 
     <Target Name="CreateStandaloneFullMsi" DependsOnTargets="CreateSetupDLL">
+
         <Copy SourceFiles="$(TrunkFolder)\Database\install_db.sql" DestinationFiles="$(DatabaseFolder)\wix_install_db.sql"  />
 		<Copy SourceFiles="$(UpdateFolder)\update_db.sql" DestinationFiles="$(DatabaseFolder)\wix_update_db.sql" />
 
@@ -693,6 +696,8 @@
            <Output TaskParameter="TargetOutputs" ItemName="StandaloneFullMsi" />	 
         </MSBuild>    			
 		<Copy SourceFiles="@(StandaloneFullMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
+		
+
     </Target>
 
 	<!-- Deploy -->

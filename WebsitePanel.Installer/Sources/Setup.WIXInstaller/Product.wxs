@@ -490,6 +490,7 @@
         <WixVariable Id="BUILDESPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\EnterpriseServer" />
         <WixVariable Id="BUILDSPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server" />
         <WixVariable Id="BUILDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Portal" />
+        <WixVariable Id="BUILDSRVPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\SchedulerService" />
         <WixVariable Id="BUILDWDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\WebDavPortal" />
         <!---->
         <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open installation log file." />

@@ -6,8 +6,8 @@
 
       <Package InstallerVersion="200" Compressed="yes" />
         <Media Id="1" EmbedCab="yes" Cabinet="schedulerservice.cab" />
-        <Feature Id="ProductFeature" Title="WebsitePanel Scheduler Service Installer" Level="1">
-            <ComponentRef Id="ProductFiles" />
+        <Feature Id="ProductFeature" Title="WebsitePanel Scheduler Service Installer" Level="1" ConfigurableDirectory="PI_SCHEDULER_INSTALL_DIR" AllowAdvertise="no">
+            <ComponentGroupRef Id="SchedulerServiceFiles" />
         </Feature>
         <Property Id="BannerBitmap">bannrbmp</Property>
 
@@ -25,12 +25,13 @@
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
         <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
         <Property Id="SERVERNAME" Value="localhost\SQLExpress" />
-        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-        <Property Id="INSTALLFOLDER" Value="c:\WebsitePanel\SchedulerService" />
+        <Property Id="WIXUI_INSTALLDIR" Value="PI_SCHEDULER_INSTALL_DIR" />
+        <Property Id="PI_SCHEDULER_INSTALL_DIR" Value="c:\WebsitePanel\SchedulerService" />
         <Property Id="CONNECTIONSTRING" Value="1" />
         <Property Id="DATABASENAME" Value="WebsitePanel" />
         <Property Id="AUTHENTICATIONTYPE" Value="Windows Authentication" />
         <Binary Id="bannrbmp" SourceFile="bannrbmp.bmp" />
+        <WixVariable Id="BUILDSRVPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\SchedulerService" />
         <UI Id="CustomInstaller">
             <UIRef Id="WixUI_Mondo" />
             <Dialog Id="DatabaseConnectionDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
@@ -136,27 +137,9 @@
     <Fragment>
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="WEBSITEPANELFOLDER" Name="WebsitePanel">
-                <Directory Id="INSTALLFOLDER" Name="SchedulerService" />
+                <Directory Id="PI_SCHEDULER_INSTALL_DIR" Name="SchedulerService" />
             </Directory>
         </Directory>
     </Fragment>
-    <Fragment>
-        <DirectoryRef Id="INSTALLFOLDER">
-            <Component Id="ProductFiles" Guid="A89FA6CF-53E2-4390-9E9D-11CD4297D739">
-              <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
-              <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
-              <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
-              <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
-              <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
-              <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
-              <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>
-              <File Id="IPAddressRange.dll" Source="$(var.BUILDPATH)\IPAddressRange.dll"/>
-              <File Id="WhoisClient.dll" Source="$(var.BUILDPATH)\WhoisClient.dll"/>
-              <File Id="WebsitePanel.Providers.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.Providers.Base.dll"/>
-              <File Id="WebsitePanel.Server.Client.dll" Source="$(var.BUILDPATH)\WebsitePanel.Server.Client.dll"/>
-              <File Id="WebsitePanel.Templates.dll" Source="$(var.BUILDPATH)\WebsitePanel.Templates.dll"/>
-              <File Id="WebsitePanel.Whois.dll" Source="$(var.BUILDPATH)\WebsitePanel.Whois.dll"/>
-            </Component>
-        </DirectoryRef>
-    </Fragment>
+
 </Wix>
