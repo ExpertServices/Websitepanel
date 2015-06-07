@@ -231,9 +231,8 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(WebDavPortalBuildFiles)" DestinationFolder="$(WebDavPortalBuild)\%(RecursiveDir)" />
 	</Target>	
-	
 
-	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreateSchedulerBuild">
+	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreateWebDavPortalBuild">
 		<ItemGroup>
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.vshost.*" />
