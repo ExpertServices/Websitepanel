@@ -517,14 +517,6 @@
         <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
         <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
         <Property Id="PI_PREREQ_IIS_TITLE" Value="Web Server (IIS)" />
-       <Property Id="PI_PREREQ_WP_SERVER" Secure="yes" Value="0" />
-       <Property Id="PI_PREREQ_WP_SERVER_TITLE" Value="WebsitePanel Server" />
-       <Property Id="PI_PREREQ_WP_ESERVER" Secure="yes" Value="0" />
-       <Property Id="PI_PREREQ_WP_ESERVER_TITLE" Value="WebsitePanel Enterprise Server" />
-       <Property Id="PI_PREREQ_WP_PORTAL" Secure="yes" Value="0" />
-       <Property Id="PI_PREREQ_WP_PORTAL_TITLE" Value="WebsitePanel Portal" />
-       <Property Id="PI_PREREQ_WP_WDPORTAL" Secure="yes" Value="0" />
-       <Property Id="PI_PREREQ_WP_WDPORTAL_TITLE" Value="WebsitePanel WebDav Portal" />
         <!--IP, PORT, HOSTNAME for each component. Default values.-->
         <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
