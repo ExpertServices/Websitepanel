@@ -2,7 +2,8 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension"
      xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension"
-     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
     <?include Config.Wxi?>
     <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
              UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
@@ -300,7 +301,7 @@
             <Dialog Id="PrereqCheckDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" Disabled="yes">
-                    <Condition Action="enable">PI_PREREQ_OS="1" AND PI_PREREQ_IIS="1" AND PI_PREREQ_ASPNET="1"</Condition>
+                    <Condition Action="enable">PI_PREREQ_OS="1" AND PI_PREREQ_IIS="1" AND PI_PREREQ_ASPNET="1" AND NETFRAMEWORK20="1" AND NETFRAMEWORK35="1" AND NETFRAMEWORK40FULL="1"</Condition>
                 </Control>
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
                 <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
@@ -513,6 +514,9 @@
         <!--Possible values: Passed(y), Fail(n).-->
         <Property Id="PI_PREREQ_OS" Secure="yes" Value="0" />
         <Property Id="PI_PREREQ_OS_TITLE" Value="Operating System" />
+        <PropertyRef Id="NETFRAMEWORK20"/>
+        <PropertyRef Id="NETFRAMEWORK35"/>
+        <PropertyRef Id="NETFRAMEWORK40FULL"/>
         <Property Id="PI_PREREQ_ASPNET" Secure="yes" Value="0"/>
         <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
         <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
