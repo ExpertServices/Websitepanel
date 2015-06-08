@@ -138,4 +138,7 @@
   <data name="secOnBehalfOf.Text" xml:space="preserve">
     <value>Send on Behalf</value>
   </data>
+  <data name="secCalendarPermissions.Text" xml:space="preserve">
+    <value>Calendar access</value>
+  </data>
 </root>

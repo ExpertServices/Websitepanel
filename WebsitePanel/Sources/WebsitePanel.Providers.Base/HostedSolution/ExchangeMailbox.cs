@@ -407,6 +407,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 	    public ExchangeAccount[] OnBehalfOfAccounts { get; set; }
+        public ExchangeAccount[] CalendarAccounts { get; set; }
 
         public bool EnableLitigationHold
         {
