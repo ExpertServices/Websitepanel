@@ -97,7 +97,9 @@ namespace WebsitePanel.Providers.HostedSolution
             LyncNewConferencingPolicy,
             LyncNewExternalAccessPolicy,
             LyncNewMobilityPolicy,
-            ResetMailboxOnBehalfPermissions
+            ResetMailboxOnBehalfPermissions,
+            RemoveMailboxFolderPermissions,
+            AddMailboxFolderPermission
         };
     }
 }

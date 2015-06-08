@@ -164,7 +164,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label2;
-
+        
         /// <summary>
         /// onBehalfOfPermissions control.
         /// </summary>
@@ -173,6 +173,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList onBehalfOfPermissions;
+        
+        /// <summary>
+        /// secCalendarPermissions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secCalendarPermissions;
+        
+        /// <summary>
+        /// panelCalendarPermissions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel panelCalendarPermissions;
+        
+        /// <summary>
+        /// Label3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label3;
+        
+        /// <summary>
+        /// calendarPermissions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList calendarPermissions;
         
         /// <summary>
         /// buttonPanel control.
