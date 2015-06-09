@@ -54,7 +54,7 @@ namespace WebsitePanel.Portal
 
             foreach (var rdsServer in rdsServers.Servers)
             {
-                rdsServer.Status = "...";
+                rdsServer.Status = ES.Services.RDS.GetRdsServerStatus(null, rdsServer.FqdName);
                 rdsServer.SslAvailable = ES.Services.RDS.GetRdsCertificateByItemId(rdsServer.ItemId) != null;
             }
 

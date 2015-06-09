@@ -12,7 +12,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug;BUILD=debug</DefineConstants>
     <SuppressValidation>False</SuppressValidation>
@@ -22,14 +22,16 @@
     </CompilerAdditionalOptions>
     <LinkerAdditionalOptions>
     </LinkerAdditionalOptions>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>BUILD=release</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
+	<Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\SchedulerServiceFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.wxi" />
@@ -41,6 +43,7 @@
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
+
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.

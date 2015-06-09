@@ -27,9 +27,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Globalization;
@@ -389,6 +391,129 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
+        protected override ExchangeAccount[] GetMailboxCalendarAccounts(Runspace runSpace, string organizationId, string accountName)
+        {
+            ExchangeLog.LogStart("GetMailboxCalendarAccounts");
+
+            string cn = GetMailboxCommonName(runSpace, accountName);
+            ExchangeAccount[] ret = GetCalendarAccounts(runSpace, organizationId, cn);
+
+            ExchangeLog.LogEnd("GetMailboxCalendarAccounts");
+            return ret;
+        }
+
+        private ExchangeAccount[] GetCalendarAccounts(Runspace runSpace, string organizationId, string accountId)
+        {
+            ExchangeLog.LogStart("GetCalendarAccounts");
+
+            Command cmd = new Command("Get-MailboxFolderPermission");
+            cmd.Parameters.Add("Identity", accountId + @":\Calendar");
+            Collection<PSObject> results = ExecuteShellCommand(runSpace, cmd);
+
+            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
+
+            foreach (PSObject current in results)
+            {
+                string user = GetPSObjectProperty(current, "User").ToString();
+
+                var accessRights = GetPSObjectProperty(current, "AccessRights") as IEnumerable;
+
+                if (accessRights != null
+                    && accessRights.Cast<object>().All(x => !string.Equals(x.ToString(), "none", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    ExchangeAccount account = GetOrganizationAccount(runSpace, organizationId, user);
+
+                    if (account != null)
+                    {
+                        accounts.Add(account);
+                    }
+                }
+            }
+
+            ExchangeLog.LogEnd("GetCalendarAccounts");
+            return accounts.ToArray();
+        }
+
+        protected override void SetMailboxCalendarPermissions(Runspace runSpace, ExchangeAccount[] existingAccounts, string accountName, string[] accounts)
+        {
+            ExchangeLog.LogStart("SetMailboxCalendarPermissions");
+
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("accountName");
+
+            if (accounts == null)
+                throw new ArgumentNullException("accounts");
+
+            ExchangeTransaction transaction = StartTransaction();
+
+            var folderPath = accountName + @":\Calendar";
+
+            try
+            {
+                SetMailboxFolderPermissions(runSpace, folderPath, existingAccounts.Select(x => x.AccountName).ToArray(), accounts, transaction);
+            }
+            catch (Exception)
+            {
+                RollbackTransaction(transaction);
+                throw;
+            }
+
+            ExchangeLog.LogEnd("SetMailboxCalendarPermissions");
+        }
+
+        private void SetMailboxFolderPermissions(Runspace runSpace, string folderPath, string[] existingAccounts, string[] newAccounts, ExchangeTransaction transaction)
+        {
+            ResetMailboxFolderPermissions(runSpace, folderPath, existingAccounts, transaction);
+
+            SetMailboxCalendarPermissions(runSpace, folderPath, newAccounts, transaction);
+        }
+
+
+        private void SetMailboxCalendarPermissions(Runspace runSpace, string folderPath, string[] accounts, ExchangeTransaction transaction)
+        {
+            ExchangeLog.LogStart("SetMailboxCalendarPermissions");
+
+            foreach (var account in accounts)
+            {
+                AddMailboxFolderPermission(runSpace, folderPath, account);
+
+                transaction.AddMailboxFolderPermission(folderPath, account);
+            }
+
+            ExchangeLog.LogEnd("SetMailboxCalendarPermissions");
+        }
+
+        private void ResetMailboxFolderPermissions(Runspace runSpace, string folderPath, string[] accounts, ExchangeTransaction transaction)
+        {
+            ExchangeLog.LogStart("ResetMailboxFolderPermissions");
+
+            foreach (var account in accounts)
+            {
+                RemoveMailboxFolderPermission(runSpace, folderPath, account);
+
+                transaction.RemoveMailboxFolderPermissions(folderPath, account);
+            }
+
+            ExchangeLog.LogEnd("ResetMailboxFolderPermissions");
+        }
+
+        protected override void AddMailboxFolderPermission(Runspace runSpace, string folderPath, string account)
+        {
+            Command cmd = new Command("Add-MailboxFolderPermission");
+            cmd.Parameters.Add("Identity", folderPath);
+            cmd.Parameters.Add("User", account);
+            cmd.Parameters.Add("AccessRights", "Reviewer");
+
+            ExecuteShellCommand(runSpace, cmd);
+        }
+
+        protected override void RemoveMailboxFolderPermission(Runspace runSpace, string folderPath, string account)
+        {
+            Command cmd = new Command("Remove-MailboxFolderPermission");
+            cmd.Parameters.Add("Identity", folderPath);
+            cmd.Parameters.Add("User", account);
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
         #endregion
 

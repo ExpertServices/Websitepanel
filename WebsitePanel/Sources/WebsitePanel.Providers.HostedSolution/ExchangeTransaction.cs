@@ -180,6 +180,15 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
+        public void ResetMailboxOnBehalfPermissions(string id, string[] accounts)
+        {
+            TransactionAction action = new TransactionAction();
+            action.ActionType = TransactionAction.TransactionActionTypes.ResetMailboxOnBehalfPermissions;
+            action.Accounts = accounts;
+            action.Id = id;
+            Actions.Add(action);
+        }
+
         public void AddMailBoxFullAccessPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
@@ -213,6 +222,24 @@ namespace WebsitePanel.Providers.HostedSolution
             action.ActionType = TransactionAction.TransactionActionTypes.RemoveSendAsPermission;
             action.Id = id;
             action.Account = accountName;
+            Actions.Add(action);
+        }
+
+        public void RemoveMailboxFolderPermissions(string folderPath, string account)
+        {
+            TransactionAction action = new TransactionAction();
+            action.ActionType = TransactionAction.TransactionActionTypes.RemoveMailboxFolderPermissions;
+            action.Id = folderPath;
+            action.Account = account;
+            Actions.Add(action);
+        }
+
+        public void AddMailboxFolderPermission(string folderPath, string account)
+        {
+            TransactionAction action = new TransactionAction();
+            action.ActionType = TransactionAction.TransactionActionTypes.AddMailboxFolderPermission;
+            action.Id = folderPath;
+            action.Account = account;
             Actions.Add(action);
         }
     }

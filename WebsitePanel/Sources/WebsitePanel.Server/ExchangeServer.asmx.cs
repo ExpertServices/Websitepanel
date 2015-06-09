@@ -510,12 +510,12 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts)
+        public void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, string[] calendarAccounts)
         {
             try
             {
                 LogStart("SetMailboxPermissions");
-                ES.SetMailboxPermissions(organizationId, accountName, sendAsAccounts, fullAccessAccounts);
+                ES.SetMailboxPermissions(organizationId, accountName, sendAsAccounts, fullAccessAccounts, onBehalfOfAccounts, calendarAccounts);
                 LogEnd("SetMailboxPermissions");
             }
             catch (Exception ex)

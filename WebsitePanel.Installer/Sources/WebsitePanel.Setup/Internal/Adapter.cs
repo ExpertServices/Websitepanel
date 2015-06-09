@@ -135,7 +135,7 @@ namespace WebsitePanel.Setup.Internal
             //Dst.IISVersion = Utils.GetVersionSetupParameter(Hash, "IISVersion");
             Dst.SetupXml = Utils.GetStringSetupParameter(Hash, "SetupXml");
             Dst.ServerPassword = Utils.GetStringSetupParameter(Hash, Global.Parameters.ServerPassword);
-            Dst.UpdateServerPassword = true;
+            Dst.UpdateServerPassword = !string.IsNullOrWhiteSpace(Dst.ServerPassword);
 
             Dst.WebSiteIP = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSiteIP);
             Dst.WebSitePort = Utils.GetStringSetupParameter(Hash, Global.Parameters.WebSitePort);
@@ -457,7 +457,7 @@ namespace WebsitePanel.Setup.Internal
 
                 try
                 {
-                    ManagedInstallerClass.InstallHelper(new[] { "/u /LogFile=\"\" ", path });
+                    ManagedInstallerClass.InstallHelper(new[] { "/u", path, "/LogFile=" });
                 }
                 catch (Exception ex)
                 {
@@ -4657,9 +4657,9 @@ namespace WebsitePanel.Setup.Internal
 			new SaveAspNetDbConnectionStringAction(),
 			new SaveComponentConfigSettingsAction(),
 			new SaveEntServerConfigSettingsAction(),
-            new SaveSchedulerServiceConnectionStringAction(),
-            new SaveSchedulerServiceCryptoKeyAction(),
-            new InstallSchedulerServiceAction()
+            // new SaveSchedulerServiceConnectionStringAction(),
+            // new SaveSchedulerServiceCryptoKeyAction(),
+            // new InstallSchedulerServiceAction()
 		};
         public WiXEnterpriseServerActionManager(SetupVariables sessionVars)
             : base(sessionVars)

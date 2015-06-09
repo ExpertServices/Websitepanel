@@ -532,9 +532,9 @@ namespace WebsitePanel.Setup.Actions
 			new SaveAspNetDbConnectionStringAction(),
 			new SaveComponentConfigSettingsAction(),
 			new SaveEntServerConfigSettingsAction(),
-            new SaveSchedulerServiceConnectionStringAction(),
-            new SaveSchedulerServiceCryptoKeyAction(),
-            new InstallSchedulerServiceAction()
+            // new SaveSchedulerServiceConnectionStringAction(),
+            // new SaveSchedulerServiceCryptoKeyAction(),
+            // new InstallSchedulerServiceAction()
 		};
 
 		public EntServerActionManager(SetupVariables sessionVars) : base(sessionVars)

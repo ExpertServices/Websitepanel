@@ -134,6 +134,23 @@ namespace WebsitePanel.Setup
 			return Convert.ToBase64String(cipherBytes);
 		}
 
+        public static string Decrypt(string key, string Base64String)
+        {
+            var RijndaelCipher = new RijndaelManaged();
+            byte[] secretText = Convert.FromBase64String(Base64String);
+            byte[] salt = Encoding.ASCII.GetBytes(key.Length.ToString());
+            var secretKey = new PasswordDeriveBytes(key, salt);
+            var decryptor = RijndaelCipher.CreateDecryptor(secretKey.GetBytes(32), secretKey.GetBytes(16));
+            var MemStream = new MemoryStream();
+            var DecryptoStream = new CryptoStream(MemStream, decryptor, CryptoStreamMode.Write);
+            DecryptoStream.Write(secretText, 0, secretText.Length);
+            DecryptoStream.FlushFinalBlock();
+            var Result = MemStream.ToArray();
+            MemStream.Close();
+            DecryptoStream.Close();
+            return Encoding.Unicode.GetString(Result);
+        }
+
 		public static string GetRandomString(int length)
 		{
 			string ptrn = "abcdefghjklmnpqrstwxyz0123456789";

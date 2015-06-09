@@ -31,11 +31,11 @@
   <ItemGroup>
     <Compile Include="CustomVerifyReadyDlg.wxs" />
     <Compile Include="Product.wxs" />
-    <Compile Include="SchedulerServiceFiles.wxs" />
     <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\ServerFiles.wxs" />
     <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\EnterpriseServerFiles.wxs" />
     <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\PortalFiles.wxs" />
     <Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\WebDavPortalFiles.wxs" />
+	<Compile Include="..\..\..\WebsitePanel\Build\$(Configuration)\WiXInstaller\ComponentsFiles\SchedulerServiceFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.wxi" />
@@ -53,6 +53,10 @@
     <WixExtension Include="WixUtilExtension">
       <HintPath>..\..\..\tools\WIX\WixUtilExtension.dll</HintPath>
       <Name>WixUtilExtension</Name>
+    </WixExtension>
+	    <WixExtension Include="WixNetFxExtension">
+      <HintPath>..\..\..\tools\WIX\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
     </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />

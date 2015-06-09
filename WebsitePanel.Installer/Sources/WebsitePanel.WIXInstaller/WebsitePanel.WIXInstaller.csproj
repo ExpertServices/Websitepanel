@@ -42,24 +42,6 @@
     <CustomActionContents>$(IntermediateOutputPath)$(AssemblyName).pdb;@(AddPdb)</CustomActionContents>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\Microsoft.Web.Administration.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.Deployment.WindowsInstaller" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Common\InMemoryStringLogListener.cs" />
     <Compile Include="Common\Tool.cs" />
     <Compile Include="Common\Prop.cs" />
@@ -73,13 +55,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebsitePanel.Setup\WebsitePanel.Setup.csproj">
-      <Project>{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}</Project>
+      <Project>{3951c0ec-bd98-450e-b228-cdbe5bd4ad49}</Project>
       <Name>WebsitePanel.Setup</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Installer.Core\WebsitePanel.Installer.Core.csproj">
-      <Project>{0E4A3F5B-0BB1-4F63-863D-7B0182B378CF}</Project>
-      <Name>WebsitePanel.Installer.Core</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(WixCATargetsPath)" />

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Caching Application Block", "Caching Application Block", "{C8E6F2E4-A5B8-486A-A56E-92D864524682}"
 	ProjectSection(SolutionItems) = preProject
@@ -137,6 +137,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.EnterpriseStorage.Windows2012", "WebsitePanel.Providers.EnterpriseStorage.Windows2012\WebsitePanel.Providers.EnterpriseStorage.Windows2012.csproj", "{D435AB26-3AE1-4AAA-B423-50372B2C16F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.HostedSolution.Lync2013HP", "WebsitePanel.Providers.HostedSolution.Lync2013HP\WebsitePanel.Providers.HostedSolution.Lync2013HP.csproj", "{D92F6235-8E5D-47C1-B96A-A2BE40E17889}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A06DE5E4-4331-47E1-8F46-7B846146B559} = {A06DE5E4-4331-47E1-8F46-7B846146B559}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Web.WebDav", "WebsitePanel.Providers.Web.WebDav\WebsitePanel.Providers.Web.WebDav.csproj", "{CE2DF3D7-D6FF-48FA-B2EA-7B836FCBF698}"
 EndProject
