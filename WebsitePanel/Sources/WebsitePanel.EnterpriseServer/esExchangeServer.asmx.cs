@@ -339,9 +339,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts)
+        public int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts)
         {
-            return ExchangeServerController.SetMailboxPermissions(itemId, accountId, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts);
+            return ExchangeServerController.SetMailboxPermissions(itemId, accountId, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts, contactAccounts);
         }
 
         [WebMethod]

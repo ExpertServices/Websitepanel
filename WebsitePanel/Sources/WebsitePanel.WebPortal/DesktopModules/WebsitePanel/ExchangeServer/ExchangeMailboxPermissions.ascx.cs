@@ -74,6 +74,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 fullAccessPermission.SetAccounts(mailbox.FullAccessAccounts);
                 onBehalfOfPermissions.SetAccounts(mailbox.OnBehalfOfAccounts);
                 calendarPermissions.SetAccounts(mailbox.CalendarAccounts);
+                contactsPermissions.SetAccounts(mailbox.ContactAccounts);
 
                 // get account meta
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
@@ -103,9 +104,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string[] sendAs = sendAsPermission.GetAccounts();
                 string[] onBehalf = onBehalfOfPermissions.GetAccounts();
                 string[] calendar = calendarPermissions.GetAccounts();
+                string[] contacts = contactsPermissions.GetAccounts();
 
                 int result =
-                    ES.Services.ExchangeServer.SetMailboxPermissions(PanelRequest.ItemID, PanelRequest.AccountID, sendAs, fullAccess, onBehalf, calendar);
+                    ES.Services.ExchangeServer.SetMailboxPermissions(PanelRequest.ItemID, PanelRequest.AccountID, sendAs, fullAccess, onBehalf, calendar, contacts);
 
 
                 if (result < 0)
