@@ -2740,7 +2740,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts)
+        public static int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2767,7 +2767,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                exchange.SetMailboxPermissions(org.OrganizationId, account.UserPrincipalName, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts);
+                exchange.SetMailboxPermissions(org.OrganizationId, account.UserPrincipalName, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts, contactAccounts);
 
                 return 0;
             }

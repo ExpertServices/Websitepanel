@@ -4617,26 +4617,28 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetMailboxPermissions", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts) {
+        public int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts) {
             object[] results = this.Invoke("SetMailboxPermissions", new object[] {
                         itemId,
                         accountId,
                         sendAsaccounts,
                         fullAccessAcounts,
                         onBehalfOfAccounts,
-                        calendarAccounts});
+                        calendarAccounts,
+                        contactAccounts});
             return ((int)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SetMailboxPermissions", new object[] {
                         itemId,
                         accountId,
                         sendAsaccounts,
                         fullAccessAcounts,
                         onBehalfOfAccounts,
-                        calendarAccounts}, callback, asyncState);
+                        calendarAccounts,
+                        contactAccounts}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -4646,12 +4648,12 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public void SetMailboxPermissionsAsync(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts) {
-            this.SetMailboxPermissionsAsync(itemId, accountId, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts, null);
+        public void SetMailboxPermissionsAsync(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts) {
+            this.SetMailboxPermissionsAsync(itemId, accountId, sendAsaccounts, fullAccessAcounts, onBehalfOfAccounts, calendarAccounts, contactAccounts, null);
         }
         
         /// <remarks/>
-        public void SetMailboxPermissionsAsync(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, object userState) {
+        public void SetMailboxPermissionsAsync(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts, object userState) {
             if ((this.SetMailboxPermissionsOperationCompleted == null)) {
                 this.SetMailboxPermissionsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetMailboxPermissionsOperationCompleted);
             }
@@ -4661,7 +4663,8 @@ namespace WebsitePanel.EnterpriseServer {
                         sendAsaccounts,
                         fullAccessAcounts,
                         onBehalfOfAccounts,
-                        calendarAccounts}, this.SetMailboxPermissionsOperationCompleted, userState);
+                        calendarAccounts,
+                        contactAccounts}, this.SetMailboxPermissionsOperationCompleted, userState);
         }
         
         private void OnSetMailboxPermissionsOperationCompleted(object arg) {

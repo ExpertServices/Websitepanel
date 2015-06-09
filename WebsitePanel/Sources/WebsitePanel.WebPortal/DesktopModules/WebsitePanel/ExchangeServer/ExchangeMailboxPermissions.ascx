@@ -65,6 +65,16 @@
                         <uc2:AccountsList id="calendarPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
                         </uc2:AccountsList>                                            
                     </asp:Panel>
+                    
+                    <wsp:CollapsiblePanel id="secContactsPermissions" runat="server"
+                        TargetControlID="panelContactsPermissions" meta:resourcekey="secContactsPermissions" Text="Contacts access">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelContactsPermissions">
+                        <asp:Label runat="server" ID="Label4" meta:resourcekey="grandPermission" /><br /><br />
+                        <uc2:AccountsList id="contactsPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
+                        </uc2:AccountsList>                                            
+                    </asp:Panel>
 
                     <div class="FormFooterClean">
                         <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 

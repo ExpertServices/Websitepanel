@@ -141,4 +141,7 @@
   <data name="secCalendarPermissions.Text" xml:space="preserve">
     <value>Calendar access</value>
   </data>
+  <data name="secContactsPermissions.Text" xml:space="preserve">
+    <value>Contacts access</value>
+  </data>
 </root>
