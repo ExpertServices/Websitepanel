@@ -10,6 +10,14 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function () {        
+        setTimeout(checkStatus, 3000);        
+    });    
+    //]]>
+</script>
+
 <asp:UpdatePanel runat="server" ID="messageBoxPanel" UpdateMode="Conditional">
     <ContentTemplate>
         <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -47,7 +55,8 @@
 
 <asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional">
     <ContentTemplate>                 
-
+        <asp:HiddenField runat="server" ID="hdnGridState" Value="false" />
+        <asp:HiddenField runat="server" ID="hdnItemId" Value="false" />
         <asp:GridView id="gvRDSServers" runat="server" AutoGenerateColumns="False"
 	        AllowPaging="True" AllowSorting="True"
 	        CssSelectorClass="NormalGridView"
@@ -55,6 +64,12 @@
 	        DataSourceID="odsRDSServersPaged" EnableViewState="False"
 	        EmptyDataText="gvRDSServers">
 	        <Columns>
+                <asp:TemplateField>
+                    <ItemStyle Width="0%" />
+                    <ItemTemplate>                        
+                        <asp:HiddenField ID="hdnRdsServerFqdnName" runat="server" Value='<%# Eval("FqdName") %>' />
+                    </ItemTemplate>
+                </asp:TemplateField>
 		        <asp:TemplateField SortExpression="Name" HeaderText="Server name">
 		            <HeaderStyle Wrap="false" />
                     <ItemStyle Wrap="False" Width="15%"/>
@@ -75,26 +90,27 @@
                 <asp:TemplateField meta:resourcekey="gvViewInfo">
                     <ItemStyle Width="8%" HorizontalAlign="Right"/>
                     <ItemTemplate>
-                        <asp:LinkButton OnClientClick="ShowProgressDialog('Getting Server Info ...');return true;" Visible='<%# Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>' CommandName="ViewInfo" CommandArgument='<%# Eval("Id")%>' ID="lbViewInfo" runat="server" Text="View Info"/>
+                        <asp:LinkButton OnClientClick="ShowProgressDialog('Getting Server Info ...');return true;" style="display:none"
+                            CommandName="ViewInfo" CommandArgument='<%# Eval("Id")%>' ID="lbViewInfo" runat="server" Text="View Info"/>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField meta:resourcekey="gvRestart">
                     <ItemStyle HorizontalAlign="Right"/>
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbRestart" CommandName="Restart" CommandArgument='<%# Eval("Id")%>' Visible='<%# Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>'
-                            runat="server" Text="Restart" OnClientClick="if(confirm('Are you sure you want to restart selected server?')) ShowProgressDialog('Loading...'); else return false;"/>
+                        <asp:LinkButton ID="lbRestart" CommandName="Restart" CommandArgument='<%# Eval("Id")%>' runat="server" Text="Restart" style="display:none"
+                            OnClientClick="if(confirm('Are you sure you want to restart selected server?')) ShowProgressDialog('Loading...'); else return false;"/>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField meta:resourcekey="gvShutdown">
                     <ItemStyle Width="9%" HorizontalAlign="Right"/>
                     <ItemTemplate>
-                        <asp:LinkButton ID="lbShutdown" CommandName="ShutDown" CommandArgument='<%# Eval("Id")%>' Visible='<%# Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>'
+                        <asp:LinkButton ID="lbShutdown" CommandName="ShutDown" CommandArgument='<%# Eval("Id")%>' style="display:none"
                             runat="server" Text="Shut Down" OnClientClick="if(confirm('Are you sure you want to shut down selected server?')) ShowProgressDialog('Loading...'); else return false;"/>
                     </ItemTemplate>
                 </asp:TemplateField>
                 <asp:TemplateField>
 			        <ItemTemplate>
-				        <asp:LinkButton ID="lnkInstallCertificate" runat="server" Text="Certificate" Visible='<%# Convert.ToBoolean(Eval("SslAvailable")) && Eval("Status") != null && Eval("Status").ToString().StartsWith("Online") %>'
+				        <asp:LinkButton ID="lnkInstallCertificate" runat="server" Text="Certificate" style="display:none"
 					        CommandName="InstallCertificate" CommandArgument='<%# Eval("Id") %>' ToolTip="Repair Certificate"
                             OnClientClick="if(confirm('Are you sure you want to install certificate?')) ShowProgressDialog('Installing certificate...'); else return false;"></asp:LinkButton>                        
 			        </ItemTemplate>
