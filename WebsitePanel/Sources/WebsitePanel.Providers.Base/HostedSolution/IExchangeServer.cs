@@ -74,7 +74,7 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
         void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
         void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
-        void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, string[] calendarAccounts);
+        void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts);
         ExchangeMailbox GetMailboxPermissions(string organizationId, string accountName);
         ExchangeMailboxStatistics GetMailboxStatistics(string accountName);
         string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName);
