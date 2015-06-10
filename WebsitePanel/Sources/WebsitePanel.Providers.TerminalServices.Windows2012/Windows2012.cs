@@ -2127,6 +2127,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             var ipAddress = GetServerIp(hostName);
 
+            if (ipAddress == null)
+            {
+                return false;
+            }
+
             var reply = ping.Send(ipAddress, 3000);
 
             return reply != null && reply.Status == IPStatus.Success;
@@ -2234,9 +2239,16 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         internal IEnumerable<IPAddress> GetServerIps(string hostname)
         {
-            var address = Dns.GetHostAddresses(hostname);
+            try
+            {
+                var address = Dns.GetHostAddresses(hostname);
+                return address;
+            }
+            catch
+            {
+            }
 
-            return address;
+            return new List<IPAddress>();
         }
 
         internal void RemoveItem(Runspace runSpace, string path)
