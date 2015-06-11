@@ -110,6 +110,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\RemoteDesktopServicesProx
 REM %WSDL% %SERVER_URL%/esEnterpriseStorage.asmx /out:.\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs
 
+%WSDL% %SERVER_URL%/esStorageSpaces.asmx /out:.\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs
 
 
 

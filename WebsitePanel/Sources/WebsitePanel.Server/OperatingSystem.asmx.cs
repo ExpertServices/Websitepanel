@@ -603,6 +603,24 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public bool InstallFsrmService()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' InstallFsrmService", ProviderSettings.ProviderName);
+                bool bResult = OsProvider.InstallFsrmService();
+                Log.WriteEnd("'{0}' InstallFsrmService", ProviderSettings.ProviderName);
+                return bResult;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' InstallFsrmService", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
         #endregion
 
         #region Synchronizing

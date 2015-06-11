@@ -171,4 +171,10 @@
   <data name="colFolderGeneralSettings.Text" xml:space="preserve">
     <value>General Settings</value>
   </data>
+  <data name="btnMigrate.Text" xml:space="preserve">
+    <value>Move to Storage Spaces</value>
+  </data>
+  <data name="btnMigrate.OnClientClick" xml:space="preserve">
+    <value>if(!confirm('Are you sure?')) return false; else ShowProgressDialog('Moving folder to Storage Space...');</value>
+  </data>
 </root>

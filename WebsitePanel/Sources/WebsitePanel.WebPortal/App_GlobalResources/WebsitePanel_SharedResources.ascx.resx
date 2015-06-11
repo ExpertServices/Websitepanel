@@ -5901,4 +5901,31 @@
   <data name="SearchObject.NOT_FOUND" xml:space="preserve">
     <value>Not found</value>
   </data>
+  <data name="Error.STORAGE_SPACES_LEVEL_REMOVE" xml:space="preserve">
+    <value>Error removing storage space level</value>
+  </data>
+  <data name="Error.STORAGE_SPACE_LEVEL_SAVE" xml:space="preserve">
+    <value>Error saving storage space level</value>
+  </data>
+  <data name="Success.STORAGE_SPACES_LEVEL_REMOVE" xml:space="preserve">
+    <value>Storage space level successfully removed</value>
+  </data>
+  <data name="Success.STORAGE_SPACE_LEVEL_SAVE" xml:space="preserve">
+    <value>Storage space level successfully saved</value>
+  </data>
+  <data name="ResourceGroup.StorageSpaceServices" xml:space="preserve">
+    <value>Storage Space Services</value>
+  </data>
+  <data name="Error.STORAGE_SPACE_SAVE" xml:space="preserve">
+    <value>Error saving storage space</value>
+  </data>
+  <data name="Success.STORAGE_SPACE_SAVE" xml:space="preserve">
+    <value>Storage space successfully saved</value>
+  </data>
+  <data name="Error.ES_MOVE_TO_STORAGE_SPACE" xml:space="preserve">
+    <value>Error moving Enterprise folder to storage space</value>
+  </data>
+  <data name="Success.ES_MOVE_TO_STORAGE_SPACE" xml:space="preserve">
+    <value>Enterprise folder succefully moved to Storage Space</value>
+  </data>
 </root>

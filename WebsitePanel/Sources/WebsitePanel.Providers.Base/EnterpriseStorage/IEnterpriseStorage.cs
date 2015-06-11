@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.Web;
 
@@ -48,5 +49,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting);
         bool CheckFileServicesInstallation();
         SystemFile[] Search(string organizationId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive);
+        SystemFile[] GetQuotasForOrganization(SystemFile[] folders);
+        void MoveFolder(string oldPath, string newPath);
     }
 }

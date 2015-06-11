@@ -60,5 +60,6 @@ namespace WebsitePanel.EnterpriseServer
         public const string EnterpriseStorage = "EnterpriseStorage";
         public const string ServiceLevels = "Service Levels";
         public const string RDS = "RDS";
+        public const string StorageSpaces = "StorageSpaceServices";
     }
 }

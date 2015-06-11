@@ -127,6 +127,7 @@
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
+    <Content Include="esStorageSpaces.asmx" />
     <Content Include="esVirtualizationServer2012.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
@@ -183,6 +184,10 @@
     </Compile>
     <Compile Include="esLync.asmx.cs">
       <DependentUpon>esLync.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="esStorageSpaces.asmx.cs">
+      <DependentUpon>esStorageSpaces.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="esVirtualizationServer2012.asmx.cs">

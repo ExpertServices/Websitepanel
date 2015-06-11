@@ -218,5 +218,15 @@ namespace WebsitePanel.Portal
         {
             get { return GetInt("CollectionId"); }
         }
+
+        public static int SsLevelId
+        {
+            get { return GetInt("SsLevelId"); }
+        }
+
+        public static int StorageSpaceId
+        {
+            get { return GetInt("StorageSpaceId"); }
+        }
     }
 }

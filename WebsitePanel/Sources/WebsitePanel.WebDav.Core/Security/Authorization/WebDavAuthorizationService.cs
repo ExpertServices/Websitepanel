@@ -6,6 +6,7 @@ using Cobalt;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Extensions;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
 using WebsitePanel.WebDav.Core.Security.Authorization.Enums;
@@ -17,6 +18,8 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
     {
         public bool HasAccess(WspPrincipal principal, string path)
         {
+            path = path.RemoveLeadingFromPath(principal.OrganizationId);
+
             var permissions = GetPermissions(principal, path);
 
             return permissions.HasFlag(WebDavPermissions.Read) || permissions.HasFlag(WebDavPermissions.Write);
@@ -83,7 +86,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
             {
                 dictionary = new Dictionary<string, IEnumerable<ESPermission>>();
 
-                var rootFolders = WSP.Services.EnterpriseStorage.GetEnterpriseFolders(principal.ItemId);
+                var rootFolders = WSP.Services.EnterpriseStorage.GetEnterpriseFoldersPaged(principal.ItemId, false,false, false,"","",0, int.MaxValue).PageItems;
 
                 foreach (var rootFolder in rootFolders)
                 {
@@ -101,7 +104,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authorization
             return dictionary.ContainsKey(rootFolderName) ? dictionary[rootFolderName] : new ESPermission[0];
         }
 
-        private IEnumerable<ExchangeAccount> GetUserSecurityGroups(WspPrincipal principal)
+        public IEnumerable<ExchangeAccount> GetUserSecurityGroups(WspPrincipal principal)
         {
             var groups = HttpContext.Current.Session != null ? HttpContext.Current.Session[WebDavAppConfigManager.Instance.SessionKeys.UserGroupsKey] as IEnumerable<ExchangeAccount> : null;
 

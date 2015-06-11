@@ -103,11 +103,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard,
                     chkAddDefaultGroup.Checked);
 
-                /*if (!result.IsSuccess && result.ErrorCodes.Count > 0)
+                if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
                     messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Enterprise Storage");
+
                     return;
-                }*/
+                }
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folder_settings",
                     "FolderID=" + txtFolderName.Text,

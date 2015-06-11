@@ -735,8 +735,6 @@
   <data name="ModuleTitle.HostedSharePointRestoreSiteCollection" xml:space="preserve">
     <value>Restore Site Collection</value>
   </data>
-
-
   <data name="ModuleTitle.HostedSharePointEnterpriseSiteCollection" xml:space="preserve">
     <value>SharePoint Enterprise Site Collection</value>
   </data>
@@ -749,7 +747,6 @@
   <data name="ModuleTitle.HostedSharePointEnterpriseRestoreSiteCollection" xml:space="preserve">
     <value>Restore Site Collection</value>
   </data>
-
   <data name="ModuleTitle.WebSiteIPAddresses" xml:space="preserve">
     <value>Web Site IP Addresses</value>
   </data>
@@ -816,7 +813,6 @@
   <data name="ModuleTitle.RDSServersEditServer" xml:space="preserve">
     <value>Edit RDS Server</value>
   </data>
-  
   <data name="ModuleTitle.VirtualPrivateServers2012" xml:space="preserve">
     <value>Virtual Private Servers</value>
   </data>
@@ -894,5 +890,23 @@
   </data>
   <data name="ModuleTitle.VpsToolsReinstallServer" xml:space="preserve">
     <value>Re-install Server</value>
+  </data>
+  <data name="ModuleTitle.SpaceStorages" xml:space="preserve">
+    <value>Storage Spaces</value>
+  </data>
+  <data name="ModuleTitle.AddSpaceStorageLevel" xml:space="preserve">
+    <value>Add Storage Space Level</value>
+  </data>
+  <data name="ModuleTitle.EditSpaceStorageLevel" xml:space="preserve">
+    <value>Edit Space Storage Level</value>
+  </data>
+  <data name="ModuleTitle.SpaceStorageLevels" xml:space="preserve">
+    <value>Storage Space Levels</value>
+  </data>
+  <data name="ModuleTitle.AddStorageSpace" xml:space="preserve">
+    <value>Add Storage Space</value>
+  </data>
+  <data name="ModuleTitle.EditStorageSpace" xml:space="preserve">
+    <value>Edit Storage Space</value>
   </data>
 </root>

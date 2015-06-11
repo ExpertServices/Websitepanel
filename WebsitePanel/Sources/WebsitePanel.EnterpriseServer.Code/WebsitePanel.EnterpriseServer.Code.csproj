@@ -180,6 +180,7 @@
     <Compile Include="SharePoint\HostedSharePointServerController.cs" />
     <Compile Include="SharePoint\SharePointServerController.cs" />
     <Compile Include="StatisticsServers\StatisticsServerController.cs" />
+    <Compile Include="StorageSpaces\StorageSpacesController.cs" />
     <Compile Include="System\SystemController.cs" />
     <Compile Include="Tasks\SendEmailNotification.cs" />
     <Compile Include="Tasks\TaskController.cs" />
