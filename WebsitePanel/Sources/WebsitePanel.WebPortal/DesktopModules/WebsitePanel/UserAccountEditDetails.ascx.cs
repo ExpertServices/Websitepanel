@@ -73,10 +73,6 @@ namespace WebsitePanel.Portal
                     // select loginStatus
                     loginStatus.SelectedIndex = user.LoginStatusId;
 
-					// bind ec
-					chkEcommerceEnbl.Checked = user.EcommerceEnabled;
-					BindEcommerceEnabled();
-
                     rowRole.Visible = !editAdminAccount;
 
                     // select status
@@ -130,8 +126,6 @@ namespace WebsitePanel.Portal
                 user.Role = (UserRole)Enum.Parse(typeof(UserRole), role.SelectedValue);
                 user.IsDemo = chkDemo.Checked;
                 user.Status = ViewState[UserStatusConst] != null ? (UserStatus) ViewState[UserStatusConst]: UserStatus.Active;
-				//
-				user.EcommerceEnabled = chkEcommerceEnbl.Checked;
 
                 user.LoginStatusId = loginStatus.SelectedIndex;
                 
@@ -205,17 +199,6 @@ namespace WebsitePanel.Portal
                     role.Items.Remove("Reseller");
             }
         }
-
-		private void BindEcommerceEnabled()
-		{
-			// set visibility
-			rowEcommerceEnbl.Visible = (role.SelectedValue != "User");
-		}
-
-		protected void role_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			BindEcommerceEnabled();
-		}
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {

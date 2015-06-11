@@ -52,17 +52,19 @@ namespace WebsitePanel.Portal
                 // bind roles
                 BindForm();
                 BindRoles(PanelSecurity.SelectedUser);
-				BindEcommerceRow();
             }
         }
 
         private void BindForm()
         {
-			UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.ACCOUNT_SUMMARY_LETTER);
-        	bool accountSummaryEmailEnabled = !String.IsNullOrEmpty(settings["EnableLetter"]) && Utils.ParseBool(settings["EnableLetter"], false);
-        	this.chkAccountLetter.Enabled = accountSummaryEmailEnabled;
-        	this.pnlDisabledSummaryLetterHint.Visible = !accountSummaryEmailEnabled;
-            if (PortalUtils.GetHideDemoCheckbox()) this.lblDemoAccount.Visible = this.chkDemo.Checked = this.chkDemo.Visible = false;
+            UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId,
+                UserSettings.ACCOUNT_SUMMARY_LETTER);
+            bool accountSummaryEmailEnabled = !String.IsNullOrEmpty(settings["EnableLetter"]) &&
+                                              Utils.ParseBool(settings["EnableLetter"], false);
+            this.chkAccountLetter.Enabled = accountSummaryEmailEnabled;
+            this.pnlDisabledSummaryLetterHint.Visible = !accountSummaryEmailEnabled;
+            if (PortalUtils.GetHideDemoCheckbox())
+                this.lblDemoAccount.Visible = this.chkDemo.Checked = this.chkDemo.Visible = false;
 
             //reseller.UserId = PanelSecurity.SelectedUserId;
             userPassword.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.WEBSITEPANEL_POLICY, "PasswordPolicy");
@@ -73,7 +75,7 @@ namespace WebsitePanel.Portal
             if (user.Role == UserRole.User)
                 role.Items.Remove("Reseller");
 
-            if ((PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) | 
+            if ((PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) |
                 (PanelSecurity.LoggedUser.Role == UserRole.ResellerHelpdesk))
                 role.Items.Remove("Reseller");
         }
@@ -86,14 +88,11 @@ namespace WebsitePanel.Portal
             // gather data from form
             UserInfo user = new UserInfo();
             user.UserId = 0;
-            user.Role = (UserRole)Enum.Parse(typeof(UserRole), role.SelectedValue);
+            user.Role = (UserRole) Enum.Parse(typeof (UserRole), role.SelectedValue);
             user.StatusId = Int32.Parse(status.SelectedValue);
             user.OwnerId = PanelSecurity.SelectedUserId;
             user.IsDemo = chkDemo.Checked;
             user.IsPeer = false;
-			//
-			if (chkEcommerceEnbl.Visible)
-				user.EcommerceEnabled = chkEcommerceEnbl.Checked;
 
             // account info
             user.FirstName = txtFirstName.Text;
@@ -102,11 +101,11 @@ namespace WebsitePanel.Portal
             user.Email = txtEmail.Text;
             user.SecondaryEmail = txtSecondaryEmail.Text;
             user.HtmlMail = ddlMailFormat.SelectedIndex == 1;
-            user.Username  = txtUsername.Text.Trim();
+            user.Username = txtUsername.Text.Trim();
 //            user.Password = userPassword.Password;
 
             // contact info
-			user.CompanyName = contact.CompanyName;
+            user.CompanyName = contact.CompanyName;
             user.Address = contact.Address;
             user.City = contact.City;
             user.Country = contact.Country;
@@ -157,11 +156,6 @@ namespace WebsitePanel.Portal
             }
         }
 
-		protected void role_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			BindEcommerceRow();
-		}
-
         protected void btnCreate_Click(object sender, EventArgs e)
         {
             SaveUser();
@@ -171,11 +165,5 @@ namespace WebsitePanel.Portal
         {
             Response.Redirect(NavigateURL(PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString()));
         }
-
-		private void BindEcommerceRow()
-		{
-			//
-			rowEcommerceEnbl.Visible = (role.SelectedValue == "Reseller");
-		}
     }
 }

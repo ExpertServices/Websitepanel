@@ -98,30 +98,8 @@
     <Compile Include="Common\Utils.cs" />
     <Compile Include="DatabaseServers\DatabaseServerController.cs" />
     <Compile Include="Data\DataProvider.cs" />
-    <Compile Include="Data\EcommerceProvider.cs" />
     <Compile Include="Data\SQLHelper.cs" />
     <Compile Include="DnsServers\DnsServerController.cs" />
-    <Compile Include="Ecommerce\CategoryController.cs" />
-    <Compile Include="Ecommerce\ContractSystem\ContractController.cs" />
-    <Compile Include="Ecommerce\Helpers.cs" />
-    <Compile Include="Ecommerce\InvoiceController.cs" />
-    <Compile Include="Ecommerce\MiscController.cs" />
-    <Compile Include="Ecommerce\PaymentGatewayController.cs" />
-    <Compile Include="Ecommerce\Provisioning\DomainNameController.cs" />
-    <Compile Include="Ecommerce\Provisioning\HostingAddonController.cs" />
-    <Compile Include="Ecommerce\Provisioning\HostingPackageController.cs" />
-    <Compile Include="Ecommerce\Provisioning\IServiceProvisioning.cs" />
-    <Compile Include="Ecommerce\Provisioning\ProvisioningContext.cs" />
-    <Compile Include="Ecommerce\Provisioning\ServiceProvisioningBase.cs" />
-    <Compile Include="Ecommerce\ServiceController.cs" />
-    <Compile Include="Ecommerce\ServiceHandlers\ServiceHandlerController.cs" />
-    <Compile Include="Ecommerce\StorefrontController.cs" />
-    <Compile Include="Ecommerce\StorehouseController.cs" />
-    <Compile Include="Ecommerce\SystemPluginController.cs" />
-    <Compile Include="Ecommerce\TaskEventHandlers\SendEmailNotification.cs" />
-    <Compile Include="Ecommerce\TaskEventHandlers\SystemTriggersAgent.cs" />
-    <Compile Include="Ecommerce\TriggerSystem\CommonTrigger.cs" />
-    <Compile Include="Ecommerce\TriggerSystem\TriggerController.cs" />
     <Compile Include="EnterpriseStorage\EnterpriseStorageController.cs" />
     <Compile Include="ExchangeServer\ExchangeServerController.cs" />
     <Compile Include="Files\FilesController.cs" />
@@ -150,25 +128,20 @@
     <Compile Include="Provisioning\ImportController.cs" />
     <Compile Include="RemoteDesktopServices\RemoteDesktopServicesHelpers.cs" />
     <Compile Include="RemoteDesktopServices\RemoteDesktopServicesController.cs" />
-    <Compile Include="SchedulerTasks\ActivatePaidInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\BackupDatabaseTask.cs" />
     <Compile Include="SchedulerTasks\BackupTask.cs" />
     <Compile Include="SchedulerTasks\DeleteExchangeAccountsTask.cs" />
     <Compile Include="SchedulerTasks\CalculateExchangeDiskspaceTask.cs" />
     <Compile Include="SchedulerTasks\CalculatePackagesBandwidthTask.cs" />
     <Compile Include="SchedulerTasks\CalculatePackagesDiskspaceTask.cs" />
-    <Compile Include="SchedulerTasks\CancelOverdueInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\CheckWebSiteTask.cs" />
     <Compile Include="SchedulerTasks\DomainExpirationTask.cs" />
     <Compile Include="SchedulerTasks\FTPFilesTask.cs" />
-    <Compile Include="SchedulerTasks\GenerateInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\HostedSolutionReport.cs" />
     <Compile Include="SchedulerTasks\DomainLookupViewTask.cs" />
     <Compile Include="SchedulerTasks\NotifyOverusedDatabasesTask.cs" />
-    <Compile Include="SchedulerTasks\RunPaymentQueueTask.cs" />
     <Compile Include="SchedulerTasks\RunSystemCommandTask.cs" />
     <Compile Include="SchedulerTasks\SendMailNotificationTask.cs" />
-    <Compile Include="SchedulerTasks\SuspendOverdueInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\SuspendOverusedPackagesTask.cs" />
     <Compile Include="SchedulerTasks\UserPasswordExpirationNotificationTask.cs" />
     <Compile Include="SchedulerTasks\ZipFilesTask.cs" />
@@ -211,10 +184,6 @@
     <ProjectReference Include="..\WebsitePanel.Templates\WebsitePanel.Templates.csproj">
       <Project>{387FA0EF-3927-45FF-8F8F-BCCD735540C6}</Project>
       <Name>WebsitePanel.Templates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Whois\WebsitePanel.Whois.csproj">
-      <Project>{7112B144-C5EE-43C2-9441-569D75D13CB9}</Project>
-      <Name>WebsitePanel.Whois</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
