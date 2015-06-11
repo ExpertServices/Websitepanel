@@ -165,9 +165,6 @@
   <data name="lblUsername.Text" xml:space="preserve">
     <value>User name:</value>
   </data>
-  <data name="lclEcommerceEnabled.Text" xml:space="preserve">
-    <value>Ecommerce Enabled:</value>
-  </data>
   <data name="roleItem.Administrator" xml:space="preserve">
     <value>Administrator</value>
   </data>

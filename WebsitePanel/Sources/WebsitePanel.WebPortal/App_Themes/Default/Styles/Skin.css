@@ -265,7 +265,7 @@ input.Button3:hover {background-color:#ced2d5; border-color:#c3cccd;}
 .LogRecord .Error {color: red; padding: 2px;}
 .FormSectionHeader {font-size: 9pt; font-weight: bold;}
 .PopupExtender {background-color: #ffffff; padding: 7px; border: solid 1px #c0c0c0;}
-.ProductBlock {background-image: url(../Images/Ecommerce/product_head_bg.gif); background-repeat: repeat-x; padding-top: 11px; width: 250px;}
+.ProductBlock {background-repeat: repeat-x; padding-top: 11px; width: 250px;}
 .WhiteSpacer {width: 20px; height: 20px; visibility: hidden; font-size: 5px;}
 .ProductInfo {border-left: solid 6px #E2E2E2; padding-left: 13px; text-transform: uppercase; color: #6A6A6A; font-size: 10pt; font-weight: bold; vertical-align: top; width: 100%;}
 .NormalText {font-size: 8pt; text-transform: none; font-weight: normal;}

@@ -38,7 +38,7 @@ using System.Security.Cryptography.Xml;
 
 using WebsitePanel.Providers;
 using OS = WebsitePanel.Providers.OS;
-using WebsitePanel.Ecommerce.EnterpriseServer;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.EnterpriseServer
 {
