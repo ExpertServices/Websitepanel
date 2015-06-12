@@ -26,15 +26,6 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\CRMProxy.cs
 REM %WSDL% %SERVER_URL%/esDatabaseServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\DatabaseServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\DatabaseServersProxy.cs
 
-REM %WSDL% %SERVER_URL%/ecServiceHandler.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ecServiceHandlerProxy.cs /namespace:WebsitePanel.Ecommerce.EnterpriseServer /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ecServiceHandlerProxy.cs
-
-REM %WSDL% %SERVER_URL%/ecStorefront.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ecStorefrontProxy.cs /namespace:WebsitePanel.Ecommerce.EnterpriseServer /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ecStorefrontProxy.cs
-
-REM %WSDL% %SERVER_URL%/ecStorehouse.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ecStorehouseProxy.cs /namespace:WebsitePanel.Ecommerce.EnterpriseServer /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ecStorehouseProxy.cs
-
 REM %WSDL% %SERVER_URL%/esExchangeServer.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs
 

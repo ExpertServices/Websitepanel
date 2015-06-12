@@ -131,8 +131,6 @@
     <Content Include="esVirtualizationServer2012.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
-    <Content Include="ecStorefront.asmx" />
-    <Content Include="ecStorehouse.asmx" />
     <Content Include="esApplicationsInstaller.asmx" />
     <Content Include="esAuditLog.asmx" />
     <Content Include="esAuthentication.asmx" />
@@ -204,18 +202,6 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="ecServiceHandler.asmx.cs">
-      <DependentUpon>ecServiceHandler.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ecStorefront.asmx.cs">
-      <DependentUpon>ecStorefront.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ecStorehouse.asmx.cs">
-      <DependentUpon>ecStorehouse.asmx</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="esApplicationsInstaller.asmx.cs">
       <DependentUpon>esApplicationsInstaller.asmx</DependentUpon>
@@ -335,7 +321,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ecServiceHandler.asmx" />
     <Content Include="esBlackBerry.asmx" />
     <Content Include="esOCS.asmx" />
     <Content Include="esVirtualizationServer.asmx" />

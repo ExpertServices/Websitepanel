@@ -102,8 +102,7 @@
                     <asp:Label ID="lblRole" runat="server" meta:resourcekey="lblRole" Text="Role:"></asp:Label>
                 </td>
                 <td class="NormalBold" valign="top">
-                    <asp:DropDownList ID="role" runat="server" resourcekey="role" AutoPostBack="true"
-                        OnSelectedIndexChanged="role_SelectedIndexChanged" CssClass="NormalTextBox">
+                    <asp:DropDownList ID="role" runat="server" resourcekey="role" AutoPostBack="true" CssClass="NormalTextBox">
                         <asp:ListItem Value="User"></asp:ListItem>
                         <asp:ListItem Value="Reseller"></asp:ListItem>
                     </asp:DropDownList>
@@ -129,14 +128,6 @@
                 <td class="Normal">
                     <asp:CheckBox ID="chkDemo" runat="server" meta:resourcekey="chkDemo" Text="Yes">
                     </asp:CheckBox>
-                </td>
-            </tr>
-            <tr id="rowEcommerceEnbl" runat="server">
-                <td class="SubHead">
-                    <asp:Localize runat="server" meta:resourcekey="lclEcommerceEnabled" />
-                </td>
-                <td class="Normal">
-                    <asp:CheckBox runat="server" ID="chkEcommerceEnbl" Text="Yes" />
                 </td>
             </tr>
             <tr>

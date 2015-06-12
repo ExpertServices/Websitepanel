@@ -40,7 +40,6 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
 using System.Collections.Generic;
-using WebsitePanel.Ecommerce.EnterpriseServer;
 
 namespace WebsitePanel.Portal
 {

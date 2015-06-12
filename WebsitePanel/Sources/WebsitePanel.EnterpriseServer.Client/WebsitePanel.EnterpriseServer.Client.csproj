@@ -97,9 +97,6 @@
     <Compile Include="VirtualizationServerProxyForPrivateCloud.cs" />
     <Compile Include="CRMProxy.cs" />
     <Compile Include="DatabaseServersProxy.cs" />
-    <Compile Include="ecServiceHandlerProxy.cs" />
-    <Compile Include="ecStorefrontProxy.cs" />
-    <Compile Include="ecStorehouseProxy.cs" />
     <Compile Include="FilesProxy.cs" />
     <Compile Include="FtpServersProxy.cs" />
     <Compile Include="HostedSharePointServersProxy.cs" />

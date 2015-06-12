@@ -186,9 +186,6 @@
   <data name="lblUserStatus.Text" xml:space="preserve">
     <value>Account Status</value>
   </data>
-  <data name="lclEcommerceEnabled.Text" xml:space="preserve">
-    <value>Ecommerce Enabled:</value>
-  </data>
   <data name="roleItem.Reseller" xml:space="preserve">
     <value>Reseller</value>
   </data>
