@@ -606,6 +606,13 @@ namespace WebsitePanel.EnterpriseServer
 
                     string usersDomain = esSesstings["UsersDomain"];
 
+                    var folders = GetEnterpriseFoldersPaged(itemId, false,false,false, string.Empty,string.Empty, 0, int.MaxValue);
+
+                    foreach (var folder in folders.PageItems)
+                    {
+                        DeleteFolder(itemId, folder.Name);
+                    }
+
                     EnterpriseStorageController.DeleteWebDavDirectory(packageId, usersDomain, org.OrganizationId);
                     EnterpriseStorageController.DeleteFolder(itemId);
                     EnterpriseStorageController.DeleteMappedDrivesGPO(itemId);
@@ -876,8 +883,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (webDavSetting == null)
                 {
+                    int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
+
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
+
                     if (rootFolder)
                     {
+                        webDavSetting = new WebDavSetting(esSesstings["LocationDrive"], esSesstings["UsersHome"], esSesstings["UsersDomain"]);
 
                         es.CreateFolder(org.OrganizationId, folderName, webDavSetting);
 
@@ -902,10 +914,6 @@ namespace WebsitePanel.EnterpriseServer
 
                         throw new Exception("Error creating storage space folder");
                     }
-
-                    int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
-
-                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
 
                     var storageFolder = StorageSpacesController.GetStorageSpaceFolderById(storageSpaceFolderResult.Value);
 
