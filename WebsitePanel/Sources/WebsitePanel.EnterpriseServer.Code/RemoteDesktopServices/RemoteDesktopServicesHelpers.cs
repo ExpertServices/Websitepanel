@@ -276,7 +276,16 @@ namespace WebsitePanel.EnterpriseServer
 
         public static RdsServer FillRdsServerData(RdsServer server)
         {
-            server.Address = GetServerIp(server.FqdName).ToString();
+            var serverIp = GetServerIp(server.FqdName);
+
+            if (serverIp != null)
+            {
+                server.Address = serverIp.ToString();
+            }
+            else
+            {
+                server.Address = "";
+            }
 
             return server;
         }
@@ -349,9 +358,16 @@ namespace WebsitePanel.EnterpriseServer
 
         private static IEnumerable<System.Net.IPAddress> GetServerIps(string hostname)
         {
-            var address = Dns.GetHostAddresses(hostname);
+            try
+            {
+                var address = Dns.GetHostAddresses(hostname);
+                return address;
+            }
+            catch
+            {
+            }
 
-            return address;
+            return new List<System.Net.IPAddress>();
         }               
     }
 }

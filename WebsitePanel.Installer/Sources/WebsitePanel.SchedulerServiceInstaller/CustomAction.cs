@@ -105,7 +105,7 @@ namespace WebsitePanel.SchedulerServiceInstaller
         {
             session["SKIPCONNECTIONSTRINGSTEP"] = "0";
 
-            session["SERVICEFOLDER"] = session["INSTALLFOLDER"];
+            session["SERVICEFOLDER"] = session["PI_SCHEDULER_INSTALL_DIR"];
 
             var servicePath = SecurityUtils.GetServicePath("WebsitePanel Scheduler");
 

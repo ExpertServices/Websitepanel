@@ -332,11 +332,7 @@
     <None Include="App_Data\WebsitePanel_Pages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="App_Data\Ecommerce_Modules.config" />
-    <None Include="App_Data\Ecommerce_Pages.config" />
     <None Include="App_Data\SupportedLocales.config" />
-    <Content Include="Services\2Checkout.ashx" />
-    <Content Include="Services\PayPalIPN.ashx" />
     <Content Include="App_Themes\Default\Images.skin" />
     <Content Include="App_Themes\Default\Common.skin" />
     <Content Include="App_Themes\Default\DataBoundControls.skin" />
@@ -373,7 +369,6 @@
     </Content>
     <Content Include="App_Skins\Default\Browse1.ascx" />
     <Content Include="App_Skins\Default\Browse3.ascx" />
-    <Content Include="App_Skins\Default\Storefront.ascx" />
     <Content Include="App_Themes\Default\Buttons.skin" />
     <Content Include="App_Themes\Default\Icons\accounting_mail_48.png" />
     <Content Include="App_Themes\Default\Icons\admin_128.png" />
@@ -571,15 +566,6 @@
   <ItemGroup>
     <Content Include="App_Containers\Default\Exchange.ascx" />
     <Content Include="App_Containers\Default\VPS.ascx" />
-    <Content Include="App_GlobalResources\Ecommerce_Modules.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_GlobalResources\Ecommerce_Pages.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="App_GlobalResources\Ecommerce_SharedResources.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="App_Skins\Default\Exchange.ascx" />
     <Content Include="App_Skins\Default\SimpleWhite.ascx" />
     <Content Include="App_Skins\Default\VPS.ascx" />
@@ -690,9 +676,7 @@
     <Content Include="App_Themes\Default\Icons\world_level_48.png" />
     <Content Include="App_Themes\Default\Images\admin_16.png" />
     <Content Include="App_Themes\Default\Images\button_bkg2.png" />
-    <Content Include="App_Skins\Default\Storefront2.ascx" />
     <Content Include="App_Themes\Default\Images\delete_16.png" />
-    <Content Include="App_Themes\Default\Images\Ecommerce\product_head_bg.gif" />
     <Content Include="App_Themes\Default\Images\error_big.gif" />
     <Content Include="App_Themes\Default\Images\error_icon_small.gif" />
     <Content Include="App_Themes\Default\Images\Exchange\accounting_mail_48.png" />

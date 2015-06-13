@@ -57,15 +57,6 @@ namespace WebsitePanel.Portal
 
         private void BindMenu(MenuItemCollection items, XmlNodeList nodes)
         {
-			bool ecUserEnabled = false;
-			bool ecAdminEnabled = PanelSecurity.SelectedUser.EcommerceEnabled;
-			//
-			UserInfo parent = UsersHelper.GetUser(PanelSecurity.SelectedUser.OwnerId);
-            
-			//
-			if (parent != null)
-				ecUserEnabled = parent.EcommerceEnabled;
-
             foreach (XmlNode node in nodes)
             {
                 string pageId = null;
@@ -135,13 +126,6 @@ namespace WebsitePanel.Portal
                         }
                     }
                 }
-				// set ecommerce user visibility first
-				if (display && node.Attributes["ecuser"] != null)
-					display = ecUserEnabled;
-				// set ecommerce admin visibility third
-				if (display && node.Attributes["ecadmin"] != null)
-					display = ecAdminEnabled;
-
                 
                 //Audit Log functionality is disabled when user is in Demo mode
                 if ((pageId == "AuditLog") && (PanelSecurity.SelectedUser.IsDemo))
