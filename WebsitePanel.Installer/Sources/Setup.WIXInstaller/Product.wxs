@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
-     xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension"
      xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
      xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
     <?include Config.Wxi?>
     <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
              UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
-        <Package InstallerVersion="200" Compressed="yes" />
+        <Package  InstallerVersion="200" Compressed="yes"  InstallPrivileges="elevated" InstallScope="perMachine" />
+        <Condition Message="You need to be an administrator to install the [ProductName].">Privileged</Condition>
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
@@ -218,10 +218,10 @@
                 </Control>
                 <Control Type="PushButton" Id ="CheckConnButton" X="150" Y="200" Width="74" Height="17" Text="Test connection" />
             </Dialog>
-            <Dialog Id="ConnectionWarningDlg" Width="250" Height="85" Title="[ProductName] Setup" NoMinimize="yes">
+            <Dialog Id="ConnectionWarningDlg" Width="250" Height="85" Title="Sql Connection Error" NoMinimize="yes">
                 <Control Id="Ok" Type="PushButton" X="184" Y="60" Width="56" Height="17" Text="Ok" Default="yes" Cancel="yes"/>
                 <Control Id="Text" Type="Text" X="8" Y="8" Width="221" Height="30">
-                    <Text>Connection not valid. [DB_CONN_MSG]</Text>
+                    <Text>[DB_CONN_MSG]</Text>
                 </Control>
             </Dialog>
             <Dialog Id="SelectDbDlg" Width="135" Height="55" Title="Select database" NoMinimize="yes">
@@ -301,13 +301,13 @@
             <Dialog Id="PrereqCheckDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" Disabled="yes">
-                    <Condition Action="enable">PI_PREREQ_OS="1" AND PI_PREREQ_IIS="1" AND PI_PREREQ_ASPNET="1" AND NETFRAMEWORK20="1" AND NETFRAMEWORK35="1" AND NETFRAMEWORK40FULL="1"</Condition>
+                    <Condition Action="enable">NETFRAMEWORK20="1" AND NETFRAMEWORK35="1" AND NETFRAMEWORK40FULL="1"</Condition>
                 </Control>
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
                 <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
                 <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
-                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Prerequisities check" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Prerequisites check" />
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Software requirements and system state checks" />
                 <Control Id="ReqGroupBox" Type="GroupBox" X="4" Y="49" Width="180" Height="175" Property="REQGROUP" Text="Requirements"/>
                 <Control Id="LogGroupBox" Type="GroupBox" X="186" Y="49" Width="180" Height="175" Property="LOGGROUP" Text="Check log"/>
@@ -323,15 +323,37 @@
                     <Text>[VALIDATE_MSG]</Text>
                 </Control>
             </Dialog>
+            <Dialog Id="ChoosePreinstallDlg" Width="370" Height="270" Title="[ProductName] select prerequisites" NoMinimize="yes">
+                <!--Default controls-->
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Select prerequisites to install" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Choose missing web components" />
+                <!---->
+                <Control Id="InstallIisChck" Type="CheckBox" X="145" Y="90" Width="202" Height="17" Text="Install IIS" Property="PI_PREREQ_IIS_INSTALL" CheckBoxValue="[PI_PREREQ_IIS_INSTALL]">
+                    <Condition Action="hide"><![CDATA[PI_PREREQ_IIS=1]]></Condition>
+                    <Condition Action="show"><![CDATA[PI_PREREQ_IIS=0]]></Condition>
+                </Control>
+                <Control Id="InstallAspNetChck" Type="CheckBox" X="145" Y="117" Width="202" Height="17" Text="Install ASP.NET" Property="PI_PREREQ_ASPNET_INSTALL" CheckBoxValue="[PI_PREREQ_ASPNET_INSTALL]">
+                    <Condition Action="hide"><![CDATA[PI_PREREQ_ASPNET=1]]></Condition>
+                    <Condition Action="show"><![CDATA[PI_PREREQ_ASPNET=0]]></Condition>
+                </Control>
+            </Dialog>
             <!--All events and actions in one place-->
             <!--LicenseAgreementDlg-->
             <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PrereqCheckDlg" Order="3">LicenseAccepted = "1"</Publish>
             <!--PrereqCheckDlg-->
-            <Publish Dialog="PrereqCheckDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg" Order="1">1</Publish>
-            <Publish Dialog="PrereqCheckDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg">1</Publish>
             <Publish Dialog="PrereqCheckDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <Publish Dialog="PrereqCheckDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg" Order="1">1</Publish>
+            <Publish Dialog="PrereqCheckDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
+            <Publish Dialog="PrereqCheckDlg" Control="Next" Event="NewDialog" Value="ChoosePreinstallDlg" Order="2"><![CDATA[PI_PREREQ_IIS=0 OR PI_PREREQ_ASPNET=0]]></Publish>            
             <!--CustomizeDlg-->
-            <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="4"><![CDATA[(&ServerFeature=-1 AND !ServerFeature=3) OR (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) OR (&PortalFeature=-1 AND !PortalFeature=3) OR (&SchedulerServiceFeature=-1 AND !SchedulerServiceFeature=3) OR (&WDPortalFeature=-1 AND !WDPortalFeature=3)]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="5"><![CDATA[(&ServerFeature=-1 AND !ServerFeature=3) OR (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) OR (&PortalFeature=-1 AND !PortalFeature=3) OR (&SchedulerServiceFeature=-1 AND !SchedulerServiceFeature=3) OR (&WDPortalFeature=-1 AND !WDPortalFeature=3)]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="ChoosePreinstallDlg" Order="4"><![CDATA[PI_PREREQ_IIS=0 OR PI_PREREQ_ASPNET=0]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="PrereqCheckDlg" Order="3">1</Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg" Order="15"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="14"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
@@ -474,8 +496,10 @@
             <Publish Dialog="ValidateDlg" Control="Ok" Event="EndDialog" Value="Return">1</Publish>
             <!--ExitDialog-->
             <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1</Publish>
-            <!---->
-            <ProgressText Action="CA_InstallWebFeatures">Please wait while [ProductName] Installer configures IIS &amp; ASP.NET, this may take a few minutes. Thanks!</ProgressText>
+            <!--ChoosePreinstallDlg-->
+            <Publish Dialog="ChoosePreinstallDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <Publish Dialog="ChoosePreinstallDlg" Control="Back" Event="NewDialog" Value="PrereqCheckDlg" Order="1">1</Publish>
+            <Publish Dialog="ChoosePreinstallDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
         </UI>
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
         <Binary Id="Assembly_CA" SourceFile="bin\WebsitePanel.WIXInstaller.CA.dll" />
@@ -514,16 +538,19 @@
         <!--Possible values: Passed(y), Fail(n).-->
         <Property Id="PI_PREREQ_OS" Secure="yes" Value="0" />
         <Property Id="PI_PREREQ_OS_TITLE" Value="Operating System" />
+        <Property Id="PI_PREREQ_ASPNET" Secure="yes" Value="0"/>
+        <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
+        <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_IIS_TITLE" Value="Web Server (IIS)" />
+        <Property Id="PI_PREREQ_IIS_INSTALL" Secure="yes" Value="0" />
+        <Property Id="PI_PREREQ_ASPNET_INSTALL" Secure="yes" Value="0"/>        
+        <!--.NET Framework-->
         <PropertyRef Id="NETFRAMEWORK20"/>
         <Property Id="NETFRAMEWORK20_TITLE" Value="Micrsoft .NET Framework 2.0"/>
         <PropertyRef Id="NETFRAMEWORK35"/>
         <Property Id="NETFRAMEWORK35_TITLE" Value="Micrsoft .NET Framework 3.5"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
         <Property Id="NETFRAMEWORK40FULL_TITLE" Value="Micrsoft .NET Framework 4.0"/>
-        <Property Id="PI_PREREQ_ASPNET" Secure="yes" Value="0"/>
-        <Property Id="PI_PREREQ_ASPNET_TITLE" Value="Microsoft ASP.NET"/>
-        <Property Id="PI_PREREQ_IIS" Secure="yes" Value="0" />
-        <Property Id="PI_PREREQ_IIS_TITLE" Value="Web Server (IIS)" />
         <!--IP, PORT, HOSTNAME for each component. Default values.-->
         <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
@@ -600,6 +627,8 @@
         <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" />
         <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
         <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no" />
+        <CustomAction Id="CA_InstallWebFeaturesDeferred" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no"  Execute="deferred" />
+        <CustomAction Id="CA_PropertyInstallWebFeaturesDeferred" Property="CA_InstallWebFeaturesDeferred" Value="PI_PREREQ_IIS_INSTALL=[PI_PREREQ_IIS_INSTALL];PI_PREREQ_ASPNET_INSTALL=[PI_PREREQ_ASPNET_INSTALL]" />
         <!--Run corresponding install scripts.-->
         <!-- Prepare and backup when upgrading from old to new installer type.
              Yes, session variables and custom action data are identical almost for corresponding WebsitePanel components in prepare and install scripts.
@@ -642,11 +671,12 @@
         <SetProperty Id="WSP_INSTALL_DIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
         <SetProperty Id="ARPINSTALLLOCATION" Value="[WSP_INSTALL_DIR]" After="InstallValidate" Sequence="execute" />
         <SetProperty Id="PI_ESERVER_URL" Value="http://[PI_ESERVER_IP]:[PI_ESERVER_PORT]/" Before="CostInitialize" />
-        <SetProperty Id="REINSTALLMODE" Value="amus" After="CostInitialize">1</SetProperty>        
+        <SetProperty Id="REINSTALLMODE" Value="amus" After="CostInitialize">1</SetProperty>
+        <SetProperty Id="PI_PREREQ_IIS_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_IIS=0]]></SetProperty>
+        <SetProperty Id="PI_PREREQ_ASPNET_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_ASPNET=0]]></SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
             <!--Preinstall.-->
-            <Custom Action="CA_InstallWebFeatures" Before="CostInitialize"><![CDATA[(&ServerFeature=3) OR (&EnterpriseServerFeature=3) OR (&PortalFeature=3) OR (&SchedulerServiceFeature=3) OR (&WDPortalFeature=3)]]></Custom>
             <!--Preparation when "old to new installer update". Also disabled in Maintenance mode.-->
             <Custom Action="CA_PropertyOnServerPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3) AND NOT (&ServerFeature=2 AND !ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3) AND NOT (&ServerFeature=2 AND !ServerFeature=3)]]></Custom>
@@ -676,15 +706,16 @@
             <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <!---->
-            <!--<Custom Action="CA_PreFillSettings" After="SetWSP_INSTALL_DIR">1</Custom>-->
+            <Custom Action="CA_PropertyInstallWebFeaturesDeferred" After="InstallValidate"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
+            <Custom Action="CA_InstallWebFeatures" After="InstallInitialize"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
+            <Custom Action="CA_InstallWebFeaturesDeferred" After="CA_InstallWebFeatures"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
         </InstallExecuteSequence>
         <InstallUISequence>
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
-            <Custom Action="CA_PreFillSettings" Before="CA_InstallWebFeatures" />
-            <Custom Action="CA_InstallWebFeatures" After="CA_PrereqCheckUI" />
-            <Custom Action="CA_FillIpListUI" After="CostInitialize" />
-            <Custom Action="CA_SqlServerListUI" After="CostInitialize" />
+            <Custom Action="CA_FillIpListUI" After="CA_PrereqCheck" />
+            <Custom Action="CA_SqlServerListUI" After="CA_PrereqCheck" />
+            <Custom Action="CA_PreFillSettings" After="CA_PrereqCheck" />            
         </InstallUISequence>
     </Product>
     <Fragment>

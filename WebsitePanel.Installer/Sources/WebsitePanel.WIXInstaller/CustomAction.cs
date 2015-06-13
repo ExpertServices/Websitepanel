@@ -37,8 +37,6 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 
 using Microsoft.Deployment.WindowsInstaller;
@@ -325,46 +323,100 @@ namespace WebsitePanel.WIXInstaller
         {
             PopUpDebugger();
 
-            var Msg = string.Empty;
             var Ctx = session;
             Ctx.AttachToSetupLog();
+            Log.WriteStart("InstallWebFeatures");
             var Result = ActionResult.Success;
-            var Cancel = new CancellationTokenSource();
-            try
-            {               
-                var Animation = AnimateText(Ctx, Cancel, "Configuring");
-                Log.WriteStart("InstallWebFeatures");
-                if (Tool.GetIsWebRoleInstalled())
+            if (Ctx.GetMode(InstallRunMode.Scheduled))
+            {
+                Action<int, int> ProgressReset = (int Total, int Mode) =>
                 {
-                    if (!Tool.GetIsWebFeaturesInstalled())
+                    using (var Tmp = new Record(4))
                     {
-                        Log.WriteInfo("InstallWebFeatures: ASP.NET.");
-                        Tool.InstallWebFeatures(out Msg);
+                        Tmp.SetInteger(1, 0);
+                        Tmp.SetInteger(2, Total);
+                        Tmp.SetInteger(3, 0);
+                        Tmp.SetInteger(4, Mode);
+                        Ctx.Message(InstallMessage.Progress, Tmp);
                     }
-                }
-                else
+                };
+                Action<int> ProgressIncrement = (int Value) =>
                 {
-                    var Tmp = string.Empty;
-                    Log.WriteInfo("InstallWebFeatures: IIS and ASP.NET.");
-                    Tool.InstallWebRole(out Tmp);
-                    Msg += Tmp;
-                    Tool.InstallWebFeatures(out Tmp);
-                    Msg += Tmp;
+                    using (var Tmp = new Record(2))
+                    {
+                        Tmp.SetInteger(1, 2);
+                        Tmp.SetInteger(2, Value);
+                        Ctx.Message(InstallMessage.Progress, Tmp);
+                    }
+                };
+                Action<string> ProgressText = (string Text) =>
+                {
+                    using (var Tmp = new Record(2))
+                    {
+                        Tmp.SetString(1, "CA_InstallWebFeaturesDeferred");
+                        Tmp.SetString(2, Text);
+                        Ctx.Message(InstallMessage.ActionStart, Tmp);
+                    }
+                };
+                var Frmt = "Installing web component the {0} a {1} of {2}";
+                var InstallIis = Ctx.CustomActionData["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                var InstallAspNet = Ctx.CustomActionData["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                var Components = new List<string>();
+                if (InstallIis)
+                    Components.AddRange(Tool.GetWebRoleComponents());
+                if (InstallAspNet)
+                    Components.AddRange(Tool.GetWebDevComponents());
+                Log.WriteStart("InstallWebFeatures: components");
+                ProgressReset(Components.Count + 1, 0);
+                ProgressText("Installing necessary web components ...");
+                var Msg = new StringBuilder();
+                try
+                {
+                    InstallToolDelegate InstallTool = Tool.GetInstallTool();
+                    if (InstallTool == null)
+                        throw new ApplicationException("Install tool for copmonents is not found.");                    
+                    for (int i = 0; i < Components.Count; i ++)
+                    {
+                        var Component = Components[i];
+                        ProgressText(string.Format(Frmt, Component, i + 1, Components.Count));
+                        ProgressIncrement(1);
+                        Msg.AppendLine(InstallTool(Component));
+                    }
+                    if (InstallAspNet)
+                        Tool.PrepareAspNet();                    
+                    Log.WriteInfo("InstallWebFeatures: done.");
                 }
-                Log.WriteInfo("InstallWebFeatures: done.");
+                catch (Exception ex)
+                {
+                    Log.WriteError(string.Format("InstallWebFeatures: fail - {0}.", ex.ToString()));
+                    Result = ActionResult.Failure;
+                }
+                finally
+                {
+                    ProgressReset(Components.Count * 3 + 1, 0);
+                    if (Msg.Length > 0)
+                        Log.WriteInfo(string.Format("InstallWebFeatures Tool Log: {0}.", Msg.ToString()));
+                    Log.WriteEnd("InstallWebFeatures: components"); 
+                }                               
             }
-            catch (Exception ex)
+            else
             {
-                Log.WriteError(string.Format("InstallWebFeatures: fail - {0}.", ex.ToString()));
-                Result = ActionResult.Failure;
+                var InstallIis = Ctx["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                var InstallAspNet = Ctx["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                var Components = new List<string>();
+                if (InstallIis)
+                    Components.AddRange(Tool.GetWebRoleComponents());
+                if (InstallAspNet)
+                    Components.AddRange(Tool.GetWebDevComponents());
+                Log.WriteStart("InstallWebFeatures: prepare");
+                using (var ProgressRecord = new Record(2))
+                {     
+                    ProgressRecord.SetInteger(1, 3);
+                    ProgressRecord.SetInteger(2, Components.Count);
+                    Ctx.Message(InstallMessage.Progress, ProgressRecord);
+                }
+                Log.WriteEnd("InstallWebFeatures: prepare");
             }
-            finally
-            {
-                Cancel.Cancel();
-                Cancel.Dispose();
-            }
-            if (!string.IsNullOrWhiteSpace(Msg))
-                Log.WriteInfo(string.Format("InstallWebFeatures Tool Log: {0}.", Msg));
             Log.WriteEnd("InstallWebFeatures");
             return Result;
         }        
@@ -551,7 +603,7 @@ namespace WebsitePanel.WIXInstaller
         {
             string tmp;
             var Ctrl = new ComboBoxCtrl(session, "DB_SELECT");
-            if (CheckConnection(session["DB_CONN"], out tmp))
+            if (Adapter.CheckConnectionInfo(session["DB_CONN"], out tmp))
                 foreach (var Db in GetDbList(ConnStr: session["DB_CONN"], ForbiddenNames: SysDb))
                 {
                     Ctrl.AddItem(Db);
@@ -564,18 +616,32 @@ namespace WebsitePanel.WIXInstaller
         [CustomAction]
         public static ActionResult CheckConnectionUI(Session session)
         {
+            string Msg = default(string);
             string ConnStr = session["DB_AUTH"].Equals(SQL_AUTH_WINDOWS) ? GetConnectionString(session["DB_SERVER"], "master") :
-                                                                                   GetConnectionString(session["DB_SERVER"], "master", session["DB_LOGIN"], session["DB_PASSWORD"]);
-            string msg;
-            bool Result = CheckConnection(ConnStr, out msg);
+                                                                           GetConnectionString(session["DB_SERVER"], "master", session["DB_LOGIN"], session["DB_PASSWORD"]);
+            var Result = Adapter.CheckSql(new SetupVariables { InstallConnectionString = ConnStr }, out Msg) == CheckStatuses.Success;
             session["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
             session["DB_CONN"] = Result ? ConnStr : "";
-            session["DB_CONN_MSG"] = msg;
+            session["DB_CONN_MSG"] = Msg;
             return ActionResult.Success;
         }
         [CustomAction]
         public static ActionResult PrereqCheck(Session session)
         {
+            var SecMsg = "You do not have the appropriate permissions to perform this operation. Make sure you are running the application from the local disk and you have local system administrator privileges.";
+            Action<string> ShowMsg = (string Text) =>
+            {
+                using(var Rec = new Record(0))
+                {
+                    Rec.SetString(0, Text);
+                    session.Message(InstallMessage.Error, Rec);
+                }
+            };
+            if(!Adapter.CheckSecurity() || !Adapter.IsAdministrator())
+            {
+                ShowMsg(SecMsg);
+                return ActionResult.Failure;
+            }            
             string Msg;
             var Ctx = Tool.GetSetupVars(session);
             var ros = Adapter.CheckOS(Ctx, out Msg);
@@ -614,38 +680,14 @@ namespace WebsitePanel.WIXInstaller
                     Ctrl.AddItem(Ip);
             return ActionResult.Success;
         }
-
         #endregion
-        private static string GetConnectionString(string serverName, string databaseName)
+        private static string GetConnectionString(string serverName, string databaseName, string login = null, string password = null)
         {
-            return string.Format("Server={0};database={1};Trusted_Connection=true;", serverName, databaseName);
-        }
-
-        private static string GetConnectionString(string serverName, string databaseName, string login, string password)
-        {
-            return string.Format("Server={0};database={1};uid={2};password={3};", serverName, databaseName, login, password);
-        }
-        static bool CheckConnection(string ConnStr, out string Info)
-        {
-            Info = string.Empty;
-            bool Result = false;
-            using (var Conn = new SqlConnection(ConnStr))
-            {
-                try
-                {
-                    Conn.Open();
-                    Result = true;
-                }
-                catch (Exception ex)
-                {
-                    Info = ex.Message;
-                }
-            }
-            return Result;
+            return SqlUtils.BuildDbServerConnectionString(serverName, databaseName, login, password);
         }
         private static void AddCheck(ListViewCtrl view, Session session, string PropertyID)
         {
-            view.AddItem(session[PropertyID] == YesNo.Yes, session[PropertyID + "_TITLE"]);
+            view.AddItem(YesNo.Get(session[PropertyID]) != YesNo.No, session[PropertyID + "_TITLE"]);
         }
         static IList<string> GetSqlInstances()
         {
@@ -905,29 +947,6 @@ namespace WebsitePanel.WIXInstaller
             Result.Actions.Add(new InstallAction(ActionTypes.DeleteDirectory) { SetupVariables = CtxVars, Path = CtxVars.InstallFolder });
             return Result;
         }
-        private static Task AnimateText(Session Ctx, CancellationTokenSource Cancel, string Message, int Delay = 1000, byte DotCount = 3)
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                Cancel.Token.ThrowIfCancellationRequested();
-                byte Current = 0;
-                while (true)
-                {
-                    var Text = string.Format("{0} {1}", Message, ".".Repeat(Current++));
-                    using (var Tmp = new Record(1))
-                    {
-                        Tmp.SetString(0, Text);
-                        Ctx.Message(InstallMessage.ActionData, Tmp);
-                    }
-                    if (Current > DotCount)
-                        Current = 0;
-                    Thread.Sleep(Delay);
-                    if (Cancel.Token.IsCancellationRequested)
-                        Cancel.Token.ThrowIfCancellationRequested();
-                }
-            }, Cancel.Token);
-        }
-
         private static bool IsEnctyptionEnabled(string Cfg)
         {
             var doc = new XmlDocument();
