@@ -7,5 +7,10 @@ namespace WebsitePanel.WIXInstaller.Common
         public static string Yes { get { return "1"; } }
 
         public static string No { get { return "0"; } }
+
+        public static string Get(string Value)
+        {
+            return Value.TrimStart('#');
+        }
     }
 }
