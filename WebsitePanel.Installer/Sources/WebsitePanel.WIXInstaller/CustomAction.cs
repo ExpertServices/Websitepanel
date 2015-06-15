@@ -269,7 +269,7 @@ namespace WebsitePanel.WIXInstaller
                                 }
                             }
                         }
-                        finally
+                        catch
                         {
                             // Nothing to do.
                         }
@@ -327,7 +327,30 @@ namespace WebsitePanel.WIXInstaller
             Ctx.AttachToSetupLog();
             Log.WriteStart("InstallWebFeatures");
             var Result = ActionResult.Success;
-            if (Ctx.GetMode(InstallRunMode.Scheduled))
+            var Scheduled = Ctx.GetMode(InstallRunMode.Scheduled);
+            var Components = new List<string>();
+            var InstallIis = false;
+            var InstallAspNet = false;
+            var InstallNetFx3 = false;
+            if (Scheduled)
+            {
+                InstallIis = Ctx.CustomActionData["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                InstallAspNet = Ctx.CustomActionData["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                InstallNetFx3 = Ctx.CustomActionData["PI_PREREQ_NETFX_INSTALL"] != YesNo.No;
+            }
+            else
+            {
+                InstallIis = Ctx["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                InstallAspNet = Ctx["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                InstallNetFx3 = Ctx["PI_PREREQ_NETFX_INSTALL"] != YesNo.No;
+            }
+            if (InstallIis)
+                Components.AddRange(Tool.GetWebRoleComponents());
+            if (InstallAspNet)
+                Components.AddRange(Tool.GetWebDevComponents());
+            if (InstallNetFx3)
+                Components.AddRange(Tool.GetNetFxComponents());
+            if (Scheduled)
             {
                 Action<int, int> ProgressReset = (int Total, int Mode) =>
                 {
@@ -359,13 +382,6 @@ namespace WebsitePanel.WIXInstaller
                     }
                 };
                 var Frmt = "Installing web component the {0} a {1} of {2}";
-                var InstallIis = Ctx.CustomActionData["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
-                var InstallAspNet = Ctx.CustomActionData["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
-                var Components = new List<string>();
-                if (InstallIis)
-                    Components.AddRange(Tool.GetWebRoleComponents());
-                if (InstallAspNet)
-                    Components.AddRange(Tool.GetWebDevComponents());
                 Log.WriteStart("InstallWebFeatures: components");
                 ProgressReset(Components.Count + 1, 0);
                 ProgressText("Installing necessary web components ...");
@@ -401,13 +417,6 @@ namespace WebsitePanel.WIXInstaller
             }
             else
             {
-                var InstallIis = Ctx["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
-                var InstallAspNet = Ctx["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
-                var Components = new List<string>();
-                if (InstallIis)
-                    Components.AddRange(Tool.GetWebRoleComponents());
-                if (InstallAspNet)
-                    Components.AddRange(Tool.GetWebDevComponents());
                 Log.WriteStart("InstallWebFeatures: prepare");
                 using (var ProgressRecord = new Record(2))
                 {     
@@ -637,7 +646,7 @@ namespace WebsitePanel.WIXInstaller
                     session.Message(InstallMessage.Error, Rec);
                 }
             };
-            if(!Adapter.CheckSecurity() || !Adapter.IsAdministrator())
+            if (!Adapter.CheckSecurity() || !Adapter.IsAdministrator())
             {
                 ShowMsg(SecMsg);
                 return ActionResult.Failure;
