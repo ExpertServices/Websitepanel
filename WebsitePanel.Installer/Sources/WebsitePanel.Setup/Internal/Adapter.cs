@@ -5,11 +5,15 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Security;
+using System.Security.Permissions;
+using System.Security.Principal;
 using System.ServiceProcess;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -70,8 +74,77 @@ namespace WebsitePanel.Setup.Internal
         {
             return ConfigurationCheckPage.CheckOS(setupVariables, out Msg);
         }
+        public static CheckStatuses CheckSql(SetupVariables setupVariables, out string Msg)
+        {
+            var Result = CheckStatuses.Error;
+            try
+            {
+                var MsgBuilder = new StringBuilder();
+                var MsgStr = string.Empty;
+                var ConnStr = setupVariables.InstallConnectionString;
+                if (CheckConnectionInfo(ConnStr, out MsgStr))
+                {
+                    string V = SqlUtils.GetSqlServerVersion(ConnStr);
+                    var Valid = new string[] { "9.", "10.", "11.", "12." }.Any(x => V.StartsWith(x));
+                    if (Valid)
+                        if (SqlUtils.GetSqlServerSecurityMode(ConnStr) == 0)
+                            Result = CheckStatuses.Success;
+                        else
+                            MsgBuilder.AppendLine("Please switch SQL Server authentication to mixed SQL Server and Windows Authentication mode.");
+                    else
+                        MsgBuilder.AppendLine("This program can be installed on SQL Server 2005/2008/2012/2014 only.");
+                }
+                else
+                {
+                    MsgBuilder.AppendLine("SQL Server does not exist or access denied");
+                    MsgBuilder.AppendLine(MsgStr);
+                }
+                Msg = MsgBuilder.ToString();
+            }
+            catch(Exception ex)
+            {
+                Msg = "Unable to configure the database server." + ex.Message;
+            }
+            return Result;
+        }
+        public static bool CheckConnectionInfo(string ConnStr, out string Info)
+        {
+            Info = string.Empty;
+            bool Result = false;
+            using (var Conn = new SqlConnection(ConnStr))
+            {
+                try
+                {
+                    Conn.Open();
+                    Result = true;
+                }
+                catch (Exception ex)
+                {
+                    Info = ex.Message;
+                }
+            }
+            return Result;
+        }
+        public static bool IsAdministrator()
+        {
+            WindowsIdentity user = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(user);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+        public static bool CheckSecurity()
+        {
+            try
+            {
+                PermissionSet set = new PermissionSet(PermissionState.Unrestricted);
+                set.Demand();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
     }
-
     public interface IWiXSetup
     {
         void Run();

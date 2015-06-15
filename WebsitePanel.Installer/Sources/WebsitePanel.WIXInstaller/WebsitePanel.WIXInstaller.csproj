@@ -54,6 +54,10 @@
     <Content Include="CustomAction.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\WebsitePanel.Installer.Core\WebsitePanel.Installer.Core.csproj">
+      <Project>{0e4a3f5b-0bb1-4f63-863d-7b0182b378cf}</Project>
+      <Name>WebsitePanel.Installer.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Setup\WebsitePanel.Setup.csproj">
       <Project>{3951c0ec-bd98-450e-b228-cdbe5bd4ad49}</Project>
       <Name>WebsitePanel.Setup</Name>

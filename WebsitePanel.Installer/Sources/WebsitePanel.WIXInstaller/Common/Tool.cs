@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.Win32;
+
 using WebsitePanel.Setup;
 
 namespace WebsitePanel.WIXInstaller.Common
 {
+    public delegate string InstallToolDelegate (params string[] Components);
     internal static class Tool
     {
         public const int MINIMUM_WEBSERVER_MAJOR_VERSION = 6;
@@ -63,28 +66,21 @@ namespace WebsitePanel.WIXInstaller.Common
                 Value = int.Parse(Key.GetValue(AspNet45, 0).ToString());
             return Value == 1;
         }
-        public static bool InstallWebRole(out string Msg)
+        public static string[] GetWebRoleComponents()
         {
-            Msg = string.Empty;
+            string[] Result = null;
             var OSV = Global.OSVersion;
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                    {
-                        var Features = new[]
-                        { 
-                            "Web-Server"
-                        };
-                        Msg = InstallWebViaServerManagerCmd(Features);
-                    }
+                        Result = new[] { "Web-Server" };
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
                 case OS.WindowsVersion.WindowsServer2012:
                 case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
                 case OS.WindowsVersion.Windows8:
-                    {
-                        var Features = new[]
+                        Result = new[]
                         { 
                             "IIS-WebServer",
                             "IIS-WebServerRole",                
@@ -98,54 +94,57 @@ namespace WebsitePanel.WIXInstaller.Common
                             "IIS-Security",
                             "IIS-StaticContent"                
                         };
-                        Msg = InstallWebViaDism(Features);
-                    }
                     break;
-                default:
-                    return false;
             }
-            return true;
+            return Result;
         }
-        public static bool InstallWebFeatures(out string Msg)
+        public static string[] GetWebDevComponents()
         {
-            Msg = string.Empty;
+            string[] Result = null;
             var OSV = Global.OSVersion;
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                    {
-                        var Features = new[]
-                        {
-                            "Web-Asp-Net"              
-                        };
-                        Msg += InstallWebViaServerManagerCmd(Features);
-                        Msg += PrepareAspNet();
-                    }
+                        Result = new[] { "Web-Asp-Net" };
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
                 case OS.WindowsVersion.WindowsServer2012:
                 case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
                 case OS.WindowsVersion.Windows8:
-                    {
-                        var Features = new[]
+                        Result = new[]
                         { 
                             "IIS-ApplicationDevelopment",
                             "IIS-ASPNET",
                             "IIS-ASPNET45"
                         };
-                        Msg = InstallWebViaDism(Features);
-                    }
                     break;
-                default:
-                    return false;
             }
-            return true;
+            return Result;
         }
         public static string PrepareAspNet()
         {
             var Cmd = string.Format(@"Microsoft.NET\Framework{0}\v4.0.30319\aspnet_regiis.exe", Environment.Is64BitOperatingSystem ? "64" : "" );
             return RunTool(Path.Combine(OS.GetWindowsDirectory(), Cmd), "-i -enable");
+        }
+        public static InstallToolDelegate GetInstallTool()
+        {
+            InstallToolDelegate Result = null;
+            var OSV = Global.OSVersion;
+            switch (OSV)
+            {
+                case OS.WindowsVersion.WindowsServer2008:
+                        Result = InstallWebViaServerManagerCmd;
+                    break;
+                case OS.WindowsVersion.WindowsServer2008R2:
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:
+                case OS.WindowsVersion.Windows7:
+                case OS.WindowsVersion.Windows8:
+                        Result = InstallWebViaDism;
+                    break;
+            }
+            return Result;
         }
         private static string InstallWebViaDism(params string[] Features)
         {
