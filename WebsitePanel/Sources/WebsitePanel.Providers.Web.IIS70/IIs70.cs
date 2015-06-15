@@ -1035,14 +1035,14 @@ namespace WebsitePanel.Providers.Web
 		/// Sets anonymous authentication for the virtual iisDirObject
 		/// </summary>
 		/// <param name="vdir"></param>
-		private void SetAnonymousAuthentication(WebVirtualDirectory virtualDir)
+		private void SetAnonymousAuthentication(WebVirtualDirectory virtualDir, bool configureConnectAs = true)
 		{
 			// set anonymous credentials
 			anonymAuthSvc.SetAuthenticationSettings(virtualDir.FullQualifiedPath,
 					GetQualifiedAccountName(virtualDir.AnonymousUsername),
 					virtualDir.AnonymousUserPassword, virtualDir.EnableAnonymousAccess);
 			// configure "Connect As" feature
-			if (virtualDir.ContentPath.StartsWith(@"\\"))
+            if (virtualDir.ContentPath.StartsWith(@"\\") && configureConnectAs)
 				webObjectsSvc.ConfigureConnectAsFeature(virtualDir);
 		}
 
@@ -1741,7 +1741,7 @@ namespace WebsitePanel.Providers.Web
         public override void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
         {
             // Create iisDirObject folder if not exists.
-            if (!FileUtils.DirectoryExists(directory.ContentPath))
+            if (!FileUtils.DirectoryExists(directory.ContentPath) && new Uri(directory.ContentPath).IsUnc == false)
             {
                 FileUtils.CreateDirectory(directory.ContentPath);
             }
@@ -1763,7 +1763,7 @@ namespace WebsitePanel.Providers.Web
             // Update virtual directory (set parent site pool)
             webObjectsSvc.UpdateVirtualDirectory(directory);
             // Disable Anonymous Authentication
-            SetAnonymousAuthentication(directory);
+            SetAnonymousAuthentication(directory, false);
         }
 
 		/// <summary>
@@ -3909,7 +3909,7 @@ namespace WebsitePanel.Providers.Web
         {
             var uri = new Uri(siteId);
             var host = uri.Host;
-            var site = uri.Host + uri.PathAndQuery;
+            var site = uri.Host + Uri.UnescapeDataString(uri.PathAndQuery);
 
             if (SiteExists(host))
             {
@@ -3928,7 +3928,7 @@ namespace WebsitePanel.Providers.Web
         {
             var uri = new Uri(siteId);
             var host = uri.Host;
-            var site = uri.Host + uri.PathAndQuery;
+            var site = uri.Host + Uri.UnescapeDataString(uri.PathAndQuery);
 
             if (SiteExists(host))
             {

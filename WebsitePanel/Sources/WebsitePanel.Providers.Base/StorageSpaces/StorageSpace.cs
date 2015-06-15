@@ -1,0 +1,14 @@
+﻿using WebsitePanel.Providers.OS;
+
+namespace WebsitePanel.Providers.StorageSpaces
+{
+    public class StorageSpace : StorageSpaceItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int ServiceId { get; set; }
+        public int ServerId { get; set; }
+        public int LevelId { get; set; }
+        public string Path { get; set; }
+    }
+}

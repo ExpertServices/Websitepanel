@@ -81,10 +81,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 // get settings
-                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
-
-                SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(
-                    PanelRequest.ItemID, PanelRequest.FolderID);
+                SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID);
 
                 litFolderName.Text = string.Format("{0}", folder.Name);
 
@@ -108,6 +105,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
+
+                btnMigrate.Visible = folder.StorageSpaceFolderId == null;
+
+                if (folder.StorageSpaceFolderId != null)
+                {
+                    uncPathRow.Visible = true;
+
+                    lblUncPath.Text = folder.UncPath;
+                }
             }
             catch (Exception ex)
             {
@@ -162,13 +168,34 @@ namespace WebsitePanel.Portal.ExchangeServer
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 
-
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
             }
             catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS", ex);
+            }
+        }
+
+        protected void btnMigrate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = ES.Services.EnterpriseStorage.MoveToStorageSpace(
+                PanelRequest.ItemID,
+                PanelRequest.FolderID);
+
+                messageBox.ShowMessage(result, "ES_MOVE_TO_STORAGE_SPACE", null);
+
+                if (result.IsSuccess)
+                {
+                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+                        "ItemID=" + PanelRequest.ItemID));
+                }
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ENTERPRISE_STORAGE_MIGRATE_TO_STORAGE_SPACES", ex);
             }
         }
     }

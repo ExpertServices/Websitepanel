@@ -135,9 +135,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, bool loadUsagesData, bool loadWebdavRules, bool loadMappedDrives, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, filterValue, sortColumn, startRow, maximumRows);
+            return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, loadUsagesData, loadWebdavRules, loadMappedDrives, filterValue, sortColumn, startRow, maximumRows);
         }
 
         [WebMethod]
@@ -230,6 +230,12 @@ namespace WebsitePanel.EnterpriseServer
         public List<string> GetUserEnterpriseFolderWithOwaEditPermission(int itemId, List<int> accountIds)
         {
             return EnterpriseStorageController.GetUserEnterpriseFolderWithOwaEditPermission(itemId, accountIds);
+        }
+
+        [WebMethod]
+        public ResultObject MoveToStorageSpace(int itemId, string folderName)
+        {
+           return EnterpriseStorageController.MoveToStorageSpace(itemId, folderName);
         }
 
         #endregion

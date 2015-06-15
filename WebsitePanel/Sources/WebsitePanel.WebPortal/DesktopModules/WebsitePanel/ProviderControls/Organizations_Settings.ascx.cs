@@ -37,6 +37,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public const string TemporyDomainName = "TempDomain";
         public const string UserNameFormat = "UserNameFormat";
         public const string ArchiveStoragePath = "ArchiveStoragePath";
+        public const string UseStorageSpaces = "UseStorageSpaces";
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -56,6 +57,9 @@ namespace WebsitePanel.Portal.ProviderControls
             }
 
             txtArchiveStorageSpace.Text = settings[ArchiveStoragePath];
+            chkUseStorageSpaces.Checked = Utils.ParseBool(settings[UseStorageSpaces], false);
+
+            chkUseStorageSpaces_StateChanged(null, null);
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
@@ -65,6 +69,12 @@ namespace WebsitePanel.Portal.ProviderControls
             settings[TemporyDomainName] = txtTemporyDomainName.Text.Trim();
             settings[UserNameFormat] = UserNameFormatDropDown.SelectedItem.Text;
             settings[ArchiveStoragePath] = txtArchiveStorageSpace.Text.Trim();
-        }        
+            settings[UseStorageSpaces] = chkUseStorageSpaces.Checked.ToString();
+        }
+
+        protected void chkUseStorageSpaces_StateChanged(object sender, EventArgs e)
+        {
+            txtArchiveStorageSpace.Visible = !chkUseStorageSpaces.Checked;
+        }
     }
 }

@@ -56,12 +56,20 @@ using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 using System.Text.RegularExpressions;
 using WebsitePanel.Server.Client;
+using WebsitePanel.Providers.StorageSpaces;
 
 namespace WebsitePanel.EnterpriseServer
 {
     public class OrganizationController
     {
         public const string TemporyDomainName = "TempDomain";
+        public const string UseStorageSpaces = "UseStorageSpaces";
+        private static readonly OrganizationFoldersManager _foldersManager;
+
+        static OrganizationController()
+        {
+            _foldersManager = new OrganizationFoldersManager();
+        }
 
         private static bool CheckUserQuota(int orgId, out int errorCode)
         {
@@ -793,6 +801,19 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
+                //Cleanup OrganizationFolders
+                try
+                {
+                    if (_foldersManager.DeleteFolders(itemId).IsSuccess == false)
+                    {
+                        successful = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    successful = false;
+                    TaskManager.WriteError(ex);
+                }
 
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
@@ -2648,7 +2669,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
-                
+
                 string accountName = GetAccountName(account.AccountName);
 
                 var deletedUser = new OrganizationDeletedUser
@@ -2673,12 +2694,28 @@ namespace WebsitePanel.EnterpriseServer
 
                         if (serviceId != 0)
                         {
-                            var settings = ServerController.GetServiceSettings(serviceId);
+                            string path = string.Empty;
+                            QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(org.PackageId, Quotas.ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE);
 
-                            deletedUser.StoragePath = settings["ArchiveStoragePath"];
+                            deletedUser.FileName = string.Format("{0}.pst", account.UserPrincipalName);
 
-                            if (!string.IsNullOrEmpty(deletedUser.StoragePath))
+                            if (UsingStorageSpaces(serviceId))
                             {
+                                var folder = _foldersManager.GetFolder(itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString())
+                                    ?? _foldersManager.CreateFolder(org.OrganizationId, itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString(),
+                                        StorageSpacesController.GetFsrmQuotaInBytes(diskSpaceQuota), QuotaType.Hard);
+
+                                deletedUser.StoragePath = Directory.GetParent(folder.UncPath).ToString();
+
+                                deletedUser.FolderName = folder.Name;
+
+                                path = Path.Combine(folder.UncPath, deletedUser.FileName);
+                            }
+                            else
+                            {
+                                var settings = ServerController.GetServiceSettings(serviceId);
+
+                                deletedUser.StoragePath = settings["ArchiveStoragePath"];
                                 deletedUser.FolderName = org.OrganizationId;
 
                                 if (!CheckFolderExists(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName))
@@ -2686,22 +2723,18 @@ namespace WebsitePanel.EnterpriseServer
                                     CreateFolder(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName);
                                 }
 
-                                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(org.PackageId, Quotas.ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE);
-
                                 if (diskSpaceQuota.QuotaAllocatedValue != -1)
                                 {
                                     SetFRSMQuotaOnFolder(org.PackageId, deletedUser.StoragePath, org.OrganizationId, diskSpaceQuota, QuotaType.Hard);
                                 }
 
-                                deletedUser.FileName = string.Format("{0}.pst", account.UserPrincipalName);
-
-                                ExchangeServerController.ExportMailBox(itemId, accountId,
-                                    FilesController.ConvertToUncPath(serviceId,
-                                        Path.Combine(GetDirectory(deletedUser.StoragePath), deletedUser.FolderName, deletedUser.FileName)));
+                                path = FilesController.ConvertToUncPath(serviceId, Path.Combine(GetDirectory(deletedUser.StoragePath), deletedUser.FolderName, deletedUser.FileName));
                             }
+
+                            ExchangeServerController.ExportMailBox(itemId, accountId, path);
                         }
                     }
-                    
+
                     //Set Deleted Mailbox
                     ExchangeServerController.SetDeletedMailbox(itemId, accountId);
                 }
@@ -2731,16 +2764,49 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        public static byte[] GetArchiveFileBinaryChunk(int packageId, int itemId, int deleteAccountId, int offset, int length)
         {
+            var user = GetDeletedUser(deleteAccountId);
+
+            var path = Path.Combine(user.StoragePath, user.FolderName, user.FileName);
+
             var os = GetOS(packageId);
 
-            if (os != null && os.CheckFileServicesInstallation())
+            if (os != null)
             {
                 return os.GetFileBinaryChunk(path, offset, length);
             }
 
-            return null;
+            var folder = _foldersManager.GetFolder(itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString());
+
+            if (folder == null)
+            {
+                return null;
+            }
+
+            return StorageSpacesController.GetFileBinaryChunk(folder.StorageSpaceId, path, offset, length);
+        }
+
+        private static bool UsingStorageSpaces(int serviceId)
+        {
+            var settings = ServerController.GetServiceSettings(serviceId);
+
+            if (settings == null)
+            {
+                return false;
+            }
+
+            if (!settings.ContainsKey(UseStorageSpaces))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(settings[UseStorageSpaces]))
+            {
+                return false;
+            }
+
+            return Convert.ToBoolean(settings[UseStorageSpaces]);
         }
 
         private static bool CheckScheduleTaskRun(int packageId, string taskId)

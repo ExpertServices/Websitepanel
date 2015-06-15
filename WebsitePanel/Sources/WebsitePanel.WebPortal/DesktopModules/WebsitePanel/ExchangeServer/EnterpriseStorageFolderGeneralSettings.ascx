@@ -63,6 +63,10 @@
                                 <td class="FormLabel150"><asp:Localize ID="locFolderUrl" runat="server" meta:resourcekey="locFolderUrl" Text="Folder Url:"></asp:Localize></td>
                                 <td><asp:Label runat="server" ID="lblFolderUrl" /></td>
                             </tr>
+                            <tr id="uncPathRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locUncPath" runat="server" meta:resourcekey="locUncPath" Text="UNC Path:"></asp:Localize></td>
+                                <td><asp:Label runat="server" ID="lblUncPath" /></td>
+                            </tr>
                             <tr><td>&nbsp;</td></tr>
                             <tr>
                                 <td class="FormLabel150"><asp:Localize ID="locDirectoryBrowsing" runat="server" meta:resourcekey="locDirectoryBrowsing" Text="Enable Directory Browsing:"></asp:Localize></td>
@@ -78,6 +82,9 @@
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditFolder" OnClick="btnSave_Click"></asp:Button>
 					    <asp:ValidationSummary ID="valSummary" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditFolder" />
+                        <div style="display:inline-block;float:right;">
+                            <asp:Button id="btnMigrate" runat="server" Text="Move to Storage Spaces" CssClass="Button1" meta:resourcekey="btnMigrate" OnClick="btnMigrate_Click" ></asp:Button>
+                         </div>
 				    </div>
 				</div>
 			</div>

@@ -2849,20 +2849,22 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetArchiveFileBinaryChunk", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
-        public byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length) {
+        public byte[] GetArchiveFileBinaryChunk(int packageId, int itemId, int deleteAccountId, int offset, int length) {
             object[] results = this.Invoke("GetArchiveFileBinaryChunk", new object[] {
                         packageId,
-                        path,
+                        itemId,
+                        deleteAccountId,
                         offset,
                         length});
             return ((byte[])(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetArchiveFileBinaryChunk(int packageId, string path, int offset, int length, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetArchiveFileBinaryChunk(int packageId, int itemId, int deleteAccountId, int offset, int length, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetArchiveFileBinaryChunk", new object[] {
                         packageId,
-                        path,
+                        itemId,
+                        deleteAccountId,
                         offset,
                         length}, callback, asyncState);
         }
@@ -2874,18 +2876,19 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         }
         
         /// <remarks/>
-        public void GetArchiveFileBinaryChunkAsync(int packageId, string path, int offset, int length) {
-            this.GetArchiveFileBinaryChunkAsync(packageId, path, offset, length, null);
+        public void GetArchiveFileBinaryChunkAsync(int packageId, int itemId, int deleteAccountId, int offset, int length) {
+            this.GetArchiveFileBinaryChunkAsync(packageId, itemId, deleteAccountId, offset, length, null);
         }
         
         /// <remarks/>
-        public void GetArchiveFileBinaryChunkAsync(int packageId, string path, int offset, int length, object userState) {
+        public void GetArchiveFileBinaryChunkAsync(int packageId, int itemId, int deleteAccountId, int offset, int length, object userState) {
             if ((this.GetArchiveFileBinaryChunkOperationCompleted == null)) {
                 this.GetArchiveFileBinaryChunkOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetArchiveFileBinaryChunkOperationCompleted);
             }
             this.InvokeAsync("GetArchiveFileBinaryChunk", new object[] {
                         packageId,
-                        path,
+                        itemId,
+                        deleteAccountId,
                         offset,
                         length}, this.GetArchiveFileBinaryChunkOperationCompleted, userState);
         }

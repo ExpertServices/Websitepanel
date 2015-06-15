@@ -300,11 +300,42 @@ namespace WebsitePanel.Providers.OS
 
             ExecuteShellCommand(runSpace, cmd, false);
         }
-        
+
+        public override bool InstallFsrmService()
+        {
+            Log.WriteStart("InstallFsrmService");
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Install-WindowsFeature");
+                cmd.Parameters.Add("Name", "FS-Resource-Manager");
+                cmd.Parameters.Add("IncludeManagementTools", true);
+
+                ExecuteShellCommand(runSpace, cmd, false);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("InstallFsrmService", ex);
+
+                return false;
+            }
+            finally
+            {
+                Log.WriteEnd("InstallFsrmService");
+
+                CloseRunspace(runSpace);
+            }
+
+            return true;
+        }
+
         #region PowerShell integration
         private static InitialSessionState session = null;
 
-        internal virtual Runspace OpenRunspace()
+        protected virtual Runspace OpenRunspace()
         {
              Log.WriteStart("OpenRunspace");
 
@@ -322,7 +353,7 @@ namespace WebsitePanel.Providers.OS
             return runSpace;
         }
 
-        internal void CloseRunspace(Runspace runspace)
+        protected void CloseRunspace(Runspace runspace)
         {
             try
             {
@@ -337,12 +368,38 @@ namespace WebsitePanel.Providers.OS
             }
         }
 
-        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
+        protected Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
         {
             return ExecuteShellCommand(runSpace, cmd, true);
         }
 
-        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController)
+        protected Collection<PSObject> ExecuteLocalScript(Runspace runSpace,  List<string> scripts, out object[] errors, params string[] moduleImports)
+        {
+            return ExecuteRemoteScript(runSpace, null ,scripts, out errors, moduleImports);
+        }
+
+        protected Collection<PSObject> ExecuteRemoteScript(Runspace runSpace, string hostName, List<string> scripts, out object[] errors, params string[] moduleImports)
+        {
+            Command invokeCommand = new Command("Invoke-Command");
+
+            if (!string.IsNullOrEmpty(hostName))
+            {
+                invokeCommand.Parameters.Add("ComputerName", hostName);
+            }
+
+            RunspaceInvoke invoke = new RunspaceInvoke();
+            string commandString = moduleImports.Any() ? string.Format("import-module {0};", string.Join(",", moduleImports)) : string.Empty;
+
+            commandString = string.Format("{0};{1}", commandString, string.Join(";", scripts.ToArray()));
+
+            ScriptBlock sb = invoke.Invoke(string.Format("{{{0}}}", commandString))[0].BaseObject as ScriptBlock;
+
+            invokeCommand.Parameters.Add("ScriptBlock", sb);
+
+            return ExecuteShellCommand(runSpace, invokeCommand, false, out errors);
+        }
+
+        protected Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController)
         {
             object[] errors;
             return ExecuteShellCommand(runSpace, cmd, useDomainController, out errors);
@@ -397,7 +454,7 @@ namespace WebsitePanel.Providers.OS
             return results;
         }
 
-        internal object GetPSObjectProperty(PSObject obj, string name)
+        protected object GetPSObjectProperty(PSObject obj, string name)
         {
             return obj.Members[name].Value;
         }

@@ -18,5 +18,10 @@
 
             return source.Substring(source.Length - tailLength);
         }
+
+        public static string RemoveLeadingFromPath(this string source, string toRemove)
+        {
+            return source.StartsWith('/' + toRemove) ? source.Substring(toRemove.Length + 1) : source;
+        }
     }
 }
