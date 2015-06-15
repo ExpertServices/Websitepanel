@@ -764,6 +764,13 @@ namespace WebsitePanel.EnterpriseServer
                         }
 
                         folder.FsrmQuotaType = esFolder.FsrmQuotaType;
+
+                        var ssFolder = StorageSpacesController.GetStorageSpaceFolderById(esFolder.StorageSpaceFolderId.Value);
+
+                        if (ssFolder != null)
+                        {
+                            folder.UncPath = ssFolder.UncPath;
+                        }
                     }
 
                     folder.Rules = GetFolderWebDavRulesInternal(itemId, folder.Name);
@@ -1259,7 +1266,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 SetDirectoryBrowseEnabled(itemId, systemFile.Url, directoryBrowsing);
 
-                es.MoveFolder(systemFile.FullName, storageFolder.UncPath);
+                //es.MoveFolder(systemFile.FullName, storageFolder.UncPath);
 
                 DataProvider.UpdateEntepriseFolderStorageSpaceFolder(itemId, folderName, storageFolderResult.Value);
             }
@@ -1510,11 +1517,6 @@ namespace WebsitePanel.EnterpriseServer
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(packageId));
                 result = es.GetQuotasForOrganization(result.ToArray()).ToList();
             }
-
-            //if (loadWebdavRules)
-            //{
-            //    folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
-            //}
 
             return result;
         }

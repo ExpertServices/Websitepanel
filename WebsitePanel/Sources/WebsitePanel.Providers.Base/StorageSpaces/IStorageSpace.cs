@@ -19,5 +19,6 @@ namespace WebsitePanel.Providers.StorageSpaces
         void SetFolderNtfsPermissions(string fullPath, UserPermission[] permissions, bool isProtected, bool preserveInheritance);
         StorageSpaceFolderShare ShareFolder(string fullPath, string shareName);
         SystemFile[] Search(string[] searchPaths, string searchText, bool recursive);
+        byte[] GetFileBinaryChunk(string path, int offset, int length);
     }
 }

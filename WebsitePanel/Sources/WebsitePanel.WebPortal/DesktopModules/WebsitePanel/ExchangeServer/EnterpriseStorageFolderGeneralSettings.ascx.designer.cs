@@ -193,6 +193,33 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.Label lblFolderUrl;
         
         /// <summary>
+        /// uncPathRow control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow uncPathRow;
+        
+        /// <summary>
+        /// locUncPath control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locUncPath;
+        
+        /// <summary>
+        /// lblUncPath control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUncPath;
+        
+        /// <summary>
         /// locDirectoryBrowsing control.
         /// </summary>
         /// <remarks>

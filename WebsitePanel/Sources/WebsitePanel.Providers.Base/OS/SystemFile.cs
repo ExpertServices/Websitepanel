@@ -147,7 +147,7 @@ namespace WebsitePanel.Providers.OS
         public string RelativeUrl { get; set; }
         public string Summary { get; set; }
         public int? StorageSpaceFolderId { get; set; }
-        
+        public string UncPath { get; set; }
 
         public string DriveLetter
         {

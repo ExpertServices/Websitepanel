@@ -107,6 +107,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
 
                 btnMigrate.Visible = folder.StorageSpaceFolderId == null;
+
+                if (folder.StorageSpaceFolderId != null)
+                {
+                    uncPathRow.Visible = true;
+
+                    lblUncPath.Text = folder.UncPath;
+                }
             }
             catch (Exception ex)
             {

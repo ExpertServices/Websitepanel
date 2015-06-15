@@ -13586,6 +13586,141 @@ SET StorageSpaceFolderId = @StorageSpaceFolderId
 WHERE ItemID = @ItemID AND FolderName = @FolderName
 GO
 
+--Deleted Users + Storage Spaces START
+
+--TODO REMOVE DROP
+IF EXISTS (SELECT name FROM SYS.OBJECTS WHERE name='ExchangeOrganizationSsFolders')
+	DROP TABLE ExchangeOrganizationSsFolders
+GO
+
+IF NOT EXISTS (SELECT name FROM SYS.OBJECTS WHERE name='ExchangeOrganizationSsFolders')
+	CREATE TABLE ExchangeOrganizationSsFolders
+	(
+		Id INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+		ItemId INT NOT NULL,
+		Type varchar(100) NOT NULL,
+		StorageSpaceFolderId INT NOT NULL
+	)
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_ExchangeOrganizationSsFolders_StorageSpaceFolderId')
+BEGIN
+	ALTER TABLE [dbo].[ExchangeOrganizationSsFolders]
+	DROP CONSTRAINT [FK_ExchangeOrganizationSsFolders_StorageSpaceFolderId]
+END	
+GO
+
+ALTER TABLE [dbo].[ExchangeOrganizationSsFolders]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSsFolders_StorageSpaceFolderId] FOREIGN KEY([StorageSpaceFolderId])
+											REFERENCES [dbo].[StorageSpaceFolders] ([ID]) ON DELETE CASCADE
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_ExchangeOrganizationSsFolders_ItemId')
+BEGIN
+	ALTER TABLE [dbo].[ExchangeOrganizationSsFolders]
+	DROP CONSTRAINT [FK_ExchangeOrganizationSsFolders_ItemId]
+END	
+GO
+
+ALTER TABLE [dbo].[ExchangeOrganizationSsFolders]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationSsFolders_ItemId] FOREIGN KEY([ItemId])
+											REFERENCES [dbo].[ExchangeOrganizations] ([ItemID]) ON DELETE CASCADE
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationStoragSpaceFolders' )
+	DROP PROCEDURE GetOrganizationStoragSpaceFolders
+GO
+
+CREATE PROCEDURE GetOrganizationStoragSpaceFolders
+(
+	@ItemId INT
+)
+AS
+	SELECT
+		SSF.Id,
+		SSF.Name,
+		SSF.StorageSpaceId,
+		SSF.Path,
+		SSF.UncPath,
+		SSF.IsShared,
+		SSF.FsrmQuotaType,
+		SSF.FsrmQuotaSizeBytes
+	FROM [ExchangeOrganizationSsFolders] AS OSSF
+	INNER JOIN [StorageSpaceFolders] AS SSF ON SSF.Id = OSSF.StorageSpaceFolderId
+	WHERE ItemId = @ItemId
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationStoragSpacesFolderByType' )
+	DROP PROCEDURE GetOrganizationStoragSpacesFolderByType
+GO
+
+CREATE PROCEDURE GetOrganizationStoragSpacesFolderByType
+(
+	@ItemId INT,
+	@Type varchar(100)
+)
+AS
+	SELECT
+		SSF.Id,
+		SSF.Name,
+		SSF.StorageSpaceId,
+		SSF.Path,
+		SSF.UncPath,
+		SSF.IsShared,
+		SSF.FsrmQuotaType,
+		SSF.FsrmQuotaSizeBytes
+	FROM [ExchangeOrganizationSsFolders] AS OSSF
+	INNER JOIN [StorageSpaceFolders] AS SSF ON SSF.Id = OSSF.StorageSpaceFolderId
+	WHERE ItemId = @ItemId AND Type = @Type
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteOrganizationStoragSpacesFolder' )
+	DROP PROCEDURE DeleteOrganizationStoragSpacesFolder
+GO
+
+CREATE PROCEDURE DeleteOrganizationStoragSpacesFolder
+(
+	@Id INT
+)
+AS
+	DELETE
+	FROM [ExchangeOrganizationSsFolders]
+	WHERE StorageSpaceFolderId = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddOrganizationStoragSpacesFolder' )
+	DROP PROCEDURE AddOrganizationStoragSpacesFolder
+GO
+
+CREATE PROCEDURE AddOrganizationStoragSpacesFolder
+(
+	@Id INT OUTPUT,
+	@ItemId INT,
+	@Type varchar(100),
+	@StorageSpaceFolderId INT
+)
+AS
+	INSERT INTO [ExchangeOrganizationSsFolders]
+	(
+		ItemId,
+		Type,
+		StorageSpaceFolderId
+	)
+	VALUES 
+	(
+		@ItemId,
+		@Type,
+		@StorageSpaceFolderId
+	)
+
+	SET @Id = @StorageSpaceFolderId
+GO
+
+--Deleted Users + Storage Spaces END
+
 -- REMOVE ECOMMERCE 
 
 /****** Object:  StoredProcedure [dbo].[ecWriteSupportedPluginLog]    Script Date: 6/11/2015 8:14:20 PM ******/

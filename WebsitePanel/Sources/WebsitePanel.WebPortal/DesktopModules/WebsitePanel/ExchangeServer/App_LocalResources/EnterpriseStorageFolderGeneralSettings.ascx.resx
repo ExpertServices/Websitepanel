@@ -177,4 +177,7 @@
   <data name="btnMigrate.OnClientClick" xml:space="preserve">
     <value>if(!confirm('Are you sure?')) return false; else ShowProgressDialog('Moving folder to Storage Space...');</value>
   </data>
+  <data name="locUncPath.Text" xml:space="preserve">
+    <value>UNC Path:</value>
+  </data>
 </root>

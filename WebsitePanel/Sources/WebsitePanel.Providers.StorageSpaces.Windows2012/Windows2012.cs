@@ -540,19 +540,6 @@ namespace WebsitePanel.Providers.StorageSpaces
 
                         file.FullName = (reader[4] as string ?? string.Empty);
 
-                        //if (isRootSearch)
-                        //{
-                        //    file.RelativeUrl = file.FullName.Replace(rootFolder, "").Trim('\\');
-                        //}
-                        //else
-                        //{
-                        //    foreach (var searchPath in searchPaths)
-                        //    {
-                        //        file.RelativeUrl =
-                        //            file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
-                        //    }
-                        //}
-
                         file.Summary = SanitizeXmlString(reader[6] as string);
 
                         result.Add(file);

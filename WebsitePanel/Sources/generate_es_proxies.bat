@@ -50,8 +50,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OCSProxy.cs
 REM %WSDL% %SERVER_URL%/esOperatingSystems.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs
 
-REM %WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
+%WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/esPackages.asmx /out:.\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs
@@ -101,8 +101,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\RemoteDesktopServicesProx
 REM %WSDL% %SERVER_URL%/esEnterpriseStorage.asmx /out:.\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs
 
-%WSDL% %SERVER_URL%/esStorageSpaces.asmx /out:.\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs
+REM %WSDL% %SERVER_URL%/esStorageSpaces.asmx /out:.\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\StorageSpacesProxy.cs
 
 
 

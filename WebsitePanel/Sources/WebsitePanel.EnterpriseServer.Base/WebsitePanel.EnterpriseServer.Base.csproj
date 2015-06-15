@@ -76,6 +76,7 @@
     </Compile>
     <Compile Include="Common\KeyValueBunch.cs" />
     <Compile Include="Common\MailTemplate.cs" />
+    <Compile Include="Common\StorageSpaceFolderTypes.cs" />
     <Compile Include="Common\WebPlatformInstaller.cs" />
     <Compile Include="DatabaseServers\DatabaseBrowserConfiguration.cs" />
     <Compile Include="ExchangeServer\ExchangeEmailAddress.cs" />

@@ -59,6 +59,8 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         private System.Threading.SendOrPostCallback SearchOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetFileBinaryChunkOperationCompleted;
+        
         /// <remarks/>
         public StorageSpaceServices() {
             this.Url = "http://localhost:9003/StorageSpaceServices.asmx";
@@ -102,6 +104,9 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         /// <remarks/>
         public event SearchCompletedEventHandler SearchCompleted;
+        
+        /// <remarks/>
+        public event GetFileBinaryChunkCompletedEventHandler GetFileBinaryChunkCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -671,6 +676,55 @@ namespace WebsitePanel.Providers.StorageSpaces {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetFileBinaryChunk", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        [return: System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")]
+        public byte[] GetFileBinaryChunk(string path, int offset, int length) {
+            object[] results = this.Invoke("GetFileBinaryChunk", new object[] {
+                        path,
+                        offset,
+                        length});
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetFileBinaryChunk(string path, int offset, int length, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetFileBinaryChunk", new object[] {
+                        path,
+                        offset,
+                        length}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public byte[] EndGetFileBinaryChunk(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((byte[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetFileBinaryChunkAsync(string path, int offset, int length) {
+            this.GetFileBinaryChunkAsync(path, offset, length, null);
+        }
+        
+        /// <remarks/>
+        public void GetFileBinaryChunkAsync(string path, int offset, int length, object userState) {
+            if ((this.GetFileBinaryChunkOperationCompleted == null)) {
+                this.GetFileBinaryChunkOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetFileBinaryChunkOperationCompleted);
+            }
+            this.InvokeAsync("GetFileBinaryChunk", new object[] {
+                        path,
+                        offset,
+                        length}, this.GetFileBinaryChunkOperationCompleted, userState);
+        }
+        
+        private void OnGetFileBinaryChunkOperationCompleted(object arg) {
+            if ((this.GetFileBinaryChunkCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetFileBinaryChunkCompleted(this, new GetFileBinaryChunkCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -878,6 +932,32 @@ namespace WebsitePanel.Providers.StorageSpaces {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemFile[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetFileBinaryChunkCompletedEventHandler(object sender, GetFileBinaryChunkCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetFileBinaryChunkCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetFileBinaryChunkCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public byte[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((byte[])(this.results[0]));
             }
         }
     }

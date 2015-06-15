@@ -63,6 +63,10 @@
                                 <td class="FormLabel150"><asp:Localize ID="locFolderUrl" runat="server" meta:resourcekey="locFolderUrl" Text="Folder Url:"></asp:Localize></td>
                                 <td><asp:Label runat="server" ID="lblFolderUrl" /></td>
                             </tr>
+                            <tr id="uncPathRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locUncPath" runat="server" meta:resourcekey="locUncPath" Text="UNC Path:"></asp:Localize></td>
+                                <td><asp:Label runat="server" ID="lblUncPath" /></td>
+                            </tr>
                             <tr><td>&nbsp;</td></tr>
                             <tr>
                                 <td class="FormLabel150"><asp:Localize ID="locDirectoryBrowsing" runat="server" meta:resourcekey="locDirectoryBrowsing" Text="Enable Directory Browsing:"></asp:Localize></td>

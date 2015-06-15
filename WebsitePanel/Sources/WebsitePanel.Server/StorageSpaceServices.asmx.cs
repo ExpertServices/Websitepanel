@@ -249,6 +249,22 @@ namespace WebsitePanel.Server
             }
         }
 
-        
+        [WebMethod, SoapHeader("settings")]
+        public byte[] GetFileBinaryChunk(string path, int offset, int length)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFileBinaryChunk", ProviderSettings.ProviderName);
+                var result = StorageSpaceProvider.GetFileBinaryChunk(path, offset, length);
+                Log.WriteEnd("'{0}' GetFileBinaryChunk", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFileBinaryChunk", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

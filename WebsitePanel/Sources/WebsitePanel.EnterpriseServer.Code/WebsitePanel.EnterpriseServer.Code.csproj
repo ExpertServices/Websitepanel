@@ -109,6 +109,7 @@
     <Compile Include="HostedSolution\CRMController.cs" />
     <Compile Include="HostedSolution\LyncController.cs" />
     <Compile Include="HostedSolution\LyncControllerAsync.cs" />
+    <Compile Include="HostedSolution\Managers\OrganizationFoldersManager.cs" />
     <Compile Include="HostedSolution\OCSController.cs" />
     <Compile Include="HostedSolution\OrganizationController.cs" />
     <Compile Include="HostedSolution\ReportController.cs" />

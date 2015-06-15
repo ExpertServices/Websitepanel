@@ -457,7 +457,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                var storageId = StorageSpacesController.FindBestStorageSpaceService(ResourceGroups.EnterpriseStorage, quotaInBytes);
+                var storageId = StorageSpacesController.FindBestStorageSpaceService(groupName, quotaInBytes);
 
                 if (!storageId.IsSuccess)
                 {
@@ -487,7 +487,7 @@ namespace WebsitePanel.EnterpriseServer
             catch (Exception exception)
             {
                 TaskManager.WriteError(exception);
-                result.AddError("Error removing Storage Space", exception);
+                result.AddError("Error creating Storage Space folder", exception);
 
                 if (result.Value > 0)
                 {
@@ -532,7 +532,10 @@ namespace WebsitePanel.EnterpriseServer
                 var fullPath = CreateFilePath(storageSpace.Path, organizationId, groupName, folderName);
                 var uncPath = CreateFilePath(storageSpace.UncPath, organizationId, groupName, folderName);
 
-                ss.UpdateFolderQuota(fullPath, quotaInBytes, quotaType);
+                if (quotaInBytes > 0)
+                {
+                    ss.UpdateFolderQuota(fullPath, quotaInBytes, quotaType);
+                }
 
                 DataProvider.UpdateStorageSpaceFolder(storageSpaceFolderId, folderName, storageSpace.Id, fullPath, uncPath, false, quotaType, quotaInBytes);
             }
@@ -974,6 +977,40 @@ namespace WebsitePanel.EnterpriseServer
             ServiceProviderProxy.Init(ss, serviceId);
 
             return ss;
+        }
+
+        public static long GetFsrmQuotaInBytes(QuotaValueInfo quotaInfo)
+        {
+            if (quotaInfo.QuotaAllocatedValue == -1)
+            {
+                return -1;
+            }
+
+            if (quotaInfo.QuotaDescription.ToLower().Contains("gb"))
+            {
+                return quotaInfo.QuotaAllocatedValue*1024*1024*1024;
+            }
+
+            if (quotaInfo.QuotaDescription.ToLower().Contains("mb"))
+            {
+                return quotaInfo.QuotaAllocatedValue * 1024 * 1024;
+            }
+
+            return quotaInfo.QuotaAllocatedValue * 1024 ;
+        }
+
+        public static byte[] GetFileBinaryChunk(int storageSpaceId, string path, int offset, int length)
+        {
+            var storageSpace = StorageSpacesController.GetStorageSpaceById(storageSpaceId);
+
+            if (storageSpace == null)
+            {
+                throw new Exception(string.Format("Storage space with id={0} not found", storageSpaceId));
+            }
+
+            var ss = GetStorageSpaceService(storageSpace.ServiceId);
+
+            return ss.GetFileBinaryChunk(path, offset, length);
         }
     }
 }

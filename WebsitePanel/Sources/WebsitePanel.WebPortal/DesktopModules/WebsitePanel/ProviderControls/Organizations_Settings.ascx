@@ -34,6 +34,13 @@
     </tr>
     <tr>
         <td class="SubHead" nowrap="true"><asp:Label runat="server" ID="Label2" meta:resourcekey="lblArchiveStorageSpace" /></td>
-        <td><asp:TextBox  runat="server" ID="txtArchiveStorageSpace" MaxLength="100" Width="200px" /></td>
+        <td>
+            <asp:UpdatePanel runat="server">
+                <ContentTemplate>
+                     <asp:TextBox  runat="server" ID="txtArchiveStorageSpace" MaxLength="100" Width="200px" />
+                    <asp:CheckBox ID="chkUseStorageSpaces" runat="server" meta:resourcekey="chkUseStorageSpaces" Text="Use Storage Spaces" OnCheckedChanged="chkUseStorageSpaces_StateChanged" AutoPostBack="True"/>
+                </ContentTemplate>
+            </asp:UpdatePanel>
+        </td>
     </tr>
 </table>

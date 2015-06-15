@@ -5753,5 +5753,64 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Organization Storage Space Folders
+        public static IDataReader GetOrganizationStoragSpaceFolders(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationStoragSpaceFolders",
+                new SqlParameter("@ItemId", itemId)
+            );
+        }
+
+        public static IDataReader GetOrganizationStoragSpacesFolderByType(int itemId, string type)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationStoragSpacesFolderByType",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@Type", type)
+            );
+        }
+
+        public static void DeleteOrganizationStoragSpacesFolder(int id)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteOrganizationStoragSpacesFolder",
+                new SqlParameter("@ID", id));
+        }
+
+        public static int AddOrganizationStoragSpacesFolder(int itemId, string type, int storageSpaceFolderId)
+        {
+            SqlParameter outParam = new SqlParameter("@ID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddOrganizationStoragSpacesFolder",
+                outParam,
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@Type", type),
+                new SqlParameter("@StorageSpaceFolderId", storageSpaceFolderId)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static IDataReader GetOrganizationStorageSpacesFolderById(int itemId, int folderId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationStorageSpacesFolderById",
+                new SqlParameter("@ItemId", itemId),
+                new SqlParameter("@ID", folderId)
+            );
+        }
+        #endregion
     }
 }

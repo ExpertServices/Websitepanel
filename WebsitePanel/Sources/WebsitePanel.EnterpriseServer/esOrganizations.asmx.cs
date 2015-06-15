@@ -355,9 +355,9 @@ namespace WebsitePanel.EnterpriseServer
         }
         
         [WebMethod]
-        public byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        public byte[] GetArchiveFileBinaryChunk(int packageId, int itemId, int deleteAccountId, int offset, int length)
         {
-            return OrganizationController.GetArchiveFileBinaryChunk(packageId, path, offset, length);
+            return OrganizationController.GetArchiveFileBinaryChunk(packageId, itemId, deleteAccountId, offset, length);
         }
 
         [WebMethod]
