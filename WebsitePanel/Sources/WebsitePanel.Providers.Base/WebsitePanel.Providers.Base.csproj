@@ -89,6 +89,7 @@
     <Compile Include="DomainLookup\DnsRecordInfoChange.cs" />
     <Compile Include="DomainLookup\DomainDnsChanges.cs" />
     <Compile Include="DomainLookup\DomainDnsRecordStatuses.cs" />
+    <Compile Include="EnterpriseStorage\EsFolder.cs" />
     <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />
@@ -302,6 +303,15 @@
     <Compile Include="Statistics\StatsServer.cs" />
     <Compile Include="Statistics\StatsSite.cs" />
     <Compile Include="Statistics\StatsUser.cs" />
+    <Compile Include="StorageSpaces\IStorageSpace.cs" />
+    <Compile Include="StorageSpaces\StorageSpace.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceFolder.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceFolderSearchRequest.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceFolderShare.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceItem.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceLevel.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceLevelPaged.cs" />
+    <Compile Include="StorageSpaces\StorageSpacesPaged.cs" />
     <Compile Include="Virtualization\AutomaticStopAction.cs" />
     <Compile Include="Virtualization\AutomaticStartAction.cs" />
     <Compile Include="Virtualization\BiosInfo.cs" />

@@ -759,5 +759,10 @@ namespace WebsitePanel.Providers.OS
             return WebsitePanel.Server.Utils.OS.CheckFileServicesInstallation();
 
         }
+
+        public virtual bool InstallFsrmService()
+        {
+            return true;
+        }
     }
 }

@@ -157,6 +157,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Virt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.HostedSolution.SharePoint2013Ent", "WebsitePanel.Providers.HostedSolution.SharePoint2013Ent\WebsitePanel.Providers.HostedSolution.SharePoint2013Ent.csproj", "{0CF0C19E-7BFE-4A61-AF00-7B7CE7264252}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.StorageSpaces.Windows2012", "WebsitePanel.Providers.StorageSpaces.Windows2012\WebsitePanel.Providers.StorageSpaces.Windows2012.csproj", "{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -777,6 +779,16 @@ Global
 		{0CF0C19E-7BFE-4A61-AF00-7B7CE7264252}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0CF0C19E-7BFE-4A61-AF00-7B7CE7264252}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0CF0C19E-7BFE-4A61-AF00-7B7CE7264252}.Release|x86.ActiveCfg = Release|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BDB1CF50-DF8D-4165-BFDB-F000D29D0A56}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

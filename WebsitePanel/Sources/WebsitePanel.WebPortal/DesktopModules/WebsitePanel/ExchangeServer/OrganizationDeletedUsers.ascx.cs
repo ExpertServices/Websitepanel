@@ -60,7 +60,7 @@ namespace WebsitePanel.Portal.HostedSolution
                     try
                     {
                         // read remote content
-                        buffer = ES.Services.Organizations.GetArchiveFileBinaryChunk(PanelSecurity.PackageId, downloadFile, offset, FILE_BUFFER_LENGTH);
+                        buffer = ES.Services.Organizations.GetArchiveFileBinaryChunk(PanelSecurity.PackageId, PanelRequest.ItemID, PanelRequest.AccountID, offset, FILE_BUFFER_LENGTH);
                     }
                     catch (Exception ex)
                     {
@@ -332,14 +332,15 @@ namespace WebsitePanel.Portal.HostedSolution
             return serviceLevel;
         }
 
-        public string GetDownloadLink(string storagePath, string folderName, string fileName)
+        public string GetDownloadLink(int accountId, string fileName)
         {
             return NavigateURL(PortalUtils.SPACE_ID_PARAM,
                 PanelSecurity.PackageId.ToString(),
                 "ctl=" + PanelRequest.Ctl,
                 "ItemID=" + PanelRequest.ItemID,
                 "mid=" + this.ModuleID,
-                "DownloadFile=" + Server.UrlEncode(Path.Combine(storagePath, folderName, fileName)));
+                "AccountID=" + accountId,
+                "DownloadFile=" + Server.UrlEncode(fileName));
         }
     }
 }
