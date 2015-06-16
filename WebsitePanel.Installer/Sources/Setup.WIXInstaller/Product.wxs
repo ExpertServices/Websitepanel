@@ -682,6 +682,8 @@
         <SetProperty Id="PI_PREREQ_IIS_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_IIS=0]]></SetProperty>
         <SetProperty Id="PI_PREREQ_ASPNET_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_ASPNET=0]]></SetProperty>
         <SetProperty Id="PI_PREREQ_NETFX_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0"]]></SetProperty>
+        <!--At the 'first time' installation of product we're setting 'C' drive as root. See 'ROOTDRIVE' reference at msdn.-->
+        <SetProperty Id="ROOTDRIVE" After="AppSearch" Value="C:\">NOT Installed</SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
             <!--Preinstall.-->
