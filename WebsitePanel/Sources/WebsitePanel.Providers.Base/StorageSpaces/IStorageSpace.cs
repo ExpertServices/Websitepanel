@@ -20,5 +20,6 @@ namespace WebsitePanel.Providers.StorageSpaces
         StorageSpaceFolderShare ShareFolder(string fullPath, string shareName);
         SystemFile[] Search(string[] searchPaths, string searchText, bool recursive);
         byte[] GetFileBinaryChunk(string path, int offset, int length);
+        void RemoveShare(string fullPath);
     }
 }

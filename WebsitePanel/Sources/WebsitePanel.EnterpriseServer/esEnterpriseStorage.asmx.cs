@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Specialized;
 using System.Data;
 using System.Web;
 using System.Collections;
@@ -180,6 +181,12 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
            return EnterpriseStorageController.SearchFiles(itemId, searchPaths, searchText, userPrincipalName, recursive);
+        }
+
+        [WebMethod]
+        public int GetEnterpriseStorageServiceId(int itemId)
+        {
+            return EnterpriseStorageController.GetEnterpriseStorageServiceId(itemId);
         }
 
         #region Directory Browsing

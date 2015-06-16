@@ -277,7 +277,7 @@ namespace WebsitePanel.EnterpriseServer
             return SaveStorageSpaceInternal(space);
         }
 
-        private static IntResult SaveStorageSpaceInternal(StorageSpace space)
+        private static IntResult SaveStorageSpaceInternal(StorageSpace space, bool isShared = false)
         {
 
             var result = TaskManager.StartResultTask<IntResult>("STORAGE_SPACES", "SAVE_STORAGE_SPACE");
@@ -291,14 +291,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 var ss = GetStorageSpaceService(space.ServiceId);
 
-                var share = ss.ShareFolder(space.Path, space.Name);
+                if (isShared)
+                {
+                    var share = ss.ShareFolder(space.Path, space.Name);
 
-                if (share == null)
-                {
-                    throw new Exception("Error sharin folder");
-                }
-                else
-                {
+                    if (share == null)
+                    {
+                        throw new Exception("Error sharin folder");
+                    }
+
                     space.IsShared = true;
                     space.UncPath = share.UncPath;
                 }
@@ -471,18 +472,22 @@ namespace WebsitePanel.EnterpriseServer
                     throw new Exception(string.Format("Storage space with id={0} not found", storageId.Value));
                 }
 
-                var ss = StorageSpacesController.GetStorageSpaceService(storageSpace.ServiceId);
+                var ss = GetStorageSpaceService(storageSpace.ServiceId);
 
                 var fullPath = CreateFilePath(storageSpace.Path, organizationId, groupName, folderName);
-                var uncPath = CreateFilePath(storageSpace.UncPath, organizationId, groupName, folderName);
 
                 ss.CreateFolder(fullPath);
 
+                var share = ss.ShareFolder(fullPath, folderName);
+
+                if (share == null)
+                {
+                    throw new Exception("Error sharin folder");
+                }
+
                 ss.UpdateFolderQuota(fullPath, quotaInBytes, quotaType);
 
-                //ss.
-
-                result.Value = DataProvider.CreateStorageSpaceFolder(folderName, storageSpace.Id, fullPath, uncPath, false, quotaType, quotaInBytes);
+                result.Value = DataProvider.CreateStorageSpaceFolder(folderName, storageSpace.Id, fullPath, share.UncPath, true, quotaType, quotaInBytes);
             }
             catch (Exception exception)
             {
@@ -509,12 +514,12 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static ResultObject UpdateStorageSpaceFolder(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName, long quotaInBytes, QuotaType quotaType)
+        public static ResultObject UpdateStorageSpaceFolder(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName, string uncPath, long quotaInBytes, QuotaType quotaType)
         {
-            return UpdateStorageSpaceFolderInternal(storageSpaceId, storageSpaceFolderId, organizationId, groupName, folderName, quotaInBytes, quotaType);
+            return UpdateStorageSpaceFolderInternal(storageSpaceId, storageSpaceFolderId, organizationId, groupName, folderName, uncPath, quotaInBytes, quotaType);
         }
 
-        private static ResultObject UpdateStorageSpaceFolderInternal(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName, long quotaInBytes, QuotaType quotaType)
+        private static ResultObject UpdateStorageSpaceFolderInternal(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName,string uncPath, long quotaInBytes, QuotaType quotaType)
         {
             var result = TaskManager.StartResultTask<ResultObject>("STORAGE_SPACES", "UPDATE_STORAGE_SPACE_FOLDER");
 
@@ -530,7 +535,6 @@ namespace WebsitePanel.EnterpriseServer
                 var ss = StorageSpacesController.GetStorageSpaceService(storageSpace.ServiceId);
 
                 var fullPath = CreateFilePath(storageSpace.Path, organizationId, groupName, folderName);
-                var uncPath = CreateFilePath(storageSpace.UncPath, organizationId, groupName, folderName);
 
                 if (quotaInBytes > 0)
                 {
@@ -557,6 +561,54 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
+        }
+
+        public static StorageSpaceFolderShare ShareStorageSpaceFolder(int storageSpaceId, string fullPath, string shareName)
+        {
+            return ShareStorageSpaceFolderInternal(storageSpaceId, fullPath, shareName);
+        }
+
+        private static StorageSpaceFolderShare ShareStorageSpaceFolderInternal(int storageSpaceId, string fullPath, string shareName)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("STORAGE_SPACES", "SHARE_STORAGE_SPACE_FOLDER");
+
+            try
+            {
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(storageSpaceId);
+
+                if (storageSpace == null)
+                {
+                    throw new Exception(string.Format("Storage space with id={0} not found", storageSpaceId));
+                }
+
+                var ss = StorageSpacesController.GetStorageSpaceService(storageSpace.ServiceId);
+
+                var share = ss.ShareFolder(fullPath, shareName);
+
+                if (share == null)
+                {
+                    throw new Exception("Error sharin folder");
+                }
+
+                return share;
+            }
+            catch (Exception exception)
+            {
+                result.AddError("Error sharing Storage Space folder", exception);
+
+               throw TaskManager.WriteError(exception);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
         }
 
         private static string CreateFilePath(string path, string organizationId, string groupName, string folderName)
@@ -595,6 +647,11 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 var ss = GetStorageSpaceService(storage.ServiceId);
+
+                if (storageFolder.IsShared)
+                {
+                    ss.RemoveShare(storageFolder.Path);
+                }
 
                 ss.DeleteFolder(storageFolder.Path);
 
@@ -796,12 +853,12 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static ResultObject RenameStorageSpaceFolder(int storageSpaceId, string fullPath, string newName)
+        public static ResultObject RenameStorageSpaceFolder(int storageSpaceId, int folderId, string organizationId, string group, string fullPath, string newName)
         {
-            return RenameFolderInternal(storageSpaceId, fullPath, newName);
+            return RenameFolderInternal(storageSpaceId, folderId, organizationId, group, fullPath, newName);
         }
 
-        private static ResultObject RenameFolderInternal(int storageSpaceId, string fullPath, string newName)
+        private static ResultObject RenameFolderInternal(int storageSpaceId, int folderId, string organizationId, string group, string fullPath, string newName)
         {
             var result = TaskManager.StartResultTask<ResultObject>("STORAGE_SPACES", "RENAME_FOLDER");
 
@@ -821,12 +878,23 @@ namespace WebsitePanel.EnterpriseServer
 
                 var ss = GetStorageSpaceService(storage.ServiceId);
 
+                ss.RemoveShare(fullPath);
+
                 ss.RenameFolder(fullPath, newName);
+
+                var newPath = Path.Combine(Directory.GetParent(fullPath).ToString(), newName);
+
+                var share = ShareStorageSpaceFolder(storageSpaceId, newPath, newName);
+
+                var folder = GetStorageSpaceFolderById(folderId);
+
+                StorageSpacesController.UpdateStorageSpaceFolder(storageSpaceId, folderId, organizationId, group, newName, share.UncPath, folder.FsrmQuotaSizeBytes, folder.FsrmQuotaType);
+
             }
             catch (Exception exception)
             {
                 TaskManager.WriteError(exception);
-                result.AddError("Error during folder exist check", exception);
+                result.AddError("Error during folder rename", exception);
             }
             finally
             {
