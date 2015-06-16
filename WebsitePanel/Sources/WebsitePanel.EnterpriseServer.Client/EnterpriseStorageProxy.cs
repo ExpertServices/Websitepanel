@@ -77,6 +77,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback SearchFilesOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetEnterpriseStorageServiceIdOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetDirectoryBrowseEnabledOperationCompleted;
         
         private System.Threading.SendOrPostCallback SetDirectoryBrowseEnabledOperationCompleted;
@@ -176,6 +178,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event SearchFilesCompletedEventHandler SearchFilesCompleted;
+        
+        /// <remarks/>
+        public event GetEnterpriseStorageServiceIdCompletedEventHandler GetEnterpriseStorageServiceIdCompleted;
         
         /// <remarks/>
         public event GetDirectoryBrowseEnabledCompletedEventHandler GetDirectoryBrowseEnabledCompleted;
@@ -1171,6 +1176,47 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.SearchFilesCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SearchFilesCompleted(this, new SearchFilesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetEnterpriseStorageServiceId", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int GetEnterpriseStorageServiceId(int itemId) {
+            object[] results = this.Invoke("GetEnterpriseStorageServiceId", new object[] {
+                        itemId});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetEnterpriseStorageServiceId(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetEnterpriseStorageServiceId", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndGetEnterpriseStorageServiceId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetEnterpriseStorageServiceIdAsync(int itemId) {
+            this.GetEnterpriseStorageServiceIdAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void GetEnterpriseStorageServiceIdAsync(int itemId, object userState) {
+            if ((this.GetEnterpriseStorageServiceIdOperationCompleted == null)) {
+                this.GetEnterpriseStorageServiceIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEnterpriseStorageServiceIdOperationCompleted);
+            }
+            this.InvokeAsync("GetEnterpriseStorageServiceId", new object[] {
+                        itemId}, this.GetEnterpriseStorageServiceIdOperationCompleted, userState);
+        }
+        
+        private void OnGetEnterpriseStorageServiceIdOperationCompleted(object arg) {
+            if ((this.GetEnterpriseStorageServiceIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetEnterpriseStorageServiceIdCompleted(this, new GetEnterpriseStorageServiceIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -2410,6 +2456,32 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemFile[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetEnterpriseStorageServiceIdCompletedEventHandler(object sender, GetEnterpriseStorageServiceIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetEnterpriseStorageServiceIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetEnterpriseStorageServiceIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
             }
         }
     }

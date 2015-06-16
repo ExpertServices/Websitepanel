@@ -123,4 +123,10 @@
   <data name="lblDomain.Text" xml:space="preserve">
     <value>Enterprise Storage Domain:</value>
   </data>
+  <data name="lblUseStorageSpaces.Text" xml:space="preserve">
+    <value>Use storage sapces:</value>
+  </data>
+  <data name="chkUseStorageSpaces.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

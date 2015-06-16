@@ -61,6 +61,8 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         private System.Threading.SendOrPostCallback GetFileBinaryChunkOperationCompleted;
         
+        private System.Threading.SendOrPostCallback RemoveShareOperationCompleted;
+        
         /// <remarks/>
         public StorageSpaceServices() {
             this.Url = "http://localhost:9003/StorageSpaceServices.asmx";
@@ -107,6 +109,9 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         /// <remarks/>
         public event GetFileBinaryChunkCompletedEventHandler GetFileBinaryChunkCompleted;
+        
+        /// <remarks/>
+        public event RemoveShareCompletedEventHandler RemoveShareCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -725,6 +730,46 @@ namespace WebsitePanel.Providers.StorageSpaces {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/RemoveShare", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void RemoveShare(string fullPath) {
+            this.Invoke("RemoveShare", new object[] {
+                        fullPath});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginRemoveShare(string fullPath, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("RemoveShare", new object[] {
+                        fullPath}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndRemoveShare(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void RemoveShareAsync(string fullPath) {
+            this.RemoveShareAsync(fullPath, null);
+        }
+        
+        /// <remarks/>
+        public void RemoveShareAsync(string fullPath, object userState) {
+            if ((this.RemoveShareOperationCompleted == null)) {
+                this.RemoveShareOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRemoveShareOperationCompleted);
+            }
+            this.InvokeAsync("RemoveShare", new object[] {
+                        fullPath}, this.RemoveShareOperationCompleted, userState);
+        }
+        
+        private void OnRemoveShareOperationCompleted(object arg) {
+            if ((this.RemoveShareCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.RemoveShareCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -961,4 +1006,8 @@ namespace WebsitePanel.Providers.StorageSpaces {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void RemoveShareCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

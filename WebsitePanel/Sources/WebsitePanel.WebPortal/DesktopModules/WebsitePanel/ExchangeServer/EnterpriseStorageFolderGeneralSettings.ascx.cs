@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Specialized;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -36,7 +37,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-
+using WebsitePanel.Portal.ProviderControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.OS;
@@ -106,7 +107,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
 
-                btnMigrate.Visible = folder.StorageSpaceFolderId == null;
+                var serviceId = ES.Services.EnterpriseStorage.GetEnterpriseStorageServiceId(PanelRequest.ItemID);
+
+                StringDictionary settings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
+
+                btnMigrate.Visible = folder.StorageSpaceFolderId == null
+                    && Utils.ParseBool(settings[EnterpriseStorage_Settings.UseStorageSpaces], false);
 
                 if (folder.StorageSpaceFolderId != null)
                 {
@@ -197,6 +203,17 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 messageBox.ShowErrorMessage("ENTERPRISE_STORAGE_MIGRATE_TO_STORAGE_SPACES", ex);
             }
+        }
+
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
         }
     }
 }

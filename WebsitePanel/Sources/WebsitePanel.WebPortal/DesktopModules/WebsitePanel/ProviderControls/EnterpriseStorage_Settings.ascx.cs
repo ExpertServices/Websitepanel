@@ -42,6 +42,8 @@ namespace WebsitePanel.Portal.ProviderControls
 {
     public partial class EnterpriseStorage_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
     {
+        public const string UseStorageSpaces = "UseStorageSpaces";
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -60,6 +62,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
             txtFolder.Text = path;
             txtDomain.Text = settings["UsersDomain"];
+            chkUseStorageSpaces.Checked = Utils.ParseBool(settings[UseStorageSpaces], false);
         }
 
         public void SaveSettings(StringDictionary settings)
@@ -73,6 +76,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["LocationDrive"] = drive.Split(':')[0];
             settings["UsersHome"] = folder;
             settings["UsersDomain"] = domain;
+            settings[UseStorageSpaces] = chkUseStorageSpaces.Checked.ToString();
         }
     }
 }
