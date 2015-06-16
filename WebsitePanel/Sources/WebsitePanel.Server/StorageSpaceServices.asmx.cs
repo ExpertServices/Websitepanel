@@ -266,5 +266,22 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveShare(string fullPath)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveShare", ProviderSettings.ProviderName);
+                StorageSpaceProvider.RemoveShare(fullPath);
+                Log.WriteEnd("'{0}' RemoveShare", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveShare", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+        
     }
 }

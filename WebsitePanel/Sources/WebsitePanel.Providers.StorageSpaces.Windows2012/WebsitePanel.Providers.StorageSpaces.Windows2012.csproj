@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Windows2012.cs" />
   </ItemGroup>
@@ -67,10 +70,6 @@
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
       <Project>{e91e52f3-9555-4d00-b577-2b1dbdd87ca7}</Project>
       <Name>WebsitePanel.Server.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Server\WebsitePanel.Server.csproj">
-      <Project>{38c6047c-e447-4cc2-891f-abe54d4659f3}</Project>
-      <Name>WebsitePanel.Server</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -153,11 +153,9 @@ namespace WebsitePanel.Providers.StorageSpaces
 
                 RemoveOldQuotaOnFolder(runSpace, fullPath);
 
-                if (!string.IsNullOrEmpty(uncPath))
+                if (!string.IsNullOrEmpty(fullPath))
                 {
-                    var shareName = new Uri(uncPath).Segments.LastOrDefault();
-
-                    RemoveShare(shareName, runSpace);
+                    RemoveShare(fullPath, runSpace);
                 }
             }
             catch (Exception ex)
@@ -370,6 +368,11 @@ namespace WebsitePanel.Providers.StorageSpaces
             }
         }
 
+        public void RemoveShare(string fullPath)
+        {
+            RemoveShare(fullPath, null);
+        }
+
         public bool ShareExist(string shareName, Runspace runspace = null)
         {
 
@@ -456,7 +459,6 @@ namespace WebsitePanel.Providers.StorageSpaces
 
         public bool RemoveShare(string shareName, Runspace runspace = null)
         {
-
             Log.WriteStart("RemoveShare");
             Log.WriteInfo("Share Name : {0}", shareName);
 
@@ -471,7 +473,7 @@ namespace WebsitePanel.Providers.StorageSpaces
 
                 var scripts = new List<string>
                 {                
-                    string.Format("net share {0} /Y /delete", shareName),
+                    string.Format("net share \"{0}\" /Y /delete", shareName),
                 };
 
                 object[] errors = null;

@@ -24,4 +24,12 @@
                 ControlToValidate="txtDomain"  ErrorMessage="*"></asp:RegularExpressionValidator>  
         </td>
     </tr>
+    <tr>
+		<td class="SubHead" style="width:200px;">
+		    <asp:Label ID="lblUseStorageSpaces" runat="server" meta:resourcekey="lblUseStorageSpaces" Text="Use storage sapces:"></asp:Label>
+		</td>
+		<td>
+			<asp:CheckBox ID="chkUseStorageSpaces" runat="server" meta:resourcekey="chkUseStorageSpaces" Text="Yes" />
+		</td>
+	</tr>
 </table>

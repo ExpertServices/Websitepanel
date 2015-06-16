@@ -56,6 +56,8 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class EnterpriseStorageController
     {
+        public const string UseStorageSpaces = "UseStorageSpaces";
+
         #region Public Methods
 
         public static bool CheckEnterpriseStorageInitialization(int packageId, int itemId)
@@ -529,7 +531,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     EnterpriseStorageController.CreateFolder(itemId, true);
 
-                    EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
+                    EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, Path.Combine(homePath, org.OrganizationId));
                 }
             }
             catch (Exception ex)
@@ -567,7 +569,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     Organization org = OrganizationController.GetOrganization(itemId);
 
-                    EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, string.Format("{0}/{1}", org.OrganizationId, folderName).Trim('/'), uncPath);
+                    EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, Path.Combine(org.OrganizationId, folderName), uncPath);
                 }
             }
             catch (Exception ex)
@@ -589,6 +591,17 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
+        private static string GetParentUnc(string uncPath)
+        {
+            var uri = new Uri(uncPath);
+
+            if (uri.Segments.Length == 2)
+            {
+                return string.Format("\\\\{0}", uri.Host);
+            }
+
+            return Directory.GetParent(uncPath).ToString();
+        }
 
         protected static ResultObject DeleteEnterpriseStorageInternal(int packageId, int itemId)
         {
@@ -825,20 +838,18 @@ namespace WebsitePanel.EnterpriseServer
                     }
                     else
                     {
-                        var result =  StorageSpacesController.RenameStorageSpaceFolder(esFolder.StorageSpaceId, esFolder.Path, newFolder);
+                        var result = StorageSpacesController.RenameStorageSpaceFolder(esFolder.StorageSpaceId, esFolder.StorageSpaceFolderId.Value,org.OrganizationId, ResourceGroups.EnterpriseStorage, esFolder.Path, newFolder);
 
                         if (!result.IsSuccess)
                         {
                             throw new Exception(result.ErrorCodes.First());
                         }
 
-                        StorageSpacesController.UpdateStorageSpaceFolder(esFolder.StorageSpaceId, esFolder.StorageSpaceFolderId.Value, org.OrganizationId, ResourceGroups.EnterpriseStorage, newFolder, esFolder.FsrmQuotaSizeBytes, esFolder.FsrmQuotaType);
-
                         esFolder = ObjectUtils.FillObjectFromDataReader<EsFolder>(DataProvider.GetEnterpriseFolder(itemId, oldFolder));
 
                         DeleteWebDavDirectory(org.PackageId, esFolder.Domain, string.Format("{0}/{1}", org.OrganizationId, esFolder.FolderName));
 
-                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, newFolder, Directory.GetParent(Directory.GetParent(esFolder.UncPath).ToString()).ToString());
+                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, newFolder, esFolder.UncPath);
 
                         DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, ConvertBytesToMB(esFolder.FsrmQuotaSizeBytes));
 
@@ -893,40 +904,43 @@ namespace WebsitePanel.EnterpriseServer
                     int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
 
                     StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
+                    
+                    webDavSetting = new WebDavSetting(esSesstings["LocationDrive"], esSesstings["UsersHome"], esSesstings["UsersDomain"]);
 
-                    if (rootFolder)
+                    StorageSpaceFolder folder = null;
+
+                    if (UsingStorageSpaces(esId) && !rootFolder)
                     {
-                        webDavSetting = new WebDavSetting(esSesstings["LocationDrive"], esSesstings["UsersHome"], esSesstings["UsersDomain"]);
+                        var storageSpaceFolderResult =
+                            StorageSpacesController.CreateStorageSpaceFolder(ResourceGroups.EnterpriseStorage,
+                                org.OrganizationId, folderName, quotaInBytses, quotaType);
 
+                        if (!storageSpaceFolderResult.IsSuccess)
+                        {
+                            foreach (var errorCode in storageSpaceFolderResult.ErrorCodes)
+                            {
+                                result.ErrorCodes.Add(errorCode);
+                            }
+
+                            throw new Exception("Error creating storage space folder");
+                        }
+
+                        folder = StorageSpacesController.GetStorageSpaceFolderById(storageSpaceFolderResult.Value);
+
+                        DataProvider.AddEntepriseFolder(itemId, folderName, quota, null, null, esSesstings["UsersDomain"], storageSpaceFolderResult.Value);
+
+                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, folder.UncPath);
+                    }
+                    else
+                    {
                         es.CreateFolder(org.OrganizationId, folderName, webDavSetting);
 
-                        DataProvider.AddEntepriseFolder(itemId, folderName, quota, webDavSetting.LocationDrive,
-                            webDavSetting.HomeFolder, webDavSetting.Domain, null);
+                        DataProvider.AddEntepriseFolder(itemId, folderName, quota, webDavSetting.LocationDrive, webDavSetting.HomeFolder, webDavSetting.Domain, null);
 
                         SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType, webDavSetting);
 
                         DataProvider.UpdateEnterpriseFolder(itemId, folderName, folderName, quota);
-
-                        return result;
                     }
-
-                    var storageSpaceFolderResult = StorageSpacesController.CreateStorageSpaceFolder(ResourceGroups.EnterpriseStorage, org.OrganizationId, folderName, quotaInBytses, quotaType);
-
-                    if (!storageSpaceFolderResult.IsSuccess)
-                    {
-                        foreach (var errorCode in storageSpaceFolderResult.ErrorCodes)
-                        {
-                            result.ErrorCodes.Add(errorCode);
-                        }
-
-                        throw new Exception("Error creating storage space folder");
-                    }
-
-                    var storageFolder = StorageSpacesController.GetStorageSpaceFolderById(storageSpaceFolderResult.Value);
-
-                    CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, Directory.GetParent(Directory.GetParent(storageFolder.UncPath).ToString()).ToString());
-
-                    DataProvider.AddEntepriseFolder(itemId, folderName, quota, null, null, esSesstings["UsersDomain"], storageSpaceFolderResult.Value);
 
                     if (addDefaultGroup)
                     {
@@ -955,7 +969,10 @@ namespace WebsitePanel.EnterpriseServer
 
                         es.SetFolderWebDavRules(org.OrganizationId, folderName, null, rules.ToArray());
 
-                        StorageSpacesController.SetFolderNtfsPermissions(storageFolder.StorageSpaceId, storageFolder.Path, ConvertToUserPermissions(rules.ToArray()), true, false);
+                        if (UsingStorageSpaces(esId) && folder != null)
+                        {
+                            StorageSpacesController.SetFolderNtfsPermissions(folder.StorageSpaceId, folder.Path, ConvertToUserPermissions(rules.ToArray()), true, false);
+                        }
                     }
                 }
                 else
@@ -1233,7 +1250,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 storageFolder = StorageSpacesController.GetStorageSpaceFolderById(storageFolderResult.Value);
 
-                virDirectoryResult = CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, Directory.GetParent(Directory.GetParent(storageFolder.UncPath).ToString()).ToString());
+                virDirectoryResult = CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, storageFolder.UncPath);
 
                 if (!virDirectoryResult.IsSuccess)
                 {
@@ -1300,6 +1317,25 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
+        public static int GetEnterpriseStorageServiceId(int itemId)
+        {
+            return GetEnterpriseStorageServiceIdInternal(itemId);
+        }
+
+        private static int GetEnterpriseStorageServiceIdInternal(int itemId)
+        {
+            // load organization
+            Organization org = OrganizationController.GetOrganization(itemId);
+            if (org == null)
+            {
+                throw new NullReferenceException("Organization not found");
+            }
+
+            int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
+
+            return esId;
+        }
+
         #region WebDav
 
         protected static int AddWebDavDirectoryInternal(int packageId, string site, string vdirName, string contentpath)
@@ -1317,8 +1353,8 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // create virtual directory
                 WebVirtualDirectory dir = new WebVirtualDirectory();
-                dir.Name = vdirName;
-                dir.ContentPath = Path.Combine(contentpath, vdirName.Replace("/", "\\"));
+                dir.Name = (vdirName ?? string.Empty).Replace("\\","/");
+                dir.ContentPath = contentpath;
 
                 dir.EnableAnonymousAccess = false;
                 dir.EnableWindowsAuthentication = false;
@@ -2364,6 +2400,28 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             return (int)(bytes / OneMb);
+        }
+
+        private static bool UsingStorageSpaces(int serviceId)
+        {
+            var settings = ServerController.GetServiceSettings(serviceId);
+
+            if (settings == null)
+            {
+                return false;
+            }
+
+            if (!settings.ContainsKey(UseStorageSpaces))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(settings[UseStorageSpaces]))
+            {
+                return false;
+            }
+
+            return Convert.ToBoolean(settings[UseStorageSpaces]);
         }
     }
 }
