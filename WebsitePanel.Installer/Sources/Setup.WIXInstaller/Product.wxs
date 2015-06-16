@@ -84,7 +84,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_SERVER_DOMAIN">
+                <Control Type="ComboBox" Id="ServerDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_SERVER_DOMAIN">                    
+                    <ComboBox Property="PI_SERVER_DOMAIN" />
                     <Condition Action="disable">NOT(PI_SERVER_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_SERVER_CREATE_AD = "1"</Condition>
                 </Control>
@@ -144,7 +145,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_ESERVER_DOMAIN">
+                <Control Type="ComboBox" Id="EServerDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_ESERVER_DOMAIN">
+                    <ComboBox Property="PI_ESERVER_DOMAIN" />
                     <Condition Action="disable">NOT(PI_ESERVER_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_ESERVER_CREATE_AD = "1"</Condition>
                 </Control>
@@ -262,7 +264,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_PORTAL_DOMAIN">
+                <Control Type="ComboBox" Id="PortalDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_PORTAL_DOMAIN">
+                    <ComboBox Property="PI_PORTAL_DOMAIN" />
                     <Condition Action="disable">NOT(PI_PORTAL_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_PORTAL_CREATE_AD = "1"</Condition>
                 </Control>
@@ -619,6 +622,7 @@
         <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" Impersonate="no" />
         <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" Impersonate="no" />
         <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" Impersonate="no" />
+        <CustomAction Id="CA_FillDomainListUI" BinaryKey="Assembly_CA" DllEntry="FillDomainListUI" Impersonate="no" />
         <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" Impersonate="no" />
         <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" Impersonate="no" />
         <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" Impersonate="no" />
@@ -718,6 +722,7 @@
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
             <Custom Action="CA_FillIpListUI" After="CA_PrereqCheck" />
+            <Custom Action="CA_FillDomainListUI" After="CA_PrereqCheck" />
             <Custom Action="CA_SqlServerListUI" After="CA_PrereqCheck" />
             <Custom Action="CA_PreFillSettings" After="CA_PrereqCheck" />            
         </InstallUISequence>
