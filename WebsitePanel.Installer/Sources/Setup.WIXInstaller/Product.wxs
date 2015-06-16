@@ -6,8 +6,8 @@
     <?include Config.Wxi?>
     <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
              UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
-        <Package  InstallerVersion="200" Compressed="yes"  InstallPrivileges="elevated" InstallScope="perMachine" />
-        <Condition Message="You need to be an administrator to install the [ProductName].">Privileged</Condition>
+        <Package  InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" />
+        <Condition Message="The [ProductName] package requires Microsoft .NET 4.0 Full. Please install it and try again."><![CDATA[NETFRAMEWORK40FULL="#1"]]></Condition>
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
@@ -84,7 +84,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Server security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_SERVER_DOMAIN">
+                <Control Type="ComboBox" Id="ServerDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_SERVER_DOMAIN">                    
+                    <ComboBox Property="PI_SERVER_DOMAIN" />
                     <Condition Action="disable">NOT(PI_SERVER_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_SERVER_CREATE_AD = "1"</Condition>
                 </Control>
@@ -144,7 +145,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Enterprise Server security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_ESERVER_DOMAIN">
+                <Control Type="ComboBox" Id="EServerDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_ESERVER_DOMAIN">
+                    <ComboBox Property="PI_ESERVER_DOMAIN" />
                     <Condition Action="disable">NOT(PI_ESERVER_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_ESERVER_CREATE_AD = "1"</Condition>
                 </Control>
@@ -262,7 +264,8 @@
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify WebsitePanel Portal security settings." />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Security Settings" />
                 <Control Type="Text" Id="DomainLabel" Width="73" Height="15" X="58" Y="116" Text="Domain:" />
-                <Control Type="Edit" Id="DomainEdit" Width="163" Height="15" X="142" Y="116" Property="PI_PORTAL_DOMAIN">
+                <Control Type="ComboBox" Id="PortalDomainCombo" Width="163" Height="15" X="142" Y="116" Property="PI_PORTAL_DOMAIN">
+                    <ComboBox Property="PI_PORTAL_DOMAIN" />
                     <Condition Action="disable">NOT(PI_PORTAL_CREATE_AD = "1")</Condition>
                     <Condition Action="enable">PI_PORTAL_CREATE_AD = "1"</Condition>
                 </Control>
@@ -300,9 +303,7 @@
             </Dialog>
             <Dialog Id="PrereqCheckDlg" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
-                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" Disabled="yes">
-                    <Condition Action="enable">NETFRAMEWORK20="#1" AND NETFRAMEWORK35="#1" AND NETFRAMEWORK40FULL="#1"</Condition>
-                </Control>
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
                 <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
                 <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
@@ -341,6 +342,10 @@
                 <Control Id="InstallAspNetChck" Type="CheckBox" X="145" Y="117" Width="202" Height="17" Text="Install ASP.NET" Property="PI_PREREQ_ASPNET_INSTALL" CheckBoxValue="[PI_PREREQ_ASPNET_INSTALL]">
                     <Condition Action="hide"><![CDATA[PI_PREREQ_ASPNET=1]]></Condition>
                     <Condition Action="show"><![CDATA[PI_PREREQ_ASPNET=0]]></Condition>
+                </Control>
+                <Control Id="InstallNetFxChck" Type="CheckBox" X="145" Y="134" Width="202" Height="17" Text="Install .NET Framework (2.0, 3.0, 3.5)" Property="PI_PREREQ_NETFX_INSTALL" CheckBoxValue="[PI_PREREQ_NETFX_INSTALL]">
+                    <Condition Action="hide"><![CDATA[NOT (NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0")]]></Condition>
+                    <Condition Action="show"><![CDATA[NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0"]]></Condition>
                 </Control>
             </Dialog>
             <!--All events and actions in one place-->
@@ -551,6 +556,7 @@
         <Property Id="NETFRAMEWORK35_TITLE" Value="Micrsoft .NET Framework 3.5"/>
         <PropertyRef Id="NETFRAMEWORK40FULL"/>
         <Property Id="NETFRAMEWORK40FULL_TITLE" Value="Micrsoft .NET Framework 4.0"/>
+        <Property Id="PI_PREREQ_NETFX_INSTALL" Secure="yes" Value="0" />
         <!--IP, PORT, HOSTNAME for each component. Default values.-->
         <Property Id="PI_SERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_SERVER_PORT" Secure="yes" Value="9003" />
@@ -611,24 +617,25 @@
         <Property Id="COMPFOUND_WDPORTAL_MAIN_CFG" Secure="yes" />
         <Property Id="COMPFOUND_SCHEDULER_MAIN_CFG" Secure="yes" />
         <!--CustomActions.-->
-        <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" />
-        <CustomAction Id="CA_PrereqCheck" BinaryKey="Assembly_CA" DllEntry="PrereqCheck" />
-        <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" />
-        <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" />
-        <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" />
-        <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" />
-        <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" />
-        <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" />
-        <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" />
-        <CustomAction Id="CA_ServerAdminValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAdminValidateUI" />
-        <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" />
-        <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" />
-        <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" />
-        <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" />
-        <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
-        <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no" />
+        <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" Impersonate="no" />
+        <CustomAction Id="CA_PrereqCheck" BinaryKey="Assembly_CA" DllEntry="PrereqCheck" Impersonate="no" />
+        <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" Impersonate="no" />
+        <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" Impersonate="no" />
+        <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" Impersonate="no" />
+        <CustomAction Id="CA_FillDomainListUI" BinaryKey="Assembly_CA" DllEntry="FillDomainListUI" Impersonate="no" />
+        <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" Impersonate="no" />
+        <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" Impersonate="no" />
+        <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" Impersonate="no" />
+        <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" Impersonate="no" />
+        <CustomAction Id="CA_ServerAdminValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAdminValidateUI" Impersonate="no" />
+        <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" Impersonate="no" />
+        <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" Impersonate="no" />
+        <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" Impersonate="no" />
+        <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" Impersonate="no" />
+        <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" Impersonate="no" />
+        <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures"  Impersonate="no" />
         <CustomAction Id="CA_InstallWebFeaturesDeferred" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no"  Execute="deferred" />
-        <CustomAction Id="CA_PropertyInstallWebFeaturesDeferred" Property="CA_InstallWebFeaturesDeferred" Value="PI_PREREQ_IIS_INSTALL=[PI_PREREQ_IIS_INSTALL];PI_PREREQ_ASPNET_INSTALL=[PI_PREREQ_ASPNET_INSTALL]" />
+        <CustomAction Id="CA_PropertyInstallWebFeaturesDeferred" Property="CA_InstallWebFeaturesDeferred" Value="PI_PREREQ_IIS_INSTALL=[PI_PREREQ_IIS_INSTALL];PI_PREREQ_ASPNET_INSTALL=[PI_PREREQ_ASPNET_INSTALL];PI_PREREQ_NETFX_INSTALL=[PI_PREREQ_NETFX_INSTALL]" />
         <!--Run corresponding install scripts.-->
         <!-- Prepare and backup when upgrading from old to new installer type.
              Yes, session variables and custom action data are identical almost for corresponding WebsitePanel components in prepare and install scripts.
@@ -664,7 +671,7 @@
         <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=portal;BaseDirectory=[WSP_INSTALL_DIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
-        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
+        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" Impersonate="no" />
         <!---->
         <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
         <!---->
@@ -674,6 +681,9 @@
         <SetProperty Id="REINSTALLMODE" Value="amus" After="CostInitialize">1</SetProperty>
         <SetProperty Id="PI_PREREQ_IIS_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_IIS=0]]></SetProperty>
         <SetProperty Id="PI_PREREQ_ASPNET_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[PI_PREREQ_ASPNET=0]]></SetProperty>
+        <SetProperty Id="PI_PREREQ_NETFX_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0"]]></SetProperty>
+        <!--At the 'first time' installation of product we're setting 'C' drive as root. See 'ROOTDRIVE' reference at msdn.-->
+        <SetProperty Id="ROOTDRIVE" After="AppSearch" Value="C:\">NOT Installed</SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
             <!--Preinstall.-->
@@ -706,14 +716,15 @@
             <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
             <!---->
-            <Custom Action="CA_PropertyInstallWebFeaturesDeferred" After="InstallValidate"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
-            <Custom Action="CA_InstallWebFeatures" After="InstallInitialize"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
-            <Custom Action="CA_InstallWebFeaturesDeferred" After="CA_InstallWebFeatures"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1]]></Custom>
+            <Custom Action="CA_PropertyInstallWebFeaturesDeferred" After="InstallValidate"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1]]></Custom>
+            <Custom Action="CA_InstallWebFeatures" After="InstallInitialize"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1]]></Custom>
+            <Custom Action="CA_InstallWebFeaturesDeferred" After="CA_InstallWebFeatures"><![CDATA[PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1]]></Custom>
         </InstallExecuteSequence>
         <InstallUISequence>
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
             <Custom Action="CA_FillIpListUI" After="CA_PrereqCheck" />
+            <Custom Action="CA_FillDomainListUI" After="CA_PrereqCheck" />
             <Custom Action="CA_SqlServerListUI" After="CA_PrereqCheck" />
             <Custom Action="CA_PreFillSettings" After="CA_PrereqCheck" />            
         </InstallUISequence>

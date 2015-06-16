@@ -73,7 +73,19 @@ namespace WebsitePanel.WIXInstaller.Common
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                        Result = new[] { "Web-Server" };
+                        Result = new[] 
+                        { 
+                            "Web-Server",
+                            "Web-Common-Http",
+                            "Web-Default-Doc",
+                            "Web-ISAPI-Ext",
+                            "Web-ISAPI-Filter",
+                            "Web-Mgmt-Console",
+                            "Web-Net-Ext",
+                            "Web-Filtering",
+                            "Web-Security",
+                            "Web-Static-Content"
+                        };
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
                 case OS.WindowsVersion.WindowsServer2012:
@@ -82,8 +94,8 @@ namespace WebsitePanel.WIXInstaller.Common
                 case OS.WindowsVersion.Windows8:
                         Result = new[]
                         { 
-                            "IIS-WebServer",
-                            "IIS-WebServerRole",                
+                            "IIS-WebServerRole",
+                            "IIS-WebServer",                                            
                             "IIS-CommonHttpFeatures",
                             "IIS-DefaultDocument",
                             "IIS-ISAPIExtensions",
@@ -118,6 +130,25 @@ namespace WebsitePanel.WIXInstaller.Common
                             "IIS-ASPNET",
                             "IIS-ASPNET45"
                         };
+                    break;
+            }
+            return Result;
+        }
+        public static string [] GetNetFxComponents()
+        {
+            string[] Result = null;
+            var OSV = Global.OSVersion;
+            switch (OSV)
+            {
+                case OS.WindowsVersion.WindowsServer2008:
+                        Result = new[] { "NET-Framework" };
+                    break;
+                case OS.WindowsVersion.WindowsServer2008R2:
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:
+                case OS.WindowsVersion.Windows7:
+                case OS.WindowsVersion.Windows8:
+                        Result = new[] { "NetFx3" };
                     break;
             }
             return Result;
