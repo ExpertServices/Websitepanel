@@ -14456,3 +14456,15 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ecAddonProducts]') AND type in (N'U'))
 DROP TABLE [dbo].[ecAddonProducts]
 GO
+/****** Object:  View [dbo].[ServiceHandlersResponsesDetailed]    Script Date: 6/16/2015 6:26:54 AM ******/
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[ServiceHandlersResponsesDetailed]'))
+DROP VIEW [dbo].[ServiceHandlersResponsesDetailed]
+GO
+/****** Object:  View [dbo].[ContractsServicesDetailed]    Script Date: 6/16/2015 6:26:54 AM ******/
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[ContractsServicesDetailed]'))
+DROP VIEW [dbo].[ContractsServicesDetailed]
+GO
+/****** Object:  View [dbo].[ContractsInvoicesDetailed]    Script Date: 6/16/2015 6:26:54 AM ******/
+IF  EXISTS (SELECT * FROM sys.views WHERE object_id = OBJECT_ID(N'[dbo].[ContractsInvoicesDetailed]'))
+DROP VIEW [dbo].[ContractsInvoicesDetailed]
+GO
