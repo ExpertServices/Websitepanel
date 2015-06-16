@@ -32,6 +32,7 @@ using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -181,8 +182,6 @@ namespace WebsitePanel.WIXInstaller
             TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
             TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
             TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVER_ACCESS_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVERADMIN_PASSWORD");
 
             var WSP = Ctx["WSP_INSTALL_DIR"];
             var DirList = new List<string>();
@@ -596,6 +595,20 @@ namespace WebsitePanel.WIXInstaller
             Valid = ValidatePasswordUI(Ctx, "SERVER_ACCESS", out Msg);
             ValidationMsg(Ctx, Msg);
             ValidationStatus(Ctx, Valid);
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult FillDomainListUI(Session Ctx)
+        {
+            var Ctrls = new[]{ new ComboBoxCtrl(Ctx, "PI_SERVER_DOMAIN"),
+                               new ComboBoxCtrl(Ctx, "PI_ESERVER_DOMAIN"),
+                               new ComboBoxCtrl(Ctx, "PI_PORTAL_DOMAIN") };
+            using (var f = Forest.GetCurrentForest())
+            {
+                foreach (Domain d in f.Domains)
+                    foreach (var Ctrl in Ctrls)
+                        Ctrl.AddItem(d.Name);
+            }
             return ActionResult.Success;
         }
         [CustomAction]
