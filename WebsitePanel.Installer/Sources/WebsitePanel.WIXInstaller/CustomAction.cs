@@ -600,14 +600,21 @@ namespace WebsitePanel.WIXInstaller
         [CustomAction]
         public static ActionResult FillDomainListUI(Session Ctx)
         {
-            var Ctrls = new[]{ new ComboBoxCtrl(Ctx, "PI_SERVER_DOMAIN"),
-                               new ComboBoxCtrl(Ctx, "PI_ESERVER_DOMAIN"),
-                               new ComboBoxCtrl(Ctx, "PI_PORTAL_DOMAIN") };
-            using (var f = Forest.GetCurrentForest())
+            try
             {
-                foreach (Domain d in f.Domains)
-                    foreach (var Ctrl in Ctrls)
-                        Ctrl.AddItem(d.Name);
+                var Ctrls = new[]{ new ComboBoxCtrl(Ctx, "PI_SERVER_DOMAIN"),
+                                   new ComboBoxCtrl(Ctx, "PI_ESERVER_DOMAIN"),
+                                   new ComboBoxCtrl(Ctx, "PI_PORTAL_DOMAIN") };
+                using (var f = Forest.GetCurrentForest())
+                {
+                    foreach (Domain d in f.Domains)
+                        foreach (var Ctrl in Ctrls)
+                            Ctrl.AddItem(d.Name);
+                }
+            }
+            catch
+            {
+                // Nothing to do.
             }
             return ActionResult.Success;
         }
