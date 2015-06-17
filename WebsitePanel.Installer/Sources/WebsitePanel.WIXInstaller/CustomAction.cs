@@ -171,6 +171,20 @@ namespace WebsitePanel.WIXInstaller
                 if ((new Version(Found) > new Version(Current)) && !CtxVars.InstallerType.ToLowerInvariant().Equals("msi"))
                     throw new InvalidOperationException("New version must be greater than previous always.");
             };
+            Func<string, string> NormalizeDir = (string Dir) =>
+            {
+                string nds = Path.DirectorySeparatorChar.ToString();
+                string ads = Path.AltDirectorySeparatorChar.ToString();
+                var Result = Dir.Trim();
+                if (!Result.EndsWith(nds) && !Result.EndsWith(ads))
+                {
+                    if (Result.Contains(nds))
+                        Result += nds;
+                    else
+                        Result += ads;
+                }
+                return Result;
+            };
 
             var Ctx = session;
             Ctx.AttachToSetupLog();
@@ -213,7 +227,7 @@ namespace WebsitePanel.WIXInstaller
                         SetProperty(Ctx, "PI_SERVER_DOMAIN", CtxVars.UserDomain);
 
                         SetProperty(Ctx, "PI_SERVER_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
+                        SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
                                                 
                         Ctx["SERVER_ACCESS_PASSWORD"] = string.Empty;
                         Ctx["SERVER_ACCESS_PASSWORD_CONFIRM"] = string.Empty;
@@ -240,7 +254,7 @@ namespace WebsitePanel.WIXInstaller
                         EServerUrl = string.Format("http://{0}:{1}", CtxVars.WebSiteIP, CtxVars.WebSitePort);
 
                         SetProperty(Ctx, "PI_ESERVER_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
+                        SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
 
                         var ConnStr = new SqlConnectionStringBuilder(CtxVars.DbInstallConnectionString);
                         SetProperty(Ctx, "DB_CONN", ConnStr.ToString());
@@ -297,7 +311,7 @@ namespace WebsitePanel.WIXInstaller
                                 SetProperty(Ctx, "PI_ESERVER_URL", Global.WebPortal.DefaultEntServURL);
 
                         SetProperty(Ctx, "PI_PORTAL_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
+                        SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
 
                         var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
                         bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
