@@ -12849,6 +12849,7 @@ SET @ID = SCOPE_IDENTITY()
 
 RETURN
 
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type ='P' AND name = 'RemoveStorageSpaceLevel')
 	DROP PROCEDURE RemoveStorageSpaceLevel
@@ -13181,6 +13182,7 @@ SET @ID = SCOPE_IDENTITY()
 
 RETURN
 
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type ='P' AND name = 'RemoveStorageSpace')
 	DROP PROCEDURE RemoveStorageSpace
@@ -13310,7 +13312,7 @@ SET @ID = SCOPE_IDENTITY()
 
 RETURN
 
-
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name ='UpdateStorageSpaceFolder')
 	DROP PROCEDURE UpdateStorageSpaceFolder
