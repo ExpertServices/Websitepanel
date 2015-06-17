@@ -12691,7 +12691,7 @@ Go
 
 -- Storage Spaces
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'Storage Spaces')
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'StorageSpaceServices')
 BEGIN
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (49, N'StorageSpaceServices', 26, N'WebsitePanel.EnterpriseServer.StorageSpacesController', 1)
 END
