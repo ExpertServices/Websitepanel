@@ -52,6 +52,7 @@ namespace WebsitePanel.Portal.RDS
 
                 litCollectionName.Text = collection.Name;                
                 txtApplicationName.Text = remoteApp.DisplayName;
+                txtCommandLine.Text = remoteApp.RequiredCommandLine;
                 //var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Contains(x.AccountName));
                 var remoteAppUsers = organizationUsers.Where(x => applicationUsers.Select(a => a.Split('\\').Last().ToLower()).Contains(x.SamAccountName.Split('\\').Last().ToLower()));
                 var localAdmins = ES.Services.RDS.GetRdsCollectionLocalAdmins(PanelRequest.CollectionID);
@@ -80,6 +81,7 @@ namespace WebsitePanel.Portal.RDS
                 var applications = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
                 var remoteApp = applications.Where(x => x.Alias.Equals(PanelRequest.ApplicationID, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
                 remoteApp.DisplayName = txtApplicationName.Text;
+                remoteApp.RequiredCommandLine = txtCommandLine.Text;
                 //ES.Services.RDS.SetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp, users.GetUsers().Select(x => x.AccountName).ToArray());
                 ES.Services.RDS.SetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp, users.GetUsers().Select(x => x.SamAccountName.Split('\\').Last()).ToArray());
             }

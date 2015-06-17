@@ -159,4 +159,7 @@
   <data name="btnSaveExit.Text" xml:space="preserve">
     <value>Save Changes and Exit</value>
   </data>
+  <data name="locCommandLine.Text" xml:space="preserve">
+    <value>Command line parameters</value>
+  </data>
 </root>
