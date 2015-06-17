@@ -757,6 +757,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("DisplayName", remoteApp.DisplayName);
                 cmd.Parameters.Add("UserGroups", users);
                 cmd.Parameters.Add("Alias", remoteApp.Alias);
+
+                if (!string.IsNullOrEmpty(remoteApp.RequiredCommandLine))
+                {
+                    cmd.Parameters.Add("CommandLineSetting", "Require");
+                    cmd.Parameters.Add("RequiredCommandLine", remoteApp.RequiredCommandLine);
+                }
+
                 object[] errors;
 
                 ExecuteShellCommand(runspace, cmd, false, out errors).FirstOrDefault();

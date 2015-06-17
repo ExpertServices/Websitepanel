@@ -112,6 +112,24 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valApplicationName;
         
         /// <summary>
+        /// locCommandLine control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locCommandLine;
+        
+        /// <summary>
+        /// txtCommandLine control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCommandLine;
+        
+        /// <summary>
         /// secRdsApplicationUsers control.
         /// </summary>
         /// <remarks>
