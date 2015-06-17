@@ -345,8 +345,6 @@ namespace WebsitePanel.EnterpriseServer
 
                     DataProvider.UpdateEnterpriseFolder(itemId, folder.Name, folder.Name, quota);
                 }
-
-                EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
             }
             catch (Exception ex)
             {
@@ -419,7 +417,6 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.StartTask("ENTERPRISE_STORAGE", taskName, org.PackageId);
 
                     EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota, quotaType);
-                    EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
                     EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
                 }
                 catch (Exception ex)
@@ -825,8 +822,6 @@ namespace WebsitePanel.EnterpriseServer
                         throw new Exception("Old folder not found");
                     }
 
-                    var directoryBrowsingEnabled = GetDirectoryBrowseEnabled(itemId, folder.Url);
-
                     var rules = folder.Rules;
 
                     if (esFolder.StorageSpaceFolderId == null)
@@ -854,8 +849,6 @@ namespace WebsitePanel.EnterpriseServer
                         DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, ConvertBytesToMB(esFolder.FsrmQuotaSizeBytes));
 
                         folder = GetFolder(itemId, newFolder);
-
-                        SetDirectoryBrowseEnabled(itemId, folder.Url, directoryBrowsingEnabled);
 
                         SetFolderWebDavRulesInternal(itemId, newFolder, ConvertToESPermission(itemId, rules));
 
@@ -1230,8 +1223,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 var systemFile = GetFolderInternal(itemId, folderName);
 
-                var directoryBrowsing = GetDirectoryBrowseEnabled(itemId, systemFile.Url);
-
                 long quotaInBytses = ((long)systemFile.FRSMQuotaMB) * 1024 * 1024;
 
                 var storageFolderResult =
@@ -1280,8 +1271,6 @@ namespace WebsitePanel.EnterpriseServer
 
                     throw new Exception("Error updating NTFS permissions");
                 }
-
-                SetDirectoryBrowseEnabled(itemId, systemFile.Url, directoryBrowsing);
 
                 //es.MoveFolder(systemFile.FullName, storageFolder.UncPath);
 
@@ -2008,7 +1997,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (byOrganization)
                 {
-                    SystemFile[] folders = GetFolders(itemId);
+                    SystemFile[] folders = GetEnterpriseFoldersPaged(itemId, true, false, false, "", "", 0, int.MaxValue).PageItems;
 
                     stats.CreatedEnterpriseStorageFolders = folders.Count();
 

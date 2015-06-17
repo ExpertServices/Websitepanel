@@ -105,8 +105,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                         break;
                 }
 
-                chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
-
                 var serviceId = ES.Services.EnterpriseStorage.GetEnterpriseStorageServiceId(PanelRequest.ItemID);
 
                 StringDictionary settings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
@@ -170,7 +168,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ES.Services.EnterpriseStorage.SetEnterpriseFolderGeneralSettings(
                     PanelRequest.ItemID,
                     folder,
-                    chkDirectoryBrowsing.Checked,
+                    false,
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 

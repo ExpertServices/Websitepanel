@@ -68,14 +68,6 @@
                                 <td><asp:Label runat="server" ID="lblUncPath" /></td>
                             </tr>
                             <tr><td>&nbsp;</td></tr>
-                            <tr>
-                                <td class="FormLabel150"><asp:Localize ID="locDirectoryBrowsing" runat="server" meta:resourcekey="locDirectoryBrowsing" Text="Enable Directory Browsing:"></asp:Localize></td>
-						        <td>
-							        <asp:CheckBox id="chkDirectoryBrowsing" runat="server"></asp:CheckBox>
-						        </td>
-					        </tr>
-                            <tr><td>&nbsp;</td></tr>
-
 					    </table>
 					</asp:Panel>
 

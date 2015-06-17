@@ -293,12 +293,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (isShared)
                 {
-                    var share = ss.ShareFolder(space.Path, space.Name);
-
-                    if (share == null)
-                    {
-                        throw new Exception("Error sharin folder");
-                    }
+                    var share = ShareStorageSpaceFolderInternal(space.Id, space.Path, space.Name);
 
                     space.IsShared = true;
                     space.UncPath = share.UncPath;
@@ -478,12 +473,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 ss.CreateFolder(fullPath);
 
-                var share = ss.ShareFolder(fullPath, folderName);
+                var shareName = GenerateShareName(organizationId, folderName);
 
-                if (share == null)
-                {
-                    throw new Exception("Error sharin folder");
-                }
+                var share = ShareStorageSpaceFolderInternal(storageSpace.Id, fullPath, shareName);
 
                 ss.UpdateFolderQuota(fullPath, quotaInBytes, quotaType);
 
@@ -512,6 +504,11 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
+        }
+
+        private static string GenerateShareName(string organizationId, string folderName)
+        {
+            return string.Join("-", organizationId, folderName);
         }
 
         public static ResultObject UpdateStorageSpaceFolder(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName, string uncPath, long quotaInBytes, QuotaType quotaType)
@@ -884,7 +881,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 var newPath = Path.Combine(Directory.GetParent(fullPath).ToString(), newName);
 
-                var share = ShareStorageSpaceFolder(storageSpaceId, newPath, newName);
+                var shareName = GenerateShareName(organizationId, newName);
+
+                var share = ShareStorageSpaceFolderInternal(storageSpaceId, newPath, shareName);
 
                 var folder = GetStorageSpaceFolderById(folderId);
 
