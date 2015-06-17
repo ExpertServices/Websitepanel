@@ -33,12 +33,20 @@
                         <div style="padding: 10px;">
                             <table>
                                 <tr>
-                                    <td class="FormLabel150" style="width: 150px;">
+                                    <td class="FormLabel150" style="width: 170px;">
                                         <asp:Localize ID="locLblApplicationName" runat="server" meta:resourcekey="locLblApplicationName" Text="Application Name"/>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtApplicationName" runat="server" CssClass="TextBox300" />
                                         <asp:RequiredFieldValidator ID="valApplicationName" runat="server" ErrorMessage="*" ControlToValidate="txtApplicationName" ValidationGroup="SaveRDSCollection"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="FormLabel150" style="width: 170px;">
+                                        <asp:Localize ID="locCommandLine" runat="server" meta:resourcekey="locCommandLine" Text="Command line parameters"/>
+                                    </td>
+                                    <td>
+                                        <asp:TextBox ID="txtCommandLine" runat="server" CssClass="TextBox300" />                                        
                                     </td>
                                 </tr>
                             </table>
