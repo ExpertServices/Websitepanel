@@ -947,12 +947,22 @@ namespace WebsitePanel.Providers.Mail
 
         public void CreateAccount(MailAccount mailbox)
         {
+            if (mailbox.MaxMailboxSize == -1)
+            {
+                mailbox.MaxMailboxSize = 0;
+            }
+
+            if (mailbox.MaxMessageSizeMegaByte == -1)
+            {
+                mailbox.MaxMessageSizeMegaByte = 0;
+            }
+
             var accountObject = GetAccountObject();
 
             var emailParts = new MailAddress(mailbox.Name);
             if (!accountObject.CanCreateMailbox(emailParts.User, emailParts.User, mailbox.Password, emailParts.Host))
             {
-                var ex = new Exception("Cannot create account because of password policy in IceWarp server, invalid username, alias or domain. Check if the password policy is different in IceWarp and WSP. Also perhaps your IceWarp diallows username in password?");
+                var ex = new Exception("Cannot create account because of password policy in IceWarp server, invalid username, alias or domain. Check if the password policy is different in IceWarp and WebsitePanel. Also perhaps your IceWarp disallows username in password?");
                 Log.WriteError(ex);
                 throw ex;
             }
@@ -1528,7 +1538,7 @@ namespace WebsitePanel.Providers.Mail
                 SaveAccount(listServerAccountObject, "listserver account to associate with mailing list");
             }
 
-            return !listServerAccountFound ? null : listServerAccountObject;
+            return string.IsNullOrWhiteSpace(listServerAccountObject.EmailAddress) ? null : listServerAccountObject;
         }
 
         public void UpdateList(MailList maillist)
