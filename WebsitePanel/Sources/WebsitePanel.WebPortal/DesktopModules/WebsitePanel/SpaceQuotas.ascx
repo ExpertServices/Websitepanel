@@ -103,6 +103,18 @@
 		<td class="SubHead" nowrap><asp:Label ID="lblEnterpriseStorage" runat="server" meta:resourcekey="lblEnterpriseStorage" Text="Enterprise Storage:" /></td>
 		<td class="Normal"><wsp:Quota ID="quotaEnterpriseStorage" runat="server" QuotaName="EnterpriseStorage.DiskStorageSpace" DisplayGauge="True" /></td>
 	</tr>
+    <tr ID="pnlRdsCollections" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblRdsCollections" runat="server" meta:resourcekey="lblRdsCollections" Text="RDS Collections:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaRdsCollections" runat="server" QuotaName="RDS.Collections" DisplayGauge="True" /></td>
+    </tr> 
+    <tr ID="pnlRdsServers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblRdsServers" runat="server" meta:resourcekey="lblRdsServers" Text="RDS Servers:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaRdsServers" runat="server" QuotaName="RDS.Servers" DisplayGauge="True" /></td>
+    </tr> 
+    <tr ID="pnlRdsUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblRdsUsers" runat="server" meta:resourcekey="lblRdsUsers" Text="RDS Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaRdsUsers" runat="server" QuotaName="RDS.Users" DisplayGauge="True" /></td>
+    </tr> 
 </table>
 </div>
 <div class="FormFooter">
