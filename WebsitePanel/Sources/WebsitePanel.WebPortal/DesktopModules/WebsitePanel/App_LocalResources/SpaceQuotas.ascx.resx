@@ -213,4 +213,13 @@
   <data name="lblSharepointEnterpriseSites.Text" xml:space="preserve">
     <value>SharePoint Server Sites:</value>
   </data>
+  <data name="lblRdsCollections.Text" xml:space="preserve">
+    <value>RDS Collections:</value>
+  </data>
+  <data name="lblRdsServers.Text" xml:space="preserve">
+    <value>RDS Servers:</value>
+  </data>
+  <data name="lblRdsUsers.Text" xml:space="preserve">
+    <value>RDS Users:</value>
+  </data>
 </root>
