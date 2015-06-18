@@ -679,6 +679,7 @@ namespace WebsitePanel.WIXInstaller
         public static ActionResult PrereqCheck(Session session)
         {
             var SecMsg = "You do not have the appropriate permissions to perform this operation. Make sure you are running the application from the local disk and you have local system administrator privileges.";
+            var NetMsg = "Microsoft .NET {0} is {1}.";
             Action<string> ShowMsg = (string Text) =>
             {
                 using(var Rec = new Record(0))
@@ -686,6 +687,13 @@ namespace WebsitePanel.WIXInstaller
                     Rec.SetString(0, Text);
                     session.Message(InstallMessage.Error, Rec);
                 }
+            };
+            Action<Session, string, string> FxLog = (Session SesCtx, string Ver, string StrVer) =>
+            {
+                if (YesNo.Get(session[Ver]) == YesNo.Yes)
+                    AddLog(SesCtx, string.Format(NetMsg, StrVer, "available"));
+                else
+                    AddLog(SesCtx, string.Format(NetMsg, StrVer, "not available"));
             };
             if (!Adapter.CheckSecurity() || !Adapter.IsAdministrator())
             {
@@ -703,7 +711,9 @@ namespace WebsitePanel.WIXInstaller
             session[Prop.REQ_OS] = ros == CheckStatuses.Success ? YesNo.Yes : YesNo.No;
             session[Prop.REQ_IIS] = riis == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
             session[Prop.REQ_ASPNET] = raspnet == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
-
+            FxLog(session, Prop.REQ_NETFRAMEWORK20, "2.0");
+            FxLog(session, Prop.REQ_NETFRAMEWORK35, "3.5");
+            FxLog(session, Prop.REQ_NETFRAMEWORK40FULL, "4.0");
             return ActionResult.Success;
         }
         [CustomAction]
