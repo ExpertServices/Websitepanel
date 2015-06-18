@@ -55,6 +55,7 @@ using System.Xml.Serialization;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 using System.Text.RegularExpressions;
+using WebsitePanel.EnterpriseServer.Code.Common.Extensions;
 using WebsitePanel.Server.Client;
 using WebsitePanel.Providers.StorageSpaces;
 
@@ -3179,7 +3180,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", itemId);
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", displayName, itemId);
 
             try
             {
@@ -3192,12 +3193,20 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return -1;
 
+                // Log org
+                LogExtension.WriteObject(org);
+
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                // Log account
+                LogExtension.WriteObject(account);
+                // Log method parameters
+                LogExtension.WriteParameters(new { notes });
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
@@ -3236,13 +3245,17 @@ namespace WebsitePanel.EnterpriseServer
                     externalEmailAddress,
                     userMustChangePassword);
 
+                // Log properties
+                account.WritePropertyIfChange(a => a.DisplayName, displayName)
+                       .WritePropertyIfChange(a => a.SubscriberNumber, subscriberNumber)
+                       .WritePropertyIfChange(a => a.LevelId, levelId)
+                       .WritePropertyIfChange(a => a.IsVIP, isVIP);
+
                 // update account
                 account.DisplayName = displayName;
                 account.SubscriberNumber = subscriberNumber;
                 account.LevelId = levelId;
                 account.IsVIP = isVIP;
-
-                //account.
 
                 UpdateAccount(account);
                 UpdateAccountServiceLevelSettings(account);
@@ -3895,7 +3908,10 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", itemId);
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", displayName, itemId);
+
+            // Log method parameters
+            LogExtension.WriteParameters(new {accountId, notes});
 
             try
             {
@@ -3906,12 +3922,18 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return -1;
 
+                // Log org
+                LogExtension.WriteObject(org);
+
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                // Log org
+                LogExtension.WriteObject(account);
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings

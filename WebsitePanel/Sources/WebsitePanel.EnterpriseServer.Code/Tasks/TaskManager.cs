@@ -40,6 +40,9 @@ using System.Reflection;
 using WebsitePanel.Providers.Common;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -77,7 +80,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void StartTask(string source, string taskName, int itemId)
         {
-            StartTask(source, taskName, 0, new List<BackgroundTaskParameter>());
+            StartTask(source, taskName, itemId, new List<BackgroundTaskParameter>());
         }
 
         public static void StartTask(string source, string taskName, int itemId, BackgroundTaskParameter parameter)
@@ -165,7 +168,7 @@ namespace WebsitePanel.EnterpriseServer
 
             String itemNameStr = itemName != null
                 ? itemName.ToString()
-                : String.Empty;
+                : itemId > 0 ? "(Id = " + itemId + ")" : String.Empty;
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
 
@@ -849,6 +852,11 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        #endregion
+
+        #region Log Advanced
+
+        
         #endregion
 
     }

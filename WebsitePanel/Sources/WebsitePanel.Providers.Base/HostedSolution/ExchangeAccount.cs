@@ -54,6 +54,7 @@ namespace WebsitePanel.Providers.HostedSolution
         int levelId;
         bool isVip;
 
+        [LogProperty]
         public int AccountId
         {
             get { return this.accountId; }
@@ -78,24 +79,28 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.accountType = value; }
         }
 
+        [LogProperty]
         public string AccountName
         {
             get { return this.accountName; }
             set { this.accountName = value; }
         }
 
+        [LogProperty]
         public string SamAccountName
         {
             get { return this.samAccountName; }
             set { this.samAccountName = value; }
         }
 
+        [LogProperty]
         public string DisplayName
         {
             get { return this.displayName; }
             set { this.displayName = value; }
         }
 
+        [LogProperty("Email Address")]
         public string PrimaryEmailAddress
         {
             get { return this.primaryEmailAddress; }

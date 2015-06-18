@@ -30,6 +30,8 @@ using System;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
+    [LogParentProperty("Id", NameInLog = "Org Id")]
+    [LogParentProperty("Name", NameInLog = "Org Name")]
     public class Organization : ServiceProviderItem
     {
         #region Fields
