@@ -616,6 +616,87 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaEnterpriseStorage;
         
         /// <summary>
+        /// pnlRdsCollections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlRdsCollections;
+        
+        /// <summary>
+        /// lblRdsCollections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRdsCollections;
+        
+        /// <summary>
+        /// quotaRdsCollections control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaRdsCollections;
+        
+        /// <summary>
+        /// pnlRdsServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlRdsServers;
+        
+        /// <summary>
+        /// lblRdsServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRdsServers;
+        
+        /// <summary>
+        /// quotaRdsServers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaRdsServers;
+        
+        /// <summary>
+        /// pnlRdsUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlRdsUsers;
+        
+        /// <summary>
+        /// lblRdsUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblRdsUsers;
+        
+        /// <summary>
+        /// quotaRdsUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaRdsUsers;
+        
+        /// <summary>
         /// btnViewQuotas control.
         /// </summary>
         /// <remarks>

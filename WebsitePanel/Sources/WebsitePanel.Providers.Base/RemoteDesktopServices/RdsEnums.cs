@@ -35,4 +35,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         High,
         FipsCompliant
     }
+
+    public enum CommandLineSettings
+    {
+        Allow,
+        DoNotAllow,
+        Require
+    }
 }

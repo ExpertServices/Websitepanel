@@ -684,6 +684,9 @@
         <SetProperty Id="PI_PREREQ_NETFX_INSTALL" After="CA_PrereqCheck" Value="1" Sequence="ui"><![CDATA[NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0"]]></SetProperty>
         <!--At the 'first time' installation of product we're setting 'C' drive as root. See 'ROOTDRIVE' reference at msdn.-->
         <SetProperty Id="ROOTDRIVE" After="AppSearch" Value="C:\">NOT Installed</SetProperty>
+        <!---->
+        <SetProperty Id="SKIPINSTALLSQLDATA" Before="InstallValidate" Value="1" Sequence="execute"><![CDATA[NOT (&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></SetProperty>
+        <SetProperty Id="SKIPUNINSTALLSQLDATA" Before="InstallValidate" Value="1" Sequence="execute"><![CDATA[NOT (&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
             <!--Preinstall.-->
