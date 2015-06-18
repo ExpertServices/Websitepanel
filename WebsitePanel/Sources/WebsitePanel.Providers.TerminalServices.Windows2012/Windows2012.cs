@@ -757,10 +757,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("DisplayName", remoteApp.DisplayName);
                 cmd.Parameters.Add("UserGroups", users);
                 cmd.Parameters.Add("Alias", remoteApp.Alias);
+                cmd.Parameters.Add("CommandLineSetting", remoteApp.CommandLineSettings.ToString());
 
-                if (!string.IsNullOrEmpty(remoteApp.RequiredCommandLine))
-                {
-                    cmd.Parameters.Add("CommandLineSetting", "Require");
+                if (remoteApp.CommandLineSettings == CommandLineSettings.Require)
+                {                    
                     cmd.Parameters.Add("RequiredCommandLine", remoteApp.RequiredCommandLine);
                 }
 
@@ -864,10 +864,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("DisplayName", remoteApp.DisplayName);
                 cmd.Parameters.Add("FilePath", remoteApp.FilePath);
                 cmd.Parameters.Add("ShowInWebAccess", remoteApp.ShowInWebAccess);
+                cmd.Parameters.Add("CommandLineSetting", remoteApp.CommandLineSettings.ToString());
 
-                if (!string.IsNullOrEmpty(remoteApp.RequiredCommandLine))
+                if (remoteApp.CommandLineSettings == CommandLineSettings.Require)
                 {
-                    cmd.Parameters.Add("CommandLineSetting", "Require");
                     cmd.Parameters.Add("RequiredCommandLine", remoteApp.RequiredCommandLine);
                 }
 
@@ -2223,6 +2223,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             var requiredCommandLine = GetPSObjectProperty(psObject, "RequiredCommandLine");
             remoteApp.RequiredCommandLine = requiredCommandLine == null ? null : requiredCommandLine.ToString();
+            var commandLineSettings = GetPSObjectProperty(psObject, "CommandLineSetting");
+
+            if (commandLineSettings != null)
+            {
+                remoteApp.CommandLineSettings = (CommandLineSettings)Enum.Parse(typeof(CommandLineSettings), commandLineSettings.ToString());
+            }
+
             var users = (string[])(GetPSObjectProperty(psObject, "UserGroups"));
 
             if (users != null && users.Any())

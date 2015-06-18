@@ -33,7 +33,7 @@
                         <div style="padding: 10px;">
                             <table>
                                 <tr>
-                                    <td class="FormLabel150" style="width: 170px;">
+                                    <td class="FormLabel150" colspan="2" style="width: 130px;">
                                         <asp:Localize ID="locLblApplicationName" runat="server" meta:resourcekey="locLblApplicationName" Text="Application Name"/>
                                     </td>
                                     <td>
@@ -42,11 +42,32 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="FormLabel150" style="width: 170px;">
-                                        <asp:Localize ID="locCommandLine" runat="server" meta:resourcekey="locCommandLine" Text="Command line parameters"/>
+                                    <td colspan="3">
+                                        <asp:RadioButton ID="chNotAllow" GroupName="commandLineParameters" meta:resourcekey="chNotAllow" runat="server" Text=""/>                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <asp:RadioButton ID="chAllowAny" GroupName="commandLineParameters" meta:resourcekey="chAllowAny" runat="server" Text=""/>                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td  style="width:40px;"/>
+                                    <td colspan="2">
+                                        <asp:Localize ID="locAllowAny" runat="server" meta:resourcekey="locAllowAny" Text=""/>                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <asp:RadioButton ID="chAllow" meta:resourcekey="chAllow" GroupName="commandLineParameters" runat="server" Text=""/>                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="FormLabel150" colspan="2" style="width: 130px;">
+                                        <asp:Localize ID="locCommandLine" runat="server" meta:resourcekey="locCommandLine" Text="Command-line parameters"/>
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtCommandLine" runat="server" CssClass="TextBox300" />                                        
+                                        <asp:TextBox ID="txtCommandLine" runat="server" CssClass="TextBox300" Enabled="False" />                                        
                                     </td>
                                 </tr>
                             </table>

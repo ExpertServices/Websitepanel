@@ -112,6 +112,42 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valApplicationName;
         
         /// <summary>
+        /// chNotAllow control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton chNotAllow;
+        
+        /// <summary>
+        /// chAllowAny control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton chAllowAny;
+        
+        /// <summary>
+        /// locAllowAny control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locAllowAny;
+        
+        /// <summary>
+        /// chAllow control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton chAllow;
+        
+        /// <summary>
         /// locCommandLine control.
         /// </summary>
         /// <remarks>
