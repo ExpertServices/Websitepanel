@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using WebsitePanel.Providers;
 
 namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
@@ -25,7 +21,7 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
             }
 
             // Log Properties
-            var properties = typeof(T).GetProperties().Where(prop => prop.IsDefined(typeof(LogPropertyAttribute), false));
+            var properties = typeof (T).GetProperties().Where(prop => prop.IsDefined(typeof (LogPropertyAttribute), false));
             foreach (var property in properties)
             {
                 var attributes = GetAttributes<LogPropertyAttribute>(property);
@@ -35,8 +31,8 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
                 }
             }
         }
-        
-        public static T WritePropertyIfChange<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true)
+
+        public static T WritePropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true)
         {
             var property = ObjectUtils.GetProperty(obj, expression);
 
@@ -44,27 +40,34 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
 
             if (!oldValue.Equals(newValue))
             {
-                WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue), LogExtensionHelper.GetString(newValue), withOld);
+                WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
+                    LogExtensionHelper.GetString(newValue), withOld);
             }
 
             return obj;
         }
 
-         public static void WriteParameters<T>(T parametersObj)
+        public static void WriteParameters(object parametersObj)
         {
-            foreach (var property in typeof(T).GetProperties())
+            foreach (var property in parametersObj.GetType().GetProperties())
             {
                 var parameterName = LogExtensionHelper.DecorateName(property.Name);
                 var parameterValue = LogExtensionHelper.GetString(property.GetValue(parametersObj, null));
-                
+
                 TaskManager.Write(LogExtensionHelper.CombineString(parameterName, parameterValue));
             }
         }
 
+        public static void WriteVariable(string name, string value)
+        {
+            TaskManager.Write(LogExtensionHelper.CombineString(name, value));
+        }
+
+        //MethodImpl(MethodImplOptions.NoInlining)
         //public static void WriteParameters(params object[] values)
         //{
         //    var valuesEnumerator = values.GetEnumerator();
-         
+
         //    // Get executing method for log
         //    StackTrace st = new StackTrace();
         //    StackFrame sf = st.GetFrame(1);
@@ -84,18 +87,23 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
         //    }
         //}
 
-        #region Private methods
-
-        private static TAttr[] GetAttributes<TObj, TAttr>() 
-            where TObj : class
-            where TAttr : class  
+        public static void SetItemName(string itemName)
         {
-            return (TAttr[])typeof(TObj).GetCustomAttributes(typeof(TAttr), false);
+            TaskManager.ItemName = itemName;
         }
 
-        private static T[] GetAttributes<T>(ICustomAttributeProvider member) where T : class 
+        #region Private methods
+
+        private static TAttr[] GetAttributes<TObj, TAttr>()
+            where TObj : class
+            where TAttr : class
         {
-            return (T[])member.GetCustomAttributes(typeof(T), false);
+            return (TAttr[]) typeof (TObj).GetCustomAttributes(typeof (TAttr), false);
+        }
+
+        private static T[] GetAttributes<T>(ICustomAttributeProvider member) where T : class
+        {
+            return (T[]) member.GetCustomAttributes(typeof (T), false);
         }
 
         private static void WriteChangedProperty(object obj, PropertyInfo property, string oldValue, string newValue, bool withOld = true)
@@ -114,10 +122,12 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
             }
             else
             {
-                if (withOld)
-                    TaskManager.Write(OLD_PREFIX + LogExtensionHelper.CombineString(property.Name, newValue));
+                var name = LogExtensionHelper.DecorateName(property.Name);
 
-                TaskManager.Write(NEW_PREFIX + LogExtensionHelper.CombineString(property.Name, oldValue));
+                if (withOld)
+                    TaskManager.Write(OLD_PREFIX + LogExtensionHelper.CombineString(name, newValue));
+
+                TaskManager.Write(NEW_PREFIX + LogExtensionHelper.CombineString(name, oldValue));
             }
 
         }

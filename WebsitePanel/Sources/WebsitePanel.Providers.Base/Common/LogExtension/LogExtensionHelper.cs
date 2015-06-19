@@ -18,8 +18,11 @@ namespace WebsitePanel.Providers
 
         public static string DecorateName(string name)
         {
-            var newName = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0"); // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
-            return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(newName); // Capitalize
+            name = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0"); // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
+            name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(name); // Capitalize
+            name = Regex.Replace(name, @"\bId\b", "ID", RegexOptions.IgnoreCase); // "Id" becomes "ID"
+
+            return name;
         }
 
         public static string GetString(object value)

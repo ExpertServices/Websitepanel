@@ -9,9 +9,8 @@ namespace WebsitePanel.Providers
     [AttributeUsage(AttributeTargets.Property)]
     public class LogPropertyAttribute : Attribute
     {
-        public LogPropertyAttribute(bool withNameDecoration = true)
+        public LogPropertyAttribute()
         {
-            NameDecoration = withNameDecoration;
         }
 
         public LogPropertyAttribute(string nameInLog)
@@ -20,8 +19,6 @@ namespace WebsitePanel.Providers
         }
 
         public string NameInLog { get; set; }
-
-        public bool NameDecoration { get; set; }
 
         public string GetLogString(object obj, PropertyInfo propertyInfo)
         {
@@ -36,15 +33,8 @@ namespace WebsitePanel.Providers
 
         public string GetLogString(string name, string value)
         {
-            string logName;
-
-            if (string.IsNullOrEmpty(NameInLog))
-                logName = NameDecoration ? LogExtensionHelper.DecorateName(name) : name;
-            else
-                logName = NameInLog;
-
+            var logName = string.IsNullOrEmpty(NameInLog) ? LogExtensionHelper.DecorateName(name) : NameInLog;
             return LogExtensionHelper.CombineString(logName, value);
         }
-
     }
 }

@@ -498,11 +498,16 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load domain
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
                 {
@@ -1288,6 +1293,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org); 
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -1332,8 +1339,8 @@ namespace WebsitePanel.EnterpriseServer
                     // add domain
                     domain.DomainId = domainId;
                 }
-
-
+                // Log Extension
+                LogExtension.WriteObject(domain);
 
                 // register domain
                 DataProvider.AddExchangeOrganizationDomain(itemId, domain.DomainId, false);
@@ -1365,6 +1372,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     OCSController.AddDomain(domain.DomainName, itemId);
                 }
+
                 return 0;
             }
             catch (Exception ex)
@@ -2339,13 +2347,10 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_USER", itemId);
-
-            TaskManager.Write("Organization ID :" + itemId);
-            TaskManager.Write("name :" + name);
-            TaskManager.Write("domain :" + domain);
-            TaskManager.Write("subscriberNumber :" + subscriberNumber);
-
+            TaskManager.StartTask("ORGANIZATION", "CREATE_USER", displayName, itemId);
+            // Log Extension
+            LogExtension.WriteParameters(new {name, domain, subscriberNumber});
+            
             int userId = -1;
 
             try
@@ -2361,12 +2366,13 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
 
                 // load organization
-                WebsitePanel.Providers.HostedSolution.Organization org = GetOrganization(itemId);
-
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                 {
                     return -1;
                 }
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
 
@@ -2386,18 +2392,20 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string upn = string.Format("{0}@{1}", name, domain);
-                string sAMAccountName = BuildAccountNameEx(org, name);                    
+                string SamAccountName = BuildAccountNameEx(org, name);
 
-                TaskManager.Write("accountName :" + sAMAccountName);
-                TaskManager.Write("upn :" + upn);
+                // Log Extension
+                LogExtension.WriteVariable("Account Name", SamAccountName);
+                LogExtension.WriteParameters(new {upn});
 
-                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
+                if (orgProxy.CreateUser(org.OrganizationId, SamAccountName, displayName, upn, password, enabled) == 0)
                 {
-                    accountName = sAMAccountName;
-                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
-                    TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
+                    accountName = SamAccountName;
+                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(SamAccountName, org.OrganizationId);
+                    // Log Extension
+                    LogExtension.WriteVariable("sAMAccountName", retUser.DomainUserName);
 
-                    userId = AddOrganizationUser(itemId, sAMAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+                    userId = AddOrganizationUser(itemId, SamAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                     // register email address
                     AddAccountEmailAddress(userId, email);
@@ -2639,6 +2647,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "SET_DELETED_USER", itemId);
+            // Log Extension
+            LogExtension.WriteParameters(new {enableForceArchive});
 
             try
             {
@@ -2663,6 +2673,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 int errorCode;
                 if (!CheckDeletedUserQuota(org.Id, out errorCode))
@@ -2670,6 +2682,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteObject(account);
 
                 string accountName = GetAccountName(account.AccountName);
 
@@ -2939,7 +2954,6 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.CURRENT_USER_IS_CRM_USER;
                 }
 
-
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
                     return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER;
@@ -2950,15 +2964,19 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER;
                 }
 
-
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load account
                 ExchangeAccount user = ExchangeServerController.GetAccount(itemId, accountId);
-                
+                // Log Extension
+                LogExtension.SetItemName(user.DisplayName);
+                LogExtension.WriteObject(user);
+
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string account = GetAccountName(user.AccountName);
@@ -3181,7 +3199,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", displayName, itemId);
-
+            
             try
             {
                 displayName = displayName.Trim();
@@ -3193,7 +3211,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return -1;
 
-                // Log org
+                // Log Extension
                 LogExtension.WriteObject(org);
 
                 // check package
@@ -3203,10 +3221,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
-                // Log account
+                // Log Extension
                 LogExtension.WriteObject(account);
-                // Log method parameters
-                LogExtension.WriteParameters(new { notes });
+                LogExtension.WriteParameters(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
@@ -3245,11 +3262,11 @@ namespace WebsitePanel.EnterpriseServer
                     externalEmailAddress,
                     userMustChangePassword);
 
-                // Log properties
-                account.WritePropertyIfChange(a => a.DisplayName, displayName)
-                       .WritePropertyIfChange(a => a.SubscriberNumber, subscriberNumber)
-                       .WritePropertyIfChange(a => a.LevelId, levelId)
-                       .WritePropertyIfChange(a => a.IsVIP, isVIP);
+                // Log Extension
+                account.WritePropertyIfChanged(a => a.DisplayName, displayName)
+                       .WritePropertyIfChanged(a => a.SubscriberNumber, subscriberNumber)
+                       .WritePropertyIfChanged(a => a.LevelId, levelId)
+                       .WritePropertyIfChanged(a => a.IsVIP, isVIP);
 
                 // update account
                 account.DisplayName = displayName;
@@ -3287,12 +3304,12 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-
-
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -3300,6 +3317,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 OrganizationUser user = GetUserGeneralSettings(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(user.DisplayName);
+                LogExtension.WriteObject(user);
+                LogExtension.WriteParameters(new {inherit});
+                user.WritePropertyIfChanged(u => u.UserPrincipalName, userPrincipalName);
 
                 if (user.UserPrincipalName != userPrincipalName)
                 {
@@ -3723,10 +3745,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", itemId);
-
-            TaskManager.Write("Organization ID :" + itemId);
-            TaskManager.Write("display name :" + displayName);
+            TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", displayName, itemId);
+            // Log Extension
+            LogExtension.WriteParameters(new {displayName});
 
             int securityGroupId = -1;
 
@@ -3736,11 +3757,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load organization
                 Organization org = GetOrganization(itemId);
-
                 if (org == null)
                 {
                     return -1;
                 }
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
 
@@ -3756,13 +3778,14 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string groupName = BuildAccountNameEx(org, displayName.Replace(" ", ""));
-                    
-                TaskManager.Write("accountName :" + groupName);
+                // Log Extension
+                LogExtension.WriteParameters(new {groupName});
 
                 if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
                     OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
-                    TaskManager.Write("sAMAccountName :" + retSecurityGroup.SAMAccountName);
+                    // Log Extension
+                    LogExtension.WriteObject(org);
 
                     securityGroupId = AddAccount(itemId, ExchangeAccountType.SecurityGroup, groupName,
                                                     displayName, null, false,
@@ -3879,9 +3902,14 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteObject(account);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -3909,10 +3937,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", displayName, itemId);
-
-            // Log method parameters
-            LogExtension.WriteParameters(new {accountId, notes});
-
+            
             try
             {
                 displayName = displayName.Trim();
@@ -3922,7 +3947,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return -1;
 
-                // Log org
+                // Log Extension
                 LogExtension.WriteObject(org);
 
                 // check package
@@ -3932,8 +3957,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
-                // Log org
+                // Log Extension
                 LogExtension.WriteObject(account);
+                LogExtension.WriteParameters(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
@@ -3946,6 +3972,9 @@ namespace WebsitePanel.EnterpriseServer
                     memberAccounts,
                     notes);
 
+                // Log Extension
+                account.WritePropertyIfChanged(a => a.DisplayName, displayName);
+                
                 // update account
                 account.DisplayName = displayName;
 
@@ -4069,6 +4098,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "DELETE_USER_FROM_SECURITY_GROUP", itemId);
+            LogExtension.WriteParameters(new {groupName});
 
             try
             {
@@ -4076,9 +4106,14 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load user account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteObject(org);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
