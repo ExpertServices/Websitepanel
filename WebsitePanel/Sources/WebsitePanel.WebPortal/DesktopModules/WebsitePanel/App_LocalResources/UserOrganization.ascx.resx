@@ -175,10 +175,10 @@
     <value>Drive Maps</value>
   </data>
   <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
-    <value>Online Folders</value>
+    <value>Shared Folders</value>
   </data>
   <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
-    <value>Hosted Organization - Enterprise Storage</value>
+    <value>Hosted Organization - Cloud Folders</value>
   </data>
   <data name="Text.ExchangeDomainNames" xml:space="preserve">
     <value>Accepted Domains</value>

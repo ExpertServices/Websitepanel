@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
-                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Enterprise Storage");
+                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Cloud Folders");
 
                     return;
                 }

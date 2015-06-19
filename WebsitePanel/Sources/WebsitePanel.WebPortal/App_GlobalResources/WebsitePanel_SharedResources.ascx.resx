@@ -1918,7 +1918,7 @@
     <value>Remote Desktop Services</value>
   </data>
   <data name="ResourceGroup.EnterpriseStorage" xml:space="preserve">
-    <value>Enterprise Storage Services</value>
+    <value>Cloud Folder Services</value>
   </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
@@ -5605,7 +5605,7 @@
     <value>Website is not created</value>
   </data>
   <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
-    <value>Enterprise storage folder settings have been successfully updated.</value>
+    <value>Cloud Folder settings have been successfully updated.</value>
   </data>
   <data name="Quota.HostedCRM.LimitedUsers" xml:space="preserve">
     <value>Limited licenses per organization</value>

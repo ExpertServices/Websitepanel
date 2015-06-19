@@ -100,7 +100,7 @@
 		<td class="Normal"><wsp:Quota ID="quotaNumberOfFolders" runat="server" QuotaName="EnterpriseStorage.Folders" DisplayGauge="True" /></td>
 	</tr>
     <tr id="pnlEnterpriseStorage" runat="server">
-		<td class="SubHead" nowrap><asp:Label ID="lblEnterpriseStorage" runat="server" meta:resourcekey="lblEnterpriseStorage" Text="Enterprise Storage:" /></td>
+		<td class="SubHead" nowrap><asp:Label ID="lblEnterpriseStorage" runat="server" meta:resourcekey="lblEnterpriseStorage" Text="Cloud Folders:" /></td>
 		<td class="Normal"><wsp:Quota ID="quotaEnterpriseStorage" runat="server" QuotaName="EnterpriseStorage.DiskStorageSpace" DisplayGauge="True" /></td>
 	</tr>
     <tr ID="pnlRdsCollections" runat="server">
