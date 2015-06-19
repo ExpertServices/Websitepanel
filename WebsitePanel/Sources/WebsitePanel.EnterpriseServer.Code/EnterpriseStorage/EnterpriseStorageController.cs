@@ -349,7 +349,7 @@ namespace WebsitePanel.EnterpriseServer
             catch (Exception ex)
             {
                 // log error
-                TaskManager.WriteError(ex, "Error executing enterprise storage background task");
+                TaskManager.WriteError(ex, "Error executing cloud folders background task");
             }
             finally
             {
@@ -388,7 +388,7 @@ namespace WebsitePanel.EnterpriseServer
                 catch (Exception ex)
                 {
                     // log error
-                    TaskManager.WriteError(ex, "Error executing enterprise storage background task");
+                    TaskManager.WriteError(ex, "Error executing Cloud Folders background task");
                 }
                 finally
                 {
@@ -422,7 +422,7 @@ namespace WebsitePanel.EnterpriseServer
                 catch (Exception ex)
                 {
                     // log error
-                    TaskManager.WriteError(ex, "Error executing enterprise storage background task");
+                    TaskManager.WriteError(ex, "Error executing Cloud Folders background task");
                 }
                 finally
                 {
@@ -915,7 +915,7 @@ namespace WebsitePanel.EnterpriseServer
                                 result.ErrorCodes.Add(errorCode);
                             }
 
-                            throw new Exception("Error creating storage space folder");
+                            throw new Exception("Error creating cloud folder");
                         }
 
                         folder = StorageSpacesController.GetStorageSpaceFolderById(storageSpaceFolderResult.Value);
@@ -971,7 +971,7 @@ namespace WebsitePanel.EnterpriseServer
                 else
                 {
                     result.IsSuccess = false;
-                    result.AddError("Enterprise Storage", new Exception("Folder already exist"));
+                    result.AddError("Cloud Folders", new Exception("Folder already exist"));
                     return result;
                 }
             }

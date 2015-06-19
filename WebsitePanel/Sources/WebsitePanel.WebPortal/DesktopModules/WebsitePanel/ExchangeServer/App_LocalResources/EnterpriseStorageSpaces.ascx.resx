@@ -142,10 +142,10 @@
     <value>Total Spaces Allocated:</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Enterprise Storage Spaces</value>
+    <value>Cloud Folders</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Enterprise Storage Spaces</value>
+    <value>Cloud Folders</value>
   </data>
   <data name="gvManage.Header" xml:space="preserve">
     <value>Manage</value>

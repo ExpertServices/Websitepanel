@@ -154,7 +154,7 @@
     <value>Folders</value>
   </data>
   <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
-    <value>Enterprise Storage</value>
+    <value>Cloud Folders</value>
   </data>
   <data name="Text.ExchangeDomainNames" xml:space="preserve">
     <value>Accepted Domains</value>
