@@ -5928,4 +5928,7 @@
   <data name="Success.ES_MOVE_TO_STORAGE_SPACE" xml:space="preserve">
     <value>Enterprise folder succefully moved to Storage Space</value>
   </data>
+  <data name="Error.FILES_INCORRECT_FOLDER_NAME" xml:space="preserve">
+    <value>Error! Incorrect folder name</value>
+  </data>
 </root>

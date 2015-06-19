@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Text.RegularExpressions;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
@@ -81,14 +82,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             try
             {
-                foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                if (!EnterpriseStorageHelper.ValidateFolderName(txtFolderName.Text))
                 {
-                    if (txtFolderName.Text.Contains(invalidChar.ToString()))
-                    {
-                        messageBox.ShowErrorMessage("FILES_CREATE_FILE");
+                    messageBox.ShowErrorMessage("FILES_INCORRECT_FOLDER_NAME");
 
-                        return;
-                    }
+                    return;
                 }
 
                 if (!ES.Services.EnterpriseStorage.CheckEnterpriseStorageInitialization(PanelSecurity.PackageId, PanelRequest.ItemID))

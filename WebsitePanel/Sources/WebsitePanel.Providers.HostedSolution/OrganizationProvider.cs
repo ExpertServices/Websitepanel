@@ -1645,13 +1645,7 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             else if (!string.IsNullOrEmpty(gpoId))
             {
-                string path = string.Format("{0}\\{1}",
-                                            string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
-                                            "Drives.xml");
-
-                // open xml document
-                XmlDocument xml = new XmlDocument();
-                xml.Load(path);
+                var xml = GetOrCreateDrivesFile(gpoId);
 
                 MappedDrive[] drives = GetDrivesFromXML(xml, items);
 
@@ -1670,6 +1664,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return (MappedDrive[])items.ToArray(typeof(MappedDrive));
         }
 
+       
         public int CreateMappedDrive(string organizationId, string drive, string labelAs, string path)
         {
             return CreateMappedDriveInternal(organizationId, drive, labelAs, path);
@@ -1704,9 +1699,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string drivesXmlPath = string.Format("{0}\\{1}",
                                                      string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId), 
                                                      "Drives.xml");
-                // open xml document
-                XmlDocument xml = new XmlDocument();
-                xml.Load(drivesXmlPath);
+                var xml = GetOrCreateDrivesFile(gpoId);
 
                 XmlNode drivesNode = xml.SelectSingleNode("(/*)");
                 XmlNode driveNode = CreateDriveNode(xml, drive, labelAs, path);
@@ -1753,9 +1746,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                                 string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
                                                 "Drives.xml");
 
-                    // open xml document
-                    XmlDocument xml = new XmlDocument();
-                    xml.Load(filePath);
+                    var xml = GetOrCreateDrivesFile(gpoId);
 
                     XmlNode drive = xml.SelectSingleNode(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", path));
 
@@ -1802,9 +1793,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                             string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
                                             "Drives.xml");
 
-                // open xml document
-                XmlDocument xml = new XmlDocument();
-                xml.Load(path);
+                var xml = GetOrCreateDrivesFile(gpoId);
 
                 XmlNode x = xml.SelectSingleNode(string.Format("/Drives/Drive[@name='{0}:']", drive));
                 if (x != null)
@@ -1905,8 +1894,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                                           string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
                                                           "Drives.xml");
                      // open xml document
-                     XmlDocument xml = new XmlDocument();
-                     xml.Load(drivesXmlPath);
+                     var xml = GetOrCreateDrivesFile(gpoId);
 
                      XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", folderName));
 
@@ -1972,8 +1960,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                                           string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
                                                           "Drives.xml");
                      // open xml document
-                     XmlDocument xml = new XmlDocument();
-                     xml.Load(drivesXmlPath);
+                     var xml = GetOrCreateDrivesFile(gpoId);
 
                      XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", oldFolder));
 
@@ -2339,6 +2326,24 @@ namespace WebsitePanel.Providers.HostedSolution
         private bool IsGroup(ExchangeAccount account)
         {
             return (account.AccountType == ExchangeAccountType.SecurityGroup || account.AccountType == ExchangeAccountType.DefaultSecurityGroup);
+        }
+
+        private XmlDocument GetOrCreateDrivesFile(string gpoId)
+        {
+            string path = string.Format("{0}\\{1}",
+                string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                "Drives.xml");
+
+            if (!File.Exists(path))
+            {
+                CreateDrivesXmlEmpty(string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId), "Drives.xml");
+            }
+
+            // open xml document
+            XmlDocument xml = new XmlDocument();
+            xml.Load(path);
+
+            return xml;
         }
 
         #endregion
