@@ -2,6 +2,7 @@
 <Include>
     <?define PROJECTPATH = "..\..\..\WebsitePanel"?>
     <?define NAME="WebsitePanel"?>
+    <?define DESCRIPTION="WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers to automate the provisioning of a full suite of services on Windows servers."?>
     <?define ServerTitle="Server"?>
     <?define ServerDescription="WebsitePanel Server is a set of services running on the remote server to be controlled. Server application should be reachable from Enterprise Server one."?>
     <?define EServerTitle="Enterprise Server"?>
