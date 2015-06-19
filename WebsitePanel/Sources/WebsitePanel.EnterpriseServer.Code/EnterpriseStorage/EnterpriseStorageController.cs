@@ -2020,7 +2020,7 @@ namespace WebsitePanel.EnterpriseServer
                             {
                                 foreach (Organization o in orgs)
                                 {
-                                    SystemFile[] folders = GetFolders(o.Id);
+                                    SystemFile[] folders = GetEnterpriseFoldersPaged(o.Id, true, false, false, "", "", 0, int.MaxValue).PageItems;
 
                                     stats.CreatedEnterpriseStorageFolders += folders.Count();
 
@@ -2180,7 +2180,7 @@ namespace WebsitePanel.EnterpriseServer
                     return null;
                 }
 
-                List<SystemFile> folders = GetEnterpriseFoldersPaged(itemId,false,false, true,"","",0 , int.MaxValue).PageItems.ToList();
+                List<SystemFile> folders = GetEnterpriseFoldersPaged(itemId,false,false, false,"","",0 , int.MaxValue).PageItems.ToList();
 
                 Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
 
