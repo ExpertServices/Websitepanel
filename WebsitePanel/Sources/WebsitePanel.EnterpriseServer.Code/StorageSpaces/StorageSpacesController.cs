@@ -231,7 +231,32 @@ namespace WebsitePanel.EnterpriseServer
 
             result.Spaces = spaces.ToArray();
 
+            GetStorageSpacesUsage(result.Spaces);
+
             return result;
+        }
+
+        private static void GetStorageSpacesUsage(IEnumerable<StorageSpace> spaces)
+        {
+            var tasks = new List<Task>();
+
+
+            foreach (var space in spaces)
+            {
+                var closureSpace = space;
+                var task = new Task(() =>
+                {
+                    var quota = GetFolderQuota(closureSpace.Path, closureSpace.Id);
+
+                    closureSpace.ActuallyUsedInBytes = ConvertMbToBytes(quota.Usage);
+                });
+
+                task.Start();
+
+                tasks.Add(task);
+            }
+
+            Task.WaitAll(tasks.ToArray());
         }
 
         public static List<StorageSpace> GetStorageSpacesByLevelId(int levelId)
@@ -1064,6 +1089,11 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return quotaInfo.QuotaAllocatedValue * 1024 ;
+        }
+
+        private static long ConvertMbToBytes(long mBytes)
+        {
+            return mBytes*1024*1024;
         }
 
         public static byte[] GetFileBinaryChunk(int storageSpaceId, string path, int offset, int length)
