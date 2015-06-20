@@ -73,7 +73,6 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.packageId = value; }
         }
 
-        [LogProperty]
         public ExchangeAccountType AccountType
         {
             get { return this.accountType; }

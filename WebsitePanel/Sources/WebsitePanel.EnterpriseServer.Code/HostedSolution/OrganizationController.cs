@@ -55,7 +55,6 @@ using System.Xml.Serialization;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 using System.Text.RegularExpressions;
-using WebsitePanel.EnterpriseServer.Code.Common.Extensions;
 using WebsitePanel.Server.Client;
 using WebsitePanel.Providers.StorageSpaces;
 
@@ -2349,7 +2348,7 @@ namespace WebsitePanel.EnterpriseServer
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_USER", displayName, itemId);
             // Log Extension
-            LogExtension.WriteParameters(new {name, domain, subscriberNumber});
+            LogExtension.WriteVariables(new {name, domain, subscriberNumber});
             
             int userId = -1;
 
@@ -2396,7 +2395,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Log Extension
                 LogExtension.WriteVariable("Account Name", SamAccountName);
-                LogExtension.WriteParameters(new {upn});
+                LogExtension.WriteVariables(new {upn});
 
                 if (orgProxy.CreateUser(org.OrganizationId, SamAccountName, displayName, upn, password, enabled) == 0)
                 {
@@ -2648,7 +2647,7 @@ namespace WebsitePanel.EnterpriseServer
             // place log record
             TaskManager.StartTask("ORGANIZATION", "SET_DELETED_USER", itemId);
             // Log Extension
-            LogExtension.WriteParameters(new {enableForceArchive});
+            LogExtension.WriteVariables(new {enableForceArchive});
 
             try
             {
@@ -3223,7 +3222,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Log Extension
                 LogExtension.WriteObject(account);
-                LogExtension.WriteParameters(new {notes});
+                LogExtension.WriteVariables(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
@@ -3263,10 +3262,10 @@ namespace WebsitePanel.EnterpriseServer
                     userMustChangePassword);
 
                 // Log Extension
-                account.WritePropertyIfChanged(a => a.DisplayName, displayName)
-                       .WritePropertyIfChanged(a => a.SubscriberNumber, subscriberNumber)
-                       .WritePropertyIfChanged(a => a.LevelId, levelId)
-                       .WritePropertyIfChanged(a => a.IsVIP, isVIP);
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                account.LogPropertyIfChanged(a => a.SubscriberNumber, subscriberNumber);
+                account.LogPropertyIfChanged(a => a.LevelId, levelId);
+account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
                 // update account
                 account.DisplayName = displayName;
@@ -3320,8 +3319,8 @@ namespace WebsitePanel.EnterpriseServer
                 // Log Extension
                 LogExtension.SetItemName(user.DisplayName);
                 LogExtension.WriteObject(user);
-                LogExtension.WriteParameters(new {inherit});
-                user.WritePropertyIfChanged(u => u.UserPrincipalName, userPrincipalName);
+                LogExtension.WriteVariables(new {inherit});
+                user.LogPropertyIfChanged(u => u.UserPrincipalName, userPrincipalName);
 
                 if (user.UserPrincipalName != userPrincipalName)
                 {
@@ -3747,7 +3746,7 @@ namespace WebsitePanel.EnterpriseServer
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", displayName, itemId);
             // Log Extension
-            LogExtension.WriteParameters(new {displayName});
+            LogExtension.WriteVariables(new {displayName});
 
             int securityGroupId = -1;
 
@@ -3779,7 +3778,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 string groupName = BuildAccountNameEx(org, displayName.Replace(" ", ""));
                 // Log Extension
-                LogExtension.WriteParameters(new {groupName});
+                LogExtension.WriteVariables(new {groupName});
 
                 if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
@@ -3959,7 +3958,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Log Extension
                 LogExtension.WriteObject(account);
-                LogExtension.WriteParameters(new {notes});
+                LogExtension.WriteVariables(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
@@ -3973,7 +3972,7 @@ namespace WebsitePanel.EnterpriseServer
                     notes);
 
                 // Log Extension
-                account.WritePropertyIfChanged(a => a.DisplayName, displayName);
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
                 
                 // update account
                 account.DisplayName = displayName;
@@ -4098,7 +4097,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "DELETE_USER_FROM_SECURITY_GROUP", itemId);
-            LogExtension.WriteParameters(new {groupName});
+            LogExtension.WriteVariables(new {groupName});
 
             try
             {

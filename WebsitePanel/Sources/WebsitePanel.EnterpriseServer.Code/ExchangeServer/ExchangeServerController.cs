@@ -37,6 +37,7 @@ using System.Threading;
 using System.Drawing;
 using System.IO;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
+using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.Exchange;
@@ -183,6 +184,10 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return null;
+                // Log Extension
+                LogExtension.SetItemName(org.Name);
+                LogExtension.WriteObject(org);
+                LogExtension.WriteVariables(new {byOrganization});
 
                 OrganizationStatistics stats = new OrganizationStatistics();
 
@@ -219,6 +224,9 @@ namespace WebsitePanel.EnterpriseServer
                             {
                                 foreach (Organization o in orgs)
                                 {
+                                    // Log Extension
+                                    LogExtension.WriteVariable("Clild Org", o.Name);
+                                   
                                     OrganizationStatistics tempStats = ObjectUtils.FillObjectFromDataReader<OrganizationStatistics>(DataProvider.GetExchangeOrganizationStatistics(o.Id));
 
                                     stats.CreatedMailboxes += tempStats.CreatedMailboxes;
@@ -364,6 +372,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             // place log record
             TaskManager.StartTask("EXCHANGE", "CREATE_ORG", org.Name, new BackgroundTaskParameter("Organization ID", org.OrganizationId));
+            // Log Extension
+            LogExtension.WriteObject(org, o => o.DistinguishedName, o => o.OrganizationId);
 
             try
             {
@@ -596,6 +606,9 @@ namespace WebsitePanel.EnterpriseServer
                 // delete organization in Exchange
                 //System.Threading.Thread.Sleep(5000);
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                // Log Extension
+                LogExtension.SetItemName(org.DistinguishedName);
+                LogExtension.WriteObject(org, o => o.DistinguishedName);
 
                 List<ExchangeDomainName> acceptedDomains = GetOrganizationDomains(itemId);
 
@@ -663,12 +676,17 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "SET_ORG_LIMITS", itemId);
+            // Log Extension
+            LogExtension.WriteVariables(new { issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays }, "Mailbox ");
 
             try
             {
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return 0;
+                // Log Extension
+                LogExtension.SetItemName(org.DistinguishedName);
+                LogExtension.WriteObject(org);
 
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
@@ -943,6 +961,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return 0;
+                // Log Extension
+                LogExtension.WriteObject(org, o => o.ServiceId);
 
                 // get policy
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -1462,12 +1482,16 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load domain
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
-
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 // delete domain on Exchange
                 int[] hubTransportServiceIds;
@@ -1593,11 +1617,16 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load domain
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
                 {
@@ -1701,7 +1730,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX", displayName, itemId);
+            // Log Extension
+            LogExtension.WriteVariables(new {accountName, displayName});
 
             bool userCreated = false;
             Organization org = null;
@@ -1717,6 +1748,8 @@ namespace WebsitePanel.EnterpriseServer
                 org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // e-mail
                 string email = name + "@" + domain;
@@ -1822,7 +1855,7 @@ namespace WebsitePanel.EnterpriseServer
                 //GetServiceSettings
                 StringDictionary primSettings = ServerController.GetServiceSettings(exchangeServiceId);
 
-                string samAccount = exchange.CreateMailEnableUser(email, org.OrganizationId, org.DistinguishedName,
+                string samAccountName = exchange.CreateMailEnableUser(email, org.OrganizationId, org.DistinguishedName,
                                                 org.SecurityGroup, org.DefaultDomain,
                                                 accountType, primSettings["mailboxdatabase"],
                                                 org.OfflineAddressBook,
@@ -1852,7 +1885,7 @@ namespace WebsitePanel.EnterpriseServer
                     | MailboxManagerActions.EmailAddresses;
 
 
-                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
+                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccountName, password, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
 
                 ResultObject resPolicy = new ResultObject() { IsSuccess = true };
                 SetMailBoxRetentionPolicyAndArchiving(itemId, mailboxPlanId, archivedPlanId, accountName, exchange, org.OrganizationId, resPolicy, EnableArchiving);
@@ -1889,6 +1922,9 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     TaskManager.WriteError(ex);
                 }
+
+                // Log Extension
+                LogExtension.WriteVariables(new {email, samAccountName, accountId});
 
                 return accountId;
             }
@@ -1930,9 +1966,14 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                LogExtension.WriteObject(account, a => a.UserPrincipalName);
 
                 if (BlackBerryController.CheckBlackBerryUserExists(accountId))
                 {
@@ -2164,6 +2205,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL", itemId);
+            // Log Extension
+            LogExtension.WriteVariables(new {hideAddressBook, disabled}, "Try ");
 
             try
             {
@@ -2171,6 +2214,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -2178,6 +2223,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                LogExtension.WriteObject(account);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -2188,6 +2236,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue))
                     hideAddressBook = true;
+
+                // Log Extension
+                LogExtension.WriteVariables(new { hideAddressBook });
 
                 exchange.SetMailboxGeneralSettings(
                     account.UserPrincipalName,
@@ -2233,6 +2284,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "ADD_MAILBOX_ADDRESS", itemId);
+            // Log Extension
+            LogExtension.WriteVariable("Email Address added", emailAddress);
 
             try
             {
@@ -2244,6 +2297,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -2251,6 +2306,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                LogExtension.WriteObject(account, a => a.UserPrincipalName);
 
                 // add e-mail
                 AddAccountEmailAddress(accountId, emailAddress);
@@ -2300,12 +2358,20 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // get account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                LogExtension.WriteObject(account);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+
                 account.PrimaryEmailAddress = emailAddress;
 
                 // update exchange
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
+
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -2541,6 +2607,8 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
+                // Log Extension
+                LogExtension.WriteObject(org);
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -2548,6 +2616,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                LogExtension.WriteObject(account);
 
                 // PMM settings
                 if (pmmAllowed) account.MailboxManagerActions |= action;
@@ -2593,7 +2664,15 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty(body))
                 return null;
 
-            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
+            string result = "";
+            try
+            {
+                result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteWarning("Cant EvaluateMailboxTemplate of GetMailboxSetupInstructions: " + ex.Message);
+            }
             return user.HtmlMail ? result : result.Replace("\n", "<br/>");
         }
 

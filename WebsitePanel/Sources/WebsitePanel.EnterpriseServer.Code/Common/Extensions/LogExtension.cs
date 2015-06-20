@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using WebsitePanel.Providers;
 
-namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
+namespace WebsitePanel.EnterpriseServer.Extensions
 {
     public static class LogExtension
     {
@@ -32,7 +32,29 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
             }
         }
 
-        public static T WritePropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true)
+        public static void WriteObject<T, TU>(T obj, params Expression<Func<T, TU>>[] additionalProperties) where T : class
+        {
+            WriteObject(obj);
+
+            foreach (var expression in additionalProperties)
+            {
+                LogProperty(obj, expression);
+            }
+        }
+
+        public static T LogProperty<T, TU>(this T obj, Expression<Func<T, TU>> expression, string nameInLog = null) where T : class
+        {
+            var property = ObjectUtils.GetProperty(obj, expression);
+
+            var propertyName = string.IsNullOrEmpty(nameInLog) ? LogExtensionHelper.DecorateName(property.Name) : nameInLog;
+            var propertyValue = LogExtensionHelper.GetString(property.GetValue(obj, null));
+
+            TaskManager.Write(LogExtensionHelper.CombineString(propertyName, propertyValue));
+
+            return obj;
+        }
+
+        public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true)
         {
             var property = ObjectUtils.GetProperty(obj, expression);
 
@@ -47,14 +69,14 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
             return obj;
         }
 
-        public static void WriteParameters(object parametersObj)
+        public static void WriteVariables(object variablesObs, string prefix = "")
         {
-            foreach (var property in parametersObj.GetType().GetProperties())
+            foreach (var property in variablesObs.GetType().GetProperties())
             {
                 var parameterName = LogExtensionHelper.DecorateName(property.Name);
-                var parameterValue = LogExtensionHelper.GetString(property.GetValue(parametersObj, null));
+                var parameterValue = LogExtensionHelper.GetString(property.GetValue(variablesObs, null));
 
-                TaskManager.Write(LogExtensionHelper.CombineString(parameterName, parameterValue));
+                TaskManager.Write(prefix + LogExtensionHelper.CombineString(parameterName, parameterValue));
             }
         }
 
@@ -64,7 +86,7 @@ namespace WebsitePanel.EnterpriseServer.Code.Common.Extensions
         }
 
         //MethodImpl(MethodImplOptions.NoInlining)
-        //public static void WriteParameters(params object[] values)
+        //public static void WriteVariables(params object[] values)
         //{
         //    var valuesEnumerator = values.GetEnumerator();
 
