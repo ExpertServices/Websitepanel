@@ -1847,21 +1847,21 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
-        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName)
+        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string path)
         {
-            SetDriveMapsTargetingFilterInternal(organizationId, accounts, folderName);
+            SetDriveMapsTargetingFilterInternal(organizationId, accounts, path);
         }
 
-        internal void SetDriveMapsTargetingFilterInternal(string organizationId, ExchangeAccount[] accounts, string folderName)
+        internal void SetDriveMapsTargetingFilterInternal(string organizationId, ExchangeAccount[] accounts, string locationPath)
         {
             HostedSolutionLog.LogStart("SetDriveMapsTargetingFilterInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
-            HostedSolutionLog.DebugInfo("folderName : {0}", folderName);
+            HostedSolutionLog.DebugInfo("folderName : {0}", locationPath);
 
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
 
-            if (string.IsNullOrEmpty(folderName))
+            if (string.IsNullOrEmpty(locationPath))
                 throw new ArgumentNullException("folderName");
 
              try
@@ -1896,7 +1896,7 @@ namespace WebsitePanel.Providers.HostedSolution
                      // open xml document
                      var xml = GetOrCreateDrivesFile(gpoId);
 
-                     XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", folderName));
+                     XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", locationPath));
 
                      foreach (XmlNode driveNode in drives)
                      {
