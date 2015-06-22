@@ -78,13 +78,14 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.itemId = value; }
         }
 
-
+        [LogProperty("Mailbox Plan ID")]
         public int MailboxPlanId
         {
             get { return this.mailboxPlanId; }
             set { this.mailboxPlanId = value; }
         }
 
+        [LogProperty("Mailbox Plan Name")]
         public string MailboxPlan
         {
             get { return this.mailboxPlan; }
@@ -254,6 +255,7 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.enableForceArchiveDeletion = value; }
         }
 
+        [LogProperty("Mailbox Plan Unique Name")]
         public string WSPUniqueName
         {
             get

@@ -494,16 +494,15 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 // load domain
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
+                
                 // Log Extension
                 LogExtension.SetItemName(domain.DomainName);
                 LogExtension.WriteObject(domain);
@@ -681,7 +680,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 bool successful = true;
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
 
                 try
                 {
@@ -933,24 +932,35 @@ namespace WebsitePanel.EnterpriseServer
             return org;
         }
 
-        public static Organization GetOrganization(int itemId)
+        public static Organization GetOrganization(int itemId, bool withLog = true)
         {
             #region Demo Mode
             if (IsDemoMode)
             {
                 // load package by user
-                Organization org = new Organization();
-                org.PackageId = 0;
-                org.Id = 1;
-                org.OrganizationId = "fabrikam";
-                org.Name = "Fabrikam Inc";
-                org.KeepDeletedItemsDays = 14;
-                org.GlobalAddressList = "FabrikamGAL";
-                return org;
+                Organization orgDemo = new Organization();
+                orgDemo.PackageId = 0;
+                orgDemo.Id = 1;
+                orgDemo.OrganizationId = "fabrikam";
+                orgDemo.Name = "Fabrikam Inc";
+                orgDemo.KeepDeletedItemsDays = 14;
+                orgDemo.GlobalAddressList = "FabrikamGAL";
+
+                // Log Extension
+                if (withLog)
+                    LogExtension.WriteObject(orgDemo);
+
+                return orgDemo;
             }
             #endregion
 
-            return (Organization)PackageController.GetPackageItem(itemId);
+            var org = (Organization)PackageController.GetPackageItem(itemId);
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(org);
+
+            return org;
         }
 
         public static OrganizationStatistics GetOrganizationStatistics(int itemId)
@@ -997,7 +1007,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
@@ -1289,11 +1299,9 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org); 
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -1338,6 +1346,7 @@ namespace WebsitePanel.EnterpriseServer
                     // add domain
                     domain.DomainId = domainId;
                 }
+                
                 // Log Extension
                 LogExtension.WriteObject(domain);
 
@@ -1391,7 +1400,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return -1;
 
@@ -1421,7 +1430,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (currentDefaultOrganizationId > 0)
                 {
                     // load current default organization
-                    Organization currentDefaultOrg = (Organization)PackageController.GetPackageItem(currentDefaultOrganizationId);
+                    Organization currentDefaultOrg = GetOrganization(currentDefaultOrganizationId);
 
                     currentDefaultOrg.IsDefault = false;
 
@@ -1430,7 +1439,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // load organization
-                Organization newDefaultOrg = (Organization)PackageController.GetPackageItem(newDefaultOrganizationId);
+                Organization newDefaultOrg = GetOrganization(newDefaultOrganizationId);
                 
                 newDefaultOrg.IsDefault = true;
                 // save changes
@@ -2347,6 +2356,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_USER", displayName, itemId);
+            
             // Log Extension
             LogExtension.WriteVariables(new {name, domain, subscriberNumber});
             
@@ -2367,11 +2377,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
-                {
                     return -1;
-                }
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
 
@@ -2401,6 +2407,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     accountName = SamAccountName;
                     OrganizationUser retUser = orgProxy.GetUserGeneralSettings(SamAccountName, org.OrganizationId);
+                    
                     // Log Extension
                     LogExtension.WriteVariable("sAMAccountName", retUser.DomainUserName);
 
@@ -2646,6 +2653,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "SET_DELETED_USER", itemId);
+            
             // Log Extension
             LogExtension.WriteVariables(new {enableForceArchive});
 
@@ -2672,8 +2680,6 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 int errorCode;
                 if (!CheckDeletedUserQuota(org.Id, out errorCode))
@@ -2681,9 +2687,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
                 // Log Extension
                 LogExtension.SetItemName(account.DisplayName);
-                LogExtension.WriteObject(account);
 
                 string accountName = GetAccountName(account.AccountName);
 
@@ -2967,14 +2973,12 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 // load account
                 ExchangeAccount user = ExchangeServerController.GetAccount(itemId, accountId);
+                
                 // Log Extension
                 LogExtension.SetItemName(user.DisplayName);
-                LogExtension.WriteObject(user);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -3047,13 +3051,17 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteOrganizationDeletedUser(id);
         }
 
-        public static OrganizationUser GetAccount(int itemId, int userId)
+        public static OrganizationUser GetAccount(int itemId, int userId, bool withLog = true)
         {
             OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
                 DataProvider.GetExchangeAccount(itemId, userId));
 
             if (account == null)
                 return null;
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(account);
 
             return account;
         }
@@ -3073,7 +3081,7 @@ namespace WebsitePanel.EnterpriseServer
         private static void DeleteUserFromMetabase(int itemId, int accountId)
         {
             // try to get organization
-            if (GetOrganization(itemId) == null)
+            if (GetOrganization(itemId, false) == null)
                 return;
 
             DataProvider.DeleteExchangeAccount(itemId, accountId);
@@ -3097,12 +3105,12 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                org = GetOrganization(itemId);
+                org = GetOrganization(itemId, false);
                 if (org == null)
                     return null;
 
                 // load account
-                account = GetAccount(itemId, accountId);
+                account = GetAccount(itemId, accountId, false);
             }
             catch (Exception) { }
 
@@ -3210,9 +3218,6 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return -1;
 
-                // Log Extension
-                LogExtension.WriteObject(org);
-
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
@@ -3221,7 +3226,6 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
                 // Log Extension
-                LogExtension.WriteObject(account);
                 LogExtension.WriteVariables(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
@@ -3265,7 +3269,7 @@ namespace WebsitePanel.EnterpriseServer
                 account.LogPropertyIfChanged(a => a.DisplayName, displayName);
                 account.LogPropertyIfChanged(a => a.SubscriberNumber, subscriberNumber);
                 account.LogPropertyIfChanged(a => a.LevelId, levelId);
-account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
+                account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
                 // update account
                 account.DisplayName = displayName;
@@ -3307,8 +3311,6 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -3316,6 +3318,7 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
                 // load account
                 OrganizationUser user = GetUserGeneralSettings(itemId, accountId);
+               
                 // Log Extension
                 LogExtension.SetItemName(user.DisplayName);
                 LogExtension.WriteObject(user);
@@ -3588,7 +3591,7 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return null;
 
@@ -3745,6 +3748,7 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", displayName, itemId);
+            
             // Log Extension
             LogExtension.WriteVariables(new {displayName});
 
@@ -3760,8 +3764,6 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 {
                     return -1;
                 }
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
 
@@ -3777,14 +3779,16 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string groupName = BuildAccountNameEx(org, displayName.Replace(" ", ""));
+                
                 // Log Extension
                 LogExtension.WriteVariables(new {groupName});
 
                 if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
                     OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
+                    
                     // Log Extension
-                    LogExtension.WriteObject(org);
+                    LogExtension.WriteObject(retSecurityGroup);
 
                     securityGroupId = AddAccount(itemId, ExchangeAccountType.SecurityGroup, groupName,
                                                     displayName, null, false,
@@ -3901,14 +3905,12 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
                 // Log Extension
                 LogExtension.SetItemName(account.DisplayName);
-                LogExtension.WriteObject(account);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -3946,9 +3948,6 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 if (org == null)
                     return -1;
 
-                // Log Extension
-                LogExtension.WriteObject(org);
-
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
@@ -3957,7 +3956,6 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
                 // Log Extension
-                LogExtension.WriteObject(account);
                 LogExtension.WriteVariables(new {notes});
 
                 string accountName = GetAccountName(account.AccountName);
@@ -4097,6 +4095,8 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "DELETE_USER_FROM_SECURITY_GROUP", itemId);
+            
+            // Log Extension
             LogExtension.WriteVariables(new {groupName});
 
             try
@@ -4105,14 +4105,12 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-                // Log Extension
-                LogExtension.WriteObject(org);
 
                 // load user account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
                 // Log Extension
                 LogExtension.SetItemName(account.DisplayName);
-                LogExtension.WriteObject(org);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -4242,7 +4240,7 @@ account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
             #endregion
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return null;
 

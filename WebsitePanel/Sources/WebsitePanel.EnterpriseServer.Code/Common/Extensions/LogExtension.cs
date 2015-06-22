@@ -11,8 +11,12 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         private const string OLD_PREFIX = "Old ";
         private const string NEW_PREFIX = "New ";
 
-        public static void WriteObject<T>(T obj) where T : class
+        public static void WriteObject<T>(T obj) 
+            where T : class
         {
+            if (obj == null)
+                return;
+
             // Log Parent Properties
             var logPropertyAttributes = GetAttributes<T, LogParentPropertyAttribute>();
             foreach (var logPropertyAttribute in logPropertyAttributes)
@@ -32,17 +36,16 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
         }
 
-        public static void WriteObject<T, TU>(T obj, params Expression<Func<T, TU>>[] additionalProperties) where T : class
+        public static void WriteObject<T, TU>(T obj, params Expression<Func<T, TU>>[] additionalProperties)
+            where T : class
         {
             WriteObject(obj);
 
-            foreach (var expression in additionalProperties)
-            {
-                LogProperty(obj, expression);
-            }
+            LogProperties(obj, additionalProperties);
         }
 
-        public static T LogProperty<T, TU>(this T obj, Expression<Func<T, TU>> expression, string nameInLog = null) where T : class
+        public static T LogProperty<T, TU>(this T obj, Expression<Func<T, TU>> expression, string nameInLog = null) 
+            where T : class
         {
             var property = ObjectUtils.GetProperty(obj, expression);
 
@@ -54,7 +57,16 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             return obj;
         }
 
-        public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true)
+        public static void LogProperties<T, TU>(this T obj, params Expression<Func<T, TU>>[] expressions) 
+            where T : class
+        {
+            foreach (var expression in expressions)
+            {
+                LogProperty(obj, expression);
+            }
+        }
+
+        public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true) where T : class
         {
             var property = ObjectUtils.GetProperty(obj, expression);
 
@@ -71,6 +83,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
 
         public static void WriteVariables(object variablesObs, string prefix = "")
         {
+            if (variablesObs == null)
+                throw new ArgumentException();
+            
             foreach (var property in variablesObs.GetType().GetProperties())
             {
                 var parameterName = LogExtensionHelper.DecorateName(property.Name);

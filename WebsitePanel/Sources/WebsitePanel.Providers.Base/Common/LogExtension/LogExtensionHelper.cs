@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace WebsitePanel.Providers
     public class LogExtensionHelper
     {
         public const string LOG_STRING_TEMPLATE = "{0}: {1}";
+        public const string LOG_ARRAY_SEPARATOR = ", ";
 
         public static string CombineString(string name, string value)
         {
@@ -18,7 +20,8 @@ namespace WebsitePanel.Providers
 
         public static string DecorateName(string name)
         {
-            name = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0"); // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
+            name = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0");
+                // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
             name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(name); // Capitalize
             name = Regex.Replace(name, @"\bId\b", "ID", RegexOptions.IgnoreCase); // "Id" becomes "ID"
 
@@ -29,6 +32,18 @@ namespace WebsitePanel.Providers
         {
             if (value == null)
                 return "";
+
+            // if array
+            if (value.GetType().IsArray)
+            {
+                var elementType = value.GetType().GetElementType();
+
+                if (elementType != null && !elementType.IsValueType)
+                {
+                    string[] strs = ((IEnumerable) value).Cast<object>().Select(x => x.ToString()).ToArray();
+                    return string.Join(LOG_ARRAY_SEPARATOR, strs);
+                }
+            }
 
             return value.ToString();
         }

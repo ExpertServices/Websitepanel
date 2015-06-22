@@ -36,6 +36,8 @@ namespace WebsitePanel.Providers.HostedSolution
     public class ExchangeRetentionPolicyTag
     {
         int tagID;
+
+        [LogProperty]
         public int TagID
         {
             get { return tagID; }
@@ -50,6 +52,8 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         string tagName;
+
+        [LogProperty]
         public string TagName
         {
             get { return tagName; }
@@ -57,6 +61,8 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         int tagType;
+
+        [LogProperty]
         public int TagType
         {
             get { return tagType; }
@@ -64,6 +70,8 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         int ageLimitForRetention;
+
+        [LogProperty("Tag Age Limit For Retention")]
         public int AgeLimitForRetention
         {
             get { return ageLimitForRetention; }
@@ -71,12 +79,15 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         int retentionAction;
+
+        [LogProperty("Tag Retention Action")]
         public int RetentionAction
         {
             get { return retentionAction; }
             set { retentionAction = value; }
         }
 
+        [LogProperty("Tag Unique Name")]
         public string WSPUniqueName
         {
             get

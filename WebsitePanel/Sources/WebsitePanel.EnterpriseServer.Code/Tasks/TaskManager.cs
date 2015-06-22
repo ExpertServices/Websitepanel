@@ -168,7 +168,7 @@ namespace WebsitePanel.EnterpriseServer
 
             String itemNameStr = itemName != null
                 ? itemName.ToString()
-                : itemId > 0 ? "(Id = " + itemId + ")" : String.Empty;
+                : String.Empty; //: itemId > 0 ? "(Id = " + itemId + ")" : String.Empty;
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
 
