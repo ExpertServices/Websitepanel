@@ -10,7 +10,7 @@
         <Condition Message="The [ProductName] package requires Microsoft .NET 4.0 Full. Please install it and try again."><![CDATA[NETFRAMEWORK40FULL="#1"]]></Condition>
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
-        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
+        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed."  AllowSameVersionUpgrades="yes" />
         <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WSP_INSTALL_DIR" AllowAdvertise="no" Display="expand"
                  Description="$(var.DESCRIPTION)">
             <ComponentGroupRef Id="WebsitePanelFiles" />
