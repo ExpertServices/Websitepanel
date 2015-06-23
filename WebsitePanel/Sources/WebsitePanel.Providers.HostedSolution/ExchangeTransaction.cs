@@ -225,21 +225,21 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        public void RemoveMailboxFolderPermissions(string folderPath, string account)
+        public void RemoveMailboxFolderPermissions(string folderPath, ExchangeAccount account)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.RemoveMailboxFolderPermissions;
             action.Id = folderPath;
-            action.Account = account;
+            action.ExchangeAccount = account;
             Actions.Add(action);
         }
 
-        public void AddMailboxFolderPermission(string folderPath, string account)
+        public void AddMailboxFolderPermission(string folderPath, ExchangeAccount account)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.AddMailboxFolderPermission;
             action.Id = folderPath;
-            action.Account = account;
+            action.ExchangeAccount = account;
             Actions.Add(action);
         }
     }
