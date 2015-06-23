@@ -69,6 +69,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
         
         public string[] Accounts { get; set; }
+        public ExchangeAccount ExchangeAccount { get; set; }
 
         public enum TransactionActionTypes
         {
