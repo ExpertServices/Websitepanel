@@ -208,7 +208,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList calendarPermissions;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsListWithPermissions calendarPermissions;
         
         /// <summary>
         /// secContactsPermissions control.
@@ -244,7 +244,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList contactsPermissions;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsListWithPermissions contactsPermissions;
         
         /// <summary>
         /// buttonPanel control.

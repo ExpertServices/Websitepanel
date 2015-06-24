@@ -348,6 +348,49 @@
                     <Condition Action="show"><![CDATA[NETFRAMEWORK20="#0" OR NETFRAMEWORK35="#0"]]></Condition>
                 </Control>
             </Dialog>
+            <!--Dialogues in maintenance mode.-->
+            <Dialog Id="ServerPasswordDlg_Mtn" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for this server." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Server Password" />
+                <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="110" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="110" Property="SERVER_ACCESS_PASSWORD" Password="yes" />
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="136" Text="Confirm password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="136" Property="SERVER_ACCESS_PASSWORD_CONFIRM" Password="yes" />
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify a password which will be used to access this Server from the Enterprise Server component. Click Next to continue." />
+            </Dialog>
+            <Dialog Id="ServerAdminPasswordDlg_Mtn" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Specify a new password for the serveradmin account." />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Set Administrator Password" />
+                <Control Type="Text" Id="PasswordLabel" Width="50" Height="17" X="52" Y="90" Text="Password:" />
+                <Control Type="Edit" Id="PasswordEdit" Width="163" Height="15" X="142" Y="90" Property="SERVERADMIN_PASSWORD" Password="yes"/>
+                <Control Type="Text" Id="ConfirmPasswordLabel" Width="72" Height="17" X="52" Y="116" Text="Confirm password:" />
+                <Control Type="Edit" Id="ConfirmPasswordEdit" Width="163" Height="15" X="142" Y="116" Property="SERVERADMIN_PASSWORD_CONFIRM" Password="yes"/>
+            </Dialog>
+            <Dialog Id="ESUrlDlg_Mtn" Width="370" Height="270" NoMinimize="yes" Title="[ProductName] Setup">
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back" />
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="[BannerBitmap]" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
+                <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Enter the Enterprise Server URL" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Enterprise Server URL" />
+                <Control Type="Text" Id="UrlLabel" Width="88" Height="17" X="50" Y="110" Text="Enterprise Server URL:" />
+                <Control Type="Edit" Id="ESUrlEdit" Width="163" Height="15" X="142" Y="110" Property="PI_ESERVER_URL" />
+                <Control Type="Text" Id="IntroLabel" Width="341" Height="27" X="15" Y="52" Text="Please, specify URL which will be used to access the Enterprise Server from the Portal. Click Next to continue." />
+            </Dialog>
             <!--All events and actions in one place-->
             <!--LicenseAgreementDlg-->
             <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="PrereqCheckDlg" Order="3">LicenseAccepted = "1"</Publish>
@@ -360,14 +403,13 @@
             <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="5"><![CDATA[(&ServerFeature=-1 AND !ServerFeature=3) OR (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) OR (&PortalFeature=-1 AND !PortalFeature=3) OR (&SchedulerServiceFeature=-1 AND !SchedulerServiceFeature=3) OR (&WDPortalFeature=-1 AND !WDPortalFeature=3)]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="ChoosePreinstallDlg" Order="4"><![CDATA[PI_PREREQ_IIS=0 OR PI_PREREQ_ASPNET=0]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="PrereqCheckDlg" Order="3">1</Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg" Order="15"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="14"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="13"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="12"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="11"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="10"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="9"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="8"><![CDATA[&WDPortalFeature=3 AND COMPFOUND_WDPORTAL=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="15"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="14"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="13"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="12"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="10"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="9"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="8"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>            
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="7">1</Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="DoAction" Value="CA_RecapListUI" Order="1">1</Publish>
              <!--SWebDlg-->
@@ -389,24 +431,18 @@
             <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="SUserAccountDlg" Control="SelectUserButton" Property="PI_SERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ServerPasswordDlg-->
-            <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="SUserAccountDlg" Order="1">1</Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="9"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="8"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="7">&amp;EnterpriseServerFeature=3 AND VALIDATE_OK = "1"</Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="6">&amp;PortalFeature=3 AND VALIDATE_OK = "1"</Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="5">&amp;SchedulerServiceFeature=3 AND VALIDATE_OK = "1"</Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="4">&amp;WDPortalFeature=3 AND VALIDATE_OK = "1"</Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3">
-                <![CDATA[NOT(&EnterpriseServerFeature=3) AND NOT(&PortalFeature=3) AND NOT(&SchedulerServiceFeature=3) AND NOT(&WDPortalFeature=3) AND VALIDATE_OK = "1"]]>
-            </Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">
-                <![CDATA[VALIDATE_OK=0 AND NOT(&ServerFeature=-1 AND !ServerFeature=3)]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="8"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="7"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="5"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="4"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2"><![CDATA[VALIDATE_OK = "0"]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="DoAction" Value="CA_ServerAccessValidateUI" Order="1">1</Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--ESWebDlg-->
-            <Publish Dialog="ESWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]>
-            </Publish>
+            <Publish Dialog="ESWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
             <Publish Dialog="ESWebDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
             <Publish Dialog="ESWebDlg" Control="Next" Event="NewDialog" Value="ESUserAccountDlg" Order="2">1</Publish>
             <Publish Dialog="ESWebDlg" Control="Next" Event="DoAction" Value="CA_SetEServerUrlUI" Order="1">1</Publish>
@@ -426,21 +462,20 @@
             <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="ESUserAccountDlg" Control="SelectUserButton" Property="PI_ESERVER_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ServerAdminPasswordDlg-->
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Back" Event="NewDialog" Value="ESUserAccountDlg" Order="1">1</Publish>
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND VALIDATE_OK = "1"]]></Publish>
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="4"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND VALIDATE_OK = "1"]]></Publish>
-            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[(&EnterpriseServerFeature=3 OR &SchedulerServiceFeature=3) AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[VALIDATE_OK="1"]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Next" Event="DoAction" Value="CA_ServerAdminValidateUI" Order="1">1</Publish>
             <Publish Dialog="ServerAdminPasswordDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--DatabaseConnectionDlg-->
-            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="4"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3)]]></Publish>
-            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="4"><![CDATA[(&PortalFeature=3 AND COMPFOUND_PORTAL="0") AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
             <Publish Dialog="DatabaseConnectionDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
-            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="7">&amp;PortalFeature=3 AND DB_CONN_CORRECT="1" AND VALIDATE_OK = "1"</Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="10"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0 AND DB_CONN_CORRECT="1" AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="9"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="8"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="7"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1"]]></Publish>
             <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="6">DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1"</Publish>
             <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK = "0"</Publish>
             <Publish Dialog="DatabaseConnectionDlg" Control="Next" Event="DoAction" Value="CA_DatabaseConnectionValidateUI" Order="1">1</Publish>
@@ -457,14 +492,17 @@
             <Publish Dialog="SelectDbDlg" Control="Ok" Property="DB_DATABASE" Value="[DB_SELECT]" Order="1">1</Publish>
             <Publish Dialog="SelectDbDlg" Control="Cancel" Event="EndDialog" Value="Return">1</Publish>
             <!--PWebDlg-->
-            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3]]></Publish>
+            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
             <Publish Dialog="PWebDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
             <Publish Dialog="PWebDlg" Control="Next" Event="NewDialog" Value="PUserAccountDlg">1</Publish>
             <Publish Dialog="PWebDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--PUserAccountDlg-->
             <Publish Dialog="PUserAccountDlg" Control="Back" Event="NewDialog" Value="PWebDlg">1</Publish>
-            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="4"><![CDATA[NOT(&EnterpriseServerFeature=3) AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg" Order="7"><![CDATA[NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0") AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0"]]></Publish>
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="5"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish> 
+            <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="4"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>    
             <Publish Dialog="PUserAccountDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK="1"]]></Publish>
             <Publish Dialog="PUserAccountDlg" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
             <Publish Dialog="PUserAccountDlg" Control="Next" Event="DoAction" Value="CA_PortalValidateADUI" Order="1">1</Publish>
@@ -478,22 +516,59 @@
             <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_UPN]" Order="3"><![CDATA[DSOP_UPN <> ""]]></Publish>
             <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ESUrlDlg-->
-            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="4"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="2"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
-            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="1">1</Publish>
-            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="2"><![CDATA[&SchedulerServiceFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="1"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>          
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="DatabaseConnectionDlg" Order="4"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish> 
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="2"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>                       
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
             <Publish Dialog="ESUrlDlg" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--Maintenance dialogues.-->
+            <!--ServerPasswordDlg_Mtn-->
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="4"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>            
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="5"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND VALIDATE_OK = "1"]]></Publish>            
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="4"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2"><![CDATA[VALIDATE_OK = "0"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="DoAction" Value="CA_ServerAccessValidateMtnUI" Order="1">1</Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--ServerAdminPasswordDlg_Mtn-->
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="7"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="4"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>            
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish> 
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="3"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK="1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Next" Event="SpawnDialog" Value="ValidateDlg" Order="2">VALIDATE_OK="0"</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Next" Event="DoAction" Value="CA_ServerAdminValidateUI" Order="1">1</Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
+            <!--ESUrlDlg_Mtn-->
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="8"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="7"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="4"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="2"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish> 
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--CustomVerifyReadyDlg-->
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="19"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="18"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg" Order="17"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>          
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&SchedulerServiceFeature=3 AND NOT(&EnterpriseServerFeature=3) AND COMPFOUND_SCHEDULER=0]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="15"><![CDATA[&PortalFeature=3 AND NOT(&EnterpriseServerFeature=3) AND COMPFOUND_PORTAL=0]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="14"><![CDATA[&PortalFeature=3 AND &EnterpriseServerFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="13"><![CDATA[&EnterpriseServerFeature=3 AND &PortalFeature<>3 AND COMPFOUND_ESERVER=0]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="12"><![CDATA[&ServerFeature=3 AND &EnterpriseServerFeature<>3 AND &PortalFeature<>3 AND COMPFOUND_SERVER=0]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="22"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="21"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="20"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="19"><![CDATA[(&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0") AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="18"><![CDATA[(&PortalFeature=3 AND COMPFOUND_PORTAL="0") AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="17"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0 AND &EnterpriseServerFeature=3  AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="15"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
             <!--FinishDlg-->
             <Publish Dialog="FinishDlg" Control="Next" Event="NewDialog" Value="FinishDlg">1</Publish>
@@ -624,6 +699,7 @@
         <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" Impersonate="no" />
         <CustomAction Id="CA_FillDomainListUI" BinaryKey="Assembly_CA" DllEntry="FillDomainListUI" Impersonate="no" />
         <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" Impersonate="no" />
+        <CustomAction Id="CA_ServerAccessValidateMtnUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateMtnUI" Impersonate="no" />
         <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" Impersonate="no" />
         <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" Impersonate="no" />
         <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" Impersonate="no" />
