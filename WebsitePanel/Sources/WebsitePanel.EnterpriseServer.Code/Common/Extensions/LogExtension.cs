@@ -11,6 +11,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         private const string OLD_PREFIX = "Old ";
         private const string NEW_PREFIX = "New ";
 
+        /// <summary>
+        /// Log properties of the object which have [LogProperty] or [LogParentPropery] attributes
+        /// </summary>
         public static void WriteObject<T>(T obj) 
             where T : class
         {
@@ -36,6 +39,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
         }
 
+        /// <summary>
+        /// Log properties of the object which have [LogProperty] or [LogParentPropery] attributes
+        /// </summary>
         public static void WriteObject<T, TU>(T obj, params Expression<Func<T, TU>>[] additionalProperties)
             where T : class
         {
@@ -44,6 +50,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             LogProperties(obj, additionalProperties);
         }
 
+        /// <summary>
+        /// Log a value of the property from expression parameter
+        /// </summary>
         public static T LogProperty<T, TU>(this T obj, Expression<Func<T, TU>> expression, string nameInLog = null) 
             where T : class
         {
@@ -57,6 +66,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             return obj;
         }
 
+        /// <summary>
+        /// Log a value of the property from expression parameter
+        /// </summary>
         public static void LogProperties<T, TU>(this T obj, params Expression<Func<T, TU>>[] expressions) 
             where T : class
         {
@@ -66,6 +78,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
         }
 
+        /// <summary>
+        /// Log a value of the property only when it is different from newValue parameter. Also the old value can be written.
+        /// </summary>
         public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true) where T : class
         {
             var property = ObjectUtils.GetProperty(obj, expression);
@@ -81,6 +96,11 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             return obj;
         }
 
+        /// <summary>
+        /// Log values of variables which will be written with variable name
+        /// </summary>
+        /// <param name="variablesObs">Dynamic object with variables instead of properties like: new {varA, varB}</param>
+        /// <param name="prefix">Add the string before a variable name</param>
         public static void WriteVariables(object variablesObs, string prefix = "")
         {
             if (variablesObs == null)
@@ -95,35 +115,18 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
         }
 
+        /// <summary>
+        /// Write log in the format "name: value"
+        /// </summary>
         public static void WriteVariable(string name, string value)
         {
             TaskManager.Write(LogExtensionHelper.CombineString(name, value));
         }
 
-        //MethodImpl(MethodImplOptions.NoInlining)
-        //public static void WriteVariables(params object[] values)
-        //{
-        //    var valuesEnumerator = values.GetEnumerator();
-
-        //    // Get executing method for log
-        //    StackTrace st = new StackTrace();
-        //    StackFrame sf = st.GetFrame(1);
-        //    var currentMethod = sf.GetMethod();
-
-        //    var parameters = currentMethod.GetParameters().Where(m => m.IsDefined(typeof(LogParamaterAttribute), false));\
-        //    foreach (var parameter in parameters)
-        //    {
-        //        if (!valuesEnumerator.MoveNext())
-        //            break;
-
-        //        var attributes = GetAttributes<LogPropertyAttribute>(parameter);
-        //        foreach (var attribute in attributes)
-        //        {
-        //            TaskManager.Write(attribute.GetLogString(parameter.Name, ObjectUtils.GetString(valuesEnumerator.Current)));
-        //        }
-        //    }
-        //}
-
+        /// <summary>
+        /// Set item name for current Task
+        /// </summary>
+        /// <param name="itemName"></param>
         public static void SetItemName(string itemName)
         {
             TaskManager.ItemName = itemName;

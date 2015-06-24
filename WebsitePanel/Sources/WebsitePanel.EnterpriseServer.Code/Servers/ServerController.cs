@@ -1978,6 +1978,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("DOMAIN", "ADD", domainName, 0, packageId, new BackgroundTaskParameter("CreateZone", createDnsZone));
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {domainName, createDnsZone, isSubDomain, isInstantAlias, isDomainPointer, allowSubDomains});
 
             // create DNS zone
             int zoneItemId = 0;
