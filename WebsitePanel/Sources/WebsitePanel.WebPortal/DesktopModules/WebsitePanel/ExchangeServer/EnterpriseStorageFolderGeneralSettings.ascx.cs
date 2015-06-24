@@ -145,14 +145,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (PanelRequest.FolderID != txtFolderName.Text)
                 {
                     //check if filename is correct
-                    foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                    if (!EnterpriseStorageHelper.ValidateFolderName(txtFolderName.Text))
                     {
-                        if (txtFolderName.Text.Contains(invalidChar.ToString()))
-                        {
-                            messageBox.ShowErrorMessage("FILES_RENAME_FILE");
+                        messageBox.ShowErrorMessage("FILES_INCORRECT_FOLDER_NAME");
 
-                            return;
-                        }
+                        return;
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);

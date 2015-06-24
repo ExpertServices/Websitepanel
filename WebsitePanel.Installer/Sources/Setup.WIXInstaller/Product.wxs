@@ -6,13 +6,13 @@
     <?include Config.Wxi?>
     <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
              UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
-        <Package  InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" />
+        <Package  InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" Description="$(var.NAME) $(var.VERSION)" Comments="$(var.DESCRIPTION)"/>
         <Condition Message="The [ProductName] package requires Microsoft .NET 4.0 Full. Please install it and try again."><![CDATA[NETFRAMEWORK40FULL="#1"]]></Condition>
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed." />
         <Feature Id ="WebsitePanel" Title="Website Panel" Level="1" ConfigurableDirectory="WSP_INSTALL_DIR" AllowAdvertise="no" Display="expand"
-                 Description="WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers to automate the provisioning of a full suite of services on Windows servers.">
+                 Description="$(var.DESCRIPTION)">
             <ComponentGroupRef Id="WebsitePanelFiles" />
             <Feature Id="ServerFeature" Title="$(var.ServerTitle)" Level="1" ConfigurableDirectory="PI_SERVER_INSTALL_DIR" AllowAdvertise="no"
                      Description="$(var.ServerDescription)">
