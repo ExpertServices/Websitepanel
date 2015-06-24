@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExchangeMailboxPermissions.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeMailboxPermissions" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="uc2" %>
+<%@ Register Src="UserControls/AccountsListWithPermissions.ascx" TagName="AccountsListWithPermissions" TagPrefix="uc2" %>
 <%@ Register Src="UserControls/MailboxSelector.ascx" TagName="MailboxSelector" TagPrefix="uc1" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
@@ -62,8 +63,8 @@
                     
                     <asp:Panel runat="server" ID="panelCalendarPermissions">
                         <asp:Label runat="server" ID="Label3" meta:resourcekey="grandPermission" /><br /><br />
-                        <uc2:AccountsList id="calendarPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
-                        </uc2:AccountsList>                                            
+                        <uc2:AccountsListWithPermissions id="calendarPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
+                        </uc2:AccountsListWithPermissions>                                            
                     </asp:Panel>
                     
                     <wsp:CollapsiblePanel id="secContactsPermissions" runat="server"
@@ -72,8 +73,8 @@
                     
                     <asp:Panel runat="server" ID="panelContactsPermissions">
                         <asp:Label runat="server" ID="Label4" meta:resourcekey="grandPermission" /><br /><br />
-                        <uc2:AccountsList id="contactsPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
-                        </uc2:AccountsList>                                            
+                        <uc2:AccountsListWithPermissions id="contactsPermissions" runat="server" MailboxesEnabled="true" EnableMailboxOnly = "true">
+                        </uc2:AccountsListWithPermissions>                                            
                     </asp:Panel>
 
                     <div class="FormFooterClean">

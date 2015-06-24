@@ -346,7 +346,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
                 else
                 {
-                    StorageSpacesController.SetStorageSpaceFolderQuota(esFolder.StorageSpaceId, esFolder.StorageSpaceFolderId.Value, quota * 1024 * 1024, quotaType);
+                    StorageSpacesController.SetStorageSpaceFolderQuota(esFolder.StorageSpaceId, esFolder.StorageSpaceFolderId.Value, (long)quota * 1024 * 1024, quotaType);
 
                     DataProvider.UpdateEnterpriseFolder(itemId, folder.Name, folder.Name, quota);
                 }
