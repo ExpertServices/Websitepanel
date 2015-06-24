@@ -75,7 +75,7 @@
         </asp:TemplateField>
 		<asp:TemplateField SortExpression="TextSearch" HeaderText="gvText" HeaderStyle-Wrap="false">
 			<ItemTemplate>
-	            <asp:hyperlink id=lnkUser runat="server" NavigateUrl='<%# GetItemPageUrl((string)Eval("FullType"), (string)Eval("ColumnType"), (int)Eval("ItemID"), (int)Eval("PackageID"), (int)Eval("AccountID")) %>'>
+	            <asp:hyperlink id=lnkUser runat="server" NavigateUrl='<%# GetItemPageUrl((string)Eval("FullType"), (string)Eval("ColumnType"), (int)Eval("ItemID"), (int)Eval("PackageID"), (int)Eval("AccountID"), (string)Eval("TextSearch")) %>'>
 		            <%# Eval("TextSearch") %>
 	            </asp:hyperlink>
             </ItemTemplate>
