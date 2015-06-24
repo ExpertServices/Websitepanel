@@ -9,6 +9,7 @@ namespace WebsitePanel.Providers.StorageSpaces
         public int ServiceId { get; set; }
         public int ServerId { get; set; }
         public int LevelId { get; set; }
+        public long ActuallyUsedInBytes { get; set; }
         public string Path { get; set; }
     }
 }

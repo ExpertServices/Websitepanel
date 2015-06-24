@@ -1918,7 +1918,7 @@
     <value>Remote Desktop Services</value>
   </data>
   <data name="ResourceGroup.EnterpriseStorage" xml:space="preserve">
-    <value>Enterprise Storage Services</value>
+    <value>Cloud Folder Services</value>
   </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
@@ -5301,6 +5301,42 @@
   <data name="UserItemType.Users" xml:space="preserve">
     <value>Account Home</value>
   </data>
+  <data name="UserItemType.LyncAccount" xml:space="preserve">
+    <value>Lync Account</value>
+  </data>
+  <data name="UserItemType.LyncUsers" xml:space="preserve">
+    <value>Lync Users</value>
+  </data>
+  <data name="UserItemType.RDSCollection" xml:space="preserve">
+    <value>RDS Collection</value>
+  </data>
+  <data name="UserItemType.RDSCollections" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="UserItemType.CRMSite" xml:space="preserve">
+    <value>CRM Site</value>
+  </data>
+  <data name="UserItemType.CRMSites" xml:space="preserve">
+    <value>CRM Sites</value>
+  </data>
+  <data name="UserItemType.VirtualServer" xml:space="preserve">
+    <value>Virtual Server</value>
+  </data>
+  <data name="UserItemType.VirtualServers" xml:space="preserve">
+    <value>Virtual Servers</value>
+  </data>
+  <data name="UserItemType.WebDAVFolder" xml:space="preserve">
+    <value>WebDAV Folder</value>
+  </data>
+  <data name="UserItemType.SharePointFoundationSiteCollection" xml:space="preserve">
+    <value>SharePoint Site Collection</value>
+  </data>
+  <data name="UserItemType.SharePointEnterpriseSiteCollection" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collection</value>
+  </data>
+  <data name="UserItemType.SharePointSiteCollections" xml:space="preserve">
+    <value>SharePoint Site Collections</value>
+  </data>
   <data name="Error.WEB_PUB_DISABLE" xml:space="preserve">
     <value>Could not disable access to Web Publishing feature for the account specified</value>
   </data>
@@ -5605,7 +5641,7 @@
     <value>Website is not created</value>
   </data>
   <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
-    <value>Enterprise storage folder settings have been successfully updated.</value>
+    <value>Cloud Folder settings have been successfully updated.</value>
   </data>
   <data name="Quota.HostedCRM.LimitedUsers" xml:space="preserve">
     <value>Limited licenses per organization</value>
@@ -5927,5 +5963,8 @@
   </data>
   <data name="Success.ES_MOVE_TO_STORAGE_SPACE" xml:space="preserve">
     <value>Enterprise folder succefully moved to Storage Space</value>
+  </data>
+  <data name="Error.FILES_INCORRECT_FOLDER_NAME" xml:space="preserve">
+    <value>Error! Incorrect folder name</value>
   </data>
 </root>

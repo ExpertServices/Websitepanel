@@ -208,10 +208,10 @@
     <value>Groups</value>
   </data>
   <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
-    <value>Enterprise Storage</value>
+    <value>Cloud Folders</value>
   </data>
   <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
-    <value>Folders</value>
+    <value>Shared Folders</value>
   </data>
   <data name="Text.LyncPhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>

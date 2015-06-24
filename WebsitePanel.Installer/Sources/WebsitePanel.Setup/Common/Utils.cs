@@ -446,20 +446,23 @@ namespace WebsitePanel.Setup
 			int ret = RegistryUtils.GetRegistryKeyInt32Value(@"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile", "EnableFirewall");
 			return (ret == 1);
 		}
-
 		public static bool IsWindowsFirewallExceptionsAllowed()
 		{
 			int ret = RegistryUtils.GetRegistryKeyInt32Value(@"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile", "DoNotAllowExceptions");
 			return (ret != 1);
 		}
-
 		public static void OpenWindowsFirewallPort(string name, string port)
 		{
 			string path = Path.Combine(Environment.SystemDirectory, "netsh.exe");
 			string arguments = string.Format("firewall set portopening tcp {0} \"{1}\" enable", port, name);
 			RunProcess(path, arguments);
 		}
-
+        public static void OpenWindowsFirewallPortAdv(string RuleName, string Port)
+        {
+            string tool = Path.Combine(Environment.SystemDirectory, "netsh.exe");
+            string args = string.Format("advfirewall firewall add rule name=\"{0}\" dir=in action=allow protocol=tcp localport={1}", RuleName, Port);
+            RunProcess(tool, args);
+        }
 		#endregion
 
 		#region Processes & Services
@@ -767,7 +770,13 @@ namespace WebsitePanel.Setup
             bool iis7 = (iisVersion.Major >= 7);
 			if (iis7)
 			{
-				//TODO: Add IIS7 support
+				if (Utils.IsWindowsFirewallEnabled() && Utils.IsWindowsFirewallExceptionsAllowed())
+                {
+                    Log.WriteStart(String.Format("Opening port {0} in windows firewall", port));
+                    Utils.OpenWindowsFirewallPortAdv(name, port);
+                    Log.WriteEnd("Opened port in windows firewall");
+                    InstallLog.AppendLine(String.Format("- Opened port {0} in Windows Firewall", port));
+                }
 			}
 			else
 			{

@@ -105,8 +105,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                         break;
                 }
 
-                chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
-
                 var serviceId = ES.Services.EnterpriseStorage.GetEnterpriseStorageServiceId(PanelRequest.ItemID);
 
                 StringDictionary settings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
@@ -147,14 +145,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (PanelRequest.FolderID != txtFolderName.Text)
                 {
                     //check if filename is correct
-                    foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                    if (!EnterpriseStorageHelper.ValidateFolderName(txtFolderName.Text))
                     {
-                        if (txtFolderName.Text.Contains(invalidChar.ToString()))
-                        {
-                            messageBox.ShowErrorMessage("FILES_RENAME_FILE");
+                        messageBox.ShowErrorMessage("FILES_INCORRECT_FOLDER_NAME");
 
-                            return;
-                        }
+                        return;
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
@@ -170,7 +165,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ES.Services.EnterpriseStorage.SetEnterpriseFolderGeneralSettings(
                     PanelRequest.ItemID,
                     folder,
-                    chkDirectoryBrowsing.Checked,
+                    false,
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 

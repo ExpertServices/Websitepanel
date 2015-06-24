@@ -231,7 +231,32 @@ namespace WebsitePanel.EnterpriseServer
 
             result.Spaces = spaces.ToArray();
 
+            GetStorageSpacesUsage(result.Spaces);
+
             return result;
+        }
+
+        private static void GetStorageSpacesUsage(IEnumerable<StorageSpace> spaces)
+        {
+            var tasks = new List<Task>();
+
+
+            foreach (var space in spaces)
+            {
+                var closureSpace = space;
+                var task = new Task(() =>
+                {
+                    var quota = GetFolderQuota(closureSpace.Path, closureSpace.Id);
+
+                    closureSpace.ActuallyUsedInBytes = ConvertMbToBytes(quota.Usage);
+                });
+
+                task.Start();
+
+                tasks.Add(task);
+            }
+
+            Task.WaitAll(tasks.ToArray());
         }
 
         public static List<StorageSpace> GetStorageSpacesByLevelId(int levelId)
@@ -293,12 +318,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (isShared)
                 {
-                    var share = ss.ShareFolder(space.Path, space.Name);
-
-                    if (share == null)
-                    {
-                        throw new Exception("Error sharin folder");
-                    }
+                    var share = ShareStorageSpaceFolderInternal(space.Id, space.Path, space.Name);
 
                     space.IsShared = true;
                     space.UncPath = share.UncPath;
@@ -478,12 +498,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 ss.CreateFolder(fullPath);
 
-                var share = ss.ShareFolder(fullPath, folderName);
+                var shareName = GenerateShareName(organizationId, folderName);
 
-                if (share == null)
-                {
-                    throw new Exception("Error sharin folder");
-                }
+                var share = ShareStorageSpaceFolderInternal(storageSpace.Id, fullPath, shareName);
 
                 ss.UpdateFolderQuota(fullPath, quotaInBytes, quotaType);
 
@@ -512,6 +529,11 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
+        }
+
+        private static string GenerateShareName(string organizationId, string folderName)
+        {
+            return string.Join("-", organizationId, folderName);
         }
 
         public static ResultObject UpdateStorageSpaceFolder(int storageSpaceId, int storageSpaceFolderId, string organizationId, string groupName, string folderName, string uncPath, long quotaInBytes, QuotaType quotaType)
@@ -884,7 +906,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 var newPath = Path.Combine(Directory.GetParent(fullPath).ToString(), newName);
 
-                var share = ShareStorageSpaceFolder(storageSpaceId, newPath, newName);
+                var shareName = GenerateShareName(organizationId, newName);
+
+                var share = ShareStorageSpaceFolderInternal(storageSpaceId, newPath, shareName);
 
                 var folder = GetStorageSpaceFolderById(folderId);
 
@@ -1065,6 +1089,11 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return quotaInfo.QuotaAllocatedValue * 1024 ;
+        }
+
+        private static long ConvertMbToBytes(long mBytes)
+        {
+            return mBytes*1024*1024;
         }
 
         public static byte[] GetFileBinaryChunk(int storageSpaceId, string path, int offset, int length)

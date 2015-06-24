@@ -37,5 +37,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public bool ShowInWebAccess { get; set; }
         public string RequiredCommandLine { get; set; }
         public string[] Users { get; set; }
+        public CommandLineSettings CommandLineSettings { get; set; } 
     }
 }

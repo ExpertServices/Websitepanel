@@ -217,7 +217,7 @@
     <value>Used Diskspace (Mb):</value>
   </data>
   <data name="locEnterpriseStorage.Text" xml:space="preserve">
-    <value>Enterprise Storage</value>
+    <value>Cloud Folders</value>
   </data>
   <data name="locServiceLevels.Text" xml:space="preserve">
     <value>Service Levels</value>
