@@ -619,6 +619,18 @@ namespace WebsitePanel.WIXInstaller
             return ActionResult.Success;
         }
         [CustomAction]
+        public static ActionResult ServerAccessValidateMtnUI(Session session)
+        {
+            var Ctx = session;
+            bool Valid = true;
+            string Msg;
+            ValidationReset(Ctx);
+            Valid = ValidateEqualPasswordUI(Ctx, "SERVER_ACCESS", out Msg);
+            ValidationMsg(Ctx, Msg);
+            ValidationStatus(Ctx, Valid);
+            return ActionResult.Success;
+        }
+        [CustomAction]
         public static ActionResult FillDomainListUI(Session Ctx)
         {
             try
@@ -826,11 +838,27 @@ namespace WebsitePanel.WIXInstaller
                 Result = true;
             return Result;
         }
+        internal static bool PasswordValidateEqual(string Password, string Confirm, out string Msg)
+        {
+            Msg = string.Empty;
+            bool Result = false;
+            if (Password != Confirm)
+                Msg = "Password does not match the confirm password. Type both passwords again.";
+            else
+                Result = true;
+            return Result;
+        }
         internal static bool ValidatePasswordUI(Session Ctx, string Ns, out string Msg)
         {
             string p1 = Ctx[Ns + "_PASSWORD"];
             string p2 = Ctx[Ns + "_PASSWORD_CONFIRM"];
             return PasswordValidate(p1, p2, out Msg);
+        }
+        internal static bool ValidateEqualPasswordUI(Session Ctx, string Ns, out string Msg)
+        {
+            string p1 = Ctx[Ns + "_PASSWORD"];
+            string p2 = Ctx[Ns + "_PASSWORD_CONFIRM"];
+            return PasswordValidateEqual(p1, p2, out Msg);
         }
         internal static bool ValidateADDomainUI(Session Ctx, string Ns, out string Msg)
         {

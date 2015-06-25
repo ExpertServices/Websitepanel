@@ -5301,6 +5301,42 @@
   <data name="UserItemType.Users" xml:space="preserve">
     <value>Account Home</value>
   </data>
+  <data name="UserItemType.LyncAccount" xml:space="preserve">
+    <value>Lync Account</value>
+  </data>
+  <data name="UserItemType.LyncUsers" xml:space="preserve">
+    <value>Lync Users</value>
+  </data>
+  <data name="UserItemType.RDSCollection" xml:space="preserve">
+    <value>RDS Collection</value>
+  </data>
+  <data name="UserItemType.RDSCollections" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="UserItemType.CRMSite" xml:space="preserve">
+    <value>CRM Site</value>
+  </data>
+  <data name="UserItemType.CRMSites" xml:space="preserve">
+    <value>CRM Sites</value>
+  </data>
+  <data name="UserItemType.VirtualServer" xml:space="preserve">
+    <value>Virtual Server</value>
+  </data>
+  <data name="UserItemType.VirtualServers" xml:space="preserve">
+    <value>Virtual Servers</value>
+  </data>
+  <data name="UserItemType.WebDAVFolder" xml:space="preserve">
+    <value>WebDAV Folder</value>
+  </data>
+  <data name="UserItemType.SharePointFoundationSiteCollection" xml:space="preserve">
+    <value>SharePoint Site Collection</value>
+  </data>
+  <data name="UserItemType.SharePointEnterpriseSiteCollection" xml:space="preserve">
+    <value>SharePoint Enterprise Site Collection</value>
+  </data>
+  <data name="UserItemType.SharePointSiteCollections" xml:space="preserve">
+    <value>SharePoint Site Collections</value>
+  </data>
   <data name="Error.WEB_PUB_DISABLE" xml:space="preserve">
     <value>Could not disable access to Web Publishing feature for the account specified</value>
   </data>

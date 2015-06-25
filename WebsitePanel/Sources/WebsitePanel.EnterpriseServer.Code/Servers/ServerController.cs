@@ -45,6 +45,7 @@ using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DomainLookup;
 using System.Globalization;
 using System.Linq;
+using WebsitePanel.EnterpriseServer.Extensions;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1732,13 +1733,13 @@ namespace WebsitePanel.EnterpriseServer
             return ds;
         }
 
-        public static DomainInfo GetDomain(int domainId)
+        public static DomainInfo GetDomain(int domainId, bool withLog = true)
         {
             // get domain by ID
             DomainInfo domain = GetDomainItem(domainId);
 
             // return
-            return GetDomain(domain);
+            return GetDomain(domain, withLog);
         }
 
         public static DomainInfo GetDomain(string domainName)
@@ -1753,7 +1754,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        private static DomainInfo GetDomain(DomainInfo domain)
+        private static DomainInfo GetDomain(DomainInfo domain, bool withLog = true)
         {
             // check domain
             if (domain == null)
@@ -1764,6 +1765,10 @@ namespace WebsitePanel.EnterpriseServer
             DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName, true, false);
             if (instantAlias != null)
                 domain.InstantAliasId = instantAlias.DomainId;
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(domain);
 
             return domain;
         }
@@ -1973,6 +1978,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("DOMAIN", "ADD", domainName, 0, packageId, new BackgroundTaskParameter("CreateZone", createDnsZone));
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {domainName, createDnsZone, isSubDomain, isInstantAlias, isDomainPointer, allowSubDomains});
 
             // create DNS zone
             int zoneItemId = 0;

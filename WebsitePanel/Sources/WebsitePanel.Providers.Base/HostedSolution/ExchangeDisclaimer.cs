@@ -46,24 +46,28 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.itemId = value; }
         }
 
+        [LogProperty("Disclaimer ID")]
         public int ExchangeDisclaimerId
         {
             get { return this.exchangeDisclaimerId; }
             set { this.exchangeDisclaimerId = value; }
         }
 
+        [LogProperty]
         public string DisclaimerName
         {
             get { return this.disclaimerName; }
             set { this.disclaimerName = value; }
         }
 
+        [LogProperty]
         public string DisclaimerText
         {
             get { return this.disclaimerText; }
             set { this.disclaimerText = value; }
         }
 
+        [LogProperty("Disclaimer Unique Name")]
         public string WSPUniqueName
         {
             get

@@ -67,7 +67,7 @@
                             ID="tbSearch"
                             runat="server"
                             CssClass="NormalTextBox"
-                            Width="120px"
+                            Width="240px"
                             style="vertical-align: middle; z-index: 100;"
                         >
                         </asp:TextBox>

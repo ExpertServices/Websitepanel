@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using WebsitePanel.Providers;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -50,7 +51,7 @@ namespace WebsitePanel.EnterpriseServer
         private int instantAliasId;
         private string instantAliasName;
         
-
+        [LogProperty]
         public int DomainId
         {
             get { return domainId; }
@@ -75,7 +76,7 @@ namespace WebsitePanel.EnterpriseServer
             set { domainItemId = value; }
         }
 
-
+        [LogProperty]
         public string DomainName
         {
             get { return domainName; }
