@@ -88,7 +88,10 @@ namespace WebsitePanel.Setup.Internal
                     var Valid = new string[] { "9.", "10.", "11.", "12." }.Any(x => V.StartsWith(x));
                     if (Valid)
                         if (SqlUtils.GetSqlServerSecurityMode(ConnStr) == 0)
+                        {
+                            MsgBuilder.AppendLine("Good connection.");
                             Result = CheckStatuses.Success;
+                        }
                         else
                             MsgBuilder.AppendLine("Please switch SQL Server authentication to mixed SQL Server and Windows Authentication mode.");
                     else
@@ -143,6 +146,10 @@ namespace WebsitePanel.Setup.Internal
                 return false;
             }
             return true;
+        }
+        public static bool SkipCreateDb(string ConnStr, string DbName)
+        {
+            return SqlUtils.DatabaseExists(ConnStr, DbName) && !SqlUtils.IsEmptyDatabase(ConnStr, DbName);
         }
     }
     public interface IWiXSetup
@@ -233,10 +240,11 @@ namespace WebsitePanel.Setup.Internal
             Dst.UpdateServerAdminPassword = true;
 
             // DB_LOGIN, DB_PASSWORD.
+            bool WinAuth = Utils.GetStringSetupParameter(Hash, "DbAuth").ToLowerInvariant().Equals("Windows Authentication".ToLowerInvariant());
             Dst.DbInstallConnectionString = SqlUtils.BuildDbServerMasterConnectionString(
-                Dst.DatabaseServer,
-                Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdmin),
-			    Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdminPassword));
+                                                Dst.DatabaseServer,
+                                                WinAuth ? null : Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdmin),
+			                                    WinAuth ? null : Utils.GetStringSetupParameter(Hash, Global.Parameters.DbServerAdminPassword));
 
             Dst.BaseDirectory = Utils.GetStringSetupParameter(Hash, Global.Parameters.BaseDirectory);
             Dst.ComponentId = Utils.GetStringSetupParameter(Hash, Global.Parameters.ComponentId);
