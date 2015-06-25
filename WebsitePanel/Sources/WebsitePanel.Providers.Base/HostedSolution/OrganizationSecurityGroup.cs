@@ -35,12 +35,14 @@ namespace WebsitePanel.Providers.HostedSolution
 {
     public class OrganizationSecurityGroup
     {
+        [LogProperty]
         public string DisplayName
         {
             get;
             set;
         }
 
+        [LogProperty]
         public string AccountName
         {
             get;
@@ -59,6 +61,7 @@ namespace WebsitePanel.Providers.HostedSolution
             set;
         }
 
+        [LogProperty]
         public string SAMAccountName
         {
             get;
