@@ -83,11 +83,25 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         /// </summary>
         public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue, bool withOld = true) where T : class
         {
+            if (obj == null || expression == null)
+                return obj;
+
             var property = ObjectUtils.GetProperty(obj, expression);
+
+            if (property == null)
+                return obj;
 
             var oldValue = property.GetValue(obj, null);
 
-            if (!oldValue.Equals(newValue))
+            if (oldValue == null || newValue == null)
+            {
+                if (oldValue != newValue)
+                {
+                    WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
+                        LogExtensionHelper.GetString(newValue), withOld);
+                }
+            }
+            else if (!oldValue.Equals(newValue))
             {
                 WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
                     LogExtensionHelper.GetString(newValue), withOld);
