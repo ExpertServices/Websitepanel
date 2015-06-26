@@ -69,7 +69,7 @@
                             <asp:TemplateField HeaderText="gvFolderUrl">
 							    <ItemStyle Width="40%"></ItemStyle>
 							    <ItemTemplate>
-                                    <asp:Literal id="litFolderUrl" runat="server" Text='<%# Eval("Url").ToString() %>'></asp:Literal>
+                                    <asp:Literal id="litFolderUrl" runat="server" Text='<%# (Eval("UncPath") ?? Eval("Url")).ToString() %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvMappedDrive">
