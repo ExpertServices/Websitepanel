@@ -151,7 +151,7 @@
     <value>Folders</value>
   </data>
   <data name="gvFolderUrl.Header" xml:space="preserve">
-    <value>Url</value>
+    <value>Path</value>
   </data>
   <data name="locQuotaSpace.Text" xml:space="preserve">
     <value>Total Space Allocated (Gb):</value>
