@@ -1916,7 +1916,7 @@ namespace WebsitePanel.EnterpriseServer
                 SetMailBoxRetentionPolicyAndArchiving(itemId, mailboxPlanId, archivedPlanId, accountName, exchange, org.OrganizationId, resPolicy, EnableArchiving);
                 if (!resPolicy.IsSuccess)
                 {
-                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy", resPolicy.ErrorCodes.ToArray());
+                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy: " + string.Join(", ", resPolicy.ErrorCodes.ToArray()));
                 }
                 
 
