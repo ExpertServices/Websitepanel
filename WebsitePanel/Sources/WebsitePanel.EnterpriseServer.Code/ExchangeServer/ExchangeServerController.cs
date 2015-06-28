@@ -4545,7 +4545,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Log Extension
                 LogExtension.SetItemName(account.PrimaryEmailAddress);
-                LogExtension.WriteVariables("Address Added", emailAddress);
+                LogExtension.WriteVariable("Address Added", emailAddress);
 
                 exchange.SetDistributionListEmailAddresses(
                     account.AccountName,
