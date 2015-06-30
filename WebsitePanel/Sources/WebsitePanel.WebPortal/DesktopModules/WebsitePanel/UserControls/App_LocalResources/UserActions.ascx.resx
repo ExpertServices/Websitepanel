@@ -156,6 +156,12 @@
   <data name="ddlUserActionsItem.UnsetVIP" xml:space="preserve">
     <value>Unset VIP</value>
   </data>
+  <data name="ddlUserActionsItem.SendBySms" xml:space="preserve">
+    <value>Send password reset SMS</value>
+  </data>
+  <data name="ddlUserActionsItem.SendByEmail" xml:space="preserve">
+    <value>Send password reset email</value>
+  </data>
   <data name="headerMailboxPlanLabel.Text" xml:space="preserve">
     <value>Mailbox Plan</value>
   </data>
@@ -170,5 +176,17 @@
   </data>
   <data name="litVIP.Text" xml:space="preserve">
     <value>Please select a VIP status for the all checked users</value>
+  </data>
+  <data name="headerPasswordResetSendBySms.Text" xml:space="preserve">
+    <value>Password Reset</value>
+  </data>
+  <data name="btnPasswordResetNotification.Text" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="btnPasswordResetNotificationSendCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="litAccountsWithoutPhone.Text" xml:space="preserve">
+    <value>SMS will not be send to following accounts, because "Mobile Phone" is not set.</value>
   </data>
 </root>

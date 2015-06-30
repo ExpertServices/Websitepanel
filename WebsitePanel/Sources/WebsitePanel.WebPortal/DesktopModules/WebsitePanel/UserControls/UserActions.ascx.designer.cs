@@ -157,6 +157,60 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Button btnMailboxPlanCancel;
         
         /// <summary>
+        /// PasswordResetNotificationPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PasswordResetNotificationPanel;
+        
+        /// <summary>
+        /// headerPasswordResetSendBySms control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize headerPasswordResetSendBySms;
+        
+        /// <summary>
+        /// litAccountsWithoutPhone control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litAccountsWithoutPhone;
+        
+        /// <summary>
+        /// repAccountsWithoutPhone control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater repAccountsWithoutPhone;
+        
+        /// <summary>
+        /// btnPasswordResetNotificationSend control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnPasswordResetNotificationSend;
+        
+        /// <summary>
+        /// btnPasswordResetNotificationSendCancel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnPasswordResetNotificationSendCancel;
+        
+        /// <summary>
         /// FakeModalPopupTarget control.
         /// </summary>
         /// <remarks>
