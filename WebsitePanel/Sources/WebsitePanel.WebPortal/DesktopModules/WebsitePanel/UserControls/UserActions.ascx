@@ -1,6 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserActions.ascx.cs" Inherits="WebsitePanel.Portal.UserActions" %>
 <%@ Register Src="../ExchangeServer/UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 
+<style type="text/css">
+    .accounts-without-phone-list li {
+        list-style-type: circle;
+        margin-left: 10px;
+    }
+</style>
+
 <script language="javascript">
     function CloseAndShowProgressDialog(text) {
         $(".Popup").hide();
@@ -20,7 +27,12 @@
             ShowProgressDialog('Setting VIP...');
         } else if (action == 5) {
             ShowProgressDialog('Unsetting VIP...');
+        } else if (action == 7) {
+            ShowProgressDialog('Sending password reset notification...');
+        } else if (action == 8) {
+            ShowProgressDialog('Sending password reset notification...');
         }
+
     }
 </script>
 <asp:UpdatePanel ID="tblActions" runat="server" CssClass="NormalBold" UpdateMode="Conditional" ChildrenAsTriggers="true" >
@@ -35,6 +47,8 @@
             <asp:ListItem Value="4">SetVIP</asp:ListItem>
             <asp:ListItem Value="5">UnsetVIP</asp:ListItem>
             <asp:ListItem Value="6">SetMailboxPlan</asp:ListItem>
+            <asp:ListItem Value="7">SendBySms</asp:ListItem>
+            <asp:ListItem Value="8">SendByEmail</asp:ListItem>
         </asp:DropDownList>
 
         <asp:Button ID="btnApply" runat="server" meta:resourcekey="btnApply"
@@ -95,6 +109,37 @@
                 </div>
             </div>
         </asp:Panel>
+        
+        <%--Send password reset notification--%>
+        <asp:Panel ID="PasswordResetNotificationPanel" runat="server" CssClass="Popup" Style="display: none">
+            <table class="Popup-Header">
+                <tr>
+                    <td class="Popup-HeaderLeft"></td>
+                    <td class="Popup-HeaderTitle"><asp:Localize ID="headerPasswordResetSendBySms" runat="server" meta:resourcekey="headerPasswordResetSendBySms"></asp:Localize></td>
+                    <td class="Popup-HeaderRight"></td>
+                </tr>
+            </table>
+            <div class="Popup-Content">
+                <div class="Popup-Body">
+                    <br/>
+                    <asp:Literal ID="litAccountsWithoutPhone" runat="server" meta:resourcekey="litAccountsWithoutPhone"></asp:Literal>
+                    <br/>
+                    <ul class="accounts-without-phone-list">
+                        <asp:Repeater runat="server" ID="repAccountsWithoutPhone">
+                            <ItemTemplate>
+                                <li> <%# Eval("DisplayName") %> </li>
+                            </ItemTemplate>
+                        </asp:Repeater>
+                    </ul>
+                </div>
+                <div class="FormFooterMiddle">
+                    <asp:Button ID="btnPasswordResetNotificationSend" runat="server" CssClass="Button1" meta:resourcekey="btnPasswordResetNotification" Text="Send" 
+                        OnClientClick="return CloseAndShowProgressDialog('Sending password reset notification ...')" OnClick="btnModalOk_Click" />
+                    <asp:Button ID="btnPasswordResetNotificationSendCancel" runat="server" CssClass="Button1" meta:resourcekey="btnPasswordResetNotificationSendCancel" Text="Cancel"
+                        OnClick="btnModalCancel_OnClick" CausesValidation="false" />
+                </div>
+            </div>
+        </asp:Panel>
 
         
         <asp:Button ID="FakeModalPopupTarget" runat="server" Style="display: none;" />
@@ -103,6 +148,7 @@
     <Triggers>
         <asp:PostBackTrigger ControlID="btnServiceLevelOk" />
         <asp:PostBackTrigger ControlID="btnMailboxPlanOk" />
+        <asp:PostBackTrigger ControlID="btnPasswordResetNotificationSend" />
         <asp:PostBackTrigger ControlID="btnApply" />
     </Triggers>
 </asp:UpdatePanel>
