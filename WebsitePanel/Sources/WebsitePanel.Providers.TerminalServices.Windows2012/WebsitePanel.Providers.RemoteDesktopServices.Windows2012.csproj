@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RdsRunspaceExtensions.cs" />
+    <Compile Include="RdsMessenger.cs" />
     <Compile Include="Windows2012.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VersionInfo.cs" />

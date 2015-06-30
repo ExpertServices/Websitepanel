@@ -86,5 +86,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         void MoveSessionHostsToCollectionOU(List<RdsServer> servers, string collectionName, string organizationId);
         ImportedRdsCollection GetExistingCollection(string collectionName);
         void ImportCollection(string organizationId, RdsCollection collection, List<string> users);
+        void SendMessage(List<RdsMessageRecipient> recipients, string text);
     }
 }
