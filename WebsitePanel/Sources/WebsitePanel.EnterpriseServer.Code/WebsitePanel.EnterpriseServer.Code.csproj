@@ -155,6 +155,9 @@
     <Compile Include="SharePoint\HostedSharePointServerController.cs" />
     <Compile Include="SharePoint\SharePointServerController.cs" />
     <Compile Include="StatisticsServers\StatisticsServerController.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceSelectors\DefaultStorageSpaceSelector.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceSelectors\EnterpriseStorageSpaceSelector.cs" />
+    <Compile Include="StorageSpaces\StorageSpaceSelectors\IStorageSpaceSelector.cs" />
     <Compile Include="StorageSpaces\StorageSpacesController.cs" />
     <Compile Include="System\SystemController.cs" />
     <Compile Include="Tasks\SendEmailNotification.cs" />

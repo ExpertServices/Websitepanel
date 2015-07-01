@@ -29,7 +29,14 @@ namespace WebsitePanel.EnterpriseServer
 
         public StorageSpaceFolder CreateFolder(string organizationId, int itemId, string type, long quotaInBytes, QuotaType qoutaType)
         {
-            var folder = StorageSpacesController.CreateStorageSpaceFolder(ResourceGroups.HostedOrganizations, organizationId, type, quotaInBytes, qoutaType);
+            var storageId = StorageSpacesController.FindBestStorageSpaceService(new DefaultStorageSpaceSelector(), ResourceGroups.HostedOrganizations, quotaInBytes);
+
+            if (!storageId.IsSuccess)
+            {
+                throw new Exception(storageId.ErrorCodes.First());
+            }
+
+            var folder = StorageSpacesController.CreateStorageSpaceFolder(storageId.Value, ResourceGroups.HostedOrganizations, organizationId, type, quotaInBytes, qoutaType);
 
             if (!folder.IsSuccess)
             {

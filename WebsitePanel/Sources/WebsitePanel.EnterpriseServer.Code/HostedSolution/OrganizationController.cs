@@ -2726,9 +2726,9 @@ namespace WebsitePanel.EnterpriseServer
                                     ?? _foldersManager.CreateFolder(org.OrganizationId, itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString(),
                                         StorageSpacesController.GetFsrmQuotaInBytes(diskSpaceQuota), QuotaType.Hard);
 
-                                deletedUser.StoragePath = Directory.GetParent(folder.UncPath).ToString();
+                                deletedUser.StoragePath = StorageSpacesController.GetParentUnc(folder.UncPath);
 
-                                deletedUser.FolderName = folder.Name;
+                                deletedUser.FolderName = Path.GetFileName(folder.UncPath);
 
                                 path = Path.Combine(folder.UncPath, deletedUser.FileName);
                             }
