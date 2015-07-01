@@ -15126,7 +15126,25 @@ WHERE QuotaName in (
 	'Exchange2013.ResourceMailboxes',
 	'Exchange2013.SharedMailboxes',
 	'HostedSolution.DeletedUsers',
-	'HostedSolution.DeletedUsersBackupStorageSpace')
+	'HostedSolution.DeletedUsersBackupStorageSpace',
+	
+	'HostedSharePoint.Sites',
+	'HostedSharePointEnterprise.Sites',
+	'HostedCRM.Users',
+	'HostedCRM.LimitedUsers',
+	'HostedCRM.ESSUsers',
+	'HostedCRM2013.ProfessionalUsers',
+	'HostedCRM2013.BasicUsers',
+	'HostedCRM2013.EssentialUsers',
+	'BlackBerry.Users',
+	'OCS.Users',
+	'Lync.Users',
+	'EnterpriseStorage.Folders',
+	'EnterpriseStorage.DiskStorageSpace',
+	'RDS.Servers',
+	'RDS.Collections',
+	'RDS.Users'
+	)
 GO
 
 

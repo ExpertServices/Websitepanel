@@ -1186,7 +1186,7 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                int allocatedCrmUsers = cntx.Quotas[quotaName].QuotaAllocatedValue;
+                int allocatedCrmUsers = cntx.Quotas[quotaName].QuotaAllocatedValuePerOrganization;
                 res.Value = allocatedCrmUsers == -1 || allocatedCrmUsers > tmp.Value;
                 
             }

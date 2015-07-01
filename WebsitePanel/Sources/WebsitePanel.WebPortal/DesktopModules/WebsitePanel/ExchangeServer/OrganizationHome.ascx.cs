@@ -235,9 +235,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 
 
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-
-
             //Show SharePoint statistics
             if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
             {
@@ -247,7 +244,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 "SpaceID=" + PanelSecurity.PackageId);
                 siteCollectionsStats.QuotaUsedValue = orgStats.CreatedSharePointSiteCollections;
                 siteCollectionsStats.QuotaValue = orgStats.AllocatedSharePointSiteCollections;
-                if (orgStats.AllocatedSharePointSiteCollections != -1) siteCollectionsStats.QuotaAvailable = tenantStats.AllocatedSharePointSiteCollections - tenantStats.CreatedSharePointSiteCollections;
+                if (orgStats.AllocatedSharePointSiteCollections != -1) siteCollectionsStats.QuotaAvailable = orgStats.AllocatedSharePointSiteCollections - orgStats.CreatedSharePointSiteCollections;
             }
             else
                 sharePointStatsPanel.Visible = false;
@@ -261,7 +258,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 "SpaceID=" + PanelSecurity.PackageId);
                 enterpriseSiteCollectionsStats.QuotaUsedValue = orgStats.CreatedSharePointEnterpriseSiteCollections;
                 enterpriseSiteCollectionsStats.QuotaValue = orgStats.AllocatedSharePointEnterpriseSiteCollections;
-                if (orgStats.AllocatedSharePointEnterpriseSiteCollections != -1) enterpriseSiteCollectionsStats.QuotaAvailable = tenantStats.AllocatedSharePointEnterpriseSiteCollections - tenantStats.CreatedSharePointEnterpriseSiteCollections;
+                if (orgStats.AllocatedSharePointEnterpriseSiteCollections != -1) enterpriseSiteCollectionsStats.QuotaAvailable = orgStats.AllocatedSharePointEnterpriseSiteCollections - orgStats.CreatedSharePointEnterpriseSiteCollections;
             }
             else
                 sharePointEnterpriseStatsPanel.Visible = false;
@@ -270,7 +267,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
             {
                 ocsStatsPanel.Visible = true;
-                BindOCSStats(orgStats, tenantStats);
+                BindOCSStats(orgStats);
             }
             else
                 ocsStatsPanel.Visible = false;
@@ -278,7 +275,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
             {
                 besStatsPanel.Visible = true;
-                BindBESStats(orgStats, tenantStats);
+                BindBESStats(orgStats);
             }
             else
                 besStatsPanel.Visible = false;
@@ -286,7 +283,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
             {
                 lyncStatsPanel.Visible = true;
-                BindLyncStats(orgStats, tenantStats);
+                BindLyncStats(orgStats);
             }
             else
                 lyncStatsPanel.Visible = false;
@@ -300,13 +297,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     crm2013StatsPanel.Visible = true;
                     crmStatsPanel.Visible = false;
-                    BindCRM2013Stats(orgStats, tenantStats);
+                    BindCRM2013Stats(orgStats);
                 }
                 else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 {
                     crmStatsPanel.Visible = true;
                     crm2013StatsPanel.Visible = false;
-                    BindCRMStats(orgStats, tenantStats);
+                    BindCRMStats(orgStats);
                 }
 
             }
@@ -320,7 +317,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
             {
                 enterpriseStorageStatsPanel.Visible = true;
-                BindEnterpriseStorageStats(orgStats, tenantStats);
+                BindEnterpriseStorageStats(orgStats);
             }
             else
                 enterpriseStorageStatsPanel.Visible = false;
@@ -336,7 +333,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
             {
                 remoteDesktopStatsPanel.Visible = true;
-                BindRemoteDesktopStats(orgStats, tenantStats);
+                BindRemoteDesktopStats(orgStats);
             }
             else
             {
@@ -344,7 +341,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-        private void BindCRMStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindCRMStats(OrganizationStatistics stats)
         {
             lnkCRMUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crmusers",
                 "SpaceID=" + PanelSecurity.PackageId);
@@ -358,7 +355,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             crmUsersStats.QuotaUsedValue = stats.CreatedCRMUsers;
             crmUsersStats.QuotaValue = stats.AllocatedCRMUsers;
 
-            //if (stats.AllocatedCRMUsers != -1) crmUsersStats.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+            //if (stats.AllocatedCRMUsers != -1) crmUsersStats.QuotaAvailable = stats.AllocatedCRMUsers - stats.CreatedCRMUsers;
 
             crmLimitedUsersStats.QuotaUsedValue = stats.CreatedLimitedCRMUsers;
             crmLimitedUsersStats.QuotaValue = stats.AllocatedLimitedCRMUsers;
@@ -370,7 +367,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             crmDBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace>0 ? stats.AllocatedCRMDiskSpace/(1024*1024) : -1);
         }
 
-        private void BindCRM2013Stats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindCRM2013Stats(OrganizationStatistics stats)
         {
             lnkProfessionalCRMUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crmusers",
                 "SpaceID=" + PanelSecurity.PackageId);
@@ -394,49 +391,49 @@ namespace WebsitePanel.Portal.ExchangeServer
             crm2013DBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace > 0 ? stats.AllocatedCRMDiskSpace / (1024 * 1024) : -1);
         }
 
-        private void BindOCSStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindOCSStats(OrganizationStatistics stats)
         {
             ocsUsersStats.QuotaValue = stats.AllocatedOCSUsers;
             ocsUsersStats.QuotaUsedValue = stats.CreatedOCSUsers;
-            if (stats.AllocatedOCSUsers != -1) ocsUsersStats.QuotaAvailable = tenantStats.AllocatedOCSUsers - tenantStats.CreatedOCSUsers;
+            if (stats.AllocatedOCSUsers != -1) ocsUsersStats.QuotaAvailable = stats.AllocatedOCSUsers - stats.CreatedOCSUsers;
 
             lnkOCSUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "ocs_users",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 
-        private void BindLyncStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindLyncStats(OrganizationStatistics stats)
         {
             lyncUsersStats.QuotaValue = stats.AllocatedLyncUsers;
             lyncUsersStats.QuotaUsedValue = stats.CreatedLyncUsers;
-            if (stats.AllocatedLyncUsers != -1) lyncUsersStats.QuotaAvailable = tenantStats.AllocatedLyncUsers - tenantStats.CreatedLyncUsers;
+            if (stats.AllocatedLyncUsers != -1) lyncUsersStats.QuotaAvailable = stats.AllocatedLyncUsers - stats.CreatedLyncUsers;
 
             lnkLyncUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "lync_users",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 
 
-        private void BindBESStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindBESStats(OrganizationStatistics stats)
         {
             besUsersStats.QuotaValue = stats.AllocatedBlackBerryUsers;
             besUsersStats.QuotaUsedValue = stats.CreatedBlackBerryUsers;
-            if (stats.AllocatedBlackBerryUsers != -1) besUsersStats.QuotaAvailable = tenantStats.AllocatedBlackBerryUsers - tenantStats.CreatedBlackBerryUsers;
+            if (stats.AllocatedBlackBerryUsers != -1) besUsersStats.QuotaAvailable = stats.AllocatedBlackBerryUsers - stats.CreatedBlackBerryUsers;
 
             lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "blackberry_users",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 
-        private void BindEnterpriseStorageStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindEnterpriseStorageStats(OrganizationStatistics stats)
         {
             enterpriseStorageSpaceStats.QuotaValue = stats.AllocatedEnterpriseStorageSpace;
             enterpriseStorageSpaceStats.QuotaUsedValue = stats.UsedEnterpriseStorageSpace;
-            if (stats.AllocatedEnterpriseStorageSpace != -1) enterpriseStorageSpaceStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
+            if (stats.AllocatedEnterpriseStorageSpace != -1) enterpriseStorageSpaceStats.QuotaAvailable = stats.AllocatedEnterpriseStorageSpace - stats.UsedEnterpriseStorageSpace;
 
             lnkEnterpriseStorageSpace.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
             enterpriseStorageFoldersStats.QuotaValue = stats.AllocatedEnterpriseStorageFolders;
             enterpriseStorageFoldersStats.QuotaUsedValue = stats.CreatedEnterpriseStorageFolders;
-            if (stats.AllocatedEnterpriseStorageFolders != -1) enterpriseStorageFoldersStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+            if (stats.AllocatedEnterpriseStorageFolders != -1) enterpriseStorageFoldersStats.QuotaAvailable = stats.AllocatedEnterpriseStorageFolders - stats.CreatedEnterpriseStorageFolders;
 
             lnkEnterpriseStorageFolders.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
@@ -484,13 +481,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-        private void BindRemoteDesktopStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        private void BindRemoteDesktopStats(OrganizationStatistics stats)
         {
             rdsServers.QuotaValue = stats.AllocatedRdsServers;
             rdsServers.QuotaUsedValue = stats.CreatedRdsServers;
             if (stats.AllocatedRdsServers != -1)
             {
-                rdsServers.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
+                rdsServers.QuotaAvailable = stats.AllocatedRdsServers - stats.CreatedRdsServers;
             }
 
             rdsCollections.QuotaValue = stats.AllocatedRdsCollections;
@@ -498,7 +495,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (stats.AllocatedRdsCollections != -1)
             {
-                rdsCollections.QuotaAvailable = tenantStats.AllocatedRdsCollections - tenantStats.CreatedRdsCollections;
+                rdsCollections.QuotaAvailable = stats.AllocatedRdsCollections - stats.CreatedRdsCollections;
             }                       
 
             rdsUsers.QuotaValue = stats.AllocatedRdsUsers;
@@ -506,7 +503,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (stats.AllocatedRdsCollections != -1)
             {
-                rdsUsers.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+                rdsUsers.QuotaAvailable = stats.AllocatedRdsUsers - stats.CreatedRdsUsers;
             }
 
             lnkRdsServers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);

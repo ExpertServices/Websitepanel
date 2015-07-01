@@ -101,5 +101,10 @@ namespace WebsitePanel.EnterpriseServer
             get { return this.groupId; }
             set { this.groupId = value; }
         }
+
+        public int GetQuotaAllocatedValue(bool byOrganization)
+        {
+            return byOrganization ? QuotaAllocatedValuePerOrganization : QuotaAllocatedValue;
+        }
     }
 }
