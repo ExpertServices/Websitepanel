@@ -93,10 +93,9 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             // quota values
             OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
             mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
             mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
-            if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = tenantStats.AllocatedMailboxes - tenantStats.CreatedMailboxes;
+            if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = stats.AllocatedMailboxes - stats.CreatedMailboxes;
 
             if (cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
         }

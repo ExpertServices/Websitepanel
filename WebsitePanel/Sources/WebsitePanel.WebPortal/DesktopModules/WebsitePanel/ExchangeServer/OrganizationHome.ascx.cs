@@ -49,7 +49,6 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void BindExchangeStats(bool hideItems, PackageContext cntx)
         {
             OrganizationStatistics exchangeOrgStats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            //OrganizationStatistics exchangeTenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 
             lnkMailboxes.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxes",
             "SpaceID=" + PanelSecurity.PackageId.ToString());

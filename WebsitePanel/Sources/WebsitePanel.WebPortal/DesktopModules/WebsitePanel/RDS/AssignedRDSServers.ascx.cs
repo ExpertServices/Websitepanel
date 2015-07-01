@@ -57,13 +57,12 @@ namespace WebsitePanel.Portal.RDS
         private void BindQuota(PackageContext cntx)
         {
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             rdsServersQuota.QuotaUsedValue = stats.CreatedRdsServers;
             rdsServersQuota.QuotaValue = stats.AllocatedRdsServers;
 
             if (stats.AllocatedUsers != -1)
             {
-                rdsServersQuota.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
+                rdsServersQuota.QuotaAvailable = stats.AllocatedRdsServers - stats.CreatedRdsServers;
             }
         }
 

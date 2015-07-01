@@ -54,11 +54,10 @@ namespace WebsitePanel.Portal
 		{
 			// quota values
 			OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
 			siteCollectionsQuota.QuotaUsedValue = stats.CreatedSharePointEnterpriseSiteCollections;
 			siteCollectionsQuota.QuotaValue = stats.AllocatedSharePointEnterpriseSiteCollections;
-            if (stats.AllocatedSharePointEnterpriseSiteCollections != -1) siteCollectionsQuota.QuotaAvailable = tenantStats.AllocatedSharePointEnterpriseSiteCollections - tenantStats.CreatedSharePointEnterpriseSiteCollections;
+            if (stats.AllocatedSharePointEnterpriseSiteCollections != -1) siteCollectionsQuota.QuotaAvailable = stats.AllocatedSharePointEnterpriseSiteCollections - stats.CreatedSharePointEnterpriseSiteCollections;
 		}
 
 		protected void btnCreateSiteCollection_Click(object sender, EventArgs e)
