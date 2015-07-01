@@ -42,13 +42,12 @@ namespace WebsitePanel.Portal.Lync
         private void BindStats()
         {            
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             int allocatedLyncUsers = stats.AllocatedLyncUsers;
             int usedUsers = stats.CreatedLyncUsers;
             usersQuota.QuotaUsedValue = usedUsers;
             usersQuota.QuotaValue = allocatedLyncUsers;
 
-            if (stats.AllocatedLyncUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedLyncUsers - tenantStats.CreatedLyncUsers;
+            if (stats.AllocatedLyncUsers != -1) usersQuota.QuotaAvailable = stats.AllocatedLyncUsers - stats.CreatedLyncUsers;
         }
 
         protected void btnCreateUser_Click(object sender, EventArgs e)

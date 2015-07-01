@@ -52,10 +52,9 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             // set quotas
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             domainsQuota.QuotaUsedValue = stats.CreatedDomains;
             domainsQuota.QuotaValue = stats.AllocatedDomains;
-            if (stats.AllocatedDomains != -1) domainsQuota.QuotaAvailable = tenantStats.AllocatedDomains - tenantStats.CreatedDomains;
+            if (stats.AllocatedDomains != -1) domainsQuota.QuotaAvailable = stats.AllocatedDomains - stats.CreatedDomains;
         }
 
         public string GetDomainRecordsEditUrl(string domainId)

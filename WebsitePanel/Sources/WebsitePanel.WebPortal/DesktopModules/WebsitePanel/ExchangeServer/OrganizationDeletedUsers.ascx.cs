@@ -98,10 +98,9 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             // quota values
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             deletedUsersQuota.QuotaUsedValue = stats.DeletedUsers;
             deletedUsersQuota.QuotaValue = stats.AllocatedDeletedUsers;
-            if (stats.AllocatedUsers != -1) deletedUsersQuota.QuotaAvailable = tenantStats.AllocatedDeletedUsers - tenantStats.DeletedUsers;
+            if (stats.AllocatedUsers != -1) deletedUsersQuota.QuotaAvailable = stats.AllocatedDeletedUsers - stats.DeletedUsers;
         }
 
         public string GetUserEditUrl(string accountId)

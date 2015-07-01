@@ -58,13 +58,12 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             // quota values
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             groupsQuota.QuotaUsedValue = stats.CreatedGroups;
             groupsQuota.QuotaValue = stats.AllocatedGroups;
 
             if (stats.AllocatedGroups != -1)
             {
-                int groupsAvailable = groupsQuota.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+                int groupsAvailable = groupsQuota.QuotaAvailable = stats.AllocatedGroups - stats.CreatedGroups;
 
                 if (groupsAvailable <= 0)
                 {

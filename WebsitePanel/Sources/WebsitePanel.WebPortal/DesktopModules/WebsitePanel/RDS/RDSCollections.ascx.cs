@@ -72,13 +72,12 @@ namespace WebsitePanel.Portal.RDS
         private void BindQuota(PackageContext cntx)
         {            
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             collectionsQuota.QuotaUsedValue = stats.CreatedRdsCollections;
             collectionsQuota.QuotaValue = stats.AllocatedRdsCollections;
 
             if (stats.AllocatedUsers != -1)
             {
-                collectionsQuota.QuotaAvailable = tenantStats.AllocatedRdsCollections - tenantStats.CreatedRdsCollections;
+                collectionsQuota.QuotaAvailable = stats.AllocatedRdsCollections - stats.CreatedRdsCollections;
             }            
         }
 
