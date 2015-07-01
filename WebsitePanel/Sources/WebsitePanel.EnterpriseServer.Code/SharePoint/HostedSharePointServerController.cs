@@ -226,7 +226,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Check quota.
-            OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatistics(item.OrganizationId);
+            OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatisticsByOrganization(item.OrganizationId);
             //QuotaValueInfo quota = PackageController.GetPackageQuota(item.PackageId, Quotas.HOSTED_SHAREPOINT_SITES);
 
             if (orgStats.AllocatedSharePointSiteCollections > -1

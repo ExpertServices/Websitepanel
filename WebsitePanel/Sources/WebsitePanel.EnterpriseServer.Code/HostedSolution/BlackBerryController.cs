@@ -44,7 +44,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
             IntResult userCount = GetBlackBerryUsersCount(itemId, string.Empty, string.Empty);
 
-            int allocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].QuotaAllocatedValue;
+            int allocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].QuotaAllocatedValuePerOrganization;
             
             return allocatedBlackBerryUsers == -1 || allocatedBlackBerryUsers > userCount.Value;                        
         }

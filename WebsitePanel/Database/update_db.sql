@@ -15155,3 +15155,150 @@ AS
 		RETURN @Result
 	END
 GO
+
+-- Quotas Per Organization
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Quotas' AND COLS.name='PerOrganization')
+BEGIN
+	ALTER TABLE [dbo].[Quotas] ADD [PerOrganization] int NULL
+END
+GO
+
+UPDATE Quotas
+SET PerOrganization = 1
+WHERE QuotaName in (
+	'Exchange2007.DiskSpace',
+	'Exchange2007.Mailboxes',
+	'Exchange2007.Contacts',
+	'Exchange2007.DistributionLists',
+	'Exchange2007.PublicFolders',
+	'HostedSolution.Users',
+	'HostedSolution.Domains',
+	'Exchange2007.RecoverableItemsSpace',
+	'HostedSolution.SecurityGroups',
+	'Exchange2013.ArchivingStorage',
+	'Exchange2013.ArchivingMailboxes',
+	'Exchange2013.ResourceMailboxes',
+	'Exchange2013.SharedMailboxes',
+	'HostedSolution.DeletedUsers',
+	'HostedSolution.DeletedUsersBackupStorageSpace',
+	
+	'HostedSharePoint.Sites',
+	'HostedSharePointEnterprise.Sites',
+	'HostedCRM.Users',
+	'HostedCRM.LimitedUsers',
+	'HostedCRM.ESSUsers',
+	'HostedCRM2013.ProfessionalUsers',
+	'HostedCRM2013.BasicUsers',
+	'HostedCRM2013.EssentialUsers',
+	'BlackBerry.Users',
+	'OCS.Users',
+	'Lync.Users',
+	'EnterpriseStorage.Folders',
+	'EnterpriseStorage.DiskStorageSpace',
+	'RDS.Servers',
+	'RDS.Collections',
+	'RDS.Users'
+	)
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetPackageQuotas]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @PlanID int, @ParentPackageID int
+SELECT @PlanID = PlanID, @ParentPackageID = ParentPackageID FROM Packages
+WHERE PackageID = @PackageID
+
+-- get resource groups
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ISNULL(HPR.CalculateDiskSpace, 0) AS CalculateDiskSpace,
+	ISNULL(HPR.CalculateBandwidth, 0) AS CalculateBandwidth,
+	--dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, 0) AS ParentEnabled
+	CASE
+		WHEN RG.GroupName = 'Service Levels' THEN dbo.GetPackageServiceLevelResource(@ParentPackageID, RG.GroupID, 0)
+		ELSE dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, 0)
+	END AS ParentEnabled
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+--WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, 0) = 1
+WHERE (dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, 0) = 1 AND RG.GroupName <> 'Service Levels') OR
+	  (dbo.GetPackageServiceLevelResource(@PackageID, RG.GroupID, 0) = 1 AND RG.GroupName = 'Service Levels')
+ORDER BY RG.GroupOrder
+
+-- return quotas
+DECLARE @OrgsCount INT
+SET @OrgsCount = dbo.GetPackageAllocatedQuota(@PackageID, 205) -- 205 - HostedSolution.Organizations
+SET @OrgsCount = CASE WHEN ISNULL(@OrgsCount, 0) < 1 THEN 1 ELSE @OrgsCount END
+
+SELECT
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	QuotaValue = CASE WHEN Q.PerOrganization = 1 AND dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) <> -1 THEN 
+					dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) * @OrgsCount 
+				 ELSE 
+					dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) 
+				 END,
+	QuotaValuePerOrganization = dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID),
+	dbo.GetPackageAllocatedQuota(@ParentPackageID, Q.QuotaID) AS ParentQuotaValue,
+	ISNULL(dbo.CalculateQuotaUsage(@PackageID, Q.QuotaID), 0) AS QuotaUsedValue,
+	Q.PerOrganization
+FROM Quotas AS Q
+WHERE Q.HideQuota IS NULL OR Q.HideQuota = 0
+ORDER BY Q.QuotaOrder
+
+RETURN
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetPackageQuota]
+(
+	@ActorID int,
+	@PackageID int,
+	@QuotaName nvarchar(50)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- return quota
+DECLARE @OrgsCount INT
+SET @OrgsCount = dbo.GetPackageAllocatedQuota(@PackageID, 205) -- 205 - HostedSolution.Organizations
+SET @OrgsCount = CASE WHEN ISNULL(@OrgsCount, 0) < 1 THEN 1 ELSE @OrgsCount END
+
+SELECT
+	Q.QuotaID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	QuotaAllocatedValue = CASE WHEN Q.PerOrganization = 1 AND ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0) <> -1 THEN 
+					ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0) * @OrgsCount 
+				 ELSE 
+					ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0)
+				 END,
+	QuotaAllocatedValuePerOrganization = ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0),
+	ISNULL(dbo.CalculateQuotaUsage(@PackageId, Q.QuotaID), 0) AS QuotaUsedValue
+FROM Quotas AS Q
+WHERE Q.QuotaName = @QuotaName
+
+RETURN
+GO
+
+
+GO

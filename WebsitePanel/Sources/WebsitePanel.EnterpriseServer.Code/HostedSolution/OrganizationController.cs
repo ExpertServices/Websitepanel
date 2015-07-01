@@ -74,7 +74,7 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers))
@@ -89,7 +89,7 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckDeletedUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedDeletedUsers != -1 && (stats.DeletedUsers >= stats.AllocatedDeletedUsers))
@@ -1181,61 +1181,62 @@ namespace WebsitePanel.EnterpriseServer
                 // disk space               
                 // allocated quotas                               
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValue;
-                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValue;
-                stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
-                stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
+
+                stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].GetQuotaAllocatedValue(byOrganization);
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 {
-                    stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].QuotaAllocatedValue;
+                    stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
                 {
-                    stats.AllocatedSharePointEnterpriseSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_SITES].QuotaAllocatedValue;
+                    stats.AllocatedSharePointEnterpriseSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_SITES].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 {
-                    stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].QuotaAllocatedValue;
-                    stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].QuotaAllocatedValue;
-                    stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].QuotaAllocatedValue;
+                    stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
                 {
-                    stats.AllocatedProfessionalCRMUsers = cntx.Quotas[Quotas.CRM2013_PROFESSIONALUSERS].QuotaAllocatedValue;
-                    stats.AllocatedBasicCRMUsers = cntx.Quotas[Quotas.CRM2013_BASICUSERS].QuotaAllocatedValue;
-                    stats.AllocatedEssentialCRMUsers = cntx.Quotas[Quotas.CRM2013_ESSENTIALUSERS].QuotaAllocatedValue;
+                    stats.AllocatedProfessionalCRMUsers = cntx.Quotas[Quotas.CRM2013_PROFESSIONALUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedBasicCRMUsers = cntx.Quotas[Quotas.CRM2013_BASICUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedEssentialCRMUsers = cntx.Quotas[Quotas.CRM2013_ESSENTIALUSERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
                 {
-                    stats.AllocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].QuotaAllocatedValue;
+                    stats.AllocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
                 {
-                    stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].QuotaAllocatedValue;
+                    stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 {
-                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                 {
-                    stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
-                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
+                    stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
                 {
-                    stats.AllocatedRdsServers = cntx.Quotas[Quotas.RDS_SERVERS].QuotaAllocatedValue;
-                    stats.AllocatedRdsCollections = cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue;
-                    stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue;
+                    stats.AllocatedRdsServers = cntx.Quotas[Quotas.RDS_SERVERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedRdsCollections = cntx.Quotas[Quotas.RDS_COLLECTIONS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 return stats;
@@ -1288,7 +1289,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check domains quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedDomains > -1
                 && orgStats.CreatedDomains >= orgStats.AllocatedDomains)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT;
@@ -1368,7 +1369,7 @@ namespace WebsitePanel.EnterpriseServer
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
                 }
 
-                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatisticsByOrganization(itemId);
 
                 if (orgStatsExchange.AllocatedMailboxes == 0)
                 {
@@ -2744,7 +2745,7 @@ namespace WebsitePanel.EnterpriseServer
                                     CreateFolder(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName);
                                 }
 
-                                if (diskSpaceQuota.QuotaAllocatedValue != -1)
+                                if (diskSpaceQuota.QuotaAllocatedValuePerOrganization != -1)
                                 {
                                     SetFRSMQuotaOnFolder(org.PackageId, deletedUser.StoragePath, org.OrganizationId, diskSpaceQuota, QuotaType.Hard);
                                 }
@@ -2935,7 +2936,7 @@ namespace WebsitePanel.EnterpriseServer
                 os.SetQuotaLimitOnFolder(
                     Path.Combine(GetDirectory(path), folderName),
                     GetLocationDrive(path), quotaType,
-                    quotaInfo.QuotaAllocatedValue.ToString() + unit,
+                    quotaInfo.QuotaAllocatedValuePerOrganization.ToString() + unit,
                     0, String.Empty, String.Empty);
             }
         }

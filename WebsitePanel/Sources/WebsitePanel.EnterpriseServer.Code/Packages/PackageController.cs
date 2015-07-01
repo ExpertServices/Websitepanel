@@ -388,6 +388,7 @@ namespace WebsitePanel.EnterpriseServer
                 quota.QuotaDescription = ((object)dr["QuotaDescription"]).GetType() == typeof(System.DBNull) ? string.Empty : (string)dr["QuotaDescription"];
                 quota.QuotaTypeId = (int)dr["QuotaTypeId"];
                 quota.QuotaAllocatedValue = (int)dr["QuotaValue"];
+                quota.QuotaAllocatedValuePerOrganization = (int)dr["QuotaValuePerOrganization"];
                 quota.QuotaUsedValue = (int)dr["QuotaUsedValue"];
                 quota.QuotaExhausted = (packageId < 2) || (quota.QuotaAllocatedValue != -1 && quota.QuotaUsedValue >= quota.QuotaAllocatedValue);
                 quotas.Add(quota);

@@ -118,7 +118,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
             IntResult userCount = GetLyncUsersCount(itemId);
 
-            int allocatedUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+            int allocatedUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValuePerOrganization;
 
             return allocatedUsers == -1 || allocatedUsers > userCount.Value;
         }
