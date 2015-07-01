@@ -2875,7 +2875,7 @@
     <value>Contacts per Organization</value>
   </data>
   <data name="Quota.Exchange2007.DiskSpace" xml:space="preserve">
-    <value>Mailbox storage, MB</value>
+    <value>Mailbox storage per Organization, MB</value>
   </data>
   <data name="Quota.Exchange2007.DistributionLists" xml:space="preserve">
     <value>Distribution Lists per Organization</value>
@@ -5380,7 +5380,7 @@
     <value>Allow Litigation Hold</value>
   </data>
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
-    <value>Recoverable Items Storage, MB</value>
+    <value>Recoverable Items Storage per Organization, MB</value>
   </data>
   <data name="Quota.EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
     <value>Disk Storage Space, Mb</value>
@@ -5707,7 +5707,7 @@
     <value>Allow Retention policy</value>
   </data>
   <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
-    <value>Archiving storage, MB</value>
+    <value>Archiving storage per Organization, MB</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
     <value>Unable to delete Retention policy.</value>

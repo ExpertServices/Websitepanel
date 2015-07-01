@@ -49,7 +49,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void BindExchangeStats(bool hideItems, PackageContext cntx)
         {
             OrganizationStatistics exchangeOrgStats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics exchangeTenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            //OrganizationStatistics exchangeTenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 
             lnkMailboxes.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxes",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
@@ -83,30 +83,30 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             mailboxesStats.QuotaUsedValue = exchangeOrgStats.CreatedMailboxes;
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
-            if (exchangeOrgStats.AllocatedMailboxes != -1) mailboxesStats.QuotaAvailable = exchangeTenantStats.AllocatedMailboxes - exchangeTenantStats.CreatedMailboxes;
+            if (exchangeOrgStats.AllocatedMailboxes != -1) mailboxesStats.QuotaAvailable = exchangeOrgStats.AllocatedMailboxes - exchangeOrgStats.CreatedMailboxes;
 
             mailboxesSharedStats.QuotaUsedValue = exchangeOrgStats.CreatedSharedMailboxes;
             mailboxesSharedStats.QuotaValue = exchangeOrgStats.AllocatedSharedMailboxes;
-            if (exchangeOrgStats.AllocatedSharedMailboxes != -1) mailboxesSharedStats.QuotaAvailable = exchangeTenantStats.AllocatedSharedMailboxes - exchangeTenantStats.CreatedSharedMailboxes;
+            if (exchangeOrgStats.AllocatedSharedMailboxes != -1) mailboxesSharedStats.QuotaAvailable = exchangeOrgStats.AllocatedSharedMailboxes - exchangeOrgStats.CreatedSharedMailboxes;
 
             mailboxesResourceStats.QuotaUsedValue = exchangeOrgStats.CreatedResourceMailboxes;
             mailboxesResourceStats.QuotaValue = exchangeOrgStats.AllocatedResourceMailboxes;
-            if (exchangeOrgStats.AllocatedResourceMailboxes != -1) mailboxesResourceStats.QuotaAvailable = exchangeTenantStats.AllocatedResourceMailboxes - exchangeTenantStats.CreatedResourceMailboxes;
+            if (exchangeOrgStats.AllocatedResourceMailboxes != -1) mailboxesResourceStats.QuotaAvailable = exchangeOrgStats.AllocatedResourceMailboxes - exchangeOrgStats.CreatedResourceMailboxes;
 
-            if (exchangeTenantStats.AllocatedContacts == 0) this.rowContacts.Style.Add("display", "none");
+            if (exchangeOrgStats.AllocatedContacts == 0) this.rowContacts.Style.Add("display", "none");
             else
             {
                 contactsStats.QuotaUsedValue = exchangeOrgStats.CreatedContacts;
                 contactsStats.QuotaValue = exchangeOrgStats.AllocatedContacts;
-                if (exchangeOrgStats.AllocatedContacts != -1) contactsStats.QuotaAvailable = exchangeTenantStats.AllocatedContacts - exchangeTenantStats.CreatedContacts;
+                if (exchangeOrgStats.AllocatedContacts != -1) contactsStats.QuotaAvailable = exchangeOrgStats.AllocatedContacts - exchangeOrgStats.CreatedContacts;
             }
 
-            if (exchangeTenantStats.AllocatedDistributionLists == 0) this.rowLists.Style.Add("display", "none");
+            if (exchangeOrgStats.AllocatedDistributionLists == 0) this.rowLists.Style.Add("display", "none");
             else
             {
                 listsStats.QuotaUsedValue = exchangeOrgStats.CreatedDistributionLists;
                 listsStats.QuotaValue = exchangeOrgStats.AllocatedDistributionLists;
-                if (exchangeOrgStats.AllocatedDistributionLists != -1) listsStats.QuotaAvailable = exchangeTenantStats.AllocatedDistributionLists - exchangeTenantStats.CreatedDistributionLists;
+                if (exchangeOrgStats.AllocatedDistributionLists != -1) listsStats.QuotaAvailable = exchangeOrgStats.AllocatedDistributionLists - exchangeOrgStats.CreatedDistributionLists;
             }
 
             if (!hideItems)
@@ -115,18 +115,18 @@ namespace WebsitePanel.Portal.ExchangeServer
                 exchangeStorageStats.QuotaValue = exchangeOrgStats.AllocatedDiskSpace;
                 if (exchangeOrgStats.AllocatedDiskSpace != -1)
                 {
-                    exchangeStorageStats.QuotaAvailable = exchangeTenantStats.AllocatedDiskSpace - exchangeTenantStats.UsedDiskSpace;
+                    exchangeStorageStats.QuotaAvailable = exchangeOrgStats.AllocatedDiskSpace - exchangeOrgStats.UsedDiskSpace;
                 }
             }
             else
                 this.rowExchangeStorage.Style.Add("display", "none");
 
-            if (exchangeTenantStats.AllocatedPublicFolders == 0) this.rowFolders.Style.Add("display", "none");
+            if (exchangeOrgStats.AllocatedPublicFolders == 0) this.rowFolders.Style.Add("display", "none");
             else
             {
                 foldersStats.QuotaUsedValue = exchangeOrgStats.CreatedPublicFolders;
                 foldersStats.QuotaValue = exchangeOrgStats.AllocatedPublicFolders;
-                if (exchangeOrgStats.AllocatedPublicFolders != -1) foldersStats.QuotaAvailable = exchangeTenantStats.AllocatedPublicFolders - exchangeTenantStats.CreatedPublicFolders;
+                if (exchangeOrgStats.AllocatedPublicFolders != -1) foldersStats.QuotaAvailable = exchangeOrgStats.AllocatedPublicFolders - exchangeOrgStats.CreatedPublicFolders;
             }
 
             if ((!hideItems) && (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, cntx)))
@@ -135,7 +135,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 exchangeLitigationHoldStats.QuotaValue = exchangeOrgStats.AllocatedLitigationHoldSpace;
                 if (exchangeOrgStats.AllocatedLitigationHoldSpace != -1)
                 {
-                    exchangeLitigationHoldStats.QuotaAvailable = exchangeTenantStats.AllocatedLitigationHoldSpace - exchangeTenantStats.UsedLitigationHoldSpace;
+                    exchangeLitigationHoldStats.QuotaAvailable = exchangeOrgStats.AllocatedLitigationHoldSpace - exchangeOrgStats.UsedLitigationHoldSpace;
                 }
             }
             else
@@ -147,7 +147,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 exchangeArchivingStatus.QuotaValue = exchangeOrgStats.AllocatedArchingStorage;
                 if (exchangeOrgStats.AllocatedArchingStorage != -1)
                 {
-                    exchangeArchivingStatus.QuotaAvailable = exchangeTenantStats.AllocatedArchingStorage - exchangeTenantStats.UsedArchingStorage;
+                    exchangeArchivingStatus.QuotaAvailable = exchangeOrgStats.AllocatedArchingStorage - exchangeOrgStats.UsedArchingStorage;
                 }
             }
             else
@@ -177,7 +177,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             lblCreatedValue.Text = org.CreatedDate.Date.ToShortDateString();
 
             OrganizationStatistics orgStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             if (orgStats == null)
                 return;
 
@@ -185,17 +184,17 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 domainStats.QuotaUsedValue = orgStats.CreatedDomains;
                 domainStats.QuotaValue = orgStats.AllocatedDomains;
-                if (orgStats.AllocatedDomains != -1) domainStats.QuotaAvailable = tenantStats.AllocatedDomains - tenantStats.CreatedDomains;
+                if (orgStats.AllocatedDomains != -1) domainStats.QuotaAvailable = orgStats.AllocatedDomains - orgStats.CreatedDomains;
 
                 userStats.QuotaUsedValue = orgStats.CreatedUsers;
                 userStats.QuotaValue = orgStats.AllocatedUsers;
                 if (orgStats.AllocatedUsers != -1)
-                    userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+                    userStats.QuotaAvailable = orgStats.AllocatedUsers - orgStats.CreatedUsers;
 
                 deletedUserStats.QuotaUsedValue = orgStats.DeletedUsers;
                 deletedUserStats.QuotaValue = orgStats.AllocatedDeletedUsers;
                 if (orgStats.AllocatedDeletedUsers != -1)
-                    userStats.QuotaAvailable = tenantStats.AllocatedDeletedUsers - tenantStats.DeletedUsers;
+                    deletedUserStats.QuotaAvailable = orgStats.AllocatedDeletedUsers - orgStats.DeletedUsers;
 
                 lnkDomains.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains",
                     "SpaceID=" + PanelSecurity.PackageId);
@@ -212,7 +211,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     groupStats.QuotaUsedValue = orgStats.CreatedGroups;
                     groupStats.QuotaValue = orgStats.AllocatedGroups;
-                    if (orgStats.AllocatedGroups != -1) groupStats.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+                    if (orgStats.AllocatedGroups != -1) groupStats.QuotaAvailable = orgStats.AllocatedGroups - orgStats.CreatedGroups;
 
                     lnkGroups.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "secur_groups",
                         "SpaceID=" + PanelSecurity.PackageId);
@@ -233,6 +232,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 exchangeStatsPanel.Visible = false;
+
+
+
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
 
             //Show SharePoint statistics

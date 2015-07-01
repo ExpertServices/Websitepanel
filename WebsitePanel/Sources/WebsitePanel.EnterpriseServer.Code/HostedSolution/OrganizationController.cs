@@ -74,7 +74,7 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers))
@@ -89,7 +89,7 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckDeletedUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedDeletedUsers != -1 && (stats.DeletedUsers >= stats.AllocatedDeletedUsers))
@@ -1181,10 +1181,20 @@ namespace WebsitePanel.EnterpriseServer
                 // disk space               
                 // allocated quotas                               
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValue;
-                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValue;
-                stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
-                stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
+                if (byOrganization)
+                {
+                    stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValuePerOrganization;    
+                }
+                else
+                {
+                    stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValue;
+                    stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValue;
+                    stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
+                    stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
+                }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 {
@@ -1288,7 +1298,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check domains quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedDomains > -1
                 && orgStats.CreatedDomains >= orgStats.AllocatedDomains)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT;
@@ -1368,7 +1378,7 @@ namespace WebsitePanel.EnterpriseServer
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
                 }
 
-                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatisticsByOrganization(itemId);
 
                 if (orgStatsExchange.AllocatedMailboxes == 0)
                 {
@@ -2744,7 +2754,7 @@ namespace WebsitePanel.EnterpriseServer
                                     CreateFolder(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName);
                                 }
 
-                                if (diskSpaceQuota.QuotaAllocatedValue != -1)
+                                if (diskSpaceQuota.QuotaAllocatedValuePerOrganization != -1)
                                 {
                                     SetFRSMQuotaOnFolder(org.PackageId, deletedUser.StoragePath, org.OrganizationId, diskSpaceQuota, QuotaType.Hard);
                                 }
@@ -2935,7 +2945,7 @@ namespace WebsitePanel.EnterpriseServer
                 os.SetQuotaLimitOnFolder(
                     Path.Combine(GetDirectory(path), folderName),
                     GetLocationDrive(path), quotaType,
-                    quotaInfo.QuotaAllocatedValue.ToString() + unit,
+                    quotaInfo.QuotaAllocatedValuePerOrganization.ToString() + unit,
                     0, String.Empty, String.Empty);
             }
         }
