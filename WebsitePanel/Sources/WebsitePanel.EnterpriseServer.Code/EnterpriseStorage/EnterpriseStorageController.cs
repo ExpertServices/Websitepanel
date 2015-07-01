@@ -593,18 +593,6 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        private static string GetParentUnc(string uncPath)
-        {
-            var uri = new Uri(uncPath);
-
-            if (uri.Segments.Length == 2)
-            {
-                return string.Format("\\\\{0}", uri.Host);
-            }
-
-            return Directory.GetParent(uncPath).ToString();
-        }
-
         protected static ResultObject DeleteEnterpriseStorageInternal(int packageId, int itemId)
         {
             ResultObject result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "CLEANUP_ORGANIZATION_ENTERPRISE_STORAGE", itemId, packageId);
@@ -814,6 +802,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+                int esId =  GetEnterpriseStorageServiceID(org.PackageId);
 
                 var esFolder = ObjectUtils.FillObjectFromDataReader<EsFolder>(DataProvider.GetEnterpriseFolder(itemId, oldFolder));
                 var targetFolder = ObjectUtils.FillObjectFromDataReader<EsFolder>(DataProvider.GetEnterpriseFolder(itemId, newFolder));
@@ -848,7 +837,7 @@ namespace WebsitePanel.EnterpriseServer
 
                         DeleteWebDavDirectory(org.PackageId, esFolder.Domain, string.Format("{0}/{1}", org.OrganizationId, esFolder.FolderName));
 
-                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, newFolder, esFolder.UncPath);
+                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, newFolder, CheckIfSsAndEsOnSameServer(esId,esFolder.StorageSpaceId) ? esFolder.Path : esFolder.UncPath);
 
                         DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, ConvertBytesToMB(esFolder.FsrmQuotaSizeBytes));
 
@@ -868,6 +857,14 @@ namespace WebsitePanel.EnterpriseServer
             {
                 throw ex;
             }
+        }
+
+        private static bool CheckIfSsAndEsOnSameServer(int esId, int ssId)
+        {
+            var storage = StorageSpacesController.GetStorageSpaceById(ssId);
+            var esService = ServerController.GetServiceInfo(esId);
+
+            return storage.ServerId == esService.ServerId;
         }
 
         protected static ResultObject CreateFolderInternal(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup, bool rootFolder = false)
@@ -904,8 +901,16 @@ namespace WebsitePanel.EnterpriseServer
 
                     if (UsingStorageSpaces(esId) && !rootFolder)
                     {
+                        var storageSpaceId = StorageSpacesController.FindBestStorageSpaceService(new EnterpriseStorageSpaceSelector(esId),
+                            ResourceGroups.EnterpriseStorage, quotaInBytses);
+
+                        if (!storageSpaceId.IsSuccess)
+                        {
+                            throw new Exception(storageSpaceId.ErrorCodes.First());
+                        }
+
                         var storageSpaceFolderResult =
-                            StorageSpacesController.CreateStorageSpaceFolder(ResourceGroups.EnterpriseStorage,
+                            StorageSpacesController.CreateStorageSpaceFolder(storageSpaceId.Value, ResourceGroups.EnterpriseStorage,
                                 org.OrganizationId, folderName, quotaInBytses, quotaType);
 
                         if (!storageSpaceFolderResult.IsSuccess)
@@ -922,7 +927,7 @@ namespace WebsitePanel.EnterpriseServer
 
                         DataProvider.AddEntepriseFolder(itemId, folderName, quota, null, null, esSesstings["UsersDomain"], storageSpaceFolderResult.Value);
 
-                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, folder.UncPath);
+                        CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, CheckIfSsAndEsOnSameServer(esId, folder.StorageSpaceId) ? folder.Path : folder.UncPath);
                     }
                     else
                     {
@@ -1239,7 +1244,9 @@ namespace WebsitePanel.EnterpriseServer
                     return result;
                 }
 
-                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+                var esId = GetEnterpriseStorageServiceID(org.PackageId);
+
+                EnterpriseStorage es = GetEnterpriseStorage(esId);
 
                 esFolder = ObjectUtils.FillObjectFromDataReader<EsFolder>(DataProvider.GetEnterpriseFolder(itemId, folderName));
 
@@ -1257,8 +1264,16 @@ namespace WebsitePanel.EnterpriseServer
 
                 long quotaInBytses = ((long)systemFile.FRSMQuotaMB) * 1024 * 1024;
 
+                var storageSpaceId = StorageSpacesController.FindBestStorageSpaceService(new EnterpriseStorageSpaceSelector(esId),
+                           ResourceGroups.EnterpriseStorage, quotaInBytses);
+
+                if (!storageSpaceId.IsSuccess)
+                {
+                    throw new Exception(storageSpaceId.ErrorCodes.First());
+                }
+
                 var storageFolderResult =
-                    StorageSpacesController.CreateStorageSpaceFolder(ResourceGroups.EnterpriseStorage,
+                    StorageSpacesController.CreateStorageSpaceFolder(storageSpaceId.Value, ResourceGroups.EnterpriseStorage,
                         org.OrganizationId, folderName, quotaInBytses, systemFile.FsrmQuotaType);
 
                 if (!storageFolderResult.IsSuccess)
@@ -1273,7 +1288,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 storageFolder = StorageSpacesController.GetStorageSpaceFolderById(storageFolderResult.Value);
 
-                virDirectoryResult = CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, storageFolder.UncPath);
+                virDirectoryResult = CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, CheckIfSsAndEsOnSameServer(esId, storageFolder.StorageSpaceId) ? storageFolder.Path : storageFolder.UncPath);
 
                 if (!virDirectoryResult.IsSuccess)
                 {
