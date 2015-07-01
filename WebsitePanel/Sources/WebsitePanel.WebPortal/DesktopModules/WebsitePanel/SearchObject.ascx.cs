@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal
         public string GetItemPageUrl(string fullType, string itemType, int itemId, int spaceId, int accountId, string textSearch = "")
         {
             string res = "";
-            if (fullType.Equals("Users"))
+            if (fullType.Equals("AccountHome"))
             {
                 res = PortalUtils.GetUserHomePageUrl(itemId);
             }
@@ -89,10 +89,18 @@ namespace WebsitePanel.Portal
                             "moduleDefId=ExchangeServer");
                         break;
                     case TYPE_EXCHANGEACCOUNT:
-                        res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
-                            PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_user",//"mid="+this.ModuleID.ToString(),
-                            "AccountID=" + accountId, "Context=User",
-                            "moduleDefId=ExchangeServer");
+                        if (fullType.Equals("Mailbox"))
+                        {
+                            res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                                PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=mailbox_settings",
+                                "AccountID=" + accountId, "moduleDefId=ExchangeServer");
+                        }
+                        else
+                        {
+                            res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),
+                                PortalUtils.SPACE_ID_PARAM + "=" + spaceId, "ctl=edit_user",
+                                "AccountID=" + accountId, "moduleDefId=ExchangeServer");
+                        }
                         break;
                     case TYPE_RDSCOLLECTION:
                         res = PortalUtils.NavigatePageURL(PID_SPACE_EXCHANGESERVER, "ItemID", itemId.ToString(),

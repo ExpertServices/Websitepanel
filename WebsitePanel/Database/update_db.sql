@@ -12194,12 +12194,15 @@ CREATE PROCEDURE [dbo].[GetSearchObject]
 	@StartRow int,
 	@MaximumRows int = 0,
 	@Recursive bit,
-	@ColType nvarchar(50) = '',
+	@ColType nvarchar(500) = '',
 	@FullType nvarchar(50) = '',
 	@OnlyFind bit
 )
 AS
 
+IF @ColType IS NULL
+	SET @ColType = ''
+	
 DECLARE @HasUserRights bit
 SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
 
@@ -12207,6 +12210,7 @@ IF @HasUserRights = 0
 RAISERROR('You are not allowed to access this account', 16, 1)
 
 DECLARE @curAll CURSOR
+DECLARE @curUsers CURSOR
 DECLARE @ItemID int
 DECLARE @TextSearch nvarchar(500)
 DECLARE @ColumnType nvarchar(50)
@@ -12249,7 +12253,7 @@ DECLARE @Users TABLE
 INSERT INTO @Users (UserID)
 SELECT 
  U.UserID
-FROM UsersDetailed AS U
+FROM UsersDetailed AS U 
 WHERE 
  U.UserID <> @UserID AND U.IsPeer = 0 AND
  (
@@ -12268,7 +12272,7 @@ IF @OnlyFind = 1
 SET @sql = @sql + 'U.ItemID,
  U.TextSearch,
  U.ColumnType,
- ''Users'' as FullType,
+ ''AccountHome'' as FullType,
  0 as PackageID,
  0 as AccountID
 FROM @Users AS TU
@@ -12292,23 +12296,29 @@ WHERE TextSearch<>'' '' OR ISNULL(TextSearch, 0) > 0
  AS U ON TU.UserID = U.ItemID'
 IF @FilterValue <> ''
  SET @sql = @sql + ' WHERE TextSearch LIKE ''' + @FilterValue + ''''
-IF @OnlyFind = 1
-	SET @sql = @sql + ' ORDER BY TextSearch'
+SET @sql = @sql + ' ORDER BY TextSearch'
 
 SET @sql = @sql + ';open @curValue'
 
 exec sp_executesql @sql, N'@UserID int, @FilterValue nvarchar(50), @Recursive bit, @StatusID int, @RoleID int, @columnUsername nvarchar(20), @columnEmail nvarchar(20), @columnCompanyName nvarchar(20), @columnFullName nvarchar(20), @curValue cursor output',
-@UserID, @FilterValue, @Recursive, @StatusID, @RoleID, @columnUsername, @columnEmail, @columnCompanyName, @columnFullName, @curAll output
-
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID
-WHILE @@FETCH_STATUS = 0
-BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID
-END
+@UserID, @FilterValue, @Recursive, @StatusID, @RoleID, @columnUsername, @columnEmail, @columnCompanyName, @columnFullName, @curUsers output
 
 /*--------------------------------------------Space----------------------------------------------------------*/
+DECLARE @sqlNameAccountType nvarchar(4000)
+SET @sqlNameAccountType = '
+WHEN 1 THEN ''Mailbox''
+WHEN 2 THEN ''Contact''
+WHEN 3 THEN ''DistributionList''
+WHEN 4 THEN ''PublicFolder''
+WHEN 5 THEN ''Room''
+WHEN 6 THEN ''Equipment''
+WHEN 7 THEN ''User''
+WHEN 8 THEN ''SecurityGroup''
+WHEN 9 THEN ''DefaultSecurityGroup''
+WHEN 10 THEN ''SharedMailbox''
+WHEN 11 THEN ''DeletedUser''
+'
+
 SET @sql = '
  DECLARE @ItemsService TABLE
  (
@@ -12385,7 +12395,7 @@ SET @sql = @sql + '
   EA.ItemID AS ItemID,
   EA.DisplayName as TextSearch,
   ''ExchangeAccount'' as ColumnType,
-  ''ExchangeAccount'' as FullType,
+  FullType = CASE EA.AccountType ' + @sqlNameAccountType + ' ELSE CAST(EA.AccountType AS varchar(12)) END,
   SI2.PackageID as PackageID,
   EA.AccountID as AccountID
  FROM @ItemsService AS I2
@@ -12404,7 +12414,7 @@ SET @sql = @sql + '
   EA4.ItemID AS ItemID,
   EA4.PrimaryEmailAddress as TextSearch,
   ''ExchangeAccount'' as ColumnType,
-  ''ExchangeAccount'' as FullType,
+  FullType = CASE EA4.AccountType ' + @sqlNameAccountType + ' ELSE CAST(EA4.AccountType AS varchar(12)) END,
   SI4.PackageID as PackageID,
   EA4.AccountID as AccountID
  FROM @ItemsService AS I4
@@ -12423,9 +12433,9 @@ SET @sql = @sql + '
   I3.ItemID AS ItemID,
   EAEA.EmailAddress as TextSearch,
   ''ExchangeAccount'' as ColumnType,
-  ''ExchangeAccount'' as FullType,
+  ''Mailbox'' as FullType,
   SI3.PackageID as PackageID,
-  0 as AccountID
+  EAEA.AccountID as AccountID
  FROM @ItemsService AS I3
  INNER JOIN ServiceItems AS SI3 ON I3.ItemID = SI3.ItemID
  INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID'
@@ -12437,8 +12447,6 @@ IF @OnlyFind = 1
  
 SET @sql = @sql + ';open @curValue'
 
-CLOSE @curAll
-DEALLOCATE @curAll
 exec sp_executesql @sql, N'@UserID int, @FilterValue nvarchar(50), @curValue cursor output',
 @UserID, @FilterValue, @curAll output
 
@@ -12451,6 +12459,9 @@ FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @P
 END
 
 /*-------------------------------------------Lync-----------------------------------------------------*/
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
 SET @sql = '
 SET @curValue = cursor local for
  SELECT '
@@ -12480,7 +12491,7 @@ SET @sql = @sql + '
  INNER JOIN
   Packages AS P ON SI.PackageID = P.PackageID
 WHERE ' + CAST((@HasUserRights) AS varchar(12)) + ' = 1 
-  AND P.UserID = @UserID'
+  AND (' + CAST((@IsAdmin) AS varchar(12)) + ' = 1 OR P.UserID = @UserID)'
 IF @FilterValue <> ''
  SET @sql = @sql + ' AND ea.AccountName LIKE ''' + @FilterValue + ''''
 IF @OnlyFind = 1
@@ -12500,9 +12511,6 @@ FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @P
 END
 
 /*------------------------------------RDS------------------------------------------------*/
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
 IF @IsAdmin = 1
 BEGIN
 	SET @sql = '
@@ -12526,7 +12534,7 @@ BEGIN
 	 INNER JOIN
 	  Packages AS P ON SI.PackageID = P.PackageID
 	 WHERE ' + CAST((@HasUserRights) AS varchar(12)) + ' = 1
-	 AND P.UserID = @UserID'
+	 AND (' + CAST((@IsAdmin) AS varchar(12)) + ' = 1 OR P.UserID = @UserID)'
 	IF @FilterValue <> ''
 		SET @sql = @sql + ' AND RDSCol.Name LIKE ''' + @FilterValue + ''''
 	IF @OnlyFind = 1
@@ -12570,7 +12578,7 @@ SET @sql = @sql + '
  INNER JOIN
   Packages AS P ON SI.PackageID = P.PackageID
  WHERE ' + CAST((@HasUserRights) AS varchar(12)) + ' = 1
-  AND P.UserID = @UserID'
+  AND (' + CAST((@IsAdmin) AS varchar(12)) + ' = 1 OR P.UserID = @UserID)'
 IF @FilterValue <> ''
 	SET @sql = @sql + ' AND ea.AccountName LIKE ''' + @FilterValue + ''''
 IF @OnlyFind = 1
@@ -12652,7 +12660,7 @@ SET @sql = @sql + '
  INNER JOIN
   Packages AS P ON SI.PackageID = P.PackageID
  WHERE ' + CAST((@HasUserRights) AS varchar(12)) + ' = 1
-  AND P.UserID = @UserID'
+  AND (' + CAST((@IsAdmin) AS varchar(12)) + ' = 1 OR P.UserID = @UserID)'
 IF @FilterValue <> ''
 	SET @sql = @sql + ' AND EF.FolderName LIKE ''' + @FilterValue + ''''
 IF @OnlyFind = 1
@@ -12692,7 +12700,7 @@ INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
 INNER JOIN ServiceItemProperties AS SIP ON SIP.ItemID = SI.ItemID
 RIGHT JOIN ServiceItemProperties AS T ON T.ItemID = SIP.ItemID
 WHERE ' + CAST((@HasUserRights) AS varchar(12)) + ' = 1
-AND P.UserID = @UserID
+AND (' + CAST((@IsAdmin) AS varchar(12)) + ' = 1 OR P.UserID = @UserID)
 AND (SIT.DisplayName = ''SharePointFoundationSiteCollection''
 	OR SIT.DisplayName = ''SharePointEnterpriseSiteCollection'')
 AND SIP.PropertyName = ''OrganizationId''
@@ -12741,9 +12749,40 @@ DECLARE @FullType nvarchar(50)
 DECLARE @PackageID int
 DECLARE @AccountID int
 DECLARE @EndRow int
-SET @EndRow = @StartRow + @MaximumRows
+SET @EndRow = @StartRow + @MaximumRows'
 
-DECLARE @ItemsSort TABLE
+IF (@ColType = '' OR @ColType IN ('AccountHome'))
+BEGIN
+	SET @sql = @sql + '
+	DECLARE @ItemsUser TABLE
+	(
+		ItemID int,
+		TextSearch nvarchar(500),
+		ColumnType nvarchar(50),
+		FullType nvarchar(50),
+		PackageID int,
+		AccountID int
+	)
+
+	FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		IF (1 = 1)'
+
+	IF @FullType <> ''
+		SET @sql = @sql + ' AND @FullType = ''' + @FullType + '''';
+
+	SET @sql = @sql + '
+		BEGIN
+			INSERT INTO @ItemsUser(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+			VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
+		END
+		FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
+	END'
+END
+
+SET @sql = @sql + '
+DECLARE @ItemsFilter TABLE
  (
   ItemID int,
   TextSearch nvarchar(500),
@@ -12766,7 +12805,7 @@ SET @sql = @sql + ' AND @FullType = ''' + @FullType + '''';
 
 SET @sql = @sql + '
 	BEGIN
-		INSERT INTO @ItemsSort(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
+		INSERT INTO @ItemsFilter(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
 		VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID)
 	END
 	FETCH NEXT FROM @curAllValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID
@@ -12781,8 +12820,23 @@ DECLARE @ItemsReturn TABLE
   FullType nvarchar(50),
   PackageID int,
   AccountID int
- )
+ )'
 
+IF (@ColType = '' OR @ColType IN ('AccountHome'))
+BEGIN
+	IF @SortColumn = 'TextSearch'
+		SET @sql = @sql + '
+		INSERT INTO @ItemsReturn
+		SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+		FROM @ItemsUser'
+	ELSE
+		SET @sql = @sql + '
+		INSERT INTO @ItemsFilter
+		SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID
+		FROM @ItemsUser'
+END
+
+SET @sql = @sql + '
 INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID)
 SELECT 
 	ItemID,
@@ -12791,7 +12845,7 @@ SELECT
 	FullType,
 	PackageID,
 	AccountID
-FROM @ItemsSort'
+FROM @ItemsFilter'
 SET @sql = @sql + ' ORDER BY ' +  @SortColumn
 
 SET @sql = @sql + ';
@@ -12807,8 +12861,8 @@ FROM @ItemsReturn AS IR'
 IF  @MaximumRows > 0
 	SET @sql = @sql + ' WHERE IR.ItemPosition BETWEEN @StartRow AND @EndRow';
 
-exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curAllValue cursor',
-	@StartRow, @MaximumRows, @FilterValue, @curAll
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @FilterValue nvarchar(50), @curUsersValue cursor, @curAllValue cursor',
+	@StartRow, @MaximumRows, @FilterValue, @curUsers, @curAll
 
 CLOSE @curAll
 DEALLOCATE @curAll
