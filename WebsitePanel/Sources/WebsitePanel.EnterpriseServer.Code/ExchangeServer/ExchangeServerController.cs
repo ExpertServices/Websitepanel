@@ -1916,7 +1916,7 @@ namespace WebsitePanel.EnterpriseServer
                 SetMailBoxRetentionPolicyAndArchiving(itemId, mailboxPlanId, archivedPlanId, accountName, exchange, org.OrganizationId, resPolicy, EnableArchiving);
                 if (!resPolicy.IsSuccess)
                 {
-                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy", resPolicy.ErrorCodes.ToArray());
+                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy: " + string.Join(", ", resPolicy.ErrorCodes.ToArray()));
                 }
                 
 
@@ -4545,7 +4545,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Log Extension
                 LogExtension.SetItemName(account.PrimaryEmailAddress);
-                LogExtension.WriteVariables("Address Added", emailAddress);
+                LogExtension.WriteVariable("Address Added", emailAddress);
 
                 exchange.SetDistributionListEmailAddresses(
                     account.AccountName,

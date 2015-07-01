@@ -55,7 +55,9 @@ namespace WebsitePanel.Portal
         SetServiceLevel = 3,
         SetVIP = 4,
         UnsetVIP = 5,
-        SetMailboxPlan = 6
+        SetMailboxPlan = 6,
+        SendBySms = 7,
+        SendByEmail = 8
     }
 
     public partial class UserActions : ActionListControlBase<UserActionTypes>
@@ -97,6 +99,10 @@ namespace WebsitePanel.Portal
                     return ChangeUsersSettings(userIds, null, null, false);
                 case UserActionTypes.SetMailboxPlan:
                     return SetMailboxPlan(userIds);
+                case UserActionTypes.SendByEmail:
+                    return SendPasswordResetEmails(userIds);
+                case UserActionTypes.SendBySms:
+                    return SendPasswordResetSms(userIds);
             }
 
             return 0;
@@ -224,6 +230,28 @@ namespace WebsitePanel.Portal
             return 0;
         }
 
+        protected int SendPasswordResetEmails(List<int> userIds)
+        {
+            foreach (int userId in userIds)
+            {
+                ES.Services.Organizations.SendResetUserPasswordEmail(PanelRequest.ItemID, userId, "Group action", null, true);
+            }
+
+            return 0;
+        }
+
+        protected int SendPasswordResetSms(List<int> userIds)
+        {
+            var accountsWithoutPhone = GetAccountsWithoutPhone();
+
+            foreach (int userId in userIds.Except(accountsWithoutPhone.Select(x => x.AccountId)))
+            {
+                ES.Services.Organizations.SendResetUserPasswordLinkSms(PanelRequest.ItemID, userId, "Group action", null);
+            }
+
+            return 0;
+        }
+
         #region ServiceLevel
 
         protected void FillServiceLevelsList()
@@ -277,6 +305,47 @@ namespace WebsitePanel.Portal
 
         #endregion
 
+        protected void CheckUsersHaveMobilePhone()
+        {
+            var accountsWithoutPhones = GetAccountsWithoutPhone();
+
+            if (accountsWithoutPhones.Any())
+            {
+                repAccountsWithoutPhone.DataSource = accountsWithoutPhones;
+                repAccountsWithoutPhone.DataBind();
+
+                Modal.PopupControlID = PasswordResetNotificationPanel.ID;
+                Modal.Show();
+            }
+            else
+            {
+                FireExecuteAction();  
+            }
+        }
+
+        protected List<OrganizationUser> GetAccountsWithoutPhone()
+        {
+            if (GridView == null || String.IsNullOrWhiteSpace(CheckboxesName))
+                return new List<OrganizationUser>();
+
+            // Get checked users
+            var ids = Utils.GetCheckboxValuesFromGrid<int>(GridView, CheckboxesName);
+
+            var accountsWithoutPhones = new List<OrganizationUser>();
+
+            foreach (var id in ids)
+            {
+                var account = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, id);
+
+                if (string.IsNullOrEmpty(account.MobilePhone))
+                {
+                    accountsWithoutPhones.Add(account);
+                }
+            }
+
+            return accountsWithoutPhones;
+        }
+
         protected void btnApply_Click(object sender, EventArgs e)
         {
             switch (SelectedAction)
@@ -285,6 +354,7 @@ namespace WebsitePanel.Portal
                 case UserActionTypes.Enable:
                 case UserActionTypes.SetVIP:
                 case UserActionTypes.UnsetVIP:
+                case UserActionTypes.SendByEmail:
                     FireExecuteAction();
                     break;
                 case UserActionTypes.SetServiceLevel:
@@ -295,6 +365,9 @@ namespace WebsitePanel.Portal
                 case UserActionTypes.SetMailboxPlan:
                     Modal.PopupControlID = MailboxPlanPanel.ID;
                     Modal.Show();
+                    break;
+                case UserActionTypes.SendBySms:
+                    CheckUsersHaveMobilePhone();
                     break;
 
             }

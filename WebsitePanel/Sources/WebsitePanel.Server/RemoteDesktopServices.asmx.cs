@@ -743,5 +743,21 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SendMessage(List<RdsMessageRecipient> recipients, string text)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SendMessage", ProviderSettings.ProviderName);
+                RDSProvider.SendMessage(recipients, text);
+                Log.WriteEnd("'{0}' SendMessage", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SendMessage", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }
