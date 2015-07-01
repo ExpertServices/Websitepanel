@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.Providers;
@@ -736,8 +737,18 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
-        } 
+        }
 
+        public static PropertyInfo GetProperty<T, U>(T obj, Expression<Func<T, U>> expression)
+        {
+            var member = expression.Body as MemberExpression;
+
+            if (member == null || member.Member is PropertyInfo == false)
+                throw new ArgumentException("Expression is not a Property", "expression");
+
+            return (PropertyInfo) member.Member;
+        }
+        
         #region Helper Functions
 
         /// <summary>

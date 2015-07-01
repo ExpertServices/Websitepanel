@@ -37,6 +37,7 @@ namespace WebsitePanel.Providers.HostedSolution
     public class ExchangeMailboxPlanRetentionPolicyTag
     {
         int planTagID;
+        [LogProperty]
         public int PlanTagID
         {
             get { return planTagID; }
@@ -44,6 +45,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         int tagID;
+        [LogProperty]
         public int TagID
         {
             get { return tagID; }
@@ -58,6 +60,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         string mailboxPlan;
+        [LogProperty]
         public string MailboxPlan
         {
             get { return mailboxPlan; }
@@ -65,6 +68,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         string tagName;
+        [LogProperty]
         public string TagName
         {
             get { return tagName; }

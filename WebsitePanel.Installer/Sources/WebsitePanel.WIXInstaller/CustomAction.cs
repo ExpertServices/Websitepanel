@@ -684,7 +684,21 @@ namespace WebsitePanel.WIXInstaller
             var Result = Adapter.CheckSql(new SetupVariables { InstallConnectionString = ConnStr }, out Msg) == CheckStatuses.Success;
             session["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
             session["DB_CONN"] = Result ? ConnStr : "";
-            session["DB_CONN_MSG"] = Msg;
+            session["DB_CONN_MSG"] = string.Format(Result? "Success. {0}" : "Error. {0}", Msg);
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult GetDbSkip(Session Ctx)
+        {
+            PopUpDebugger();
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("GetDbSkip");
+            var ConnStr = Ctx["DB_CONN"];
+            var DbName = Ctx["DB_DATABASE"];
+            var Tmp = Adapter.SkipCreateDb(ConnStr, DbName) ? YesNo.Yes : YesNo.No;
+            Log.WriteInfo("DB_SKIP_CREATE is " + Tmp);
+            Ctx["DB_SKIP_CREATE"] = Tmp;
+            Log.WriteEnd("GetDbSkip");
             return ActionResult.Success;
         }
         [CustomAction]

@@ -80,6 +80,9 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Common\LogExtension\LogExtensionHelper.cs" />
+    <Compile Include="Common\LogExtension\Attributes\LogParentPropertyAttribute.cs" />
+    <Compile Include="Common\LogExtension\Attributes\LogPropertyAttribute.cs" />
     <Compile Include="Common\AppPoolState.cs" />
     <Compile Include="Common\ByteOperations.cs" />
     <Compile Include="Common\ErrorCodes.cs" />
