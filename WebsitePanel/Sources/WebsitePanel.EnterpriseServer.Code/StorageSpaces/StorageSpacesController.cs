@@ -249,6 +249,7 @@ namespace WebsitePanel.EnterpriseServer
                     var quota = GetFolderQuota(closureSpace.Path, closureSpace.Id);
 
                     closureSpace.ActuallyUsedInBytes = ConvertMbToBytes(quota.Usage);
+                    closureSpace.DiskFreeSpaceInBytes = quota.DiskFreeSpaceInBytes;
                 });
 
                 task.Start();
