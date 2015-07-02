@@ -596,6 +596,8 @@ namespace WebsitePanel.Providers.StorageSpaces
                 {
                     quota.Usage = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(fullPath));
                 }
+
+                quota.DiskFreeSpaceInBytes = FileUtils.GetTotalFreeSpace(Path.GetPathRoot(fullPath));
             }
 
             return quota;

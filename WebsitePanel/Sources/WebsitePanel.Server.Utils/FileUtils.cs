@@ -790,6 +790,19 @@ namespace WebsitePanel.Providers.Utils
             return (int)bytes / (1024 * 1024);
         }
 
+        public static long GetTotalFreeSpace(string driveName)
+        {
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
+            {
+                if (drive.IsReady && drive.Name == driveName)
+                {
+                    return drive.TotalFreeSpace;
+                }
+            }
+
+            return -1;
+        }
+
         private static long CalculateFolderSize(string path, out int files, out int folders)
         {
             files = 0;

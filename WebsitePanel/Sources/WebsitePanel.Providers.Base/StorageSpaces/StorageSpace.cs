@@ -11,5 +11,6 @@ namespace WebsitePanel.Providers.StorageSpaces
         public int LevelId { get; set; }
         public long ActuallyUsedInBytes { get; set; }
         public string Path { get; set; }
+        public long DiskFreeSpaceInBytes { get; set; }
     }
 }

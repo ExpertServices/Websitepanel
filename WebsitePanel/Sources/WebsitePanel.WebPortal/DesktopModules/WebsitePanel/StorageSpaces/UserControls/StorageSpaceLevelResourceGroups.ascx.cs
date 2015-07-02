@@ -190,5 +190,10 @@ namespace WebsitePanel.Portal.StorageSpaces.UserControls
         {
             return string.Compare(group1.GroupName, group2.GroupName);
         }
+
+        protected string LocalizeGroup(string groupName)
+        {
+            return GetLocalizedString(groupName) ?? groupName;
+        }
     }
 }
