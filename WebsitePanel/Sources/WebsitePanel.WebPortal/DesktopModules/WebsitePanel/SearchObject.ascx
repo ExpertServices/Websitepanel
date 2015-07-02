@@ -65,6 +65,11 @@
 	DataSourceID="odsObjectsPaged" EnableViewState="False"
 	EmptyDataText=<%# GetSharedLocalizedString("SearchObject.NOT_FOUND") %>>
 	<Columns>
+        <asp:TemplateField HeaderText="gvUsername" SortExpression="Username" HeaderStyle-Wrap="false">
+            <ItemTemplate>
+                <%# GetTypeDisplayName((string)Eval("Username")) %>
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="gvType" SortExpression="ColumnType">
             <HeaderTemplate>
                 <a href="javascript: void(0)" onclick="CPopupDialog('mydialog',event)">Type</a>
