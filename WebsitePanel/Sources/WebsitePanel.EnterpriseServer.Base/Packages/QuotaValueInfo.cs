@@ -39,6 +39,7 @@ namespace WebsitePanel.EnterpriseServer
         private string quotaName;
         private string quotaDescription;
         private int quotaAllocatedValue;
+        private int quotaAllocatedValuePerOrganization;
         private int quotaTypeId;
         private int quotaUsedValue;
         private bool quotaExhausted;
@@ -51,6 +52,12 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.quotaAllocatedValue; }
             set { this.quotaAllocatedValue = value; }
+        }
+
+        public int QuotaAllocatedValuePerOrganization
+        {
+            get { return this.quotaAllocatedValuePerOrganization; }
+            set { this.quotaAllocatedValuePerOrganization = value; }
         }
 
         public int QuotaUsedValue
@@ -93,6 +100,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.groupId; }
             set { this.groupId = value; }
+        }
+
+        public int GetQuotaAllocatedValue(bool byOrganization)
+        {
+            return byOrganization ? QuotaAllocatedValuePerOrganization : QuotaAllocatedValue;
         }
     }
 }

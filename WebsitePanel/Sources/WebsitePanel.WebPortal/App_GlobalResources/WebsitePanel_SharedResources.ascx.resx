@@ -2875,7 +2875,7 @@
     <value>Contacts per Organization</value>
   </data>
   <data name="Quota.Exchange2007.DiskSpace" xml:space="preserve">
-    <value>Mailbox storage, MB</value>
+    <value>Mailbox storage per Organization, MB</value>
   </data>
   <data name="Quota.Exchange2007.DistributionLists" xml:space="preserve">
     <value>Distribution Lists per Organization</value>
@@ -5298,7 +5298,7 @@
   <data name="UserItemType.ExchangeAccount" xml:space="preserve">
     <value>Exchange Account</value>
   </data>
-  <data name="UserItemType.Users" xml:space="preserve">
+  <data name="UserItemType.AccountHome" xml:space="preserve">
     <value>Account Home</value>
   </data>
   <data name="UserItemType.LyncAccount" xml:space="preserve">
@@ -5336,6 +5336,24 @@
   </data>
   <data name="UserItemType.SharePointSiteCollections" xml:space="preserve">
     <value>SharePoint Site Collections</value>
+  </data>
+  <data name="UserItemType.DistributionList" xml:space="preserve">
+    <value>Distribution List</value>
+  </data>
+  <data name="UserItemType.PublicFolder" xml:space="preserve">
+    <value>Public Folder</value>
+  </data>
+  <data name="UserItemType.SecurityGroup" xml:space="preserve">
+    <value>Security Group</value>
+  </data>
+  <data name="UserItemType.DefaultSecurityGroup" xml:space="preserve">
+    <value>Default Security Group</value>
+  </data>
+  <data name="UserItemType.SharedMailbox" xml:space="preserve">
+    <value>Shared Mailbox</value>
+  </data>
+  <data name="UserItemType.DeletedUser" xml:space="preserve">
+    <value>Deleted User</value>
   </data>
   <data name="Error.WEB_PUB_DISABLE" xml:space="preserve">
     <value>Could not disable access to Web Publishing feature for the account specified</value>
@@ -5380,7 +5398,7 @@
     <value>Allow Litigation Hold</value>
   </data>
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
-    <value>Recoverable Items Storage, MB</value>
+    <value>Recoverable Items Storage per Organization, MB</value>
   </data>
   <data name="Quota.EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
     <value>Disk Storage Space, Mb</value>
@@ -5707,7 +5725,7 @@
     <value>Allow Retention policy</value>
   </data>
   <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
-    <value>Archiving storage, MB</value>
+    <value>Archiving storage per Organization, MB</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
     <value>Unable to delete Retention policy.</value>

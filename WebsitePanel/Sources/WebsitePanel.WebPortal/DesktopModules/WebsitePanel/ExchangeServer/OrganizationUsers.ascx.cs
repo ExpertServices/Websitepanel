@@ -75,10 +75,9 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             // quota values
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             usersQuota.QuotaUsedValue = stats.CreatedUsers;
             usersQuota.QuotaValue = stats.AllocatedUsers;
-            if (stats.AllocatedUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+            if (stats.AllocatedUsers != -1) usersQuota.QuotaAvailable = stats.AllocatedUsers - stats.CreatedUsers;
 
             if(cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
         }

@@ -78,7 +78,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             btnAddFolder.Enabled = true;
 
             OrganizationStatistics organizationStats = ES.Services.EnterpriseStorage.GetStatisticsByOrganization/*ES.Services.Organizations.GetOrganizationStatisticsByOrganization*/(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.EnterpriseStorage.GetStatistics/*ES.Services.Organizations.GetOrganizationStatistics*/(PanelRequest.ItemID);
 
             foldersQuota.QuotaUsedValue = organizationStats.CreatedEnterpriseStorageFolders;
             foldersQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageFolders;
@@ -90,7 +89,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (organizationStats.AllocatedEnterpriseStorageFolders != -1)
             {
-                int folderAvailable = foldersQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+                int folderAvailable = foldersQuota.QuotaAvailable = organizationStats.AllocatedEnterpriseStorageFolders - organizationStats.CreatedEnterpriseStorageFolders;
 
                 if (folderAvailable <= 0)
                 {
@@ -100,7 +99,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
             {
-                int spaceAvailable = spaceAvailableQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
+                int spaceAvailable = spaceAvailableQuota.QuotaAvailable = organizationStats.AllocatedEnterpriseStorageSpace - organizationStats.UsedEnterpriseStorageSpace;
 
                 if (spaceAvailable <= 0)
                 {
