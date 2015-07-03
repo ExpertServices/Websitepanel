@@ -22,14 +22,14 @@ namespace WebsitePanel.EnterpriseServer.Extensions
 
             try
             {
-                // Log Parent Properties
+                // Log Parent Properties Attribute
                 var logPropertyAttributes = GetAttributes<T, LogParentPropertyAttribute>();
                 foreach (var logPropertyAttribute in logPropertyAttributes)
                 {
                     TaskManager.Write(logPropertyAttribute.GetLogString(obj));
                 }
 
-                // Log Properties
+                // Log Properties Attribute
                 var properties =
                     typeof (T).GetProperties().Where(prop => prop.IsDefined(typeof (LogPropertyAttribute), false));
                 foreach (var property in properties)
@@ -43,7 +43,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
         }
 
@@ -78,7 +78,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
 
             return obj;
@@ -99,7 +99,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
         }
 
@@ -134,11 +134,10 @@ namespace WebsitePanel.EnterpriseServer.Extensions
                     WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
                         LogExtensionHelper.GetString(newValue), withOld);
                 }
-
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
 
             return obj;
@@ -151,11 +150,11 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         /// <param name="prefix">Add the string before a variable name</param>
         public static void WriteVariables(object variablesObs, string prefix = "")
         {
-            if (variablesObs == null)
-                throw new ArgumentException();
-
             try
             {
+                if (variablesObs == null)
+                    throw new ArgumentException("variablesObs"); 
+                
                 foreach (var property in variablesObs.GetType().GetProperties())
                 {
                     var parameterName = LogExtensionHelper.DecorateName(property.Name);
@@ -166,7 +165,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
         }
 
@@ -181,7 +180,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
         }
 
@@ -197,7 +196,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             }
             catch (Exception ex)
             {
-                WriteError(ex);
+                WriteException(ex);
             }
         }
 
@@ -220,10 +219,13 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         {
             var attributes = GetAttributes<LogPropertyAttribute>(property);
 
-            if (attributes.Length > 0)
+            if (attributes != null && attributes.Length > 0)
             {
                 foreach (var logPropertyAttribute in attributes)
                 {
+                    if (logPropertyAttribute == null)
+                        continue;
+                    
                     if (withOld)
                         TaskManager.Write(OLD_PREFIX + logPropertyAttribute.GetLogString(obj, property));
 
@@ -242,9 +244,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
 
         }
 
-        private static void WriteError(Exception ex)
+        private static void WriteException(Exception ex)
         {
-            TaskManager.WriteError("Extension Log Error: " + ex.Message + ex.StackTrace);
+            TaskManager.WriteWarning("Extension Log Error: " + ex.Message + ex.StackTrace);
         }
 
         #endregion
