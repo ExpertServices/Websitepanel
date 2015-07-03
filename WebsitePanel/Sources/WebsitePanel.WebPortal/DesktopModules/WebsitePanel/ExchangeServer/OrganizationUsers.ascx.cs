@@ -85,22 +85,20 @@ namespace WebsitePanel.Portal.HostedSolution
         private void BindServiceLevelsStats()
         {
             ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
-            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
             List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
-            foreach (var quota in Array.FindAll<QuotaValueInfo>(
-                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            foreach (var quota in stats.ServiceLevels)
             {
-                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
-                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
-
-                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo { QuotaName = quota.QuotaName,
-                                                                        QuotaDescription = quota.QuotaDescription + " in this Organization:", 
-                                                                        QuotaTypeId = quota.QuotaTypeId,
-                                                                        QuotaValue = quota.QuotaAllocatedValue,
-                                                                        QuotaUsedValue = usedInOrgCount,
-                                                                        //QuotaUsedValue = quota.QuotaUsedValue,
-                                                                        QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue });
+                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo
+                {
+                    QuotaName = quota.QuotaName,
+                    QuotaDescription = quota.QuotaDescription + " in this Organization:",
+                    QuotaTypeId = quota.QuotaTypeId,
+                    QuotaValue = quota.QuotaAllocatedValue,
+                    QuotaUsedValue = quota.QuotaUsedValue,
+                    QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue
+                });
             }
             dlServiceLevelQuotas.DataSource = serviceLevelQuotas;
             dlServiceLevelQuotas.DataBind();

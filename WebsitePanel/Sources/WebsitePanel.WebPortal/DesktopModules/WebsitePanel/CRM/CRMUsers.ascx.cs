@@ -28,7 +28,8 @@
 
 ﻿using System;
 using WebsitePanel.EnterpriseServer;
-using WebsitePanel.Providers.HostedSolution;
+﻿using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+﻿using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.CRM
 {

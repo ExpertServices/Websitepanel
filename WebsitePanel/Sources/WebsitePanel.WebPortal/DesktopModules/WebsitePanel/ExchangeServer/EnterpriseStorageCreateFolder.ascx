@@ -35,7 +35,7 @@
 									ErrorMessage="Enter Folder Size" ValidationGroup="CreateFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
                                 <asp:RangeValidator ID="rangeFolderSize" runat="server" ControlToValidate="txtFolderSize" MaximumValue="99999999" MinimumValue="0.01" Type="Double"
                                     ValidationGroup="CreateFolder" Display="Dynamic" Text="*" SetFocusOnError="True"
-                                    ErrorMessage="The quota you’ve entered exceeds the available quota for tenant" />
+                                    ErrorMessage="The quota you've entered exceeds the available quota for organization" />
 							</td>
 						</tr>
                         <tr>

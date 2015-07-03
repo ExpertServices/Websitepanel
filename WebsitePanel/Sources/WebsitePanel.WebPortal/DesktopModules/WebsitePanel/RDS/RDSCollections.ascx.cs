@@ -31,6 +31,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.EnterpriseServer.Base.RDS;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;

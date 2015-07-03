@@ -36,6 +36,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Drawing;
 using System.IO;
+using WebsitePanel.EnterpriseServer.Base;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;

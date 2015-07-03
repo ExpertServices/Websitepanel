@@ -22,7 +22,7 @@ namespace WebsitePanel.Providers
 
         public string GetLogString(object obj, PropertyInfo propertyInfo)
         {
-            if (propertyInfo != null)
+            if (obj != null && propertyInfo != null)
             {
                 var value = LogExtensionHelper.GetString(propertyInfo.GetValue(obj, null));
                 return GetLogString(propertyInfo.Name, value);

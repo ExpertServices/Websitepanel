@@ -261,7 +261,6 @@
     <Compile Include="HostedSolution\OrganizationDomain.cs" />
     <Compile Include="HostedSolution\OrganizationDomainName.cs" />
     <Compile Include="HostedSolution\OrganizationPaged.cs" />
-    <Compile Include="HostedSolution\OrganizationStatistics.cs" />
     <Compile Include="HostedSolution\OrganizationUser.cs" />
     <Compile Include="HostedSolution\OrganizationUsersPaged.cs" />
     <Compile Include="Mail\IMailServer.cs" />

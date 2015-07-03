@@ -29,6 +29,7 @@
 using System;
 using System.Text.RegularExpressions;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -59,7 +60,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     rangeFolderSize.MaximumValue = Math.Round((organizationStats.AllocatedEnterpriseStorageSpace - (decimal)organizationStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you�ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you've entered exceeds the available quota for organization ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
 
                 if (organizationStats.AllocatedGroups != -1)

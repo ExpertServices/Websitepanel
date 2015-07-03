@@ -55,6 +55,11 @@ namespace WebsitePanel.Portal
             set { quotaViewer.DisplayGauge = value; }
         }
 
+        public int QuotaAllocatedValue
+        {
+            set { quotaViewer.QuotaValue = value; }
+        }
+
         public QuotaViewer Viewer
         {
             get { return quotaViewer; }
