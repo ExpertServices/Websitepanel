@@ -37,6 +37,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Twilio;
+using WebsitePanel.EnterpriseServer.Base;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
 using WebsitePanel.EnterpriseServer.Extensions;
@@ -1011,6 +1012,8 @@ namespace WebsitePanel.EnterpriseServer
                 if (org == null)
                     return null;
 
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
                 OrganizationStatistics stats = new OrganizationStatistics();
                 if (byOrganization)
                 {
@@ -1084,6 +1087,8 @@ namespace WebsitePanel.EnterpriseServer
                         stats.CreatedRdsCollections = RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(org.Id);
                         stats.CreatedRdsServers = RemoteDesktopServicesController.GetOrganizationRdsServersCount(org.Id);
                     }
+
+                    stats.ServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
                 }
                 else
                 {
@@ -1172,6 +1177,26 @@ namespace WebsitePanel.EnterpriseServer
                                         stats.CreatedRdsCollections += RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(o.Id);
                                         stats.CreatedRdsServers += RemoteDesktopServicesController.GetOrganizationRdsServersCount(o.Id);
                                     }
+
+                                    if (stats.ServiceLevels == null)
+                                    {
+                                        stats.ServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
+                                    }
+                                    else
+                                    {
+                                        var orgServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
+
+                                        foreach (var totalQuota in stats.ServiceLevels)
+                                        {
+                                            var orgQuota = orgServiceLevels.FirstOrDefault(q => q.QuotaName == totalQuota.QuotaName);
+
+                                            if (orgQuota != null)
+                                            {
+                                                totalQuota.QuotaAllocatedValue += orgQuota.QuotaAllocatedValue;
+                                                totalQuota.QuotaUsedValue += orgQuota.QuotaUsedValue;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1180,7 +1205,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // disk space               
                 // allocated quotas                               
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
                 stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].GetQuotaAllocatedValue(byOrganization);
                 stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].GetQuotaAllocatedValue(byOrganization);
@@ -1239,6 +1263,7 @@ namespace WebsitePanel.EnterpriseServer
                     stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
+
                 return stats;
             }
             catch (Exception ex)
@@ -1249,6 +1274,23 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        private static List<QuotaValueInfo> GetServiceLevelQuotas(PackageContext cntx, int orgItemId)
+        {
+            ServiceLevel[] serviceLevels = GetSupportServiceLevels();
+            List<OrganizationUser> accounts = SearchAccounts(orgItemId, "", "", "", true);
+
+            var quotas = Array.FindAll(cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS));
+            foreach (var quota in quotas)
+            {
+               int levelId = serviceLevels.First(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).LevelId;
+                int usedInOrgCount = accounts.Count(x => x.LevelId == levelId);
+
+                quota.QuotaUsedValue = usedInOrgCount;
+            }
+
+            return quotas.ToList();
         }
 
         public static int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)

@@ -39,6 +39,7 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
