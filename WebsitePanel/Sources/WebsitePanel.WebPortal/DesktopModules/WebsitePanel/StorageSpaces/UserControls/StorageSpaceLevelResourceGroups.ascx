@@ -24,7 +24,7 @@
                 <asp:TemplateField meta:resourcekey="gvResourceGroupsName" >
                     <ItemStyle Width="96%" Wrap="false" HorizontalAlign="Left"></ItemStyle>
                     <ItemTemplate>
-                        <asp:Literal ID="litGroupName" runat="server" Text='<%# Eval("GroupName") %>'></asp:Literal>
+                        <asp:Literal ID="litGroupName" runat="server" Text='<%# LocalizeGroup(Eval("GroupName").ToString()) %>'></asp:Literal>
                         <asp:HiddenField ID="hdnGroupId" runat="server" Value='<%# Eval("GroupId") %>' />
                     </ItemTemplate>
                 </asp:TemplateField>
@@ -75,7 +75,7 @@
                                         <asp:TemplateField meta:resourcekey="gvResourceGroupsName">
                                             <ItemStyle Width="50%" HorizontalAlign="Left"></ItemStyle>
                                             <ItemTemplate>
-                                                <asp:Literal ID="litGroupName" runat="server" Text='<%# Eval("GroupName") %>'></asp:Literal>
+                                                <asp:Literal ID="litGroupName" runat="server" Text='<%# LocalizeGroup(Eval("GroupName").ToString()) %>'></asp:Literal>
                                                 <asp:HiddenField ID="hdnGroupId" runat="server" Value='<%# Eval("GroupId") %>' />
                                             </ItemTemplate>
                                         </asp:TemplateField>

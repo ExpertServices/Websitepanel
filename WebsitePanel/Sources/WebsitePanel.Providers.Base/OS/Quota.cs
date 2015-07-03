@@ -63,6 +63,8 @@ namespace WebsitePanel.Providers.OS
             set { _Usage = value; }
         }
 
+        public long DiskFreeSpaceInBytes { get; set; }
+
         #endregion
 
         #region Constructors
