@@ -15,13 +15,21 @@ namespace WebsitePanel.Providers
 
         public static string CombineString(string name, string value)
         {
+            if (name == null)
+                name = "";
+
+            if (value == null)
+                value = "";
+
             return String.Format(LOG_STRING_TEMPLATE, name, value);
         }
 
         public static string DecorateName(string name)
         {
-            name = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0");
-                // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
+            if (name == null)
+                return "";
+
+            name = Regex.Replace(name, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0"); // "DriveIsSCSICompatible" becomes "Drive Is SCSI Compatible"
             name = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(name); // Capitalize
             name = Regex.Replace(name, @"\bId\b", "ID", RegexOptions.IgnoreCase); // "Id" becomes "ID"
 

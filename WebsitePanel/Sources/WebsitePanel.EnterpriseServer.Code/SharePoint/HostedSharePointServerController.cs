@@ -33,6 +33,7 @@ using System.Data;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.HostedSolution;

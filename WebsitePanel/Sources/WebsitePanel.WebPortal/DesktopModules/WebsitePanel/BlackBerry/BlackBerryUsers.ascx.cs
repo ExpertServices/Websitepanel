@@ -27,7 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
-using WebsitePanel.Providers.HostedSolution;
+﻿using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+﻿using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.BlackBerry
 {

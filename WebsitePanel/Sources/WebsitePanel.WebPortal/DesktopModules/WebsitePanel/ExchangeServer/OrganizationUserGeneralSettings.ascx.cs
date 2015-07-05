@@ -163,11 +163,8 @@ namespace WebsitePanel.Portal.HostedSolution
                     litServiceLevel.ToolTip = serviceLevel.LevelDescription;
 
                     bool addLevel = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null;
-
                     addLevel = addLevel && cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName);
-
                     addLevel = addLevel ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : addLevel;
-
                     if (addLevel)
                     {
                         ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
@@ -270,19 +267,17 @@ namespace WebsitePanel.Portal.HostedSolution
         private void BindServiceLevels()
         {
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
             if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
             {
                 List<ServiceLevel> enabledServiceLevels = new List<ServiceLevel>();
 
-                foreach (var quota in cntx.Quotas.Where(x => x.Key.Contains(Quotas.SERVICE_LEVELS)))
+                foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
                 {
-                    foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
+                    if (CheckServiceLevelQuota(serviceLevel, stats.ServiceLevels))
                     {
-                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value))
-                        {
-                            enabledServiceLevels.Add(serviceLevel);
-                        }
+                        enabledServiceLevels.Add(serviceLevel);
                     }
                 }
 
@@ -314,15 +309,17 @@ namespace WebsitePanel.Portal.HostedSolution
             }
         }
 
-        private bool CheckServiceLevelQuota(QuotaValueInfo quota)
+        private bool CheckServiceLevelQuota(ServiceLevel serviceLevel, List<QuotaValueInfo> quotas)
         {
+            var quota = quotas.FirstOrDefault(q => q.QuotaName.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName);
 
-            if (quota.QuotaAllocatedValue != -1)
-            {
-                return quota.QuotaAllocatedValue > quota.QuotaUsedValue;
-            }
+            if (quota == null)
+                return false;
 
-            return true;
+            if (quota.QuotaAllocatedValue == -1)
+                return true;
+
+            return quota.QuotaAllocatedValue > quota.QuotaUsedValue;
         }
 
         private void SaveSettings()

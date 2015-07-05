@@ -341,5 +341,10 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         public DateTime PasswordExpirationDateTime { get; set; }
+
+        public override string ToString()
+        {
+            return !string.IsNullOrEmpty(accountName) ? accountName : base.ToString();
+        }
     }
 }

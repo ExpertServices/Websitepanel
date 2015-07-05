@@ -27,7 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
-using WebsitePanel.Providers.Common;
+﻿using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+﻿using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.Lync

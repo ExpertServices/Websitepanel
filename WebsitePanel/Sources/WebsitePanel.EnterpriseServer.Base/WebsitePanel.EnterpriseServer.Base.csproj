@@ -85,6 +85,7 @@
     <Compile Include="ExchangeServer\ExchangeEmailAddress.cs" />
     <Compile Include="HostedSolution\AccessTokenTypes.cs" />
     <Compile Include="HostedSolution\AdditionalGroup.cs" />
+    <Compile Include="HostedSolution\OrganizationStatistics.cs" />
     <Compile Include="HostedSolution\ServiceLevel.cs" />
     <Compile Include="HostedSolution\CRMLycenseTypes.cs" />
     <Compile Include="HostedSolution\ESPermission.cs" />

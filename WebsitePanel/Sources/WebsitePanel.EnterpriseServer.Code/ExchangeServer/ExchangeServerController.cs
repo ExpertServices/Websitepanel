@@ -36,6 +36,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Drawing;
 using System.IO;
+using WebsitePanel.EnterpriseServer.Base;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;
@@ -2276,10 +2278,17 @@ namespace WebsitePanel.EnterpriseServer
                 // Log Extension
                 LogExtension.WriteVariables(new { hideAddressBook });
 
+                var oldObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
                 exchange.SetMailboxGeneralSettings(
                     account.UserPrincipalName,
                     hideAddressBook,
                     disabled);
+
+                var newObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -2570,6 +2579,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
+
                 exchange.SetMailboxMailFlowSettings(account.UserPrincipalName,
                     enableForwarding,
                     forwardingAccountName,
@@ -2578,6 +2589,11 @@ namespace WebsitePanel.EnterpriseServer
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldSettings, newSettings);
 
                 return 0;
             }
@@ -2654,12 +2670,17 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
                 
-                // Log Extension
-                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                var newAction = action;
 
                 // PMM settings
-                if (pmmAllowed) account.MailboxManagerActions |= action;
-                else account.MailboxManagerActions &= ~action;
+                if (pmmAllowed) newAction |= action;
+                else newAction &= ~action;
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                account.LogPropertyIfChanged(a => a.MailboxManagerActions, newAction);
+
+                account.MailboxManagerActions = newAction;
 
                 // update account
                 UpdateAccount(account);
@@ -2878,6 +2899,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -3222,7 +3246,16 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // Log Extension
                 LogExtension.WriteObject(mailboxPlan);
-                
+                ExchangeMailboxPlan oldMailboxPlan = null;
+                try
+                {
+                    oldMailboxPlan = ObjectUtils.Clone(mailboxPlan);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.Write("Can't clone mailbox: " + ex.Message);
+                } 
+
                 Organization org = GetOrganization(itemID);
                 if (org == null)
                     return -1;
@@ -3274,6 +3307,10 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
                                                         mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
                                                         mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldMailboxPlan, mailboxPlan);
+
             }
             catch (Exception ex)
             {
@@ -3551,6 +3588,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(tag);
+                
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -4014,6 +4054,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldContact = exchange.GetContactGeneralSettings(account.AccountName);
+
                 exchange.SetContactGeneralSettings(
                     account.AccountName,
                     displayName,
@@ -4041,9 +4083,12 @@ namespace WebsitePanel.EnterpriseServer
                     notes,
                     useMapiRichTextFormat, org.DefaultDomain);
 
+                var newContact = exchange.GetContactGeneralSettings(account.AccountName);
+
                 // Log Extension
                 account.LogPropertyIfChanged(a => a.DisplayName, displayName);
                 account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+                LogExtension.LogPropertiesIfChanged(oldContact, newContact);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4134,10 +4179,17 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
                 exchange.SetContactMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -4373,6 +4425,8 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
                 exchange.SetDistributionListGeneralSettings(
                     account.AccountName,
                     displayName,
@@ -4381,6 +4435,12 @@ namespace WebsitePanel.EnterpriseServer
                     memberAccounts,
                     notes,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4474,12 +4534,18 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
 
                 exchange.SetDistributionListMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -5185,6 +5251,10 @@ namespace WebsitePanel.EnterpriseServer
                     name,
                     domain);
 
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.MailEnabledPublicFolder, accountName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, email, false);
+
                 // update and save account
                 account.AccountName = accountName;
                 account.MailEnabledPublicFolder = true;
@@ -5349,6 +5419,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
                 exchange.SetPublicFolderGeneralSettings(
                     org.OrganizationId,
                     account.DisplayName,
@@ -5356,6 +5428,11 @@ namespace WebsitePanel.EnterpriseServer
                     hideAddressBook,
                     accounts
                     );
+
+                var newObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 // update folder name
                 string origName = account.DisplayName;
@@ -5472,10 +5549,17 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
+
                 exchange.SetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -6115,8 +6199,13 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = GetExchangeDisclaimer(itemId, disclaimer.ExchangeDisclaimerId);
+
                 exchange.SetDisclaimer(disclaimer.WSPUniqueName, disclaimer.DisclaimerText);
                 DataProvider.UpdateExchangeDisclaimer(itemId, disclaimer);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, disclaimer);
             }
             catch (Exception ex)
             {

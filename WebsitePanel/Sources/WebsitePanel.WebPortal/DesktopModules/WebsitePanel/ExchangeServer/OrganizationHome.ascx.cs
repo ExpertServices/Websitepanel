@@ -31,6 +31,7 @@ using System.Linq;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -324,7 +325,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
             {
                 serviceLevelsStatsPanel.Visible = true;
-                BindServiceLevelsStats(cntx);
+                BindServiceLevelsStats(orgStats);
             }
             else
                 serviceLevelsStatsPanel.Visible = false;
@@ -438,41 +439,32 @@ namespace WebsitePanel.Portal.ExchangeServer
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 
-        private void BindServiceLevelsStats(PackageContext cntx)
+        private void BindServiceLevelsStats(OrganizationStatistics stats)
         {
-            WebsitePanel.EnterpriseServer.Base.HostedSolution.ServiceLevel[] serviceLevels = ES.Services.Organizations.GetSupportServiceLevels();
-            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
-
-            foreach (var quota in Array.FindAll<QuotaValueInfo>(
-                    cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            foreach (var quota in stats.ServiceLevels)
             {
                 HtmlTableRow tr = new HtmlTableRow();
-                    tr.Attributes["class"] = "OrgStatsRow";
+                tr.Attributes["class"] = "OrgStatsRow";
                 HtmlTableCell col1 = new HtmlTableCell();
-                    col1.Attributes["class"] = "OrgStatsQuota";
-                    col1.Attributes["nowrap"] = "nowrap";
+                col1.Attributes["class"] = "OrgStatsQuota";
+                col1.Attributes["nowrap"] = "nowrap";
                 HyperLink link = new HyperLink();
                 link.ID = "lnk_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
-                    link.Text = quota.QuotaDescription.Replace(", users", " (users):");
+                link.Text = quota.QuotaDescription.Replace(", users", " (users):");
 
-                    col1.Controls.Add(link);
-
-                    int levelId = serviceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
-                    int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
+                col1.Controls.Add(link);
 
                 HtmlTableCell col2 = new HtmlTableCell();
-                QuotaViewer quotaControl = (QuotaViewer)LoadControl("../UserControls/QuotaViewer.ascx");
-                    quotaControl.ID = quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim() + "Stats";
-                    quotaControl.QuotaTypeId = quota.QuotaTypeId;
-                    quotaControl.DisplayGauge = true;
-                    quotaControl.QuotaValue = quota.QuotaAllocatedValue;
-                    quotaControl.QuotaUsedValue = usedInOrgCount;
-                    //quotaControl.QuotaUsedValue = quota.QuotaUsedValue;
-                    if (quota.QuotaAllocatedValue != -1) 
-                        quotaControl.QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue;
+                QuotaViewer quotaControl = (QuotaViewer) LoadControl("../UserControls/QuotaViewer.ascx");
+                quotaControl.ID = quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim() + "Stats";
+                quotaControl.QuotaTypeId = quota.QuotaTypeId;
+                quotaControl.DisplayGauge = true;
+                quotaControl.QuotaValue = quota.QuotaAllocatedValue;
+                quotaControl.QuotaUsedValue = quota.QuotaUsedValue;
+                if (quota.QuotaAllocatedValue != -1)
+                    quotaControl.QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue;
 
-                    col2.Controls.Add(quotaControl);
-
+                col2.Controls.Add(quotaControl);
 
                 tr.Controls.Add(col1);
                 tr.Controls.Add(col2);
