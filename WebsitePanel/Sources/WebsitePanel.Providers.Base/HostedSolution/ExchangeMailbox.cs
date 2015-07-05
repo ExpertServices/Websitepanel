@@ -435,6 +435,10 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.exchangeGuid = value; }
         }
 
+        public override string ToString()
+        {
+            return !string.IsNullOrEmpty(accountName) ? accountName : base.ToString();
+        }
 
 	}
 }

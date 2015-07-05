@@ -104,6 +104,37 @@ namespace WebsitePanel.EnterpriseServer.Extensions
         }
 
         /// <summary>
+        /// Log changed values of the all properties of the object
+        /// </summary>
+        public static void LogPropertiesIfChanged<T>(T oldObj, T newObj, bool withOld = true) where T : class
+        {
+            if (oldObj == null || newObj == null)
+                return;
+
+            try
+            {
+                foreach (var property in typeof (T).GetProperties())
+                {
+                    object newValue;
+                    try
+                    {
+                        newValue = property.GetValue(newObj, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.Write("Can't get {0} property", property.Name);
+                        continue;
+                    }
+                    LogPropertyIfChanged(oldObj, property, newValue, withOld);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteException(ex);
+            }
+        }
+
+        /// <summary>
         /// Log a value of the property only when it is different from newValue parameter. Also the old value can be written.
         /// </summary>
         public static T LogPropertyIfChanged<T, TU>(this T obj, Expression<Func<T, TU>> expression, object newValue,
@@ -116,24 +147,7 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             {
                 var property = ObjectUtils.GetProperty(obj, expression);
 
-                if (property == null)
-                    return obj;
-
-                var oldValue = property.GetValue(obj, null);
-
-                if (oldValue == null || newValue == null)
-                {
-                    if (oldValue != newValue)
-                    {
-                        WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
-                            LogExtensionHelper.GetString(newValue), withOld);
-                    }
-                }
-                else if (!oldValue.Equals(newValue))
-                {
-                    WriteChangedProperty(obj, property, LogExtensionHelper.GetString(oldValue),
-                        LogExtensionHelper.GetString(newValue), withOld);
-                }
+                return LogPropertyIfChanged(obj, property, newValue, withOld);
             }
             catch (Exception ex)
             {
@@ -214,6 +228,41 @@ namespace WebsitePanel.EnterpriseServer.Extensions
             return (T[]) member.GetCustomAttributes(typeof (T), false);
         }
 
+        private static T LogPropertyIfChanged<T>(T obj, PropertyInfo property, object newValue, bool withOld = true)
+            where T : class
+        {
+            if (property == null)
+                return obj;
+
+            object oldValue;
+            try
+            {
+                oldValue = property.GetValue(obj, null);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.Write("Cant get {0} property", property.Name);
+                return obj;
+            }
+
+            var oldValueStr = LogExtensionHelper.GetString(oldValue);
+            var newValueStr = LogExtensionHelper.GetString(newValue);
+
+            if (oldValue == null || newValue == null)
+            {
+                if (oldValue != newValue)
+                {
+                    WriteChangedProperty(obj, property, oldValueStr, newValueStr, withOld);
+                }
+            }
+            else if (!oldValueStr.Equals(newValueStr))
+            {
+                WriteChangedProperty(obj, property, oldValueStr, newValueStr, withOld);
+            }
+
+            return obj;
+        }
+
         private static void WriteChangedProperty(object obj, PropertyInfo property, string oldValue, string newValue,
             bool withOld = true)
         {
@@ -237,9 +286,9 @@ namespace WebsitePanel.EnterpriseServer.Extensions
                 var name = LogExtensionHelper.DecorateName(property.Name);
 
                 if (withOld)
-                    TaskManager.Write(OLD_PREFIX + LogExtensionHelper.CombineString(name, newValue));
+                    TaskManager.Write(OLD_PREFIX + LogExtensionHelper.CombineString(name, oldValue));
 
-                TaskManager.Write(NEW_PREFIX + LogExtensionHelper.CombineString(name, oldValue));
+                TaskManager.Write(NEW_PREFIX + LogExtensionHelper.CombineString(name, newValue));
             }
 
         }
