@@ -78,10 +78,11 @@ namespace WebsitePanel.WIXInstaller.Common
                             "Web-Server",
                             "Web-Common-Http",
                             "Web-Default-Doc",
+                            "Web-App-Dev",
                             "Web-ISAPI-Ext",
                             "Web-ISAPI-Filter",
-                            "Web-Mgmt-Console",
                             "Web-Net-Ext",
+                            "Web-Mgmt-Console",                            
                             "Web-Filtering",
                             "Web-Security",
                             "Web-Static-Content"
@@ -98,10 +99,11 @@ namespace WebsitePanel.WIXInstaller.Common
                             "IIS-WebServer",                                            
                             "IIS-CommonHttpFeatures",
                             "IIS-DefaultDocument",
+                            "IIS-ApplicationDevelopment",
                             "IIS-ISAPIExtensions",
                             "IIS-ISAPIFilter",
-                            "IIS-ManagementConsole",
                             "IIS-NetFxExtensibility",
+                            "IIS-ManagementConsole",                            
                             "IIS-RequestFiltering",
                             "IIS-Security",
                             "IIS-StaticContent"                
@@ -117,16 +119,35 @@ namespace WebsitePanel.WIXInstaller.Common
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                        Result = new[] { "Web-Asp-Net" };
+                        Result = new[]
+                        { 
+                            "Web-App-Dev",
+                            "Web-ISAPI-Ext",
+                            "Web-ISAPI-Filter",
+                            "Web-Net-Ext",
+                            "Web-Asp-Net"
+                        };
                     break;
-                case OS.WindowsVersion.WindowsServer2008R2:
-                case OS.WindowsVersion.WindowsServer2012:
-                case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
+                case OS.WindowsVersion.WindowsServer2008R2:
+                    Result = new[]
+                        {
+                            "IIS-ApplicationDevelopment",
+                            "IIS-ISAPIExtensions",
+                            "IIS-ISAPIFilter",
+                            "IIS-NetFxExtensibility",
+                            "IIS-ASPNET"
+                        };
+                    break;
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:                
                 case OS.WindowsVersion.Windows8:
                         Result = new[]
                         { 
                             "IIS-ApplicationDevelopment",
+                            "IIS-ISAPIExtensions",
+                            "IIS-ISAPIFilter",
+                            "IIS-NetFxExtensibility",
                             "IIS-ASPNET",
                             "IIS-ASPNET45"
                         };
@@ -168,16 +189,26 @@ namespace WebsitePanel.WIXInstaller.Common
                         Result = InstallWebViaServerManagerCmd;
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
-                case OS.WindowsVersion.WindowsServer2012:
-                case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
-                case OS.WindowsVersion.Windows8:
                         Result = InstallWebViaDism;
+                    break;
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:                
+                case OS.WindowsVersion.Windows8:
+                        Result = InstallWebViaDismEx;
                     break;
             }
             return Result;
         }
         private static string InstallWebViaDism(params string[] Features)
+        {
+            var Params = string.Format("/NoRestart /Online /Enable-Feature {0}",
+                                       string.Join(" ", Features.Select(
+                                           Feature => string.Format("/FeatureName:{0}", Feature)
+                                       )));
+            return RunTool(Path.Combine(OS.GetWindowsDirectory(), @"SysNative\dism.exe"), Params);
+        }
+        private static string InstallWebViaDismEx(params string[] Features)
         {
             var Params = string.Format("/NoRestart /Online /Enable-Feature {0}",
                                        string.Join(" ", Features.Select(

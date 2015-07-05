@@ -80,6 +80,8 @@ namespace WebsitePanel.Setup
 		    public const string Release = "Release";
             public const string SchedulerServiceFileName = "WebsitePanel.SchedulerService.exe";
             public const string SchedulerServiceName = "WebsitePanel Scheduler";
+            public const string DatabaseUser = "DatabaseUser";
+            public const string DatabaseUserPassword = "DatabaseUserPassword";
 		}
 
 		public abstract class Messages
