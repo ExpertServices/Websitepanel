@@ -49,11 +49,6 @@ namespace WebsitePanel.Portal.HostedSolution
 
             cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            if (!IsPostBack)
-            {    
-                BindStats();
-            }
-
             BindServiceLevels();
 
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
@@ -64,6 +59,11 @@ namespace WebsitePanel.Portal.HostedSolution
                 }
             }
             gvUsers.Columns[4].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            BindStats();
         }
 
         private void BindServiceLevels()

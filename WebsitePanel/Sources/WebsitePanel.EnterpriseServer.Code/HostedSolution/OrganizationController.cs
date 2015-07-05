@@ -2221,6 +2221,9 @@ namespace WebsitePanel.EnterpriseServer
                 var xml = ObjectUtils.Serialize(settings);
 
                 DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.PasswordSettings, xml);
+
+                // Log Extension
+                LogExtension.WriteVariable("Password Settings", xml);
             }
             catch (Exception ex)
             {
@@ -2327,6 +2330,9 @@ namespace WebsitePanel.EnterpriseServer
                 var xml = ObjectUtils.Serialize(settings);
 
                 DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.GeneralSettings, xml);
+
+                // Log Extension
+                LogExtension.WriteVariable("General Settings", xml);
             }
             catch (Exception ex)
             {
@@ -3277,6 +3283,8 @@ namespace WebsitePanel.EnterpriseServer
                 // external email
                 string externalEmailAddress = (account.AccountType == ExchangeAccountType.User) ? externalEmail : account.PrimaryEmailAddress;
 
+                var oldOrgUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
                 orgProxy.SetUserGeneralSettings(
                     org.OrganizationId,
                     accountName,
@@ -3308,11 +3316,14 @@ namespace WebsitePanel.EnterpriseServer
                     externalEmailAddress,
                     userMustChangePassword);
 
+                var newOrgUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
                 // Log Extension
                 account.LogPropertyIfChanged(a => a.DisplayName, displayName);
                 account.LogPropertyIfChanged(a => a.SubscriberNumber, subscriberNumber);
                 account.LogPropertyIfChanged(a => a.LevelId, levelId);
                 account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
+                LogExtension.LogPropertiesIfChanged(oldOrgUser, newOrgUser);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4006,14 +4017,19 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
                 // external email
 
+                var oldObj = orgProxy.GetSecurityGroupGeneralSettings(accountName, org.OrganizationId);
+                
                 orgProxy.SetSecurityGroupGeneralSettings(
                     org.OrganizationId,
                     accountName,
                     memberAccounts,
                     notes);
 
+                var newObj = orgProxy.GetSecurityGroupGeneralSettings(accountName, org.OrganizationId);
+
                 // Log Extension
                 account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
                 
                 // update account
                 account.DisplayName = displayName;
@@ -4397,6 +4413,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteVariables(new { levelID, levelName, levelDescription }); 
+                
                 DataProvider.UpdateSupportServiceLevel(levelID, levelName, levelDescription);
             }
             catch (Exception ex)

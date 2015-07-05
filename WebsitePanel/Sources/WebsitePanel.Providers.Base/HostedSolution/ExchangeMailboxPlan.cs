@@ -33,6 +33,7 @@ using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
+    [Serializable]
     public class ExchangeMailboxPlan
     {
         int itemId;
