@@ -43,7 +43,7 @@ namespace WebsitePanel.Setup
 		public static readonly SetupVariables Empty = new SetupVariables();
 		public bool EnableScpaMode { get; set; }
 		public string PeerAdminPassword { get; set; }
-
+        public string DatabaseUser { get; set; }
 		public string DatabaseUserPassword { get; set; }
 		public bool NewDatabaseUser { get; set; }
 		/// <summary>
@@ -253,6 +253,7 @@ namespace WebsitePanel.Setup
         public IDictionary<string, string> FileNameMap { get; set; }
         public IDictionary<string, string> SessionVariables { get; set; }
         public IDictionary<string, string[]> XmlData { get; set; } // XPath, Value.
+        public string[] SysFields; // Fields that saved in sys config.
         public bool ComponentExists { get; set; }
 
 		public string UpdateVersion { get; set; }
