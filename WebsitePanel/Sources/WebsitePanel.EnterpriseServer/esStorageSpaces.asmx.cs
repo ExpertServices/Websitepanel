@@ -110,5 +110,29 @@ namespace WebsitePanel.EnterpriseServer
         {
             return StorageSpacesController.GetSystemSubFolders(serviceId, path);
         }
+
+        [WebMethod]
+        public void SetStorageSpaceFolderAbeStatus(int storageSpaceFolderId, bool enabled)
+        {
+            StorageSpacesController.SetStorageSpaceFolderAbeStatus(storageSpaceFolderId, enabled);
+        }
+
+        [WebMethod]
+        public bool GetStorageSpaceFolderAbeStatus(int storageSpaceFolderId)
+        {
+           return StorageSpacesController.GetStorageSpaceFolderAbeStatus(storageSpaceFolderId);
+        }
+
+        [WebMethod]
+        public void SetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId, bool enabled)
+        {
+            StorageSpacesController.SetStorageSpaceFolderEncryptDataAccessStatus(storageSpaceFolderId, enabled);
+        }
+
+        [WebMethod]
+        public bool GetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId)
+        {
+            return StorageSpacesController.GetStorageSpaceFolderEncryptDataAccessStatus(storageSpaceFolderId);
+        }
     }
 }

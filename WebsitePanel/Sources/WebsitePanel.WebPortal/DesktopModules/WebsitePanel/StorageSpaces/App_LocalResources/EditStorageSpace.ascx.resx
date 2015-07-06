@@ -174,4 +174,10 @@
   <data name="valReqStorageService.ErrorMessage" xml:space="preserve">
     <value>Please select storage space service</value>
   </data>
+  <data name="locIsDisabled.Text" xml:space="preserve">
+    <value>Disable new folder creation:</value>
+  </data>
+  <data name="chkIsDisabled.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

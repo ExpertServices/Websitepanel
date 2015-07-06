@@ -13383,6 +13383,12 @@ BEGIN
 	)
 END
 
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'StorageSpaces' AND COLUMN_NAME = 'IsDisabled')
+BEGIN
+	ALTER TABLE [dbo].[StorageSpaces]
+		ADD IsDisabled BIT NOT NULL DEFAULT(0)
+END
+GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE type = 'F' AND name = 'FK_StorageSpaces_ServiceId')
 BEGIN
@@ -13454,6 +13460,7 @@ SELECT
 		CR.FsrmQuotaType,
 		CR.FsrmQuotaSizeBytes,
 		CR.IsShared,
+		CR.IsDisabled,
 		CR.UncPath,
 		ISNULL((SELECT SUM(SSF.FsrmQuotaSizeBytes) FROM StorageSpaceFolders AS SSF WHERE SSF.StorageSpaceId = CR.Id), 0) UsedSizeBytes
 FROM @Spaces AS C
@@ -13488,6 +13495,7 @@ SELECT
 		SS.FsrmQuotaSizeBytes,
 		SS.IsShared,
 		SS.UncPath,
+		SS.IsDisabled,
 		ISNULL((SELECT SUM(SSF.FsrmQuotaSizeBytes) FROM StorageSpaceFolders AS SSF WHERE SSF.StorageSpaceId = SS.Id), 0) UsedSizeBytes
 FROM StorageSpaces AS SS
 INNER JOIN StorageSpaceLevels AS SSL
@@ -13517,6 +13525,7 @@ AS
 		SS.FsrmQuotaSizeBytes,
 		SS.IsShared,
 		SS.UncPath,
+		SS.IsDisabled,
 		ISNULL((SELECT SUM(SSF.FsrmQuotaSizeBytes) FROM StorageSpaceFolders AS SSF WHERE SSF.StorageSpaceId = SS.Id), 0) UsedSizeBytes
 	FROM [dbo].[StorageSpaces] AS SS
 	WHERE SS.Id = @Id
@@ -13538,11 +13547,12 @@ CREATE PROCEDURE UpdateStorageSpace
 	@FsrmQuotaType INT,
 	@FsrmQuotaSizeBytes BIGINT,
 	@IsShared BIT,
+	@IsDisabled BIT,
 	@UncPath varchar(max)
 )
 AS
 	UPDATE StorageSpaces
-	SET Name = @Name, ServiceId = @ServiceId,ServerId=@ServerId,LevelId=@LevelId, Path=@Path,FsrmQuotaType=@FsrmQuotaType,FsrmQuotaSizeBytes=@FsrmQuotaSizeBytes,IsShared=@IsShared,UncPath=@UncPath
+	SET Name = @Name, ServiceId = @ServiceId,ServerId=@ServerId,LevelId=@LevelId, Path=@Path,FsrmQuotaType=@FsrmQuotaType,FsrmQuotaSizeBytes=@FsrmQuotaSizeBytes,IsShared=@IsShared,UncPath=@UncPath,IsDisabled=@IsDisabled
 	WHERE ID = @ID
 GO
 
@@ -13561,6 +13571,7 @@ CREATE PROCEDURE InsertStorageSpace
 	@FsrmQuotaType INT,
 	@FsrmQuotaSizeBytes BIGINT,
 	@IsShared BIT,
+	@IsDisabled BIT,
 	@UncPath varchar(max)
 )
 AS
@@ -13575,7 +13586,8 @@ INSERT INTO StorageSpaces
 	FsrmQuotaType,
 	FsrmQuotaSizeBytes,
 	IsShared,
-	UncPath
+	UncPath,
+	IsDisabled
 )
 VALUES 
 (
@@ -13587,7 +13599,8 @@ VALUES
 	@FsrmQuotaType,
 	@FsrmQuotaSizeBytes,
 	@IsShared,
-	@UncPath
+	@UncPath,
+	@IsDisabled
 )
 
 SET @ID = SCOPE_IDENTITY()
@@ -13626,6 +13639,9 @@ SELECT
 		SS.Path,
 		SS.FsrmQuotaType,
 		SS.FsrmQuotaSizeBytes,
+		SS.IsShared,
+		SS.UncPath,
+		SS.IsDisabled,
 		ISNULL((SELECT SUM(SSF.FsrmQuotaSizeBytes) FROM StorageSpaceFolders AS SSF WHERE SSF.StorageSpaceId = SS.Id), 0) UsedSizeBytes
 FROM StorageSpaces AS SS
 INNER JOIN StorageSpaceLevelResourceGroups AS SSLRG ON SSLRG.LevelId = SS.LevelId
@@ -13651,6 +13667,9 @@ SELECT TOP 1
 		SS.Path,
 		SS.FsrmQuotaType,
 		SS.FsrmQuotaSizeBytes,
+		SS.IsShared,
+		SS.UncPath,
+		SS.IsDisabled,
 		ISNULL((SELECT SUM(SSF.FsrmQuotaSizeBytes) FROM StorageSpaceFolders AS SSF WHERE SSF.StorageSpaceId = SS.Id), 0) UsedSizeBytes
 FROM StorageSpaces AS SS
 WHERE SS.ServerId = @ServerId AND SS.Path = @Path

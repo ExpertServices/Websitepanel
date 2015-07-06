@@ -9,6 +9,7 @@ namespace WebsitePanel.Providers.StorageSpaces
         public long UsedSizeBytes { get; set; }
 
         public bool IsShared { get; set; }
+        public bool IsDisabled { get; set; }
         public string UncPath { get; set; } 
     }
 }

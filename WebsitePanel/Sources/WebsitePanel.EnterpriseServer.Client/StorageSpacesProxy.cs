@@ -66,6 +66,14 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetSystemSubFoldersOperationCompleted;
         
+        private System.Threading.SendOrPostCallback SetStorageSpaceFolderAbeStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetStorageSpaceFolderAbeStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted;
+        
         /// <remarks/>
         public esStorageSpaces() {
             this.Url = "http://localhost:9002/esStorageSpaces.asmx";
@@ -115,6 +123,18 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetSystemSubFoldersCompletedEventHandler GetSystemSubFoldersCompleted;
+        
+        /// <remarks/>
+        public event SetStorageSpaceFolderAbeStatusCompletedEventHandler SetStorageSpaceFolderAbeStatusCompleted;
+        
+        /// <remarks/>
+        public event GetStorageSpaceFolderAbeStatusCompletedEventHandler GetStorageSpaceFolderAbeStatusCompleted;
+        
+        /// <remarks/>
+        public event SetStorageSpaceFolderEncryptDataAccessStatusCompletedEventHandler SetStorageSpaceFolderEncryptDataAccessStatusCompleted;
+        
+        /// <remarks/>
+        public event GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventHandler GetStorageSpaceFolderEncryptDataAccessStatusCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetStorageSpaceLevelsPaged", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -771,6 +791,172 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetStorageSpaceFolderAbeStatus", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetStorageSpaceFolderAbeStatus(int storageSpaceFolderId, bool enabled) {
+            this.Invoke("SetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetStorageSpaceFolderAbeStatus(int storageSpaceFolderId, bool enabled, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetStorageSpaceFolderAbeStatus(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetStorageSpaceFolderAbeStatusAsync(int storageSpaceFolderId, bool enabled) {
+            this.SetStorageSpaceFolderAbeStatusAsync(storageSpaceFolderId, enabled, null);
+        }
+        
+        /// <remarks/>
+        public void SetStorageSpaceFolderAbeStatusAsync(int storageSpaceFolderId, bool enabled, object userState) {
+            if ((this.SetStorageSpaceFolderAbeStatusOperationCompleted == null)) {
+                this.SetStorageSpaceFolderAbeStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetStorageSpaceFolderAbeStatusOperationCompleted);
+            }
+            this.InvokeAsync("SetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled}, this.SetStorageSpaceFolderAbeStatusOperationCompleted, userState);
+        }
+        
+        private void OnSetStorageSpaceFolderAbeStatusOperationCompleted(object arg) {
+            if ((this.SetStorageSpaceFolderAbeStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetStorageSpaceFolderAbeStatusCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetStorageSpaceFolderAbeStatus", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool GetStorageSpaceFolderAbeStatus(int storageSpaceFolderId) {
+            object[] results = this.Invoke("GetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetStorageSpaceFolderAbeStatus(int storageSpaceFolderId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndGetStorageSpaceFolderAbeStatus(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetStorageSpaceFolderAbeStatusAsync(int storageSpaceFolderId) {
+            this.GetStorageSpaceFolderAbeStatusAsync(storageSpaceFolderId, null);
+        }
+        
+        /// <remarks/>
+        public void GetStorageSpaceFolderAbeStatusAsync(int storageSpaceFolderId, object userState) {
+            if ((this.GetStorageSpaceFolderAbeStatusOperationCompleted == null)) {
+                this.GetStorageSpaceFolderAbeStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetStorageSpaceFolderAbeStatusOperationCompleted);
+            }
+            this.InvokeAsync("GetStorageSpaceFolderAbeStatus", new object[] {
+                        storageSpaceFolderId}, this.GetStorageSpaceFolderAbeStatusOperationCompleted, userState);
+        }
+        
+        private void OnGetStorageSpaceFolderAbeStatusOperationCompleted(object arg) {
+            if ((this.GetStorageSpaceFolderAbeStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetStorageSpaceFolderAbeStatusCompleted(this, new GetStorageSpaceFolderAbeStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetStorageSpaceFolderEncryptDataAccessStatus", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId, bool enabled) {
+            this.Invoke("SetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId, bool enabled, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSetStorageSpaceFolderEncryptDataAccessStatus(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SetStorageSpaceFolderEncryptDataAccessStatusAsync(int storageSpaceFolderId, bool enabled) {
+            this.SetStorageSpaceFolderEncryptDataAccessStatusAsync(storageSpaceFolderId, enabled, null);
+        }
+        
+        /// <remarks/>
+        public void SetStorageSpaceFolderEncryptDataAccessStatusAsync(int storageSpaceFolderId, bool enabled, object userState) {
+            if ((this.SetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted == null)) {
+                this.SetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted);
+            }
+            this.InvokeAsync("SetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId,
+                        enabled}, this.SetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted, userState);
+        }
+        
+        private void OnSetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted(object arg) {
+            if ((this.SetStorageSpaceFolderEncryptDataAccessStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetStorageSpaceFolderEncryptDataAccessStatusCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetStorageSpaceFolderEncryptDataAccessStatus", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool GetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId) {
+            object[] results = this.Invoke("GetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndGetStorageSpaceFolderEncryptDataAccessStatus(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetStorageSpaceFolderEncryptDataAccessStatusAsync(int storageSpaceFolderId) {
+            this.GetStorageSpaceFolderEncryptDataAccessStatusAsync(storageSpaceFolderId, null);
+        }
+        
+        /// <remarks/>
+        public void GetStorageSpaceFolderEncryptDataAccessStatusAsync(int storageSpaceFolderId, object userState) {
+            if ((this.GetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted == null)) {
+                this.GetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted);
+            }
+            this.InvokeAsync("GetStorageSpaceFolderEncryptDataAccessStatus", new object[] {
+                        storageSpaceFolderId}, this.GetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted, userState);
+        }
+        
+        private void OnGetStorageSpaceFolderEncryptDataAccessStatusOperationCompleted(object arg) {
+            if ((this.GetStorageSpaceFolderEncryptDataAccessStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetStorageSpaceFolderEncryptDataAccessStatusCompleted(this, new GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1162,6 +1348,66 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemFile[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetStorageSpaceFolderAbeStatusCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetStorageSpaceFolderAbeStatusCompletedEventHandler(object sender, GetStorageSpaceFolderAbeStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetStorageSpaceFolderAbeStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetStorageSpaceFolderAbeStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetStorageSpaceFolderEncryptDataAccessStatusCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventHandler(object sender, GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetStorageSpaceFolderEncryptDataAccessStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }

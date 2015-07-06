@@ -67,6 +67,19 @@
                                 <td class="FormLabel150"><asp:Localize ID="locUncPath" runat="server" meta:resourcekey="locUncPath" Text="UNC Path:"></asp:Localize></td>
                                 <td><asp:Label runat="server" ID="lblUncPath" /></td>
                             </tr>
+                            <tr id="abeRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locABE" runat="server" meta:resourcekey="locABE" Text="Enable Access-Based Enumeration:"></asp:Localize></td>
+                                <td class="FormRBtnL">
+                                    <asp:CheckBox runat="server" ID="chkAbe" meta:resourcekey="chkAbe"/>
+                                </td>
+                            </tr>
+                            <tr id="edaRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locEda" runat="server" meta:resourcekey="locEda" Text="Encrypt data access:"></asp:Localize></td>
+                                <td class="FormRBtnL">
+                                    <asp:CheckBox runat="server" ID="chkEda" meta:resourcekey="chkEda"/>
+                                </td>
+                            </tr>
+
                             <tr><td>&nbsp;</td></tr>
 					    </table>
 					</asp:Panel>

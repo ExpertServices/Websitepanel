@@ -1006,6 +1006,153 @@ namespace WebsitePanel.EnterpriseServer
             return searchResults;
         }
 
+
+
+        public static void SetStorageSpaceFolderAbeStatus(int storageSpaceFolderId, bool enabled)
+        {
+            SetStorageSpaceFolderAbeStatusInternal(storageSpaceFolderId, enabled);
+        }
+
+        private static void SetStorageSpaceFolderAbeStatusInternal(int storageSpaceFolderId, bool enabled)
+        {
+            TaskManager.StartTask("STORAGE_SPACES", "SET_ABE_STATUS");
+
+            try
+            {
+                var folder = GetStorageSpaceFolderById(storageSpaceFolderId);
+
+                if (folder == null)
+                {
+                    throw new Exception(string.Format("Storage space folder with id={0} not found", storageSpaceFolderId));
+                }
+
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(folder.StorageSpaceId);
+
+                if (storageSpace == null)
+                {
+                    throw new Exception(string.Format("Storage space with id={0} not found", folder.StorageSpaceId));
+                }
+
+                var ss = GetStorageSpaceService(storageSpace.ServiceId);
+
+                ss.ShareSetAbeState(folder.Path, enabled);
+            }
+            catch (Exception exception)
+            {
+                TaskManager.WriteError(exception);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static bool GetStorageSpaceFolderAbeStatus(int storageSpaceFolderId)
+        {
+            return GetStorageSpaceFolderAbeStatusInternal(storageSpaceFolderId);
+        }
+
+        private static bool GetStorageSpaceFolderAbeStatusInternal(int storageSpaceFolderId)
+        {
+
+            try
+            {
+                var folder = GetStorageSpaceFolderById(storageSpaceFolderId);
+
+                if (folder == null)
+                {
+                    throw new Exception(string.Format("Storage space folder with id={0} not found", storageSpaceFolderId));
+                }
+
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(folder.StorageSpaceId);
+
+                if (storageSpace == null)
+                {
+                    throw new Exception(string.Format("Storage space with id={0} not found", folder.StorageSpaceId));
+                }
+
+                var ss = GetStorageSpaceService(storageSpace.ServiceId);
+
+                return ss.ShareGetAbeState(folder.Path);
+            }
+            catch (Exception exception)
+            {
+                throw TaskManager.WriteError(exception);
+            }
+        }
+
+        public static void SetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId, bool enabled)
+        {
+            SetStorageSpaceFolderEncryptDataAccessStatusInternal(storageSpaceFolderId, enabled);
+        }
+
+        private static void SetStorageSpaceFolderEncryptDataAccessStatusInternal(int storageSpaceFolderId, bool enabled)
+        {
+            TaskManager.StartTask("STORAGE_SPACES", "SET_ENCRYPT_DATA_ACCESS_STATUS");
+
+            try
+            {
+                var folder = GetStorageSpaceFolderById(storageSpaceFolderId);
+
+                if (folder == null)
+                {
+                    throw new Exception(string.Format("Storage space folder with id={0} not found", storageSpaceFolderId));
+                }
+
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(folder.StorageSpaceId);
+
+                if (storageSpace == null)
+                {
+                    throw new Exception(string.Format("Storage space with id={0} not found", folder.StorageSpaceId));
+                }
+
+                var ss = GetStorageSpaceService(storageSpace.ServiceId);
+
+                ss.ShareSetEncyptDataAccess(folder.Path, enabled);
+            }
+            catch (Exception exception)
+            {
+                throw TaskManager.WriteError(exception);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static bool GetStorageSpaceFolderEncryptDataAccessStatus(int storageSpaceFolderId)
+        {
+            return GetStorageSpaceFolderEncryptDataAccessStatusInternal(storageSpaceFolderId);
+        }
+
+        private static bool GetStorageSpaceFolderEncryptDataAccessStatusInternal(int storageSpaceFolderId)
+        {
+            try
+            {
+                var folder = GetStorageSpaceFolderById(storageSpaceFolderId);
+
+                if (folder == null)
+                {
+                    throw new Exception(string.Format("Storage space folder with id={0} not found", storageSpaceFolderId));
+                }
+
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(folder.StorageSpaceId);
+
+                if (storageSpace == null)
+                {
+                    throw new Exception(string.Format("Storage space with id={0} not found", folder.StorageSpaceId));
+                }
+
+                var ss = GetStorageSpaceService(storageSpace.ServiceId);
+
+                return ss.ShareGetEncyptDataAccessStatus(folder.Path);
+            }
+            catch (Exception exception)
+            {
+                throw TaskManager.WriteError(exception);
+            }
+        }
+
         #endregion
 
         #region Storage Spaces TreeView

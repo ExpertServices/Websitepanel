@@ -63,6 +63,14 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         private System.Threading.SendOrPostCallback RemoveShareOperationCompleted;
         
+        private System.Threading.SendOrPostCallback ShareSetAbeStateOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ShareSetEncyptDataAccessOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ShareGetEncyptDataAccessStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback ShareGetAbeStateOperationCompleted;
+        
         /// <remarks/>
         public StorageSpaceServices() {
             this.Url = "http://localhost:9003/StorageSpaceServices.asmx";
@@ -112,6 +120,18 @@ namespace WebsitePanel.Providers.StorageSpaces {
         
         /// <remarks/>
         public event RemoveShareCompletedEventHandler RemoveShareCompleted;
+        
+        /// <remarks/>
+        public event ShareSetAbeStateCompletedEventHandler ShareSetAbeStateCompleted;
+        
+        /// <remarks/>
+        public event ShareSetEncyptDataAccessCompletedEventHandler ShareSetEncyptDataAccessCompleted;
+        
+        /// <remarks/>
+        public event ShareGetEncyptDataAccessStatusCompletedEventHandler ShareGetEncyptDataAccessStatusCompleted;
+        
+        /// <remarks/>
+        public event ShareGetAbeStateCompletedEventHandler ShareGetAbeStateCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -770,6 +790,176 @@ namespace WebsitePanel.Providers.StorageSpaces {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShareSetAbeState", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ShareSetAbeState(string path, bool enabled) {
+            this.Invoke("ShareSetAbeState", new object[] {
+                        path,
+                        enabled});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShareSetAbeState(string path, bool enabled, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShareSetAbeState", new object[] {
+                        path,
+                        enabled}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndShareSetAbeState(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void ShareSetAbeStateAsync(string path, bool enabled) {
+            this.ShareSetAbeStateAsync(path, enabled, null);
+        }
+        
+        /// <remarks/>
+        public void ShareSetAbeStateAsync(string path, bool enabled, object userState) {
+            if ((this.ShareSetAbeStateOperationCompleted == null)) {
+                this.ShareSetAbeStateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShareSetAbeStateOperationCompleted);
+            }
+            this.InvokeAsync("ShareSetAbeState", new object[] {
+                        path,
+                        enabled}, this.ShareSetAbeStateOperationCompleted, userState);
+        }
+        
+        private void OnShareSetAbeStateOperationCompleted(object arg) {
+            if ((this.ShareSetAbeStateCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShareSetAbeStateCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShareSetEncyptDataAccess", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ShareSetEncyptDataAccess(string path, bool enabled) {
+            this.Invoke("ShareSetEncyptDataAccess", new object[] {
+                        path,
+                        enabled});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShareSetEncyptDataAccess(string path, bool enabled, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShareSetEncyptDataAccess", new object[] {
+                        path,
+                        enabled}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndShareSetEncyptDataAccess(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void ShareSetEncyptDataAccessAsync(string path, bool enabled) {
+            this.ShareSetEncyptDataAccessAsync(path, enabled, null);
+        }
+        
+        /// <remarks/>
+        public void ShareSetEncyptDataAccessAsync(string path, bool enabled, object userState) {
+            if ((this.ShareSetEncyptDataAccessOperationCompleted == null)) {
+                this.ShareSetEncyptDataAccessOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShareSetEncyptDataAccessOperationCompleted);
+            }
+            this.InvokeAsync("ShareSetEncyptDataAccess", new object[] {
+                        path,
+                        enabled}, this.ShareSetEncyptDataAccessOperationCompleted, userState);
+        }
+        
+        private void OnShareSetEncyptDataAccessOperationCompleted(object arg) {
+            if ((this.ShareSetEncyptDataAccessCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShareSetEncyptDataAccessCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShareGetEncyptDataAccessStatus", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool ShareGetEncyptDataAccessStatus(string path) {
+            object[] results = this.Invoke("ShareGetEncyptDataAccessStatus", new object[] {
+                        path});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShareGetEncyptDataAccessStatus(string path, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShareGetEncyptDataAccessStatus", new object[] {
+                        path}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndShareGetEncyptDataAccessStatus(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ShareGetEncyptDataAccessStatusAsync(string path) {
+            this.ShareGetEncyptDataAccessStatusAsync(path, null);
+        }
+        
+        /// <remarks/>
+        public void ShareGetEncyptDataAccessStatusAsync(string path, object userState) {
+            if ((this.ShareGetEncyptDataAccessStatusOperationCompleted == null)) {
+                this.ShareGetEncyptDataAccessStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShareGetEncyptDataAccessStatusOperationCompleted);
+            }
+            this.InvokeAsync("ShareGetEncyptDataAccessStatus", new object[] {
+                        path}, this.ShareGetEncyptDataAccessStatusOperationCompleted, userState);
+        }
+        
+        private void OnShareGetEncyptDataAccessStatusOperationCompleted(object arg) {
+            if ((this.ShareGetEncyptDataAccessStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShareGetEncyptDataAccessStatusCompleted(this, new ShareGetEncyptDataAccessStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShareGetAbeState", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool ShareGetAbeState(string path) {
+            object[] results = this.Invoke("ShareGetAbeState", new object[] {
+                        path});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginShareGetAbeState(string path, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("ShareGetAbeState", new object[] {
+                        path}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndShareGetAbeState(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void ShareGetAbeStateAsync(string path) {
+            this.ShareGetAbeStateAsync(path, null);
+        }
+        
+        /// <remarks/>
+        public void ShareGetAbeStateAsync(string path, object userState) {
+            if ((this.ShareGetAbeStateOperationCompleted == null)) {
+                this.ShareGetAbeStateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShareGetAbeStateOperationCompleted);
+            }
+            this.InvokeAsync("ShareGetAbeState", new object[] {
+                        path}, this.ShareGetAbeStateOperationCompleted, userState);
+        }
+        
+        private void OnShareGetAbeStateOperationCompleted(object arg) {
+            if ((this.ShareGetAbeStateCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ShareGetAbeStateCompleted(this, new ShareGetAbeStateCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1010,4 +1200,64 @@ namespace WebsitePanel.Providers.StorageSpaces {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void RemoveShareCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShareSetAbeStateCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShareSetEncyptDataAccessCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShareGetEncyptDataAccessStatusCompletedEventHandler(object sender, ShareGetEncyptDataAccessStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ShareGetEncyptDataAccessStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ShareGetEncyptDataAccessStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ShareGetAbeStateCompletedEventHandler(object sender, ShareGetAbeStateCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ShareGetAbeStateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal ShareGetAbeStateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
 }
