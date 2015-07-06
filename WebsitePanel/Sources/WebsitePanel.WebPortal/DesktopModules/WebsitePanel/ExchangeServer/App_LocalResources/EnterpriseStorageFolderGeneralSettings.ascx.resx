@@ -180,4 +180,16 @@
   <data name="locUncPath.Text" xml:space="preserve">
     <value>UNC Path:</value>
   </data>
+  <data name="locABE.Text" xml:space="preserve">
+    <value>Enable Access-Based Enumeration:</value>
+  </data>
+  <data name="chkAbe.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="locEda.Text" xml:space="preserve">
+    <value>Encrypt data access:</value>
+  </data>
+  <data name="chkEda.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

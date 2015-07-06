@@ -1374,6 +1374,42 @@ namespace WebsitePanel.EnterpriseServer
             return esId;
         }
 
+        public static void SetEsFolderShareSettings(int itemId, string folderName, bool abeIsEnabled, bool edaIsEnabled)
+        {
+            SetEsFolderShareSettingsInternal(itemId, folderName, abeIsEnabled, edaIsEnabled);
+        }
+
+        private static void SetEsFolderShareSettingsInternal(int itemId, string folderName, bool abeIsEnabled, bool edaIsEnabled)
+        {
+           TaskManager.StartTask("ENTERPRISE_STORAGE", "SET_ES_FOLDER_SHARE_SETTINGS");
+
+            try
+            {
+                var  esFolder = ObjectUtils.FillObjectFromDataReader<EsFolder>(DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                if (esFolder == null)
+                {
+                    throw new Exception("Folder not found");
+                }
+
+                if (esFolder.StorageSpaceFolderId == null)
+                {
+                    throw new Exception("Folder is not Storage Space folder");
+                }
+
+                StorageSpacesController.SetStorageSpaceFolderAbeStatus(esFolder.StorageSpaceFolderId.Value, abeIsEnabled);
+                StorageSpacesController.SetStorageSpaceFolderEncryptDataAccessStatus(esFolder.StorageSpaceFolderId.Value, edaIsEnabled);
+            }
+            catch (Exception exception)
+            {
+                TaskManager.WriteError(exception);
+            }
+            finally
+            {
+               TaskManager.CompleteTask();
+            }
+        }
+
         #region WebDav
 
         protected static int AddWebDavDirectoryInternal(int packageId, string site, string vdirName, string contentpath)

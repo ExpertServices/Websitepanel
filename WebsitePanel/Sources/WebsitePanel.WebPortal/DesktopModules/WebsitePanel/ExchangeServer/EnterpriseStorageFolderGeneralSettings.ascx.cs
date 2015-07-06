@@ -113,9 +113,13 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (folder.StorageSpaceFolderId != null)
                 {
-                    uncPathRow.Visible = true;
+                    uncPathRow.Visible = edaRow.Visible = abeRow.Visible = true;
 
                     lblUncPath.Text = folder.UncPath;
+
+
+                    chkAbe.Checked = ES.Services.StorageSpaces.GetStorageSpaceFolderAbeStatus(folder.StorageSpaceFolderId.Value);
+                    chkEda.Checked = ES.Services.StorageSpaces.GetStorageSpaceFolderEncryptDataAccessStatus(folder.StorageSpaceFolderId.Value);
                 }
             }
             catch (Exception ex)
@@ -167,6 +171,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     false,
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
+
+                if (edaRow.Visible && abeRow.Visible)
+                {
+                   ES.Services.EnterpriseStorage.SetEsFolderShareSettings(PanelRequest.ItemID, PanelRequest.FolderID, chkAbe.Checked, chkEda.Checked);
+                }
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
