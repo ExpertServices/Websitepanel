@@ -36,6 +36,8 @@ namespace WebsitePanel.Portal.StorageSpaces
                 {
                     txtName.Text = storage.Name;
                     txtStorageSize.Text = ConvertBytesToGB(storage.FsrmQuotaSizeBytes).ToString();
+                    chkIsDisabled.Checked = storage.IsDisabled;
+
                     path = storage.Path;
 
                     switch (storage.FsrmQuotaType)
@@ -237,6 +239,8 @@ namespace WebsitePanel.Portal.StorageSpaces
 
             storage.FsrmQuotaType = rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard;
             storage.FsrmQuotaSizeBytes = (long)(decimal.Parse(txtStorageSize.Text)*1024*1024*1024);
+
+            storage.IsDisabled = chkIsDisabled.Checked;
 
             var result = ES.Services.StorageSpaces.SaveStorageSpace(storage);
 
