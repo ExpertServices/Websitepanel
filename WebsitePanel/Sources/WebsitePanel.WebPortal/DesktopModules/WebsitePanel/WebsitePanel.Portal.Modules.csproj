@@ -5108,6 +5108,9 @@
     </Content>
     <Content Include="ProviderControls\App_LocalResources\StorageSpaceServices_Settings.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\AccountsList.ascx.resx" />
+    <Content Include="App_LocalResources\SearchObject.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
     <Content Include="RDSServersEditServer.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
@@ -5307,7 +5310,6 @@
     </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
-    <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
     <Content Include="UserControls\App_LocalResources\SendToControl.ascx.resx" />
     <Content Include="StorageSpaces\App_LocalResources\SpaceStorageLevelsList.ascx.resx">
       <SubType>Designer</SubType>
