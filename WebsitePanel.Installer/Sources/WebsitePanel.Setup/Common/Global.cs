@@ -202,6 +202,12 @@ namespace WebsitePanel.Setup
 			}
 		}
 
+        public abstract class Scheduler
+        {
+            public const string ComponentName = "Scheduler Service";
+            public const string ComponentCode = "scheduler service";
+        }
+
 		public abstract class CLI
 		{
 			public const string WebSiteIP = "webip";

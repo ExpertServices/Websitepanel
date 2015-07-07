@@ -928,6 +928,8 @@ namespace WebsitePanel.EnterpriseServer
                         DataProvider.AddEntepriseFolder(itemId, folderName, quota, null, null, esSesstings["UsersDomain"], storageSpaceFolderResult.Value);
 
                         CreateEnterpriseStorageVirtualFolderInternal(org.PackageId, itemId, folderName, CheckIfSsAndEsOnSameServer(esId, folder.StorageSpaceId) ? folder.Path : folder.UncPath);
+
+                        StorageSpacesController.SetStorageSpaceFolderAbeStatus(folder.Id, true);
                     }
                     else
                     {
