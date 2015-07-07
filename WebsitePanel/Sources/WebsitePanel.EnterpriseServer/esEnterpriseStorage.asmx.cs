@@ -189,6 +189,12 @@ namespace WebsitePanel.EnterpriseServer
             return EnterpriseStorageController.GetEnterpriseStorageServiceId(itemId);
         }
 
+        [WebMethod]
+        public void SetEsFolderShareSettings(int itemId, string folderName, bool abeIsEnabled, bool edaIsEnabled)
+        {
+            EnterpriseStorageController.SetEsFolderShareSettings(itemId, folderName, abeIsEnabled, edaIsEnabled);
+        }
+
         #region Directory Browsing
 
         [WebMethod]

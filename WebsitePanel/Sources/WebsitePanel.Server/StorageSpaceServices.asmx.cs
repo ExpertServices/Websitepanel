@@ -282,6 +282,74 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
-        
+
+        [WebMethod, SoapHeader("settings")]
+        public void ShareSetAbeState(string path, bool enabled)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShareSetAbeState", ProviderSettings.ProviderName);
+                StorageSpaceProvider.ShareSetAbeState(path, enabled);
+                Log.WriteEnd("'{0}' ShareSetAbeState", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShareSetAbeState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ShareSetEncyptDataAccess(string path, bool enabled)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShareSetEncyptDataAccess", ProviderSettings.ProviderName);
+                StorageSpaceProvider.ShareSetEncyptDataAccess(path, enabled);
+                Log.WriteEnd("'{0}' ShareSetEncyptDataAccess", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShareSetEncyptDataAccess", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public bool ShareGetEncyptDataAccessStatus(string path)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShareGetEncyptDataAccessStatus", ProviderSettings.ProviderName);
+                var result = StorageSpaceProvider.ShareGetEncyptDataAccessStatus(path);
+                Log.WriteEnd("'{0}' ShareGetEncyptDataAccessStatus", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShareGetEncyptDataAccessStatus", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool ShareGetAbeState(string path)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ShareGetAbeState", ProviderSettings.ProviderName);
+                var result = StorageSpaceProvider.ShareGetAbeState(path);
+                Log.WriteEnd("'{0}' ShareGetAbeState", ProviderSettings.ProviderName);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ShareGetAbeState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

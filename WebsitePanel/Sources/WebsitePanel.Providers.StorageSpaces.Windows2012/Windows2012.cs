@@ -457,6 +457,49 @@ namespace WebsitePanel.Providers.StorageSpaces
             }
         }
 
+        public StorageSpaceFolderShare GetShareByPath(string path, Runspace runspace = null)
+        {
+            Log.WriteStart("GetShare");
+            Log.WriteInfo("Path: {0}", path);
+
+            var closeRunspace = runspace == null;
+
+            try
+            {
+                if (runspace == null)
+                {
+                    runspace = OpenRunspace();
+                }
+
+                var cmd = new Command("Get-WmiObject");
+                cmd.Parameters.Add("Class", "Win32_Share");
+                cmd.Parameters.Add("Filter", string.Format("Path='{0}'", path).Replace("\\","\\\\"));
+
+                var result = ExecuteShellCommand(runspace, cmd, false);
+
+                if (!result.Any())
+                {
+                    return null;
+                }
+
+                return CreateShareEntity(result[0]);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                throw;
+            }
+            finally
+            {
+                if (closeRunspace)
+                {
+                    CloseRunspace(runspace);
+                }
+
+                Log.WriteEnd("GetShare");
+            }
+        }
+
         public bool RemoveShare(string shareName, Runspace runspace = null)
         {
             Log.WriteStart("RemoveShare");
@@ -506,6 +549,167 @@ namespace WebsitePanel.Providers.StorageSpaces
             result.UncPath = string.Format("\\\\{0}\\{1}", GetFqdn(), result.Name);
 
             return result;
+        }
+
+        public void ShareSetAbeState(string path, bool enabled)
+        {
+            Log.WriteStart("ShareSetAbeState");
+            Log.WriteInfo("Path: {0}", path);
+
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var share = GetShareByPath(path, runspace);
+
+                if (share == null)
+                {
+                    throw new Exception(string.Format("Share by path '{0}' not found", path));
+                }
+
+                var cmd = new Command("Set-SmbShare");
+                cmd.Parameters.Add("Name", share.Name);
+                cmd.Parameters.Add("FolderEnumerationMode", enabled ? 0 : 1);
+
+                ExecuteShellCommand(runspace, cmd, false);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+
+                Log.WriteEnd("ShareSetAbeState");
+            }
+        }
+
+        public bool ShareGetAbeState(string path)
+        {
+            Log.WriteStart("ShareGetAbeState");
+            Log.WriteInfo("Path: {0}", path);
+
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var share = GetShareByPath(path, runspace);
+
+                if (share == null)
+                {
+                    throw new Exception(string.Format("Share by path '{0}' not found", path));
+                }
+
+                var cmd = new Command("Get-SmbShare");
+                cmd.Parameters.Add("Name", share.Name);
+
+                var result = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
+
+                if (result == null)
+                {
+                    return false;
+                }
+
+                return GetPSObjectProperty(result, "FolderEnumerationMode").ToString() == "0";
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+
+                Log.WriteEnd("ShareGetAbeState");
+            }
+        }
+
+        public void ShareSetEncyptDataAccess(string path, bool enabled)
+        {
+            Log.WriteStart("ShareSetEncyptDataAccess");
+            Log.WriteInfo("Path: {0}", path);
+
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var share = GetShareByPath(path, runspace);
+
+                if (share == null)
+                {
+                    throw new Exception(string.Format("Share by path '{0}' not found", path));
+                }
+
+                var cmd = new Command("Set-SmbShare");
+                cmd.Parameters.Add("Name", share.Name);
+                cmd.Parameters.Add("EncryptData", enabled);
+                cmd.Parameters.Add("Force", true);
+
+                ExecuteShellCommand(runspace, cmd, false);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+
+                Log.WriteEnd("ShareSetEncyptDataAccess");
+            }
+        }
+
+        public bool ShareGetEncyptDataAccessStatus(string path)
+        {
+            Log.WriteStart("ShareGetEncyptDataAccessStatus");
+            Log.WriteInfo("Path: {0}", path);
+
+            Runspace runspace = null;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                var share = GetShareByPath(path, runspace);
+
+                if (share == null)
+                {
+                    throw new Exception(string.Format("Share by path '{0}' not found", path));
+                }
+
+                var cmd = new Command("Get-SmbShare");
+                cmd.Parameters.Add("Name", share.Name);
+
+                var result  = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
+
+                if (result == null)
+                {
+                    return false;
+                }
+
+                return (bool)GetPSObjectProperty(result, "EncryptData");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+
+                Log.WriteEnd("ShareGetEncyptDataAccessStatus");
+            }
         }
 
         public SystemFile[] Search(string[] searchPaths, string searchText, bool recursive)

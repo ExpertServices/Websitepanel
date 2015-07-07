@@ -22,7 +22,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
 
-            var storages = ObjectUtils.CreateListFromDataReader<StorageSpace>(DataProvider.GetStorageSpacesByResourceGroupName(groupName));
+            var storages = ObjectUtils.CreateListFromDataReader<StorageSpace>(DataProvider.GetStorageSpacesByResourceGroupName(groupName)).Where(x => !x.IsDisabled).ToList();
 
             if (!storages.Any())
             {

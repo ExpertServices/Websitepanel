@@ -85,6 +85,13 @@
                                         <asp:RadioButton ID="rbtnQuotaHard" runat="server" meta:resourcekey="rbtnQuotaHard" Text="Hard" GroupName="QuotaType" />
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="Label">
+                                        <asp:Localize ID="locIsDisabled" runat="server" meta:resourcekey="locIsDisabled" Text="Disable new folder creation:"></asp:Localize></td>
+                                    <td class="FormRBtnL">
+                                        <asp:CheckBox runat="server" ID="chkIsDisabled" meta:resourcekey="chkIsDisabled" Text="Yes"/>
+                                    </td>
+                                </tr>
                             </table>
                             <br />
                         </div>

@@ -21,5 +21,9 @@ namespace WebsitePanel.Providers.StorageSpaces
         SystemFile[] Search(string[] searchPaths, string searchText, bool recursive);
         byte[] GetFileBinaryChunk(string path, int offset, int length);
         void RemoveShare(string fullPath);
+        void ShareSetAbeState(string path, bool enabled);
+        bool ShareGetAbeState(string path);
+        bool ShareGetEncyptDataAccessStatus(string path);
+        void ShareSetEncyptDataAccess(string path, bool enabled);
     }
 }

@@ -5011,6 +5011,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@FsrmQuotaType", space.FsrmQuotaType),
                 new SqlParameter("@FsrmQuotaSizeBytes", space.FsrmQuotaSizeBytes),
                 new SqlParameter("@IsShared", space.IsShared),
+                new SqlParameter("@IsDisabled", space.IsDisabled),
                 new SqlParameter("@UncPath", space.UncPath)
             );
 
@@ -5035,6 +5036,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@FsrmQuotaType", space.FsrmQuotaType),
                 new SqlParameter("@FsrmQuotaSizeBytes", space.FsrmQuotaSizeBytes),
                 new SqlParameter("@IsShared", space.IsShared),
+                new SqlParameter("@IsDisabled", space.IsDisabled),
                 new SqlParameter("@UncPath", space.UncPath)
             );
 

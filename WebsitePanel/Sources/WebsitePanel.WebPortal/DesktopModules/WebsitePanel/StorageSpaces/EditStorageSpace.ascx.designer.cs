@@ -229,6 +229,24 @@ namespace WebsitePanel.Portal.StorageSpaces {
         protected global::System.Web.UI.WebControls.RadioButton rbtnQuotaHard;
         
         /// <summary>
+        /// locIsDisabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locIsDisabled;
+        
+        /// <summary>
+        /// chkIsDisabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkIsDisabled;
+        
+        /// <summary>
         /// buttonPanel control.
         /// </summary>
         /// <remarks>
