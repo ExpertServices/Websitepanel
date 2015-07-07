@@ -17,5 +17,10 @@ namespace WebsitePanel.WebDav.Core.Extensions
 
             return uri.ToString().Substring(hostStart + hostLength, uri.ToString().Length - hostStart - hostLength);
         }
+
+        public static string GetParentUriString(this Uri uri)
+        {
+            return uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length);
+        }
     }
 }
