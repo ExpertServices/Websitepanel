@@ -174,6 +174,7 @@
     <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
+    <Compile Include="Code\Helpers\SsHelper.cs" />
     <Compile Include="Code\Helpers\RdsServerStatusHandler.cs" />
     <Compile Include="Code\Helpers\VirtualMachineSettingExtensions.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
@@ -333,9 +334,16 @@
     <Compile Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx.designer.cs">
       <DependentUpon>HostedSharePointEnterpriseStorageUsage.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ProviderControls\StorageSpaceServices_Settings.ascx.cs">
+      <DependentUpon>StorageSpaceServices_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="RDS\RDSImportCollection.ascx.cs">
       <DependentUpon>RDSImportCollection.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\StorageSpaceServices_Settings.ascx.designer.cs">
+      <DependentUpon>StorageSpaceServices_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="RDS\RDSImportCollection.ascx.designer.cs">
       <DependentUpon>RDSImportCollection.ascx</DependentUpon>
@@ -349,6 +357,41 @@
     </Compile>
     <Compile Include="ThumbnailPhoto.ashx.cs">
       <DependentUpon>ThumbnailPhoto.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="StorageSpaces\EditStorageSpace.ascx.cs">
+      <DependentUpon>EditStorageSpace.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StorageSpaces\EditStorageSpace.ascx.designer.cs">
+      <DependentUpon>EditStorageSpace.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StorageSpaces\EditStorageSpaceLevel.ascx.cs">
+      <DependentUpon>EditStorageSpaceLevel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StorageSpaces\EditStorageSpaceLevel.ascx.designer.cs">
+      <DependentUpon>EditStorageSpaceLevel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StorageSpaces\SpaceStorageLevelsList.ascx.cs">
+      <DependentUpon>SpaceStorageLevelsList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StorageSpaces\SpaceStorageLevelsList.ascx.designer.cs">
+      <DependentUpon>SpaceStorageLevelsList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StorageSpaces\StorageSpacesList.ascx.cs">
+      <DependentUpon>StorageSpacesList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StorageSpaces\StorageSpacesList.ascx.designer.cs">
+      <DependentUpon>StorageSpacesList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="StorageSpaces\UserControls\StorageSpaceLevelResourceGroups.ascx.cs">
+      <DependentUpon>StorageSpaceLevelResourceGroups.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StorageSpaces\UserControls\StorageSpaceLevelResourceGroups.ascx.designer.cs">
+      <DependentUpon>StorageSpaceLevelResourceGroups.ascx</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SendToControl.ascx.cs">
       <DependentUpon>SendToControl.ascx</DependentUpon>
@@ -4927,7 +4970,13 @@
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageSettings.ascx" />
     <Content Include="HostedSharePoint\HostedSharePointEnterpriseStorageUsage.ascx" />
     <Content Include="RDS\RDSImportCollection.ascx" />
+    <Content Include="ProviderControls\StorageSpaceServices_Settings.ascx" />
     <Content Include="SettingsUserPasswordRequestLetter.ascx" />
+    <Content Include="StorageSpaces\EditStorageSpace.ascx" />
+    <Content Include="StorageSpaces\EditStorageSpaceLevel.ascx" />
+    <Content Include="StorageSpaces\SpaceStorageLevelsList.ascx" />
+    <Content Include="StorageSpaces\StorageSpacesList.ascx" />
+    <Content Include="StorageSpaces\UserControls\StorageSpaceLevelResourceGroups.ascx" />
     <Content Include="UserControls\SendToControl.ascx" />
     <Content Include="VpsMenu.ascx" />
     <Content Include="ProviderControls\HyperV2012R2_Settings.ascx" />
@@ -5055,6 +5104,11 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\SettingsUserPasswordRequestLetter.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ProviderControls\App_LocalResources\StorageSpaceServices_Settings.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\AccountsList.ascx.resx" />
+    <Content Include="App_LocalResources\SearchObject.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="RDS\App_LocalResources\RDSEditCollectionSettings.ascx.resx" />
@@ -5256,8 +5310,22 @@
     </Content>
     <Content Include="UserControls\App_LocalResources\MailAccountActions.ascx.resx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\UserPasswordExpirationNotificationView.ascx.resx" />
-    <Content Include="SkinControls\App_LocalResources\SearchObject.ascx.resx" />
     <Content Include="UserControls\App_LocalResources\SendToControl.ascx.resx" />
+    <Content Include="StorageSpaces\App_LocalResources\SpaceStorageLevelsList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="StorageSpaces\App_LocalResources\EditStorageSpaceLevel.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="StorageSpaces\UserControls\App_LocalResources\StorageSpaceLevelResourceGroups.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="StorageSpaces\App_LocalResources\StorageSpacesList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="StorageSpaces\App_LocalResources\EditStorageSpace.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\WebsiteActions.ascx.resx" />
     <Content Include="VPS\UserControls\App_LocalResources\Generation.ascx.resx">
       <SubType>Designer</SubType>
@@ -7091,9 +7159,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\UserControls\App_LocalResources\CountrySelector.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ExchangeServer\UserControls\App_LocalResources\AccountsList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\UserControls\App_LocalResources\MailboxSelector.ascx.resx">

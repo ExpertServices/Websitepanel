@@ -38,7 +38,7 @@ using System.ComponentModel;
 using Microsoft.Web.Services3;
 
 using WebsitePanel.Providers;
-using WebsitePanel.Ecommerce.EnterpriseServer;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.EnterpriseServer
 {

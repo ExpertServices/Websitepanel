@@ -90,7 +90,9 @@ namespace WebsitePanel.Setup
 		SwitchWebPortal2AspNet40,
         ConfigureSecureSessionModuleInWebConfig,
         RestoreConfig,
-        UpdateXml
+        UpdateXml,
+        SaveConfig,
+        DeleteDirectoryFiles
 	}
 	
 	public class InstallAction
@@ -152,6 +154,8 @@ namespace WebsitePanel.Setup
 
 		
 		public string Url { get; set; }
+
+        public Func<string, bool> FileFilter { get; set; }
 	
 	}
 }

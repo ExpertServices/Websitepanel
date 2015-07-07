@@ -37,6 +37,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Twilio;
+using WebsitePanel.EnterpriseServer.Base;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.SharePoint;
 using WebsitePanel.EnterpriseServer.Extensions;
@@ -56,17 +57,25 @@ using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 using System.Text.RegularExpressions;
 using WebsitePanel.Server.Client;
+using WebsitePanel.Providers.StorageSpaces;
 
 namespace WebsitePanel.EnterpriseServer
 {
     public class OrganizationController
     {
         public const string TemporyDomainName = "TempDomain";
+        public const string UseStorageSpaces = "UseStorageSpaces";
+        private static readonly OrganizationFoldersManager _foldersManager;
+
+        static OrganizationController()
+        {
+            _foldersManager = new OrganizationFoldersManager();
+        }
 
         private static bool CheckUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers))
@@ -81,7 +90,7 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckDeletedUserQuota(int orgId, out int errorCode)
         {
             errorCode = 0;
-            OrganizationStatistics stats = GetOrganizationStatistics(orgId);
+            OrganizationStatistics stats = GetOrganizationStatisticsByOrganization(orgId);
 
 
             if (stats.AllocatedDeletedUsers != -1 && (stats.DeletedUsers >= stats.AllocatedDeletedUsers))
@@ -486,7 +495,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
 
@@ -494,6 +503,10 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
+                
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
                 {
@@ -668,7 +681,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 bool successful = true;
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
 
                 try
                 {
@@ -793,6 +806,19 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
+                //Cleanup OrganizationFolders
+                try
+                {
+                    if (_foldersManager.DeleteFolders(itemId).IsSuccess == false)
+                    {
+                        successful = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    successful = false;
+                    TaskManager.WriteError(ex);
+                }
 
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
@@ -907,24 +933,35 @@ namespace WebsitePanel.EnterpriseServer
             return org;
         }
 
-        public static Organization GetOrganization(int itemId)
+        public static Organization GetOrganization(int itemId, bool withLog = true)
         {
             #region Demo Mode
             if (IsDemoMode)
             {
                 // load package by user
-                Organization org = new Organization();
-                org.PackageId = 0;
-                org.Id = 1;
-                org.OrganizationId = "fabrikam";
-                org.Name = "Fabrikam Inc";
-                org.KeepDeletedItemsDays = 14;
-                org.GlobalAddressList = "FabrikamGAL";
-                return org;
+                Organization orgDemo = new Organization();
+                orgDemo.PackageId = 0;
+                orgDemo.Id = 1;
+                orgDemo.OrganizationId = "fabrikam";
+                orgDemo.Name = "Fabrikam Inc";
+                orgDemo.KeepDeletedItemsDays = 14;
+                orgDemo.GlobalAddressList = "FabrikamGAL";
+
+                // Log Extension
+                if (withLog)
+                    LogExtension.WriteObject(orgDemo);
+
+                return orgDemo;
             }
             #endregion
 
-            return (Organization)PackageController.GetPackageItem(itemId);
+            var org = (Organization)PackageController.GetPackageItem(itemId);
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(org);
+
+            return org;
         }
 
         public static OrganizationStatistics GetOrganizationStatistics(int itemId)
@@ -971,9 +1008,11 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
+
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
                 OrganizationStatistics stats = new OrganizationStatistics();
                 if (byOrganization)
@@ -1048,6 +1087,8 @@ namespace WebsitePanel.EnterpriseServer
                         stats.CreatedRdsCollections = RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(org.Id);
                         stats.CreatedRdsServers = RemoteDesktopServicesController.GetOrganizationRdsServersCount(org.Id);
                     }
+
+                    stats.ServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
                 }
                 else
                 {
@@ -1136,6 +1177,26 @@ namespace WebsitePanel.EnterpriseServer
                                         stats.CreatedRdsCollections += RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(o.Id);
                                         stats.CreatedRdsServers += RemoteDesktopServicesController.GetOrganizationRdsServersCount(o.Id);
                                     }
+
+                                    if (stats.ServiceLevels == null)
+                                    {
+                                        stats.ServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
+                                    }
+                                    else
+                                    {
+                                        var orgServiceLevels = GetServiceLevelQuotas(cntx, org.Id);
+
+                                        foreach (var totalQuota in stats.ServiceLevels)
+                                        {
+                                            var orgQuota = orgServiceLevels.FirstOrDefault(q => q.QuotaName == totalQuota.QuotaName);
+
+                                            if (orgQuota != null)
+                                            {
+                                                totalQuota.QuotaAllocatedValue += orgQuota.QuotaAllocatedValue;
+                                                totalQuota.QuotaUsedValue += orgQuota.QuotaUsedValue;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -1144,63 +1205,64 @@ namespace WebsitePanel.EnterpriseServer
 
                 // disk space               
                 // allocated quotas                               
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].QuotaAllocatedValue;
-                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].QuotaAllocatedValue;
-                stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].QuotaAllocatedValue;
-                stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].QuotaAllocatedValue;
+
+                stats.AllocatedUsers = cntx.Quotas[Quotas.ORGANIZATION_USERS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedDeletedUsers = cntx.Quotas[Quotas.ORGANIZATION_DELETED_USERS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedDomains = cntx.Quotas[Quotas.ORGANIZATION_DOMAINS].GetQuotaAllocatedValue(byOrganization);
+                stats.AllocatedGroups = cntx.Quotas[Quotas.ORGANIZATION_SECURITYGROUPS].GetQuotaAllocatedValue(byOrganization);
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointFoundationServer))
                 {
-                    stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].QuotaAllocatedValue;
+                    stats.AllocatedSharePointSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_SITES].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.SharepointEnterpriseServer))
                 {
-                    stats.AllocatedSharePointEnterpriseSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_SITES].QuotaAllocatedValue;
+                    stats.AllocatedSharePointEnterpriseSiteCollections = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_ENTERPRISE_SITES].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 {
-                    stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].QuotaAllocatedValue;
-                    stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].QuotaAllocatedValue;
-                    stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].QuotaAllocatedValue;
+                    stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
                 {
-                    stats.AllocatedProfessionalCRMUsers = cntx.Quotas[Quotas.CRM2013_PROFESSIONALUSERS].QuotaAllocatedValue;
-                    stats.AllocatedBasicCRMUsers = cntx.Quotas[Quotas.CRM2013_BASICUSERS].QuotaAllocatedValue;
-                    stats.AllocatedEssentialCRMUsers = cntx.Quotas[Quotas.CRM2013_ESSENTIALUSERS].QuotaAllocatedValue;
+                    stats.AllocatedProfessionalCRMUsers = cntx.Quotas[Quotas.CRM2013_PROFESSIONALUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedBasicCRMUsers = cntx.Quotas[Quotas.CRM2013_BASICUSERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedEssentialCRMUsers = cntx.Quotas[Quotas.CRM2013_ESSENTIALUSERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
                 {
-                    stats.AllocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].QuotaAllocatedValue;
+                    stats.AllocatedBlackBerryUsers = cntx.Quotas[Quotas.BLACKBERRY_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
                 {
-                    stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].QuotaAllocatedValue;
+                    stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 {
-                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                 {
-                    stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
-                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
+                    stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].GetQuotaAllocatedValue(byOrganization);
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
                 {
-                    stats.AllocatedRdsServers = cntx.Quotas[Quotas.RDS_SERVERS].QuotaAllocatedValue;
-                    stats.AllocatedRdsCollections = cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue;
-                    stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue;
+                    stats.AllocatedRdsServers = cntx.Quotas[Quotas.RDS_SERVERS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedRdsCollections = cntx.Quotas[Quotas.RDS_COLLECTIONS].GetQuotaAllocatedValue(byOrganization);
+                    stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].GetQuotaAllocatedValue(byOrganization);
                 }
+
 
                 return stats;
             }
@@ -1212,6 +1274,23 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        private static List<QuotaValueInfo> GetServiceLevelQuotas(PackageContext cntx, int orgItemId)
+        {
+            ServiceLevel[] serviceLevels = GetSupportServiceLevels();
+            List<OrganizationUser> accounts = SearchAccounts(orgItemId, "", "", "", true);
+
+            var quotas = Array.FindAll(cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS));
+            foreach (var quota in quotas)
+            {
+               int levelId = serviceLevels.First(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).LevelId;
+                int usedInOrgCount = accounts.Count(x => x.LevelId == levelId);
+
+                quota.QuotaUsedValue = usedInOrgCount;
+            }
+
+            return quotas.ToList();
         }
 
         public static int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
@@ -1252,7 +1331,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check domains quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedDomains > -1
                 && orgStats.CreatedDomains >= orgStats.AllocatedDomains)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT;
@@ -1263,7 +1342,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
 
@@ -1310,8 +1389,9 @@ namespace WebsitePanel.EnterpriseServer
                     // add domain
                     domain.DomainId = domainId;
                 }
-
-
+                
+                // Log Extension
+                LogExtension.WriteObject(domain);
 
                 // register domain
                 DataProvider.AddExchangeOrganizationDomain(itemId, domain.DomainId, false);
@@ -1331,7 +1411,7 @@ namespace WebsitePanel.EnterpriseServer
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
                 }
 
-                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatisticsByOrganization(itemId);
 
                 if (orgStatsExchange.AllocatedMailboxes == 0)
                 {
@@ -1343,6 +1423,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     OCSController.AddDomain(domain.DomainName, itemId);
                 }
+
                 return 0;
             }
             catch (Exception ex)
@@ -1362,7 +1443,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return -1;
 
@@ -1392,7 +1473,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (currentDefaultOrganizationId > 0)
                 {
                     // load current default organization
-                    Organization currentDefaultOrg = (Organization)PackageController.GetPackageItem(currentDefaultOrganizationId);
+                    Organization currentDefaultOrg = GetOrganization(currentDefaultOrganizationId);
 
                     currentDefaultOrg.IsDefault = false;
 
@@ -1401,7 +1482,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // load organization
-                Organization newDefaultOrg = (Organization)PackageController.GetPackageItem(newDefaultOrganizationId);
+                Organization newDefaultOrg = GetOrganization(newDefaultOrganizationId);
                 
                 newDefaultOrg.IsDefault = true;
                 // save changes
@@ -2140,6 +2221,9 @@ namespace WebsitePanel.EnterpriseServer
                 var xml = ObjectUtils.Serialize(settings);
 
                 DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.PasswordSettings, xml);
+
+                // Log Extension
+                LogExtension.WriteVariable("Password Settings", xml);
             }
             catch (Exception ex)
             {
@@ -2246,6 +2330,9 @@ namespace WebsitePanel.EnterpriseServer
                 var xml = ObjectUtils.Serialize(settings);
 
                 DataProvider.UpdateOrganizationSettings(itemId, OrganizationSettings.GeneralSettings, xml);
+
+                // Log Extension
+                LogExtension.WriteVariable("General Settings", xml);
             }
             catch (Exception ex)
             {
@@ -2317,13 +2404,11 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_USER", itemId);
-
-            TaskManager.Write("Organization ID :" + itemId);
-            TaskManager.Write("name :" + name);
-            TaskManager.Write("domain :" + domain);
-            TaskManager.Write("subscriberNumber :" + subscriberNumber);
-
+            TaskManager.StartTask("ORGANIZATION", "CREATE_USER", displayName, itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {name, domain, subscriberNumber});
+            
             int userId = -1;
 
             try
@@ -2339,12 +2424,9 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
 
                 // load organization
-                WebsitePanel.Providers.HostedSolution.Organization org = GetOrganization(itemId);
-
+                Organization org = GetOrganization(itemId);
                 if (org == null)
-                {
                     return -1;
-                }
 
                 StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
 
@@ -2364,18 +2446,21 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string upn = string.Format("{0}@{1}", name, domain);
-                string sAMAccountName = BuildAccountNameEx(org, name);                    
+                string SamAccountName = BuildAccountNameEx(org, name);
 
-                TaskManager.Write("accountName :" + sAMAccountName);
-                TaskManager.Write("upn :" + upn);
+                // Log Extension
+                LogExtension.WriteVariable("Account Name", SamAccountName);
+                LogExtension.WriteVariables(new {upn});
 
-                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
+                if (orgProxy.CreateUser(org.OrganizationId, SamAccountName, displayName, upn, password, enabled) == 0)
                 {
-                    accountName = sAMAccountName;
-                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
-                    TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
+                    accountName = SamAccountName;
+                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(SamAccountName, org.OrganizationId);
+                    
+                    // Log Extension
+                    LogExtension.WriteVariable("sAMAccountName", retUser.DomainUserName);
 
-                    userId = AddOrganizationUser(itemId, sAMAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+                    userId = AddOrganizationUser(itemId, SamAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                     // register email address
                     AddAccountEmailAddress(userId, email);
@@ -2617,6 +2702,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "SET_DELETED_USER", itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {enableForceArchive});
 
             try
             {
@@ -2649,6 +2737,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
                 
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+
                 string accountName = GetAccountName(account.AccountName);
 
                 var deletedUser = new OrganizationDeletedUser
@@ -2673,12 +2764,28 @@ namespace WebsitePanel.EnterpriseServer
 
                         if (serviceId != 0)
                         {
-                            var settings = ServerController.GetServiceSettings(serviceId);
+                            string path = string.Empty;
+                            QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(org.PackageId, Quotas.ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE);
 
-                            deletedUser.StoragePath = settings["ArchiveStoragePath"];
+                            deletedUser.FileName = string.Format("{0}.pst", account.UserPrincipalName);
 
-                            if (!string.IsNullOrEmpty(deletedUser.StoragePath))
+                            if (UsingStorageSpaces(serviceId))
                             {
+                                var folder = _foldersManager.GetFolder(itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString())
+                                    ?? _foldersManager.CreateFolder(org.OrganizationId, itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString(),
+                                        StorageSpacesController.GetFsrmQuotaInBytes(diskSpaceQuota), QuotaType.Hard);
+
+                                deletedUser.StoragePath = StorageSpacesController.GetParentUnc(folder.UncPath);
+
+                                deletedUser.FolderName = Path.GetFileName(folder.UncPath);
+
+                                path = Path.Combine(folder.UncPath, deletedUser.FileName);
+                            }
+                            else
+                            {
+                                var settings = ServerController.GetServiceSettings(serviceId);
+
+                                deletedUser.StoragePath = settings["ArchiveStoragePath"];
                                 deletedUser.FolderName = org.OrganizationId;
 
                                 if (!CheckFolderExists(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName))
@@ -2686,22 +2793,18 @@ namespace WebsitePanel.EnterpriseServer
                                     CreateFolder(org.PackageId, deletedUser.StoragePath, deletedUser.FolderName);
                                 }
 
-                                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(org.PackageId, Quotas.ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE);
-
-                                if (diskSpaceQuota.QuotaAllocatedValue != -1)
+                                if (diskSpaceQuota.QuotaAllocatedValuePerOrganization != -1)
                                 {
                                     SetFRSMQuotaOnFolder(org.PackageId, deletedUser.StoragePath, org.OrganizationId, diskSpaceQuota, QuotaType.Hard);
                                 }
 
-                                deletedUser.FileName = string.Format("{0}.pst", account.UserPrincipalName);
-
-                                ExchangeServerController.ExportMailBox(itemId, accountId,
-                                    FilesController.ConvertToUncPath(serviceId,
-                                        Path.Combine(GetDirectory(deletedUser.StoragePath), deletedUser.FolderName, deletedUser.FileName)));
+                                path = FilesController.ConvertToUncPath(serviceId, Path.Combine(GetDirectory(deletedUser.StoragePath), deletedUser.FolderName, deletedUser.FileName));
                             }
+
+                            ExchangeServerController.ExportMailBox(itemId, accountId, path);
                         }
                     }
-                    
+
                     //Set Deleted Mailbox
                     ExchangeServerController.SetDeletedMailbox(itemId, accountId);
                 }
@@ -2731,16 +2834,49 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        public static byte[] GetArchiveFileBinaryChunk(int packageId, int itemId, int deleteAccountId, int offset, int length)
         {
+            var user = GetDeletedUser(deleteAccountId);
+
+            var path = Path.Combine(user.StoragePath, user.FolderName, user.FileName);
+
             var os = GetOS(packageId);
 
-            if (os != null && os.CheckFileServicesInstallation())
+            if (os != null)
             {
                 return os.GetFileBinaryChunk(path, offset, length);
             }
 
-            return null;
+            var folder = _foldersManager.GetFolder(itemId, StorageSpaceFolderTypes.DeletedUsersData.ToString());
+
+            if (folder == null)
+            {
+                return null;
+            }
+
+            return StorageSpacesController.GetFileBinaryChunk(folder.StorageSpaceId, path, offset, length);
+        }
+
+        private static bool UsingStorageSpaces(int serviceId)
+        {
+            var settings = ServerController.GetServiceSettings(serviceId);
+
+            if (settings == null)
+            {
+                return false;
+            }
+
+            if (!settings.ContainsKey(UseStorageSpaces))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(settings[UseStorageSpaces]))
+            {
+                return false;
+            }
+
+            return Convert.ToBoolean(settings[UseStorageSpaces]);
         }
 
         private static bool CheckScheduleTaskRun(int packageId, string taskId)
@@ -2848,7 +2984,7 @@ namespace WebsitePanel.EnterpriseServer
                 os.SetQuotaLimitOnFolder(
                     Path.Combine(GetDirectory(path), folderName),
                     GetLocationDrive(path), quotaType,
-                    quotaInfo.QuotaAllocatedValue.ToString() + unit,
+                    quotaInfo.QuotaAllocatedValuePerOrganization.ToString() + unit,
                     0, String.Empty, String.Empty);
             }
         }
@@ -2872,7 +3008,6 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.CURRENT_USER_IS_CRM_USER;
                 }
 
-
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
                     return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER;
@@ -2883,7 +3018,6 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER;
                 }
 
-
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
@@ -2892,6 +3026,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount user = ExchangeServerController.GetAccount(itemId, accountId);
                 
+                // Log Extension
+                LogExtension.SetItemName(user.DisplayName);
+
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string account = GetAccountName(user.AccountName);
@@ -2963,13 +3100,17 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteOrganizationDeletedUser(id);
         }
 
-        public static OrganizationUser GetAccount(int itemId, int userId)
+        public static OrganizationUser GetAccount(int itemId, int userId, bool withLog = true)
         {
             OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
                 DataProvider.GetExchangeAccount(itemId, userId));
 
             if (account == null)
                 return null;
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(account);
 
             return account;
         }
@@ -2989,7 +3130,7 @@ namespace WebsitePanel.EnterpriseServer
         private static void DeleteUserFromMetabase(int itemId, int accountId)
         {
             // try to get organization
-            if (GetOrganization(itemId) == null)
+            if (GetOrganization(itemId, false) == null)
                 return;
 
             DataProvider.DeleteExchangeAccount(itemId, accountId);
@@ -3013,12 +3154,12 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                org = GetOrganization(itemId);
+                org = GetOrganization(itemId, false);
                 if (org == null)
                     return null;
 
                 // load account
-                account = GetAccount(itemId, accountId);
+                account = GetAccount(itemId, accountId, false);
             }
             catch (Exception) { }
 
@@ -3113,8 +3254,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", itemId);
-
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", displayName, itemId);
+            
             try
             {
                 displayName = displayName.Trim();
@@ -3133,11 +3274,16 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.WriteVariables(new {notes});
+
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
                 // external email
                 string externalEmailAddress = (account.AccountType == ExchangeAccountType.User) ? externalEmail : account.PrimaryEmailAddress;
+
+                var oldOrgUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
 
                 orgProxy.SetUserGeneralSettings(
                     org.OrganizationId,
@@ -3170,13 +3316,20 @@ namespace WebsitePanel.EnterpriseServer
                     externalEmailAddress,
                     userMustChangePassword);
 
+                var newOrgUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                account.LogPropertyIfChanged(a => a.SubscriberNumber, subscriberNumber);
+                account.LogPropertyIfChanged(a => a.LevelId, levelId);
+                account.LogPropertyIfChanged(a => a.IsVIP, isVIP);
+                LogExtension.LogPropertiesIfChanged(oldOrgUser, newOrgUser);
+
                 // update account
                 account.DisplayName = displayName;
                 account.SubscriberNumber = subscriberNumber;
                 account.LevelId = levelId;
                 account.IsVIP = isVIP;
-
-                //account.
 
                 UpdateAccount(account);
                 UpdateAccountServiceLevelSettings(account);
@@ -3208,8 +3361,6 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-
-
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
@@ -3221,6 +3372,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 OrganizationUser user = GetUserGeneralSettings(itemId, accountId);
+               
+                // Log Extension
+                LogExtension.SetItemName(user.DisplayName);
+                LogExtension.WriteObject(user);
+                LogExtension.WriteVariables(new {inherit});
+                user.LogPropertyIfChanged(u => u.UserPrincipalName, userPrincipalName);
 
                 if (user.UserPrincipalName != userPrincipalName)
                 {
@@ -3488,7 +3645,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return null;
 
@@ -3644,10 +3801,10 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", itemId);
-
-            TaskManager.Write("Organization ID :" + itemId);
-            TaskManager.Write("display name :" + displayName);
+            TaskManager.StartTask("ORGANIZATION", "CREATE_SECURITY_GROUP", displayName, itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {displayName});
 
             int securityGroupId = -1;
 
@@ -3657,7 +3814,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load organization
                 Organization org = GetOrganization(itemId);
-
                 if (org == null)
                 {
                     return -1;
@@ -3677,13 +3833,16 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string groupName = BuildAccountNameEx(org, displayName.Replace(" ", ""));
-                    
-                TaskManager.Write("accountName :" + groupName);
+                
+                // Log Extension
+                LogExtension.WriteVariables(new {groupName});
 
                 if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
                     OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
-                    TaskManager.Write("sAMAccountName :" + retSecurityGroup.SAMAccountName);
+                    
+                    // Log Extension
+                    LogExtension.WriteObject(retSecurityGroup);
 
                     securityGroupId = AddAccount(itemId, ExchangeAccountType.SecurityGroup, groupName,
                                                     displayName, null, false,
@@ -3803,6 +3962,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -3829,8 +3991,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", itemId);
-
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", displayName, itemId);
+            
             try
             {
                 displayName = displayName.Trim();
@@ -3847,17 +4009,28 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.WriteVariables(new {notes});
+
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
                 // external email
 
+                var oldObj = orgProxy.GetSecurityGroupGeneralSettings(accountName, org.OrganizationId);
+                
                 orgProxy.SetSecurityGroupGeneralSettings(
                     org.OrganizationId,
                     accountName,
                     memberAccounts,
                     notes);
 
+                var newObj = orgProxy.GetSecurityGroupGeneralSettings(accountName, org.OrganizationId);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
+                
                 // update account
                 account.DisplayName = displayName;
 
@@ -3981,6 +4154,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("ORGANIZATION", "DELETE_USER_FROM_SECURITY_GROUP", itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {groupName});
 
             try
             {
@@ -3991,6 +4167,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load user account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
@@ -4120,7 +4299,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId);
             if (org == null)
                 return null;
 
@@ -4234,6 +4413,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteVariables(new { levelID, levelName, levelDescription }); 
+                
                 DataProvider.UpdateSupportServiceLevel(levelID, levelName, levelDescription);
             }
             catch (Exception ex)

@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Text.RegularExpressions;
 using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Portal
@@ -33,6 +34,11 @@ namespace WebsitePanel.Portal
     public class EnterpriseStorageHelper
     {
         #region Folders
+
+        public static bool ValidateFolderName(string name)
+        {
+            return Regex.IsMatch(name, @"^[a-zA-Z0-9-_. ]+$");
+        }
 
         SystemFilesPaged folders;
 
@@ -46,8 +52,7 @@ namespace WebsitePanel.Portal
         {
             filterValue = filterValue ?? string.Empty;
 
-            folders = ES.Services.EnterpriseStorage.GetEnterpriseFoldersPaged(itemId,
-                filterValue, sortColumn, startRowIndex, maximumRows);
+            folders = ES.Services.EnterpriseStorage.GetEnterpriseFoldersPaged(itemId, true, false, true, filterValue, sortColumn, startRowIndex, maximumRows);
 
             return folders.PageItems;
         }

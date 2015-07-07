@@ -138,4 +138,7 @@
   <data name="lblArchiveStorageSpace.Text" xml:space="preserve">
     <value>Archive Storage Path:</value>
   </data>
+  <data name="chkUseStorageSpaces.Text" xml:space="preserve">
+    <value>Use Storage Spaces</value>
+  </data>
 </root>

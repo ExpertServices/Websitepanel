@@ -171,4 +171,25 @@
   <data name="colFolderGeneralSettings.Text" xml:space="preserve">
     <value>General Settings</value>
   </data>
+  <data name="btnMigrate.Text" xml:space="preserve">
+    <value>Move to Storage Spaces</value>
+  </data>
+  <data name="btnMigrate.OnClientClick" xml:space="preserve">
+    <value>if(!confirm('Are you sure?')) return false; else ShowProgressDialog('Moving folder to Storage Space...');</value>
+  </data>
+  <data name="locUncPath.Text" xml:space="preserve">
+    <value>UNC Path:</value>
+  </data>
+  <data name="locABE.Text" xml:space="preserve">
+    <value>Enable Access-Based Enumeration:</value>
+  </data>
+  <data name="chkAbe.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="locEda.Text" xml:space="preserve">
+    <value>Encrypt data access:</value>
+  </data>
+  <data name="chkEda.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>

@@ -50,8 +50,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\SharePointServerProxy.cs
 REM %WSDL% %SERVER_URL%/VirtualizationServer.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerProxy.cs /namespace:WebsitePanel.Providers.Virtualization /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy.cs
 
-%WSDL% %SERVER_URL%/VirtualizationServer2012.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs /namespace:WebsitePanel.Providers.Virtualization2012 /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs
+REM %WSDL% %SERVER_URL%/VirtualizationServer2012.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs /namespace:WebsitePanel.Providers.Virtualization2012 /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy2012.cs
 
 REM %WSDL% %SERVER_URL%/VirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs /namespace:WebsitePanel.Providers.VirtualizationForPC /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs
@@ -73,3 +73,6 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\RemoteDesktopServicesProxy.cs
 
 REM %WSDL% %SERVER_URL%/EnterpriseStorage.asmx /out:.\WebsitePanel.Server.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.Providers.EnterpriseStorage /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\EnterpriseStorageProxy.cs
+
+%WSDL% %SERVER_URL%/StorageSpaceServices.asmx /out:.\WebsitePanel.Server.Client\StorageSpacesProxy.cs /namespace:WebsitePanel.Providers.StorageSpaces /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\StorageSpacesProxy.cs

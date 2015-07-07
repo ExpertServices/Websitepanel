@@ -33,6 +33,7 @@ using System.Data;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.HostedSolution;
@@ -226,7 +227,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Check quota.
-            OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatistics(item.OrganizationId);
+            OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatisticsByOrganization(item.OrganizationId);
             //QuotaValueInfo quota = PackageController.GetPackageQuota(item.PackageId, Quotas.HOSTED_SHAREPOINT_SITES);
 
             if (orgStats.AllocatedSharePointSiteCollections > -1

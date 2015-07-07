@@ -118,9 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblSpacesFolder.Text" xml:space="preserve">
-    <value>Enterprise Storage Path:</value>
+    <value>Cloud Folders Path:</value>
   </data>
   <data name="lblDomain.Text" xml:space="preserve">
-    <value>Enterprise Storage Domain:</value>
+    <value>Cloud Folders Domain:</value>
+  </data>
+  <data name="lblUseStorageSpaces.Text" xml:space="preserve">
+    <value>Use Storage Spaces:</value>
+  </data>
+  <data name="chkUseStorageSpaces.Text" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

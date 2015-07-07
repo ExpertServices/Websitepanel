@@ -46,7 +46,7 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Web.Services.Protocols;
     using System;
     using System.Xml.Serialization;
-	using WebsitePanel.Ecommerce.EnterpriseServer;
+	using WebsitePanel.EnterpriseServer;
     
     
     /// <remarks/>

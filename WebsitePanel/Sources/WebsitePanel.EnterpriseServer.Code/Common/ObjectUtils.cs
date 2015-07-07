@@ -32,9 +32,13 @@ using System.Reflection;
 using System.Data;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -736,8 +740,18 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
-        } 
+        }
 
+        public static PropertyInfo GetProperty<T, U>(T obj, Expression<Func<T, U>> expression)
+        {
+            var member = expression.Body as MemberExpression;
+
+            if (member == null || member.Member is PropertyInfo == false)
+                throw new ArgumentException("Expression is not a Property", "expression");
+
+            return (PropertyInfo) member.Member;
+        }
+        
         #region Helper Functions
 
         /// <summary>
@@ -772,5 +786,34 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        /// <summary>
+        /// Perform a deep Copy of the object.
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T Clone<T>(T source)
+        {
+            if (!typeof (T).IsSerializable)
+            {
+                throw new ArgumentException("The type must be serializable: " + typeof(T), "source");
+            }
+
+            // Don't serialize a null object, simply return the default for that object
+            if (ReferenceEquals(source, null))
+            {
+                return default(T);
+            }
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new MemoryStream();
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (T) formatter.Deserialize(stream);
+            }
+        }
     }
 }

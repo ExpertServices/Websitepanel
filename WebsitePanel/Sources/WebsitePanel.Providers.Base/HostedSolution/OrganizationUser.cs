@@ -225,6 +225,7 @@ namespace WebsitePanel.Providers.HostedSolution
             set { notes = value; }
         }
 
+        [LogProperty]
         public int AccountId
         {
             get { return accountId; }
@@ -243,24 +244,28 @@ namespace WebsitePanel.Providers.HostedSolution
             set { packageId = value; }
         }
 
+        [LogProperty]
         public string AccountName
         {
             get { return accountName; }
             set { accountName = value; }
         }
 
+        [LogProperty]
         public string SamAccountName
         {
             get { return samAccountName; }
             set { samAccountName = value; }
         }
 
+        [LogProperty]
         public string DisplayName
         {
             get { return displayName; }
             set { displayName = value; }
         }
 
+        [LogProperty("Email Address")]
         public string PrimaryEmailAddress
         {
             get { return primaryEmailAddress; }
@@ -336,5 +341,10 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         public DateTime PasswordExpirationDateTime { get; set; }
+
+        public override string ToString()
+        {
+            return !string.IsNullOrEmpty(accountName) ? accountName : base.ToString();
+        }
     }
 }

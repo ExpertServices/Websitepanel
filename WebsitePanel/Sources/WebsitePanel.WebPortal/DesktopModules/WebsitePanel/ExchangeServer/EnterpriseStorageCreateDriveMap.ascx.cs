@@ -107,7 +107,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
-                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_MAPPED_DRIVE", "Enterprise Storage");
+                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_MAPPED_DRIVE", "Cloud Folders");
                     return;
                 }
 

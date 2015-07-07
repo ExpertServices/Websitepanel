@@ -80,7 +80,7 @@
                             <asp:TemplateField>
                                 <ItemTemplate>
 					                <asp:HyperLink ID="lnkDownload" runat="server" Visible='<%# !(bool)Eval("IsArchiveEmpty") %>'
-						                NavigateUrl='<%# (bool)Eval("IsArchiveEmpty") ? "#" : GetDownloadLink((string)Eval("StoragePath"),(string)Eval("FolderName"),(string)Eval("FileName")) %>'>
+						                NavigateUrl='<%# (bool)Eval("IsArchiveEmpty") ? "#" : GetDownloadLink((int)Eval("AccountId"), Eval("FileName").ToString()) %>'>
                                         <%# Eval("FileName") %>
 					                </asp:HyperLink>
 							    </ItemTemplate>

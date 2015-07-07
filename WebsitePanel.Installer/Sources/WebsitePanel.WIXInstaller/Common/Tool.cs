@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.Win32;
+
 using WebsitePanel.Setup;
 
 namespace WebsitePanel.WIXInstaller.Common
 {
+    public delegate string InstallToolDelegate (params string[] Components);
     internal static class Tool
     {
         public const int MINIMUM_WEBSERVER_MAJOR_VERSION = 6;
@@ -63,91 +66,149 @@ namespace WebsitePanel.WIXInstaller.Common
                 Value = int.Parse(Key.GetValue(AspNet45, 0).ToString());
             return Value == 1;
         }
-        public static bool InstallWebRole(out string Msg)
+        public static string[] GetWebRoleComponents()
         {
-            Msg = string.Empty;
+            string[] Result = null;
             var OSV = Global.OSVersion;
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                    {
-                        var Features = new[]
+                        Result = new[] 
                         { 
-                            "Web-Server"
+                            "Web-Server",
+                            "Web-Common-Http",
+                            "Web-Default-Doc",
+                            "Web-App-Dev",
+                            "Web-ISAPI-Ext",
+                            "Web-ISAPI-Filter",
+                            "Web-Net-Ext",
+                            "Web-Mgmt-Console",                            
+                            "Web-Filtering",
+                            "Web-Security",
+                            "Web-Static-Content"
                         };
-                        Msg = InstallWebViaServerManagerCmd(Features);
-                    }
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
                 case OS.WindowsVersion.WindowsServer2012:
                 case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
                 case OS.WindowsVersion.Windows8:
-                    {
-                        var Features = new[]
+                        Result = new[]
                         { 
-                            "IIS-WebServer",
-                            "IIS-WebServerRole",                
+                            "IIS-WebServerRole",
+                            "IIS-WebServer",                                            
                             "IIS-CommonHttpFeatures",
                             "IIS-DefaultDocument",
+                            "IIS-ApplicationDevelopment",
                             "IIS-ISAPIExtensions",
                             "IIS-ISAPIFilter",
-                            "IIS-ManagementConsole",
                             "IIS-NetFxExtensibility",
+                            "IIS-ManagementConsole",                            
                             "IIS-RequestFiltering",
                             "IIS-Security",
                             "IIS-StaticContent"                
                         };
-                        Msg = InstallWebViaDism(Features);
-                    }
                     break;
-                default:
-                    return false;
             }
-            return true;
+            return Result;
         }
-        public static bool InstallWebFeatures(out string Msg)
+        public static string[] GetWebDevComponents()
         {
-            Msg = string.Empty;
+            string[] Result = null;
             var OSV = Global.OSVersion;
             switch (OSV)
             {
                 case OS.WindowsVersion.WindowsServer2008:
-                    {
-                        var Features = new[]
-                        {
-                            "Web-Asp-Net"              
+                        Result = new[]
+                        { 
+                            "Web-App-Dev",
+                            "Web-ISAPI-Ext",
+                            "Web-ISAPI-Filter",
+                            "Web-Net-Ext",
+                            "Web-Asp-Net"
                         };
-                        Msg += InstallWebViaServerManagerCmd(Features);
-                        Msg += PrepareAspNet();
-                    }
+                    break;
+                case OS.WindowsVersion.Windows7:
+                case OS.WindowsVersion.WindowsServer2008R2:
+                    Result = new[]
+                        {
+                            "IIS-ApplicationDevelopment",
+                            "IIS-ISAPIExtensions",
+                            "IIS-ISAPIFilter",
+                            "IIS-NetFxExtensibility",
+                            "IIS-ASPNET"
+                        };
+                    break;
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:                
+                case OS.WindowsVersion.Windows8:
+                        Result = new[]
+                        { 
+                            "IIS-ApplicationDevelopment",
+                            "IIS-ISAPIExtensions",
+                            "IIS-ISAPIFilter",
+                            "IIS-NetFxExtensibility",
+                            "IIS-ASPNET",
+                            "IIS-ASPNET45"
+                        };
+                    break;
+            }
+            return Result;
+        }
+        public static string [] GetNetFxComponents()
+        {
+            string[] Result = null;
+            var OSV = Global.OSVersion;
+            switch (OSV)
+            {
+                case OS.WindowsVersion.WindowsServer2008:
+                        Result = new[] { "NET-Framework" };
                     break;
                 case OS.WindowsVersion.WindowsServer2008R2:
                 case OS.WindowsVersion.WindowsServer2012:
                 case OS.WindowsVersion.WindowsServer2012R2:
                 case OS.WindowsVersion.Windows7:
                 case OS.WindowsVersion.Windows8:
-                    {
-                        var Features = new[]
-                        { 
-                            "IIS-ApplicationDevelopment",
-                            "IIS-ASPNET",
-                            "IIS-ASPNET45"
-                        };
-                        Msg = InstallWebViaDism(Features);
-                    }
+                        Result = new[] { "NetFx3" };
                     break;
-                default:
-                    return false;
             }
-            return true;
+            return Result;
         }
         public static string PrepareAspNet()
         {
             var Cmd = string.Format(@"Microsoft.NET\Framework{0}\v4.0.30319\aspnet_regiis.exe", Environment.Is64BitOperatingSystem ? "64" : "" );
             return RunTool(Path.Combine(OS.GetWindowsDirectory(), Cmd), "-i -enable");
         }
+        public static InstallToolDelegate GetInstallTool()
+        {
+            InstallToolDelegate Result = null;
+            var OSV = Global.OSVersion;
+            switch (OSV)
+            {
+                case OS.WindowsVersion.WindowsServer2008:
+                        Result = InstallWebViaServerManagerCmd;
+                    break;
+                case OS.WindowsVersion.WindowsServer2008R2:
+                case OS.WindowsVersion.Windows7:
+                        Result = InstallWebViaDism;
+                    break;
+                case OS.WindowsVersion.WindowsServer2012:
+                case OS.WindowsVersion.WindowsServer2012R2:                
+                case OS.WindowsVersion.Windows8:
+                        Result = InstallWebViaDismEx;
+                    break;
+            }
+            return Result;
+        }
         private static string InstallWebViaDism(params string[] Features)
+        {
+            var Params = string.Format("/NoRestart /Online /Enable-Feature {0}",
+                                       string.Join(" ", Features.Select(
+                                           Feature => string.Format("/FeatureName:{0}", Feature)
+                                       )));
+            return RunTool(Path.Combine(OS.GetWindowsDirectory(), @"SysNative\dism.exe"), Params);
+        }
+        private static string InstallWebViaDismEx(params string[] Features)
         {
             var Params = string.Format("/NoRestart /Online /Enable-Feature {0}",
                                        string.Join(" ", Features.Select(

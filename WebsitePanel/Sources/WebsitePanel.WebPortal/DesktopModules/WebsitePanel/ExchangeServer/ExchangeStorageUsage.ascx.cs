@@ -30,6 +30,7 @@ using System;
 using System.Web;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -49,7 +50,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindQuotas()
         {
-            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
             btnUsedSize.Text = (stats.UsedDiskSpace < 0) ? GetLocalizedString("Unlimited.Text") : stats.UsedDiskSpace.ToString();
         }

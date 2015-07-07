@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Specialized;
 using System.Data;
 using System.Web;
 using System.Collections;
@@ -135,9 +136,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, bool loadUsagesData, bool loadWebdavRules, bool loadMappedDrives, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, filterValue, sortColumn, startRow, maximumRows);
+            return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, loadUsagesData, loadWebdavRules, loadMappedDrives, filterValue, sortColumn, startRow, maximumRows);
         }
 
         [WebMethod]
@@ -180,6 +181,18 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile[] SearchFiles(int itemId, string[] searchPaths, string searchText, string userPrincipalName, bool recursive)
         {
            return EnterpriseStorageController.SearchFiles(itemId, searchPaths, searchText, userPrincipalName, recursive);
+        }
+
+        [WebMethod]
+        public int GetEnterpriseStorageServiceId(int itemId)
+        {
+            return EnterpriseStorageController.GetEnterpriseStorageServiceId(itemId);
+        }
+
+        [WebMethod]
+        public void SetEsFolderShareSettings(int itemId, string folderName, bool abeIsEnabled, bool edaIsEnabled)
+        {
+            EnterpriseStorageController.SetEsFolderShareSettings(itemId, folderName, abeIsEnabled, edaIsEnabled);
         }
 
         #region Directory Browsing
@@ -230,6 +243,12 @@ namespace WebsitePanel.EnterpriseServer
         public List<string> GetUserEnterpriseFolderWithOwaEditPermission(int itemId, List<int> accountIds)
         {
             return EnterpriseStorageController.GetUserEnterpriseFolderWithOwaEditPermission(itemId, accountIds);
+        }
+
+        [WebMethod]
+        public ResultObject MoveToStorageSpace(int itemId, string folderName)
+        {
+           return EnterpriseStorageController.MoveToStorageSpace(itemId, folderName);
         }
 
         #endregion

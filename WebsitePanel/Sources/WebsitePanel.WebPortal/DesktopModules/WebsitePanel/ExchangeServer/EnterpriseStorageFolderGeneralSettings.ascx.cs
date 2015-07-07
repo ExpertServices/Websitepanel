@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Specialized;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -36,9 +37,10 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-
+using WebsitePanel.Portal.ProviderControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -67,11 +69,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
                 {
-                    OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-
-                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace)/OneGb
+                    rangeFolderSize.MaximumValue = Math.Round((organizationStats.AllocatedEnterpriseStorageSpace - (decimal)organizationStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you�ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you've entered exceeds the available quota for organization ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
             }
         }
@@ -81,10 +81,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 // get settings
-                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
-
-                SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(
-                    PanelRequest.ItemID, PanelRequest.FolderID);
+                SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID);
 
                 litFolderName.Text = string.Format("{0}", folder.Name);
 
@@ -107,7 +104,23 @@ namespace WebsitePanel.Portal.ExchangeServer
                         break;
                 }
 
-                chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
+                var serviceId = ES.Services.EnterpriseStorage.GetEnterpriseStorageServiceId(PanelRequest.ItemID);
+
+                StringDictionary settings = ConvertArrayToDictionary(ES.Services.Servers.GetServiceSettings(serviceId));
+
+                btnMigrate.Visible = folder.StorageSpaceFolderId == null
+                    && Utils.ParseBool(settings[EnterpriseStorage_Settings.UseStorageSpaces], false);
+
+                if (folder.StorageSpaceFolderId != null)
+                {
+                    uncPathRow.Visible = edaRow.Visible = abeRow.Visible = true;
+
+                    lblUncPath.Text = folder.UncPath;
+
+
+                    chkAbe.Checked = ES.Services.StorageSpaces.GetStorageSpaceFolderAbeStatus(folder.StorageSpaceFolderId.Value);
+                    chkEda.Checked = ES.Services.StorageSpaces.GetStorageSpaceFolderEncryptDataAccessStatus(folder.StorageSpaceFolderId.Value);
+                }
             }
             catch (Exception ex)
             {
@@ -135,14 +148,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (PanelRequest.FolderID != txtFolderName.Text)
                 {
                     //check if filename is correct
-                    foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                    if (!EnterpriseStorageHelper.ValidateFolderName(txtFolderName.Text))
                     {
-                        if (txtFolderName.Text.Contains(invalidChar.ToString()))
-                        {
-                            messageBox.ShowErrorMessage("FILES_RENAME_FILE");
+                        messageBox.ShowErrorMessage("FILES_INCORRECT_FOLDER_NAME");
 
-                            return;
-                        }
+                        return;
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
@@ -158,10 +168,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ES.Services.EnterpriseStorage.SetEnterpriseFolderGeneralSettings(
                     PanelRequest.ItemID,
                     folder,
-                    chkDirectoryBrowsing.Checked,
+                    false,
                     (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 
+                if (edaRow.Visible && abeRow.Visible)
+                {
+                   ES.Services.EnterpriseStorage.SetEsFolderShareSettings(PanelRequest.ItemID, PanelRequest.FolderID, chkAbe.Checked, chkEda.Checked);
+                }
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
@@ -170,6 +184,39 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 messageBox.ShowErrorMessage("ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS", ex);
             }
+        }
+
+        protected void btnMigrate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = ES.Services.EnterpriseStorage.MoveToStorageSpace(
+                PanelRequest.ItemID,
+                PanelRequest.FolderID);
+
+                messageBox.ShowMessage(result, "ES_MOVE_TO_STORAGE_SPACE", null);
+
+                if (result.IsSuccess)
+                {
+                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+                        "ItemID=" + PanelRequest.ItemID));
+                }
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ENTERPRISE_STORAGE_MIGRATE_TO_STORAGE_SPACES", ex);
+            }
+        }
+
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
         }
     }
 }

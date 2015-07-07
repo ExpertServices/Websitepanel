@@ -27,7 +27,9 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Text.RegularExpressions;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -53,18 +55,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
                 if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
                 {
-                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace) / OneGb
+                    rangeFolderSize.MaximumValue = Math.Round((organizationStats.AllocatedEnterpriseStorageSpace - (decimal)organizationStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you�ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you've entered exceeds the available quota for organization ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
 
                 if (organizationStats.AllocatedGroups != -1)
                 {
-                    int groupsAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+                    int groupsAvailable = organizationStats.AllocatedGroups - organizationStats.CreatedGroups;
 
                     if (groupsAvailable <= 0)
                     {
@@ -81,14 +82,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             try
             {
-                foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                if (!EnterpriseStorageHelper.ValidateFolderName(txtFolderName.Text))
                 {
-                    if (txtFolderName.Text.Contains(invalidChar.ToString()))
-                    {
-                        messageBox.ShowErrorMessage("FILES_CREATE_FILE");
+                    messageBox.ShowErrorMessage("FILES_INCORRECT_FOLDER_NAME");
 
-                        return;
-                    }
+                    return;
                 }
 
                 if (!ES.Services.EnterpriseStorage.CheckEnterpriseStorageInitialization(PanelSecurity.PackageId, PanelRequest.ItemID))
@@ -103,11 +101,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard,
                     chkAddDefaultGroup.Checked);
 
-                /*if (!result.IsSuccess && result.ErrorCodes.Count > 0)
+                if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
-                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Enterprise Storage");
+                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Cloud Folders");
+
                     return;
-                }*/
+                }
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folder_settings",
                     "FolderID=" + txtFolderName.Text,

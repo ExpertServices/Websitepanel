@@ -153,6 +153,7 @@ namespace WebsitePanel.Providers.Virtualization
             HostedSolutionLog.DebugInfo("Virtual Machine: {0}", vmId);
 
             VirtualMachine vm = new VirtualMachine();
+            vm.VirtualMachineId = vmId;
 
             try
             {

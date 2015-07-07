@@ -44,5 +44,10 @@ namespace WebsitePanel.Providers.OS
             get { return this.pageItems; }
             set { this.pageItems = value; }
         }
+
+        public SystemFilesPaged()
+        {
+            PageItems = new SystemFile[0];
+        }
     }
 }

@@ -36,7 +36,10 @@ using System.Net.Mail;
 using System.Threading;
 using System.Drawing;
 using System.IO;
+using WebsitePanel.EnterpriseServer.Base;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
+using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.Exchange;
@@ -123,23 +126,34 @@ namespace WebsitePanel.EnterpriseServer
                 delegate(ServiceProviderItem item) { return (Organization)item; }));
         }
 
-        public static Organization GetOrganization(int itemId)
+        public static Organization GetOrganization(int itemId, bool withLog = true)
         {
             #region Demo Mode
             if (IsDemoMode)
             {
                 // load package by user
-                Organization org = new Organization();
-                org.PackageId = 0;
-                org.Id = 1;
-                org.OrganizationId = "fabrikam";
-                org.Name = "Fabrikam Inc";
-                org.KeepDeletedItemsDays = 14;
-                return org;
+                Organization orgDemo = new Organization();
+                orgDemo.PackageId = 0;
+                orgDemo.Id = 1;
+                orgDemo.OrganizationId = "fabrikam";
+                orgDemo.Name = "Fabrikam Inc";
+                orgDemo.KeepDeletedItemsDays = 14;
+
+                // Log Extension
+                if (withLog)
+                    LogExtension.WriteObject(orgDemo);
+
+                return orgDemo;
             }
             #endregion
 
-            return (Organization)PackageController.GetPackageItem(itemId);
+            var org = (Organization)PackageController.GetPackageItem(itemId);
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(org);
+
+            return org;
         }
 
         public static OrganizationStatistics GetOrganizationStatistics(int itemId)
@@ -180,9 +194,12 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
+
+                // Log Extension
+                LogExtension.WriteVariables(new {byOrganization});
 
                 OrganizationStatistics stats = new OrganizationStatistics();
 
@@ -219,6 +236,9 @@ namespace WebsitePanel.EnterpriseServer
                             {
                                 foreach (Organization o in orgs)
                                 {
+                                    // Log Extension
+                                    LogExtension.WriteVariable("Nested Org", o.Name);
+                                   
                                     OrganizationStatistics tempStats = ObjectUtils.FillObjectFromDataReader<OrganizationStatistics>(DataProvider.GetExchangeOrganizationStatistics(o.Id));
 
                                     stats.CreatedMailboxes += tempStats.CreatedMailboxes;
@@ -244,17 +264,33 @@ namespace WebsitePanel.EnterpriseServer
 
                 // allocated quotas
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
-                stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
-                stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
-                stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
-                stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                if (byOrganization)
+                {
+                    stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization;
 
-                stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue;
-                stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValuePerOrganization;
+                }
+                else
+                {
+                    stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
+                    stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
+                    stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
+                    stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
 
+                    stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue;
+                }
+              
                 return stats;
             }
             catch (Exception ex)
@@ -318,7 +354,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // calculate disk space
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return;
 
@@ -364,6 +400,9 @@ namespace WebsitePanel.EnterpriseServer
         {
             // place log record
             TaskManager.StartTask("EXCHANGE", "CREATE_ORG", org.Name, new BackgroundTaskParameter("Organization ID", org.OrganizationId));
+            
+            // Log Extension
+            LogExtension.WriteObject(org, o => o.DistinguishedName, o => o.OrganizationId);
 
             try
             {
@@ -595,7 +634,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // delete organization in Exchange
                 //System.Threading.Thread.Sleep(5000);
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
+                
+                // Log Extension
+                LogExtension.SetItemName(org.DistinguishedName);
+                org.LogProperty(o => o.DistinguishedName);
 
                 List<ExchangeDomainName> acceptedDomains = GetOrganizationDomains(itemId);
 
@@ -663,20 +706,25 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "SET_ORG_LIMITS", itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new { issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays }, "Mailbox ");
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return 0;
+                
+                // Log Extension
+                LogExtension.SetItemName(org.DistinguishedName);
 
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+                // load org quotas
+                OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
 
                 int maxDiskSpace = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue * 1024;
+                if (orgStats.AllocatedDiskSpace > 0)
+                    maxDiskSpace = orgStats.AllocatedDiskSpace * 1024;
 
                 if (maxDiskSpace > 0 && (issueWarningKB > maxDiskSpace || prohibitSendKB > maxDiskSpace || prohibitSendReceiveKB > maxDiskSpace || issueWarningKB == -1 || prohibitSendKB == -1 || prohibitSendReceiveKB == -1))
                     return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
@@ -751,7 +799,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
@@ -779,7 +827,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
@@ -843,7 +891,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
@@ -889,7 +937,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
@@ -940,9 +988,12 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return 0;
+
+                // Log Extension
+                org.LogProperty(o => o.ServiceId);
 
                 // get policy
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -1194,7 +1245,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
 
-        public static ExchangeAccount GetAccount(int itemId, int accountId)
+        public static ExchangeAccount GetAccount(int itemId, int accountId, bool withLog = true)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -1205,6 +1256,11 @@ namespace WebsitePanel.EnterpriseServer
                 m1.AccountType = ExchangeAccountType.Mailbox;
                 m1.DisplayName = "John Smith";
                 m1.PrimaryEmailAddress = "john@fabrikam.net";
+
+                // Log Extension
+                if (withLog)
+                    LogExtension.WriteObject(m1); 
+                
                 return m1;
             }
             #endregion
@@ -1214,6 +1270,10 @@ namespace WebsitePanel.EnterpriseServer
 
             if (account == null)
                 return null;
+
+            // Log Extension
+            if (withLog)
+                LogExtension.WriteObject(account);
 
             return account;
         }
@@ -1290,7 +1350,7 @@ namespace WebsitePanel.EnterpriseServer
         private static void DeleteAccount(int itemId, int accountId)
         {
             // try to get organization
-            if (GetOrganization(itemId) == null)
+            if (GetOrganization(itemId, false) == null)
                 return;
 
             DataProvider.DeleteExchangeAccount(itemId, accountId);
@@ -1368,7 +1428,7 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetExchangeAccountEmailAddresses(accountId));
 
             // load account
-            ExchangeAccount account = GetAccount(itemId, accountId);
+            ExchangeAccount account = GetAccount(itemId, accountId, false);
 
             foreach (ExchangeEmailAddress email in emails)
             {
@@ -1395,7 +1455,12 @@ namespace WebsitePanel.EnterpriseServer
         private static void DeleteAccountEmailAddresses(int accountId, string[] emailAddresses)
         {
             foreach (string emailAddress in emailAddresses)
+            {
+                // Log Extension
+                LogExtension.WriteVariable("E-mail Addresses deleted", emailAddress);
+
                 DataProvider.DeleteExchangeAccountEmailAddress(accountId, emailAddress);
+            }
         }
 
         #endregion
@@ -1426,7 +1491,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // load organization
-            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            Organization org = GetOrganization(itemId, false);
             if (org == null)
                 return null;
 
@@ -1459,15 +1524,18 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
-
+                
                 // load domain
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
-
+               
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 // delete domain on Exchange
                 int[] hubTransportServiceIds;
@@ -1535,7 +1603,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
 
@@ -1590,7 +1658,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load organization
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null)
                     return -1;
 
@@ -1598,6 +1666,10 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
+                
+                // Log Extension
+                LogExtension.SetItemName(domain.DomainName);
+                LogExtension.WriteObject(domain);
 
                 if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
                 {
@@ -1682,7 +1754,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (accountType == ExchangeAccountType.SharedMailbox)
             {
                 if ((orgStats.AllocatedSharedMailboxes > -1) && (orgStats.CreatedSharedMailboxes >= orgStats.AllocatedSharedMailboxes))
@@ -1701,7 +1773,10 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX", displayName, itemId);
+            
+            // Log Extension
+            LogExtension.WriteVariables(new {accountName, displayName});
 
             bool userCreated = false;
             Organization org = null;
@@ -1757,16 +1832,12 @@ namespace WebsitePanel.EnterpriseServer
                 if (packageCheck < 0) return packageCheck;
 
                 //verify if the mailbox fits in the storage quota
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-
                 int maxDiskSpace = -1;
                 int quotaUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedDiskSpace > 0)
                 {
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                    quotaUsed = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaUsedValue;
+                    maxDiskSpace = orgStats.AllocatedDiskSpace;
+                    quotaUsed = orgStats.UsedDiskSpace;
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
@@ -1781,11 +1852,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxRecoverableItemsSpace = -1;
                 int quotaRecoverableItemsUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedLitigationHoldSpace > 0)
                 {
-                    maxRecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
                 }
 
                 if (maxRecoverableItemsSpace != -1)
@@ -1802,11 +1872,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxArchivingStorage = -1;
                 int quotaArchivingStorageUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_ARCHIVINGSTORAGE)
-                    && cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedArchingStorage > 0)
                 {
-                    maxArchivingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
-                    quotaArchivingStorageUsed = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaUsedValue;
+                    maxArchivingStorage = orgStats.AllocatedArchingStorage;
+                    quotaArchivingStorageUsed = orgStats.UsedArchingStorage;
                 }
 
                 if (maxArchivingStorage != -1)
@@ -1821,8 +1890,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 //GetServiceSettings
                 StringDictionary primSettings = ServerController.GetServiceSettings(exchangeServiceId);
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
-                string samAccount = exchange.CreateMailEnableUser(email, org.OrganizationId, org.DistinguishedName,
+                string samAccountName = exchange.CreateMailEnableUser(email, org.OrganizationId, org.DistinguishedName,
                                                 org.SecurityGroup, org.DefaultDomain,
                                                 accountType, primSettings["mailboxdatabase"],
                                                 org.OfflineAddressBook,
@@ -1852,13 +1922,13 @@ namespace WebsitePanel.EnterpriseServer
                     | MailboxManagerActions.EmailAddresses;
 
 
-                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
+                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccountName, password, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
 
                 ResultObject resPolicy = new ResultObject() { IsSuccess = true };
                 SetMailBoxRetentionPolicyAndArchiving(itemId, mailboxPlanId, archivedPlanId, accountName, exchange, org.OrganizationId, resPolicy, EnableArchiving);
                 if (!resPolicy.IsSuccess)
                 {
-                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy", resPolicy.ErrorCodes.ToArray());
+                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy: " + string.Join(", ", resPolicy.ErrorCodes.ToArray()));
                 }
                 
 
@@ -1889,6 +1959,9 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     TaskManager.WriteError(ex);
                 }
+
+                // Log Extension
+                LogExtension.WriteVariables(new {email, samAccountName, accountId});
 
                 return accountId;
             }
@@ -1933,6 +2006,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                account.LogProperty(a => a.UserPrincipalName);
 
                 if (BlackBerryController.CheckBlackBerryUserExists(accountId))
                 {
@@ -2061,6 +2138,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+
                 if (BlackBerryController.CheckBlackBerryUserExists(accountId))
                 {
                     BlackBerryController.DeleteBlackBerryUser(itemId, accountId);
@@ -2164,6 +2244,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL", itemId);
+           
+            // Log Extension
+            LogExtension.WriteVariables(new {hideAddressBook, disabled}, "Try ");
 
             try
             {
@@ -2178,6 +2261,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -2189,10 +2275,20 @@ namespace WebsitePanel.EnterpriseServer
                 if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue))
                     hideAddressBook = true;
 
+                // Log Extension
+                LogExtension.WriteVariables(new { hideAddressBook });
+
+                var oldObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
                 exchange.SetMailboxGeneralSettings(
                     account.UserPrincipalName,
                     hideAddressBook,
                     disabled);
+
+                var newObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -2233,6 +2329,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "ADD_MAILBOX_ADDRESS", itemId);
+           
+            // Log Extension
+            LogExtension.WriteVariable("Email Address added", emailAddress);
 
             try
             {
@@ -2251,6 +2350,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                account.LogProperty(a => a.UserPrincipalName);
 
                 // add e-mail
                 AddAccountEmailAddress(accountId, emailAddress);
@@ -2300,6 +2403,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // get account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+
                 account.PrimaryEmailAddress = emailAddress;
 
                 // update exchange
@@ -2367,6 +2475,9 @@ namespace WebsitePanel.EnterpriseServer
                         (String.Compare(account.UserPrincipalName, emailAddress, true) != 0))
                         toDelete.Add(emailAddress);
                 }
+
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
 
                 // delete from meta-base
                 DeleteAccountEmailAddresses(accountId, toDelete.ToArray());
@@ -2461,9 +2572,14 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                var oldSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
 
                 exchange.SetMailboxMailFlowSettings(account.UserPrincipalName,
                     enableForwarding,
@@ -2473,6 +2589,11 @@ namespace WebsitePanel.EnterpriseServer
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldSettings, newSettings);
 
                 return 0;
             }
@@ -2548,10 +2669,18 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                var newAction = action;
 
                 // PMM settings
-                if (pmmAllowed) account.MailboxManagerActions |= action;
-                else account.MailboxManagerActions &= ~action;
+                if (pmmAllowed) newAction |= action;
+                else newAction &= ~action;
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                account.LogPropertyIfChanged(a => a.MailboxManagerActions, newAction);
+
+                account.MailboxManagerActions = newAction;
 
                 // update account
                 UpdateAccount(account);
@@ -2593,7 +2722,15 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty(body))
                 return null;
 
-            string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
+            string result = "";
+            try
+            {
+                result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body, passwordResetUrl);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteWarning("Cant EvaluateMailboxTemplate of GetMailboxSetupInstructions: " + ex.Message);
+            }
             return user.HtmlMail ? result : result.Replace("\n", "<br/>");
         }
 
@@ -2740,7 +2877,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts)
+        public static int SetMailboxPermissions(int itemId, int accountId, string[] sendAsaccounts, string[] fullAccessAcounts, string[] onBehalfOfAccounts, ExchangeAccount[] calendarAccounts, ExchangeAccount[] contactAccounts)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2762,6 +2899,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -2809,16 +2949,15 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+                // load org quotas
+                OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
 
                 int maxDiskSpace = -1;
                 int quotaUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedDiskSpace > 0)
                 {
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                    quotaUsed = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaUsedValue;
+                    maxDiskSpace = orgStats.AllocatedDiskSpace;
+                    quotaUsed = orgStats.UsedDiskSpace;
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
@@ -2845,11 +2984,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxRecoverableItemsSpace = -1;
                 int quotaRecoverableItemsUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedLitigationHoldSpace > 0)
                 {
-                    maxRecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
                 }
 
                 if (maxRecoverableItemsSpace != -1)
@@ -3020,10 +3158,13 @@ namespace WebsitePanel.EnterpriseServer
         public static int AddExchangeMailboxPlan(int itemID, ExchangeMailboxPlan mailboxPlan)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_MAILBOXPLAN", itemID);
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_MAILBOXPLAN", mailboxPlan.MailboxPlan, itemID);
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(mailboxPlan); 
+                
                 Organization org = GetOrganization(itemID);
                 if (org == null)
                     return -1;
@@ -3045,15 +3186,15 @@ namespace WebsitePanel.EnterpriseServer
 
                     if (mailboxPlan.Archiving)
                     {
-                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue != -1)
-                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue)
-                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization;
                     }
                     else
                     {
-                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
                     }
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
@@ -3072,9 +3213,9 @@ namespace WebsitePanel.EnterpriseServer
 
                     mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
-                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
                 }
 
                 return DataProvider.AddExchangeMailboxPlan(itemID, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
@@ -3099,10 +3240,22 @@ namespace WebsitePanel.EnterpriseServer
         public static int UpdateExchangeMailboxPlan(int itemID, ExchangeMailboxPlan mailboxPlan)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_MAILBOXPLAN", itemID);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_MAILBOXPLAN", mailboxPlan.MailboxPlan, itemID);
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(mailboxPlan);
+                ExchangeMailboxPlan oldMailboxPlan = null;
+                try
+                {
+                    oldMailboxPlan = ObjectUtils.Clone(mailboxPlan);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.Write("Can't clone mailbox: " + ex.Message);
+                } 
+
                 Organization org = GetOrganization(itemID);
                 if (org == null)
                     return -1;
@@ -3122,9 +3275,9 @@ namespace WebsitePanel.EnterpriseServer
                         if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
                             mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
                         if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
@@ -3142,9 +3295,9 @@ namespace WebsitePanel.EnterpriseServer
 
                     mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
-                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
 
                 }
 
@@ -3154,6 +3307,10 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
                                                         mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
                                                         mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldMailboxPlan, mailboxPlan);
+
             }
             catch (Exception ex)
             {
@@ -3176,6 +3333,18 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                Organization org = GetOrganization(itemID); // To write log
+                if (org == null)
+                    return -1;
+
+                var mailboxPlan = GetExchangeMailboxPlan(itemID, mailboxPlanId);
+                if (mailboxPlan != null)
+                {
+                    // Log Extension
+                    LogExtension.SetItemName(mailboxPlan.MailboxPlan);
+                    LogExtension.WriteObject(mailboxPlan);
+                }
+
                 DataProvider.DeleteExchangeMailboxPlan(mailboxPlanId);
 
                 return 0;
@@ -3341,7 +3510,7 @@ namespace WebsitePanel.EnterpriseServer
         public static IntResult AddExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
         {
             // place log record
-            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", tag.TagName, itemID);
 
             Organization org;
             try
@@ -3358,6 +3527,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(tag);
+                
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3416,6 +3588,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(tag);
+                
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3483,6 +3658,10 @@ namespace WebsitePanel.EnterpriseServer
 
                     ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, tagId);
                     if (tag == null) throw new ApplicationException("Tag is null");
+                    
+                    // Log Extension
+                    LogExtension.SetItemName(tag.TagName);
+                    LogExtension.WriteObject(tag);
 
                     ResultObject resTag = exchange.RemoveRetentionPolicyTag(tag.WSPUniqueName);
                     res.ErrorCodes.AddRange(resTag.ErrorCodes);
@@ -3572,7 +3751,7 @@ namespace WebsitePanel.EnterpriseServer
         public static IntResult AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)
         {
             // place log record
-            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", planTag.TagName, itemID);
 
             Organization org;
             try
@@ -3589,6 +3768,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(planTag);
+                
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3671,17 +3853,16 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedContacts > -1
                 && orgStats.CreatedContacts >= orgStats.AllocatedContacts)
                 return BusinessErrorCodes.ERROR_EXCHANGE_CONTACTS_QUOTA_LIMIT;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_CONTACT", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_CONTACT", displayName, itemId);
 
             try
             {
-
                 displayName = displayName.Trim();
                 email = email.Trim();
 
@@ -3719,11 +3900,17 @@ namespace WebsitePanel.EnterpriseServer
                     email, org.DefaultDomain);
 
                 ExchangeContact contact = exchange.GetContactGeneralSettings(accountName);
+               
+                // Log Extension
+                LogExtension.WriteObject(contact);
 
                 // add meta-item
                 int accountId = AddAccount(itemId, ExchangeAccountType.Contact, accountName,
                     displayName, email, false,
                     0, contact.SAMAccountName, null, 0, null);
+
+                // Log Extension
+                LogExtension.WriteVariables(new {accountId});
 
                 return accountId;
             }
@@ -3755,6 +3942,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
 
                 // delete contact
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -3839,7 +4029,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_GENERAL", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_GENERAL", displayName, itemId);
 
             try
             {
@@ -3863,6 +4053,8 @@ namespace WebsitePanel.EnterpriseServer
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                var oldContact = exchange.GetContactGeneralSettings(account.AccountName);
 
                 exchange.SetContactGeneralSettings(
                     account.AccountName,
@@ -3890,6 +4082,13 @@ namespace WebsitePanel.EnterpriseServer
                     webPage,
                     notes,
                     useMapiRichTextFormat, org.DefaultDomain);
+
+                var newContact = exchange.GetContactGeneralSettings(account.AccountName);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+                LogExtension.LogPropertiesIfChanged(oldContact, newContact);
 
                 // update account
                 account.DisplayName = displayName;
@@ -3971,15 +4170,26 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteVariables(new {acceptAccounts, rejectAccounts, requireSenderAuthentication});
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
                 exchange.SetContactMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -4002,13 +4212,13 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedDistributionLists > -1
                 && orgStats.CreatedDistributionLists >= orgStats.AllocatedDistributionLists)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DLISTS_QUOTA_LIMIT;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_DISTR_LIST", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_DISTR_LIST", displayName, itemId);
 
             try
             {
@@ -4018,6 +4228,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // e-mail
                 string email = name + "@" + domain;
+
+                // Log Extension
+                LogExtension.WriteVariables(new {email});
 
                 // check e-mail
                 if (EmailAddressExists(email))
@@ -4099,6 +4312,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
 
                 // delete mailbox
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -4196,6 +4412,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+                LogExtension.WriteVariables(new { managerAccount, memberAccounts, notes });
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -4205,6 +4425,8 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
                 exchange.SetDistributionListGeneralSettings(
                     account.AccountName,
                     displayName,
@@ -4213,6 +4435,12 @@ namespace WebsitePanel.EnterpriseServer
                     memberAccounts,
                     notes,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4279,7 +4507,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("EXCHANGE", "UPDATE_DISTR_LIST_MAILFLOW", itemId);
-
+            
             try
             {
                 // load organization
@@ -4294,6 +4522,10 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                LogExtension.WriteVariables(new { acceptAccounts, rejectAccounts, requireSenderAuthentication });
+
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -4302,12 +4534,18 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
 
                 exchange.SetDistributionListMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -4367,6 +4605,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+
                 // add e-mail
                 AddAccountEmailAddress(accountId, emailAddress);
 
@@ -4377,6 +4616,10 @@ namespace WebsitePanel.EnterpriseServer
                 List<string> addressLists = new List<string>();
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                LogExtension.WriteVariable("Address Added", emailAddress);
 
                 exchange.SetDistributionListEmailAddresses(
                     account.AccountName,
@@ -4407,6 +4650,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // get account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.UserPrincipalName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+                
                 account.PrimaryEmailAddress = emailAddress;
 
                 // update exchange
@@ -4466,9 +4714,14 @@ namespace WebsitePanel.EnterpriseServer
                     if (String.Compare(account.PrimaryEmailAddress, emailAddress, true) != 0)
                         toDelete.Add(emailAddress);
                 }
+                var emailAddressesDeleted = toDelete.ToArray();
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                LogExtension.WriteVariables(new { emailAddressesDeleted });
 
                 // delete from meta-base
-                DeleteAccountEmailAddresses(accountId, toDelete.ToArray());
+                DeleteAccountEmailAddresses(accountId, emailAddressesDeleted);
 
                 // delete from Exchange
                 Organization org = GetOrganization(itemId);
@@ -4735,7 +4988,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST_MEMBER");
+            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST_MEMBER", distributionListName);
             TaskManager.ItemId = itemId;
 
             try
@@ -4746,7 +4999,10 @@ namespace WebsitePanel.EnterpriseServer
                     return 0;
 
                 // load account
-                ExchangeAccount memberAccount = GetAccount(itemId, memberId);
+                ExchangeAccount memberAccount = GetAccount(itemId, memberId, false);
+
+                // Log Extension
+                memberAccount.LogProperty(a => a.AccountName, "Member Removed");
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -4790,14 +5046,14 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedPublicFolders > -1
                 && orgStats.CreatedPublicFolders >= orgStats.AllocatedPublicFolders)
                 return BusinessErrorCodes.ERROR_EXCHANGE_PFOLDERS_QUOTA_LIMIT;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_PUBLIC_FOLDER", itemId);
-
+            TaskManager.StartTask("EXCHANGE", "CREATE_PUBLIC_FOLDER", parentFolder + "\\" + folderName, itemId);
+            
             try
             {
                 // e-mail
@@ -4868,6 +5124,9 @@ namespace WebsitePanel.EnterpriseServer
                 if (mailEnabled)
                     AddAccountEmailAddress(accountId, email);
 
+                // Log Extension
+                LogExtension.WriteVariables(new {accountId, accountName, folderName, folderPath, email});
+
                 return accountId;
             }
             catch (Exception ex)
@@ -4915,6 +5174,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+
                 // delete folder
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -4952,7 +5214,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ENABLE_MAIL_PUBLIC_FOLDER", itemId);
+            TaskManager.StartTask("EXCHANGE", "ENABLE_MAIL_PUBLIC_FOLDER", name + "@" + domain, itemId);
 
             try
             {
@@ -4988,6 +5250,10 @@ namespace WebsitePanel.EnterpriseServer
                     account.AccountName,
                     name,
                     domain);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.MailEnabledPublicFolder, accountName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, email, false);
 
                 // update and save account
                 account.AccountName = accountName;
@@ -5035,6 +5301,9 @@ namespace WebsitePanel.EnterpriseServer
                 if (!account.MailEnabledPublicFolder)
                     return 0;
 
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
@@ -5052,8 +5321,12 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeEmailAddress[] emails = GetAccountEmailAddresses(itemId, accountId);
                 foreach (ExchangeEmailAddress email in emails)
                     addrs.Add(email.EmailAddress);
+                var addressesDeleted = addrs.ToArray();
 
-                DeleteAccountEmailAddresses(accountId, addrs.ToArray());
+                // Log Extension
+                LogExtension.WriteVariables(new {addressesDeleted});
+
+                DeleteAccountEmailAddresses(accountId, addressesDeleted);
 
                 return 0;
             }
@@ -5146,6 +5419,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
                 exchange.SetPublicFolderGeneralSettings(
                     org.OrganizationId,
                     account.DisplayName,
@@ -5154,12 +5429,21 @@ namespace WebsitePanel.EnterpriseServer
                     accounts
                     );
 
+                var newObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
+
                 // update folder name
                 string origName = account.DisplayName;
                 string newFullName = origName.Substring(0, origName.LastIndexOf("\\") + 1) + newName;
 
                 if (String.Compare(origName, newFullName, true) != 0)
                 {
+                    // Log Extension
+                    account.LogPropertyIfChanged(a => a.DisplayName, newFullName);
+                    TaskManager.Write("Public Folders: ");
+
                     // rename original folder
                     account.DisplayName = newFullName;
                     UpdateAccount(account);
@@ -5170,7 +5454,12 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         if (folder.DisplayName.ToLower().StartsWith(origName.ToLower() + "\\"))
                         {
-                            folder.DisplayName = newFullName + folder.DisplayName.Substring(origName.Length);
+                            var newFolderName = newFullName + folder.DisplayName.Substring(origName.Length);
+
+                            // Log Extension
+                            folder.LogPropertyIfChanged(f => f.DisplayName, newFolderName);
+
+                            folder.DisplayName = newFolderName;
                             UpdateAccount(folder);
                         }
                     }
@@ -5252,14 +5541,25 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteVariables(new { acceptAccounts, rejectAccounts, requireSenderAuthentication });
+
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                var oldObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
 
                 exchange.SetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -5319,6 +5619,10 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                LogExtension.WriteVariable("Email Address Added", emailAddress);
+
                 // add e-mail
                 AddAccountEmailAddress(accountId, emailAddress);
 
@@ -5356,6 +5660,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // get account
                 ExchangeAccount account = GetAccount(itemId, accountId);
+
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+
                 account.PrimaryEmailAddress = emailAddress;
 
                 // update exchange
@@ -5411,9 +5720,14 @@ namespace WebsitePanel.EnterpriseServer
                     if (String.Compare(account.PrimaryEmailAddress, emailAddress, true) != 0)
                         toDelete.Add(emailAddress);
                 }
+                var emailAddressesDeleted = toDelete.ToArray();
+
+                // Log Extension
+                LogExtension.SetItemName(account.DisplayName); 
+                LogExtension.WriteVariables(new { emailAddressesDeleted });
 
                 // delete from meta-base
-                DeleteAccountEmailAddresses(accountId, toDelete.ToArray());
+                DeleteAccountEmailAddresses(accountId, emailAddressesDeleted);
 
                 // delete from Exchange
                 Organization org = GetOrganization(itemId);
@@ -5454,6 +5768,10 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = GetOrganization(itemId);
                 if (org == null)
                     return null;
+
+                // Log Extension
+                LogExtension.SetItemName(org.DistinguishedName);
+                org.LogProperty(o => o.DistinguishedName);
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
@@ -5737,7 +6055,10 @@ namespace WebsitePanel.EnterpriseServer
         public static void WipeDataFromDevice(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "WIPE_DATA_FROM_DEVICE", itemId);
+            TaskManager.StartTask("EXCHANGE", "WIPE_DATA_FROM_DEVICE", deviceId, itemId);
+
+            // Log Extension
+            LogExtension.WriteVariables(new { deviceId });
 
             try
             {
@@ -5764,7 +6085,10 @@ namespace WebsitePanel.EnterpriseServer
         public static void CancelRemoteWipeRequest(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CANCEL_REMOTE_WIPE_REQUEST", itemId);
+            TaskManager.StartTask("EXCHANGE", "CANCEL_REMOTE_WIPE_REQUEST", deviceId, itemId);
+
+            // Log Extension
+            LogExtension.WriteVariables(new { deviceId });
 
             try
             {
@@ -5791,7 +6115,10 @@ namespace WebsitePanel.EnterpriseServer
         public static void RemoveDevice(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "REMOVE_DEVICE", itemId);
+            TaskManager.StartTask("EXCHANGE", "REMOVE_DEVICE", deviceId, itemId);
+
+            // Log Extension
+            LogExtension.WriteVariables(new { deviceId });
 
             try
             {
@@ -5825,12 +6152,16 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", disclaimer.DisclaimerName, itemId);
+            
+            // Log Extension
+            LogExtension.WriteObject(disclaimer);
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null) return -1;
+
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
@@ -5856,17 +6187,25 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", disclaimer.DisclaimerName, itemId);
+
+            // Log Extension
+            LogExtension.WriteObject(disclaimer);
 
             try
             {
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null) return -1;
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = GetExchangeDisclaimer(itemId, disclaimer.ExchangeDisclaimerId);
+
                 exchange.SetDisclaimer(disclaimer.WSPUniqueName, disclaimer.DisclaimerText);
                 DataProvider.UpdateExchangeDisclaimer(itemId, disclaimer);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, disclaimer);
             }
             catch (Exception ex)
             {
@@ -5892,14 +6231,20 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeDisclaimer disclaimer = null;
                 if (exchangeDisclaimerId != -1) disclaimer = GetExchangeDisclaimer(itemId, exchangeDisclaimerId);
 
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                // Log Extension
+                if (disclaimer != null)
+                {
+                    LogExtension.SetItemName(disclaimer.DisclaimerName);
+                    LogExtension.WriteObject(disclaimer);
+                }
+
+                Organization org = GetOrganization(itemId);
                 if (org == null) return -1;
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                if (exchange.RemoveDisclaimer(disclaimer.WSPUniqueName)!=-1)
+                if (exchange.RemoveDisclaimer(disclaimer.WSPUniqueName) != -1)
                     DataProvider.DeleteExchangeDisclaimer(exchangeDisclaimerId);
-
             }
             catch (Exception ex)
             {
@@ -5977,7 +6322,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountID);
 
-                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                Organization org = GetOrganization(itemId);
                 if (org == null) return -1;
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -6087,6 +6432,9 @@ namespace WebsitePanel.EnterpriseServer
                 throw new ApplicationException("Organization is null");
 
             ExchangeAccount account = GetAccount(itemId, accountID);
+            
+            // Log Extension
+            LogExtension.SetItemName(account.PrimaryEmailAddress);
 
             try
             {

@@ -495,4 +495,13 @@
   <data name="PageName.RDSServers" xml:space="preserve">
     <value>RDS Servers</value>
   </data>
+  <data name="PageName.SpaceStorageLevels" xml:space="preserve">
+    <value>Space Storage Levels</value>
+  </data>
+  <data name="PageName.SpaceStorages" xml:space="preserve">
+    <value>Space Storages</value>
+  </data>
+  <data name="PageName.SpaceStoragesGroup" xml:space="preserve">
+    <value>Space Storages</value>
+  </data>
 </root>

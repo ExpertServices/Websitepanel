@@ -26,19 +26,21 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.ServiceProcess;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 
 using Microsoft.Deployment.WindowsInstaller;
@@ -53,11 +55,45 @@ namespace WebsitePanel.WIXInstaller
     public class CustomActions
     {
         public static List<string> SysDb = new List<string> { "tempdb", "master", "model", "msdb" };
-        public const string CustomDataDelimiter = "-=del=-";
         public const string SQL_AUTH_WINDOWS = "Windows Authentication";
         public const string SQL_AUTH_SERVER = "SQL Server Authentication";
 
         #region CustomActions
+        [CustomAction]
+        public static ActionResult OnScpa(Session Ctx)
+        {
+            PopUpDebugger();
+            Func<Hashtable, string, string> GetParam = (s, x) => Utils.GetStringSetupParameter(s, x);
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("OnScpa");
+
+            try
+            {
+                var Hash = Ctx.CustomActionData.ToNonGenericDictionary() as Hashtable;
+                var Scpa = new WebsitePanel.Setup.Actions.ConfigureStandaloneServerAction();
+                Scpa.ServerSetup = new SetupVariables { };
+                Scpa.EnterpriseServerSetup = new SetupVariables { };
+                Scpa.PortalSetup = new SetupVariables { };
+                Scpa.EnterpriseServerSetup.ServerAdminPassword = GetParam(Hash, "ServerAdminPassword");
+                Scpa.EnterpriseServerSetup.PeerAdminPassword = Scpa.EnterpriseServerSetup.ServerAdminPassword;
+                Scpa.PortalSetup.InstallerFolder = GetParam(Hash, "InstallerFolder");
+                Scpa.PortalSetup.ComponentId = WiXSetup.GetComponentID(Scpa.PortalSetup);
+                AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = WiXSetup.GetFullConfigPath(Scpa.PortalSetup) });
+                Scpa.PortalSetup.EnterpriseServerURL = GetParam(Hash, "EnterpriseServerUrl");
+                Scpa.PortalSetup.WebSiteIP = GetParam(Hash, "PortalWebSiteIP");
+                Scpa.ServerSetup.WebSiteIP = GetParam(Hash, "ServerWebSiteIP");
+                Scpa.ServerSetup.WebSitePort = GetParam(Hash, "ServerWebSitePort");
+                Scpa.ServerSetup.ServerPassword = GetParam(Hash, "ServerPassword");
+                var Make = Scpa as WebsitePanel.Setup.Actions.IInstallAction;
+                Make.Run(null);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+            }
+            Log.WriteEnd("OnScpa");
+            return ActionResult.Success;
+        }
         [CustomAction]
         public static ActionResult OnServerPrepare(Session Ctx)
         {
@@ -89,6 +125,47 @@ namespace WebsitePanel.WIXInstaller
             Log.WriteStart("OnPortalPrepare");
             GetPrepareScript(Ctx).Run();
             Log.WriteEnd("OnPortalPrepare");
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult OnSchedulerPrepare(Session Ctx)
+        {
+            PopUpDebugger();
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("OnSchedulerPrepare");
+            try
+            {
+                var ServiceName = Global.Parameters.SchedulerServiceName;
+                var ServiceFile = string.Empty;
+                ManagementClass WmiService = new ManagementClass("Win32_Service");
+                foreach (var MObj in WmiService.GetInstances())
+                {
+                    if (MObj.GetPropertyValue("Name").ToString().Equals(ServiceName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ServiceFile = MObj.GetPropertyValue("PathName").ToString();
+                        break;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(ServiceName) && !string.IsNullOrWhiteSpace(ServiceFile))
+                {
+                    var CtxVars = new SetupVariables() { ServiceName = ServiceName, ServiceFile = ServiceFile };
+                    var Script = new BackupSchedulerScript(CtxVars);
+                    Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService)
+                    {
+                        Name = ServiceName,
+                        Path = ServiceFile,
+                        Description = "Removing Windows service...",
+                        Log = string.Format("- Remove {0} Windows service", ServiceName)
+                    });
+                    Script.Context.ServiceName = Global.Parameters.SchedulerServiceName;
+                    Script.Run();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+            }
+            Log.WriteEnd("OnSchedulerPrepare");
             return ActionResult.Success;
         }
         [CustomAction]
@@ -168,154 +245,214 @@ namespace WebsitePanel.WIXInstaller
             Action<Session, SetupVariables> VersionGuard = (Session SesCtx, SetupVariables CtxVars) =>
             {
                 var Current = SesCtx["ProductVersion"];
-                var Found =  string.IsNullOrWhiteSpace(CtxVars.Version) ? "0.0.0" : CtxVars.Version;
+                var Found = string.IsNullOrWhiteSpace(CtxVars.Version) ? "0.0.0" : CtxVars.Version;
                 if ((new Version(Found) > new Version(Current)) && !CtxVars.InstallerType.ToLowerInvariant().Equals("msi"))
                     throw new InvalidOperationException("New version must be greater than previous always.");
             };
-
-            var Ctx = session;
-            Ctx.AttachToSetupLog();
-
-            PopUpDebugger();
-
-            Log.WriteStart("PreFillSettings");
-
-            TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
-            TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
-            TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVER_ACCESS_PASSWORD");
-            TryApllyNewPassword(Ctx, "SERVERADMIN_PASSWORD");
-
-            var WSP = Ctx["WSP_INSTALL_DIR"];
-            var DirList = new List<string>();
-            DirList.Add(WSP);
-            DirList.AddRange(from Drive in DriveInfo.GetDrives()
-                             where Drive.DriveType == DriveType.Fixed
-                             select Path.Combine(Drive.RootDirectory.FullName, Global.DefaultProductName));
-            var CfgPath = FindMainConfig(DirList);
-            if (!string.IsNullOrWhiteSpace(CfgPath))
+            Func<string, string> NormalizeDir = (string Dir) =>
             {
-                try
+                string nds = Path.DirectorySeparatorChar.ToString();
+                string ads = Path.AltDirectorySeparatorChar.ToString();
+                var Result = Dir.Trim();
+                if (!Result.EndsWith(nds) && !Result.EndsWith(ads))
                 {
-                    var EServerUrl = string.Empty;
-                    AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = CfgPath });
-                    var CtxVars = new SetupVariables();
-                    CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.Server.ComponentCode);
-                    if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
+                    if (Result.Contains(nds))
+                        Result += nds;
+                    else
+                        Result += ads;
+                }
+                return Result;
+            };
+            try
+            {
+                var Ctx = session;
+                Ctx.AttachToSetupLog();
+
+                PopUpDebugger();
+
+                Log.WriteStart("PreFillSettings");
+
+                TryApllyNewPassword(Ctx, "PI_SERVER_PASSWORD");
+                TryApllyNewPassword(Ctx, "PI_ESERVER_PASSWORD");
+                TryApllyNewPassword(Ctx, "PI_PORTAL_PASSWORD");
+
+                var WSP = Ctx["WSP_INSTALL_DIR"];
+                var DirList = new List<string>();
+                DirList.Add(WSP);
+                DirList.AddRange(from Drive in DriveInfo.GetDrives()
+                                 where Drive.DriveType == DriveType.Fixed
+                                 select Path.Combine(Drive.RootDirectory.FullName, Global.DefaultProductName));
+                var CfgPath = FindMainConfig(DirList);
+                if (!string.IsNullOrWhiteSpace(CfgPath))
+                {
+                    try
                     {
-                        AppConfig.LoadComponentSettings(CtxVars);
-                        VersionGuard(Ctx, CtxVars);
-
-                        SetProperty(Ctx, "COMPFOUND_SERVER_ID", CtxVars.ComponentId);
-                        SetProperty(Ctx, "COMPFOUND_SERVER_MAIN_CFG", CfgPath);
-
-                        SetProperty(Ctx, "PI_SERVER_IP", CtxVars.WebSiteIP);
-                        SetProperty(Ctx, "PI_SERVER_PORT", CtxVars.WebSitePort);
-                        SetProperty(Ctx, "PI_SERVER_HOST", CtxVars.WebSiteDomain);
-                        SetProperty(Ctx, "PI_SERVER_LOGIN", CtxVars.UserAccount);
-                        SetProperty(Ctx, "PI_SERVER_DOMAIN", CtxVars.UserDomain);
-
-                        SetProperty(Ctx, "PI_SERVER_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
-                                                
-                        Ctx["SERVER_ACCESS_PASSWORD"] = string.Empty;
-                        Ctx["SERVER_ACCESS_PASSWORD_CONFIRM"] = string.Empty;
-
-                        var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
-                        bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
-
-                        Ctx["COMPFOUND_SERVER"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
-                    }
-                    CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.EntServer.ComponentCode);
-                    if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
-                    {
-                        AppConfig.LoadComponentSettings(CtxVars);
-                        VersionGuard(Ctx, CtxVars);
-
-                        SetProperty(Ctx, "COMPFOUND_ESERVER_ID", CtxVars.ComponentId);
-                        SetProperty(Ctx, "COMPFOUND_ESERVER_MAIN_CFG", CfgPath);
-
-                        SetProperty(Ctx, "PI_ESERVER_IP", CtxVars.WebSiteIP);
-                        SetProperty(Ctx, "PI_ESERVER_PORT", CtxVars.WebSitePort);
-                        SetProperty(Ctx, "PI_ESERVER_HOST", CtxVars.WebSiteDomain);
-                        SetProperty(Ctx, "PI_ESERVER_LOGIN", CtxVars.UserAccount);
-                        SetProperty(Ctx, "PI_ESERVER_DOMAIN", CtxVars.UserDomain);
-                        EServerUrl = string.Format("http://{0}:{1}", CtxVars.WebSiteIP, CtxVars.WebSitePort);
-
-                        SetProperty(Ctx, "PI_ESERVER_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
-
-                        var ConnStr = new SqlConnectionStringBuilder(CtxVars.DbInstallConnectionString);
-                        SetProperty(Ctx, "DB_CONN", ConnStr.ToString());
-                        SetProperty(Ctx, "DB_SERVER", ConnStr.DataSource);
-                        SetProperty(Ctx, "DB_AUTH", ConnStr.IntegratedSecurity ? SQL_AUTH_WINDOWS : SQL_AUTH_SERVER);
-                        if (!ConnStr.IntegratedSecurity)
+                        var EServerUrl = string.Empty;
+                        AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = CfgPath });
+                        var CtxVars = new SetupVariables();
+                        CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.Server.ComponentCode);
+                        if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
                         {
-                            SetProperty(Ctx, "DB_LOGIN", ConnStr.UserID);
-                            SetProperty(Ctx, "DB_PASSWORD", ConnStr.Password);
+                            AppConfig.LoadComponentSettings(CtxVars);
+                            VersionGuard(Ctx, CtxVars);
+
+                            SetProperty(Ctx, "COMPFOUND_SERVER_ID", CtxVars.ComponentId);
+                            SetProperty(Ctx, "COMPFOUND_SERVER_MAIN_CFG", CfgPath);
+
+                            SetProperty(Ctx, "PI_SERVER_IP", CtxVars.WebSiteIP);
+                            SetProperty(Ctx, "PI_SERVER_PORT", CtxVars.WebSitePort);
+                            SetProperty(Ctx, "PI_SERVER_HOST", CtxVars.WebSiteDomain);
+                            SetProperty(Ctx, "PI_SERVER_LOGIN", CtxVars.UserAccount);
+                            SetProperty(Ctx, "PI_SERVER_DOMAIN", CtxVars.UserDomain);
+
+                            SetProperty(Ctx, "PI_SERVER_INSTALL_DIR", CtxVars.InstallFolder);
+                            SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
+
+                            Ctx["SERVER_ACCESS_PASSWORD"] = string.Empty;
+                            Ctx["SERVER_ACCESS_PASSWORD_CONFIRM"] = string.Empty;
+
+                            var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
+                            bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
+
+                            Ctx["COMPFOUND_SERVER"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
                         }
-                        ConnStr = new SqlConnectionStringBuilder(CtxVars.ConnectionString);
-                        SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
-
-                        try
+                        CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.EntServer.ComponentCode);
+                        if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
                         {
-                            var SqlQuery = string.Format("USE [{0}]; SELECT [dbo].[Users].[Password] FROM [dbo].[Users] WHERE [dbo].[Users].[UserID] = 1;", ConnStr.InitialCatalog);
-                            using (var Reader = SqlUtils.ExecuteSql(CtxVars.DbInstallConnectionString, SqlQuery).CreateDataReader())
+                            AppConfig.LoadComponentSettings(CtxVars);
+                            VersionGuard(Ctx, CtxVars);
+
+                            SetProperty(Ctx, "COMPFOUND_ESERVER_ID", CtxVars.ComponentId);
+                            SetProperty(Ctx, "COMPFOUND_ESERVER_MAIN_CFG", CfgPath);
+
+                            SetProperty(Ctx, "PI_ESERVER_IP", CtxVars.WebSiteIP);
+                            SetProperty(Ctx, "PI_ESERVER_PORT", CtxVars.WebSitePort);
+                            SetProperty(Ctx, "PI_ESERVER_HOST", CtxVars.WebSiteDomain);
+                            SetProperty(Ctx, "PI_ESERVER_LOGIN", CtxVars.UserAccount);
+                            SetProperty(Ctx, "PI_ESERVER_DOMAIN", CtxVars.UserDomain);
+                            EServerUrl = string.Format("http://{0}:{1}", CtxVars.WebSiteIP, CtxVars.WebSitePort);
+
+                            SetProperty(Ctx, "PI_ESERVER_INSTALL_DIR", CtxVars.InstallFolder);
+                            SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
+
+                            var ConnStr = new SqlConnectionStringBuilder(CtxVars.DbInstallConnectionString);
+                            SetProperty(Ctx, "DB_CONN", ConnStr.ToString());
+                            SetProperty(Ctx, "DB_SERVER", ConnStr.DataSource);
+                            SetProperty(Ctx, "DB_AUTH", ConnStr.IntegratedSecurity ? SQL_AUTH_WINDOWS : SQL_AUTH_SERVER);
+                            if (!ConnStr.IntegratedSecurity)
                             {
-                                if (Reader.Read())
+                                SetProperty(Ctx, "DB_LOGIN", ConnStr.UserID);
+                                SetProperty(Ctx, "DB_PASSWORD", ConnStr.Password);
+                            }
+                            ConnStr = new SqlConnectionStringBuilder(CtxVars.ConnectionString);
+                            SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
+                            SetProperty(Ctx, "PI_ESERVER_CONN_STR", ConnStr.ToString());
+                            SetProperty(Ctx, "PI_ESERVER_CRYPTO_KEY", CtxVars.CryptoKey);
+
+                            try
+                            {
+                                var SqlQuery = string.Format("USE [{0}]; SELECT [dbo].[Users].[Password] FROM [dbo].[Users] WHERE [dbo].[Users].[UserID] = 1;", ConnStr.InitialCatalog);
+                                using (var Reader = SqlUtils.ExecuteSql(CtxVars.DbInstallConnectionString, SqlQuery).CreateDataReader())
                                 {
-                                    var Hash = Reader[0].ToString();
-                                    var Password = IsEnctyptionEnabled(string.Format(@"{0}\Web.config", CtxVars.InstallationFolder)) ? Utils.Decrypt(CtxVars.CryptoKey, Hash) : Hash;
-                                    Ctx["SERVERADMIN_PASSWORD"] = Password;
-                                    Ctx["SERVERADMIN_PASSWORD_CONFIRM"] = Password;
+                                    if (Reader.Read())
+                                    {
+                                        var Hash = Reader[0].ToString();
+                                        var Password = IsEnctyptionEnabled(string.Format(@"{0}\Web.config", CtxVars.InstallationFolder)) ? Utils.Decrypt(CtxVars.CryptoKey, Hash) : Hash;
+                                        Ctx["SERVERADMIN_PASSWORD"] = Password;
+                                        Ctx["SERVERADMIN_PASSWORD_CONFIRM"] = Password;
+                                    }
                                 }
                             }
+                            catch
+                            {
+                                // Nothing to do.
+                            }
+
+                            var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
+                            bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
+
+                            Ctx["COMPFOUND_ESERVER"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
                         }
-                        finally
+                        CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.WebPortal.ComponentCode);
+                        if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
                         {
-                            // Nothing to do.
+                            AppConfig.LoadComponentSettings(CtxVars);
+                            VersionGuard(Ctx, CtxVars);
+
+                            SetProperty(Ctx, "COMPFOUND_PORTAL_ID", CtxVars.ComponentId);
+                            SetProperty(Ctx, "COMPFOUND_PORTAL_MAIN_CFG", CfgPath);
+
+                            SetProperty(Ctx, "PI_PORTAL_IP", CtxVars.WebSiteIP);
+                            SetProperty(Ctx, "PI_PORTAL_PORT", CtxVars.WebSitePort);
+                            SetProperty(Ctx, "PI_PORTAL_HOST", CtxVars.WebSiteDomain);
+                            SetProperty(Ctx, "PI_PORTAL_LOGIN", CtxVars.UserAccount);
+                            SetProperty(Ctx, "PI_PORTAL_DOMAIN", CtxVars.UserDomain);
+                            if (!SetProperty(Ctx, "PI_ESERVER_URL", CtxVars.EnterpriseServerURL))
+                                if (!SetProperty(Ctx, "PI_ESERVER_URL", EServerUrl))
+                                    SetProperty(Ctx, "PI_ESERVER_URL", Global.WebPortal.DefaultEntServURL);
+
+                            SetProperty(Ctx, "PI_PORTAL_INSTALL_DIR", CtxVars.InstallFolder);
+                            SetProperty(Ctx, "WSP_INSTALL_DIR", NormalizeDir(new DirectoryInfo(CtxVars.InstallFolder).Parent.FullName));
+
+                            var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
+                            bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
+
+                            Ctx["COMPFOUND_PORTAL"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
                         }
-
-                        var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
-                        bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
-
-                        Ctx["COMPFOUND_ESERVER"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
+                        CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.Scheduler.ComponentCode);
+                        var HaveComponentId = !string.IsNullOrWhiteSpace(CtxVars.ComponentId);
+                        var HaveSchedulerService = ServiceController.GetServices().Any(x => x.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase));
+                        var EServerConnStr = Ctx["PI_ESERVER_CONN_STR"];
+                        var HaveConn = !string.IsNullOrWhiteSpace(EServerConnStr);
+                        if (HaveComponentId || HaveSchedulerService || HaveConn)
+                        {
+                            Ctx["COMPFOUND_SCHEDULER"] = YesNo.No;
+                            try
+                            {
+                                SqlConnectionStringBuilder ConnInfo = null;
+                                if (HaveComponentId)
+                                {
+                                    AppConfig.LoadComponentSettings(CtxVars);
+                                    VersionGuard(Ctx, CtxVars);
+                                    SetProperty(Ctx, "COMPFOUND_SCHEDULER_ID", CtxVars.ComponentId);
+                                    SetProperty(Ctx, "COMPFOUND_SCHEDULER_MAIN_CFG", CfgPath);
+                                    SetProperty(Ctx, "PI_SCHEDULER_CRYPTO_KEY", CtxVars.CryptoKey);
+                                    ConnInfo = new SqlConnectionStringBuilder(CtxVars.ConnectionString);                                    
+                                }
+                                else if (HaveConn)
+                                {                                    
+                                    SetProperty(Ctx, "PI_SCHEDULER_CRYPTO_KEY", Ctx["PI_ESERVER_CRYPTO_KEY"]);
+                                    ConnInfo = new SqlConnectionStringBuilder(EServerConnStr);
+                                }
+                                if(ConnInfo != null)
+                                {
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_SERVER", ConnInfo.DataSource);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_DATABASE", ConnInfo.InitialCatalog);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_LOGIN", ConnInfo.UserID);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_PASSWORD", ConnInfo.Password);
+                                }
+                                Ctx["COMPFOUND_SCHEDULER"] = HaveSchedulerService? YesNo.Yes : YesNo.No;
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.WriteError("Detection of existing Scheduler Service failed.", ex);
+                            }                                
+                        }
                     }
-                    CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.WebPortal.ComponentCode);
-                    if (!string.IsNullOrWhiteSpace(CtxVars.ComponentId))
+                    catch (InvalidOperationException ioex)
                     {
-                        AppConfig.LoadComponentSettings(CtxVars);
-                        VersionGuard(Ctx, CtxVars);
-
-                        SetProperty(Ctx, "COMPFOUND_PORTAL_ID", CtxVars.ComponentId);
-                        SetProperty(Ctx, "COMPFOUND_PORTAL_MAIN_CFG", CfgPath);
-
-                        SetProperty(Ctx, "PI_PORTAL_IP", CtxVars.WebSiteIP);
-                        SetProperty(Ctx, "PI_PORTAL_PORT", CtxVars.WebSitePort);
-                        SetProperty(Ctx, "PI_PORTAL_HOST", CtxVars.WebSiteDomain);
-                        SetProperty(Ctx, "PI_PORTAL_LOGIN", CtxVars.UserAccount);
-                        SetProperty(Ctx, "PI_PORTAL_DOMAIN", CtxVars.UserDomain);
-                        if (!SetProperty(Ctx, "PI_ESERVER_URL", CtxVars.EnterpriseServerURL))
-                            if (!SetProperty(Ctx, "PI_ESERVER_URL", EServerUrl))
-                                SetProperty(Ctx, "PI_ESERVER_URL", Global.WebPortal.DefaultEntServURL);
-
-                        SetProperty(Ctx, "PI_PORTAL_INSTALL_DIR", CtxVars.InstallFolder);
-                        SetProperty(Ctx, "WSP_INSTALL_DIR", Directory.GetParent(CtxVars.InstallFolder).FullName);
-
-                        var HaveAccount = SecurityUtils.UserExists(CtxVars.UserDomain, CtxVars.UserAccount);
-                        bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
-
-                        Ctx["COMPFOUND_PORTAL"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
+                        Log.WriteError(ioex.ToString());
+                        var Text = new Record(1);
+                        Text.SetString(0, ioex.Message);
+                        Ctx.Message(InstallMessage.Error, Text);
+                        return ActionResult.Failure;
                     }
                 }
-                catch (InvalidOperationException ioex)
-                {
-                    Log.WriteError(ioex.ToString());
-                    var Text = new Record(1);
-                    Text.SetString(0, ioex.Message);
-                    Ctx.Message(InstallMessage.Error, Text);
-                    return ActionResult.Failure;
-                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+                return ActionResult.Failure;
             }
             Log.WriteEnd("PreFillSettings");
             return ActionResult.Success;
@@ -325,46 +462,109 @@ namespace WebsitePanel.WIXInstaller
         {
             PopUpDebugger();
 
-            var Msg = string.Empty;
             var Ctx = session;
             Ctx.AttachToSetupLog();
+            Log.WriteStart("InstallWebFeatures");
             var Result = ActionResult.Success;
-            var Cancel = new CancellationTokenSource();
-            try
-            {               
-                var Animation = AnimateText(Ctx, Cancel, "Configuring");
-                Log.WriteStart("InstallWebFeatures");
-                if (Tool.GetIsWebRoleInstalled())
+            var Scheduled = Ctx.GetMode(InstallRunMode.Scheduled);
+            var Components = new List<string>();
+            var InstallIis = false;
+            var InstallAspNet = false;
+            var InstallNetFx3 = false;
+            if (Scheduled)
+            {
+                InstallIis = Ctx.CustomActionData["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                InstallAspNet = Ctx.CustomActionData["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                InstallNetFx3 = Ctx.CustomActionData["PI_PREREQ_NETFX_INSTALL"] != YesNo.No;
+            }
+            else
+            {
+                InstallIis = Ctx["PI_PREREQ_IIS_INSTALL"] != YesNo.No;
+                InstallAspNet = Ctx["PI_PREREQ_ASPNET_INSTALL"] != YesNo.No;
+                InstallNetFx3 = Ctx["PI_PREREQ_NETFX_INSTALL"] != YesNo.No;
+            }
+            if (InstallIis)
+                Components.AddRange(Tool.GetWebRoleComponents());
+            if (InstallAspNet)
+                Components.AddRange(Tool.GetWebDevComponents());
+            if (InstallNetFx3)
+                Components.AddRange(Tool.GetNetFxComponents());
+            if (Scheduled)
+            {
+                Action<int, int> ProgressReset = (int Total, int Mode) =>
                 {
-                    if (!Tool.GetIsWebFeaturesInstalled())
+                    using (var Tmp = new Record(4))
                     {
-                        Log.WriteInfo("InstallWebFeatures: ASP.NET.");
-                        Tool.InstallWebFeatures(out Msg);
+                        Tmp.SetInteger(1, 0);
+                        Tmp.SetInteger(2, Total);
+                        Tmp.SetInteger(3, 0);
+                        Tmp.SetInteger(4, Mode);
+                        Ctx.Message(InstallMessage.Progress, Tmp);
                     }
-                }
-                else
+                };
+                Action<int> ProgressIncrement = (int Value) =>
                 {
-                    var Tmp = string.Empty;
-                    Log.WriteInfo("InstallWebFeatures: IIS and ASP.NET.");
-                    Tool.InstallWebRole(out Tmp);
-                    Msg += Tmp;
-                    Tool.InstallWebFeatures(out Tmp);
-                    Msg += Tmp;
+                    using (var Tmp = new Record(2))
+                    {
+                        Tmp.SetInteger(1, 2);
+                        Tmp.SetInteger(2, Value);
+                        Ctx.Message(InstallMessage.Progress, Tmp);
+                    }
+                };
+                Action<string> ProgressText = (string Text) =>
+                {
+                    using (var Tmp = new Record(2))
+                    {
+                        Tmp.SetString(1, "CA_InstallWebFeaturesDeferred");
+                        Tmp.SetString(2, Text);
+                        Ctx.Message(InstallMessage.ActionStart, Tmp);
+                    }
+                };
+                var Frmt = "Installing web component the {0} a {1} of {2}";
+                Log.WriteStart("InstallWebFeatures: components");
+                ProgressReset(Components.Count + 1, 0);
+                ProgressText("Installing necessary web components ...");
+                var Msg = new StringBuilder();
+                try
+                {
+                    InstallToolDelegate InstallTool = Tool.GetInstallTool();
+                    if (InstallTool == null)
+                        throw new ApplicationException("Install tool for copmonents is not found.");                    
+                    for (int i = 0; i < Components.Count; i ++)
+                    {
+                        var Component = Components[i];
+                        ProgressText(string.Format(Frmt, Component, i + 1, Components.Count));
+                        ProgressIncrement(1);
+                        Msg.AppendLine(InstallTool(Component));
+                    }
+                    if (InstallAspNet)
+                        Tool.PrepareAspNet();                    
+                    Log.WriteInfo("InstallWebFeatures: done.");
                 }
-                Log.WriteInfo("InstallWebFeatures: done.");
+                catch (Exception ex)
+                {
+                    Log.WriteError(string.Format("InstallWebFeatures: fail - {0}.", ex.ToString()));
+                    Result = ActionResult.Failure;
+                }
+                finally
+                {
+                    ProgressReset(Components.Count * 3 + 1, 0);
+                    if (Msg.Length > 0)
+                        Log.WriteInfo(string.Format("InstallWebFeatures Tool Log: {0}.", Msg.ToString()));
+                    Log.WriteEnd("InstallWebFeatures: components"); 
+                }                               
             }
-            catch (Exception ex)
+            else
             {
-                Log.WriteError(string.Format("InstallWebFeatures: fail - {0}.", ex.ToString()));
-                Result = ActionResult.Failure;
+                Log.WriteStart("InstallWebFeatures: prepare");
+                using (var ProgressRecord = new Record(2))
+                {     
+                    ProgressRecord.SetInteger(1, 3);
+                    ProgressRecord.SetInteger(2, Components.Count);
+                    Ctx.Message(InstallMessage.Progress, ProgressRecord);
+                }
+                Log.WriteEnd("InstallWebFeatures: prepare");
             }
-            finally
-            {
-                Cancel.Cancel();
-                Cancel.Dispose();
-            }
-            if (!string.IsNullOrWhiteSpace(Msg))
-                Log.WriteInfo(string.Format("InstallWebFeatures Tool Log: {0}.", Msg));
             Log.WriteEnd("InstallWebFeatures");
             return Result;
         }        
@@ -387,6 +587,12 @@ namespace WebsitePanel.WIXInstaller
             PopUpDebugger();
             return ProcessInstall(session, WiXInstallType.InstallPortal);
         }
+        [CustomAction]
+        public static ActionResult OnSchedulerInstall(Session session)
+        {
+            PopUpDebugger();
+            return ProcessInstall(session, WiXInstallType.InstallScheduler);
+        }
         // Remove.
         [CustomAction]
         public static ActionResult OnServerRemove(Session session)
@@ -405,6 +611,12 @@ namespace WebsitePanel.WIXInstaller
         {
             PopUpDebugger();
             return ProcessInstall(session, WiXInstallType.RemovePortal);
+        }
+        [CustomAction]
+        public static ActionResult OnSchedulerRemove(Session session)
+        {
+            PopUpDebugger();
+            return ProcessInstall(session, WiXInstallType.RemoveScheduler);
         }
         // Other.
         [CustomAction]
@@ -478,6 +690,18 @@ namespace WebsitePanel.WIXInstaller
             return ActionResult.Success;
         }
         [CustomAction]
+        public static ActionResult SchedulerValidateUI(Session session)
+        {
+            var Ctx = session;
+            bool Valid = true;
+            string Msg;
+            ValidationReset(Ctx);
+            Valid = ValidateCryptoKeyUI(Ctx, out Msg);
+            ValidationMsg(Ctx, Msg);
+            ValidationStatus(Ctx, Valid);
+            return ActionResult.Success;
+        }
+        [CustomAction]
         public static ActionResult ServerAdminValidateUI(Session session)
         {
             var Ctx = session;
@@ -538,6 +762,39 @@ namespace WebsitePanel.WIXInstaller
             return ActionResult.Success;
         }
         [CustomAction]
+        public static ActionResult ServerAccessValidateMtnUI(Session session)
+        {
+            var Ctx = session;
+            bool Valid = true;
+            string Msg;
+            ValidationReset(Ctx);
+            Valid = ValidateEqualPasswordUI(Ctx, "SERVER_ACCESS", out Msg);
+            ValidationMsg(Ctx, Msg);
+            ValidationStatus(Ctx, Valid);
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult FillDomainListUI(Session Ctx)
+        {
+            try
+            {
+                var Ctrls = new[]{ new ComboBoxCtrl(Ctx, "PI_SERVER_DOMAIN"),
+                                   new ComboBoxCtrl(Ctx, "PI_ESERVER_DOMAIN"),
+                                   new ComboBoxCtrl(Ctx, "PI_PORTAL_DOMAIN") };
+                using (var f = Forest.GetCurrentForest())
+                {
+                    foreach (Domain d in f.Domains)
+                        foreach (var Ctrl in Ctrls)
+                            Ctrl.AddItem(d.Name);
+                }
+            }
+            catch
+            {
+                // Nothing to do.
+            }
+            return ActionResult.Success;
+        }
+        [CustomAction]
         public static ActionResult SqlServerListUI(Session session)
         {
             var Ctx = session;
@@ -551,7 +808,7 @@ namespace WebsitePanel.WIXInstaller
         {
             string tmp;
             var Ctrl = new ComboBoxCtrl(session, "DB_SELECT");
-            if (CheckConnection(session["DB_CONN"], out tmp))
+            if (Adapter.CheckConnectionInfo(session["DB_CONN"], out tmp))
                 foreach (var Db in GetDbList(ConnStr: session["DB_CONN"], ForbiddenNames: SysDb))
                 {
                     Ctrl.AddItem(Db);
@@ -562,20 +819,77 @@ namespace WebsitePanel.WIXInstaller
             return ActionResult.Success;
         }
         [CustomAction]
+        public static ActionResult CheckConnectionSchedulerUI(Session Ctx)
+        {
+            PopUpDebugger();
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("CheckConnectionSchedulerUI");
+            var Result = default(bool);
+            var Msg = default(string);
+            var DbServer = Ctx["PI_SCHEDULER_DB_SERVER"];
+            var DbUser = Ctx["PI_SCHEDULER_DB_LOGIN"];
+            var DbPass = Ctx["PI_SCHEDULER_DB_PASSWORD"];
+            var DbBase = Ctx["PI_SCHEDULER_DB_DATABASE"];
+            if (new string[] { DbServer, DbUser, DbPass, DbBase }.Any(x => string.IsNullOrWhiteSpace(x)))
+                Msg = "Please check all fields again.";
+            else
+                Result = Adapter.CheckSql(new SetupVariables { InstallConnectionString = GetConnectionString(DbServer, DbBase, DbUser, DbPass) }, out Msg) == CheckStatuses.Success;
+            Ctx["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
+            Ctx["DB_CONN_MSG"] = string.Format(Result ? "Success. {0}" : "Error. {0}", Msg);
+            Log.WriteEnd("CheckConnectionSchedulerUI");
+            return ActionResult.Success;
+        }
+        [CustomAction]
         public static ActionResult CheckConnectionUI(Session session)
         {
+            string Msg = default(string);
             string ConnStr = session["DB_AUTH"].Equals(SQL_AUTH_WINDOWS) ? GetConnectionString(session["DB_SERVER"], "master") :
-                                                                                   GetConnectionString(session["DB_SERVER"], "master", session["DB_LOGIN"], session["DB_PASSWORD"]);
-            string msg;
-            bool Result = CheckConnection(ConnStr, out msg);
+                                                                           GetConnectionString(session["DB_SERVER"], "master", session["DB_LOGIN"], session["DB_PASSWORD"]);
+            var Result = Adapter.CheckSql(new SetupVariables { InstallConnectionString = ConnStr }, out Msg) == CheckStatuses.Success;
             session["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
             session["DB_CONN"] = Result ? ConnStr : "";
-            session["DB_CONN_MSG"] = msg;
+            session["DB_CONN_MSG"] = string.Format(Result? "Success. {0}" : "Error. {0}", Msg);
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult GetDbSkip(Session Ctx)
+        {
+            PopUpDebugger();
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("GetDbSkip");
+            var ConnStr = Ctx["DB_CONN"];
+            var DbName = Ctx["DB_DATABASE"];
+            var Tmp = Adapter.SkipCreateDb(ConnStr, DbName) ? YesNo.Yes : YesNo.No;
+            Log.WriteInfo("DB_SKIP_CREATE is " + Tmp);
+            Ctx["DB_SKIP_CREATE"] = Tmp;
+            Log.WriteEnd("GetDbSkip");
             return ActionResult.Success;
         }
         [CustomAction]
         public static ActionResult PrereqCheck(Session session)
         {
+            var SecMsg = "You do not have the appropriate permissions to perform this operation. Make sure you are running the application from the local disk and you have local system administrator privileges.";
+            var NetMsg = "Microsoft .NET {0} is {1}.";
+            Action<string> ShowMsg = (string Text) =>
+            {
+                using(var Rec = new Record(0))
+                {
+                    Rec.SetString(0, Text);
+                    session.Message(InstallMessage.Error, Rec);
+                }
+            };
+            Action<Session, string, string> FxLog = (Session SesCtx, string Ver, string StrVer) =>
+            {
+                if (YesNo.Get(session[Ver]) == YesNo.Yes)
+                    AddLog(SesCtx, string.Format(NetMsg, StrVer, "available"));
+                else
+                    AddLog(SesCtx, string.Format(NetMsg, StrVer, "not available"));
+            };
+            if (!Adapter.CheckSecurity() || !Adapter.IsAdministrator())
+            {
+                ShowMsg(SecMsg);
+                return ActionResult.Failure;
+            }            
             string Msg;
             var Ctx = Tool.GetSetupVars(session);
             var ros = Adapter.CheckOS(Ctx, out Msg);
@@ -587,7 +901,9 @@ namespace WebsitePanel.WIXInstaller
             session[Prop.REQ_OS] = ros == CheckStatuses.Success ? YesNo.Yes : YesNo.No;
             session[Prop.REQ_IIS] = riis == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
             session[Prop.REQ_ASPNET] = raspnet == CheckStatuses.Success ? YesNo.Yes : YesNo.No; ;
-
+            FxLog(session, Prop.REQ_NETFRAMEWORK20, "2.0");
+            FxLog(session, Prop.REQ_NETFRAMEWORK35, "3.5");
+            FxLog(session, Prop.REQ_NETFRAMEWORK40FULL, "4.0");
             return ActionResult.Success;
         }
         [CustomAction]
@@ -614,38 +930,14 @@ namespace WebsitePanel.WIXInstaller
                     Ctrl.AddItem(Ip);
             return ActionResult.Success;
         }
-
         #endregion
-        private static string GetConnectionString(string serverName, string databaseName)
+        private static string GetConnectionString(string serverName, string databaseName, string login = null, string password = null)
         {
-            return string.Format("Server={0};database={1};Trusted_Connection=true;", serverName, databaseName);
-        }
-
-        private static string GetConnectionString(string serverName, string databaseName, string login, string password)
-        {
-            return string.Format("Server={0};database={1};uid={2};password={3};", serverName, databaseName, login, password);
-        }
-        static bool CheckConnection(string ConnStr, out string Info)
-        {
-            Info = string.Empty;
-            bool Result = false;
-            using (var Conn = new SqlConnection(ConnStr))
-            {
-                try
-                {
-                    Conn.Open();
-                    Result = true;
-                }
-                catch (Exception ex)
-                {
-                    Info = ex.Message;
-                }
-            }
-            return Result;
+            return SqlUtils.BuildDbServerConnectionString(serverName, databaseName, login, password);
         }
         private static void AddCheck(ListViewCtrl view, Session session, string PropertyID)
         {
-            view.AddItem(session[PropertyID] == YesNo.Yes, session[PropertyID + "_TITLE"]);
+            view.AddItem(YesNo.Get(session[PropertyID]) != YesNo.No, session[PropertyID + "_TITLE"]);
         }
         static IList<string> GetSqlInstances()
         {
@@ -724,11 +1016,27 @@ namespace WebsitePanel.WIXInstaller
                 Result = true;
             return Result;
         }
+        internal static bool PasswordValidateEqual(string Password, string Confirm, out string Msg)
+        {
+            Msg = string.Empty;
+            bool Result = false;
+            if (Password != Confirm)
+                Msg = "Password does not match the confirm password. Type both passwords again.";
+            else
+                Result = true;
+            return Result;
+        }
         internal static bool ValidatePasswordUI(Session Ctx, string Ns, out string Msg)
         {
             string p1 = Ctx[Ns + "_PASSWORD"];
             string p2 = Ctx[Ns + "_PASSWORD_CONFIRM"];
             return PasswordValidate(p1, p2, out Msg);
+        }
+        internal static bool ValidateEqualPasswordUI(Session Ctx, string Ns, out string Msg)
+        {
+            string p1 = Ctx[Ns + "_PASSWORD"];
+            string p2 = Ctx[Ns + "_PASSWORD_CONFIRM"];
+            return PasswordValidateEqual(p1, p2, out Msg);
         }
         internal static bool ValidateADDomainUI(Session Ctx, string Ns, out string Msg)
         {
@@ -783,7 +1091,18 @@ namespace WebsitePanel.WIXInstaller
             {
                 Result = false;
                 Msg = "The database name can't be empty.";
-
+            }
+            return Result;
+        }
+        internal static bool ValidateCryptoKeyUI(Session Ctx, out string Msg)
+        {
+            Msg = string.Empty;
+            var Result = true;
+            string DbName = Ctx["PI_SCHEDULER_CRYPTO_KEY"];
+            if (string.IsNullOrWhiteSpace(DbName))
+            {
+                Result = false;
+                Msg = "The crypto key can't be empty.";
             }
             return Result;
         }
@@ -830,6 +1149,12 @@ namespace WebsitePanel.WIXInstaller
                         break;
                     case WiXInstallType.MaintenancePortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
+                    case WiXInstallType.InstallScheduler:
+                        Install = SchedulerSetup.Create(Ctx.CustomActionData, SetupActions.Install);
+                        break;
+                    case WiXInstallType.RemoveScheduler:
+                        Install = SchedulerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -894,40 +1219,9 @@ namespace WebsitePanel.WIXInstaller
             SetupScript Result = new ExpressScript(CtxVars);
             Result.Actions.Add(new InstallAction(ActionTypes.StopApplicationPool) { SetupVariables = CtxVars });
             Result.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = CtxVars });
-            var ServiceCtx = new SetupVariables() { ComponentId = CtxVars.ComponentId };
-            AppConfig.LoadComponentSettings(ServiceCtx);
-            if (!string.IsNullOrWhiteSpace(ServiceCtx.ServiceName))
-            {
-                CtxVars.ServiceName = ServiceCtx.ServiceName;
-                CtxVars.ServiceFile = ServiceCtx.ServiceFile;
-                Result.Actions.Add(new InstallAction(ActionTypes.StopWindowsService));
-            }
             Result.Actions.Add(new InstallAction(ActionTypes.DeleteDirectory) { SetupVariables = CtxVars, Path = CtxVars.InstallFolder });
             return Result;
         }
-        private static Task AnimateText(Session Ctx, CancellationTokenSource Cancel, string Message, int Delay = 1000, byte DotCount = 3)
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                Cancel.Token.ThrowIfCancellationRequested();
-                byte Current = 0;
-                while (true)
-                {
-                    var Text = string.Format("{0} {1}", Message, ".".Repeat(Current++));
-                    using (var Tmp = new Record(1))
-                    {
-                        Tmp.SetString(0, Text);
-                        Ctx.Message(InstallMessage.ActionData, Tmp);
-                    }
-                    if (Current > DotCount)
-                        Current = 0;
-                    Thread.Sleep(Delay);
-                    if (Cancel.Token.IsCancellationRequested)
-                        Cancel.Token.ThrowIfCancellationRequested();
-                }
-            }, Cancel.Token);
-        }
-
         private static bool IsEnctyptionEnabled(string Cfg)
         {
             var doc = new XmlDocument();
@@ -964,9 +1258,11 @@ namespace WebsitePanel.WIXInstaller
         InstallServer,
         InstallEnterpriseServer,
         InstallPortal,
+        InstallScheduler,
         RemoveServer,
         RemoveEnterpriseServer,
         RemovePortal,
+        RemoveScheduler,
         MaintenanceServer,
         MaintenanceEnterpriseServer,
         MaintenancePortal

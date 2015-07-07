@@ -205,7 +205,7 @@
     <value>Folders:</value>
   </data>
   <data name="lblEnterpriseStorage.Text" xml:space="preserve">
-    <value>Enterprise Storage, MB:</value>
+    <value>Cloud Folders, MB:</value>
   </data>
   <data name="lblDeletedUsers.Text" xml:space="preserve">
     <value>Deleted Users:</value>

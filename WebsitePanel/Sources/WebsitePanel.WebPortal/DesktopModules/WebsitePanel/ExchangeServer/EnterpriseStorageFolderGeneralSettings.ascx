@@ -47,7 +47,7 @@
 									    ErrorMessage="Enter Folder Size" ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
                                     <asp:RangeValidator ID="rangeFolderSize" runat="server" ControlToValidate="txtFolderSize" MaximumValue="99999999" MinimumValue="0.01" Type="Double"
                                         ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"
-                                        ErrorMessage="The quota you’ve entered exceeds the available quota for tenant" />
+                                        ErrorMessage="The quota you've entered exceeds the available quota for organization" />
 							    </td>
 						    </tr>
                             <tr>
@@ -63,21 +63,33 @@
                                 <td class="FormLabel150"><asp:Localize ID="locFolderUrl" runat="server" meta:resourcekey="locFolderUrl" Text="Folder Url:"></asp:Localize></td>
                                 <td><asp:Label runat="server" ID="lblFolderUrl" /></td>
                             </tr>
-                            <tr><td>&nbsp;</td></tr>
-                            <tr>
-                                <td class="FormLabel150"><asp:Localize ID="locDirectoryBrowsing" runat="server" meta:resourcekey="locDirectoryBrowsing" Text="Enable Directory Browsing:"></asp:Localize></td>
-						        <td>
-							        <asp:CheckBox id="chkDirectoryBrowsing" runat="server"></asp:CheckBox>
-						        </td>
-					        </tr>
-                            <tr><td>&nbsp;</td></tr>
+                            <tr id="uncPathRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locUncPath" runat="server" meta:resourcekey="locUncPath" Text="UNC Path:"></asp:Localize></td>
+                                <td><asp:Label runat="server" ID="lblUncPath" /></td>
+                            </tr>
+                            <tr id="abeRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locABE" runat="server" meta:resourcekey="locABE" Text="Enable Access-Based Enumeration:"></asp:Localize></td>
+                                <td class="FormRBtnL">
+                                    <asp:CheckBox runat="server" ID="chkAbe" meta:resourcekey="chkAbe"/>
+                                </td>
+                            </tr>
+                            <tr id="edaRow" runat="server" Visible="false">
+                                <td class="FormLabel150"><asp:Localize ID="locEda" runat="server" meta:resourcekey="locEda" Text="Encrypt data access:"></asp:Localize></td>
+                                <td class="FormRBtnL">
+                                    <asp:CheckBox runat="server" ID="chkEda" meta:resourcekey="chkEda"/>
+                                </td>
+                            </tr>
 
+                            <tr><td>&nbsp;</td></tr>
 					    </table>
 					</asp:Panel>
 
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditFolder" OnClick="btnSave_Click"></asp:Button>
 					    <asp:ValidationSummary ID="valSummary" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditFolder" />
+                        <div style="display:inline-block;float:right;">
+                            <asp:Button id="btnMigrate" runat="server" Text="Move to Storage Spaces" CssClass="Button1" meta:resourcekey="btnMigrate" OnClick="btnMigrate_Click" ></asp:Button>
+                         </div>
 				    </div>
 				</div>
 			</div>

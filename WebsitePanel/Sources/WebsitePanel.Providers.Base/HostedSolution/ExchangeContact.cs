@@ -70,18 +70,21 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeAccount[] rejectAccounts;
         bool requireSenderAuthentication;
 
+        [LogProperty]
         public string DisplayName
         {
             get { return this.displayName; }
             set { this.displayName = value; }
         }
 
+        [LogProperty]
         public string AccountName
         {
             get { return this.accountName; }
             set { this.accountName = value; }
         }
 
+        [LogProperty]
         public string EmailAddress
         {
             get { return this.emailAddress; }
@@ -238,6 +241,7 @@ namespace WebsitePanel.Providers.HostedSolution
             set { useMapiRichTextFormat = value; }
         }
 
+        [LogProperty]
         public string SAMAccountName
         {
             get { return sAMAccountName; }

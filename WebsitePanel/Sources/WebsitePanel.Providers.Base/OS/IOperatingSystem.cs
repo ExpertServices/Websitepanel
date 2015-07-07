@@ -91,5 +91,6 @@ namespace WebsitePanel.Providers.OS
 
         // File Services
         bool CheckFileServicesInstallation();
+        bool InstallFsrmService();
     }
 }

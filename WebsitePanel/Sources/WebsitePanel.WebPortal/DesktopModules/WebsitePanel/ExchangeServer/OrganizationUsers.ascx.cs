@@ -49,11 +49,6 @@ namespace WebsitePanel.Portal.HostedSolution
 
             cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            if (!IsPostBack)
-            {    
-                BindStats();
-            }
-
             BindServiceLevels();
 
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
@@ -66,6 +61,11 @@ namespace WebsitePanel.Portal.HostedSolution
             gvUsers.Columns[4].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
         }
 
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            BindStats();
+        }
+
         private void BindServiceLevels()
         {
             ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
@@ -75,10 +75,9 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             // quota values
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             usersQuota.QuotaUsedValue = stats.CreatedUsers;
             usersQuota.QuotaValue = stats.AllocatedUsers;
-            if (stats.AllocatedUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+            if (stats.AllocatedUsers != -1) usersQuota.QuotaAvailable = stats.AllocatedUsers - stats.CreatedUsers;
 
             if(cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
         }
@@ -86,22 +85,20 @@ namespace WebsitePanel.Portal.HostedSolution
         private void BindServiceLevelsStats()
         {
             ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
-            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
             List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
-            foreach (var quota in Array.FindAll<QuotaValueInfo>(
-                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            foreach (var quota in stats.ServiceLevels)
             {
-                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
-                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
-
-                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo { QuotaName = quota.QuotaName,
-                                                                        QuotaDescription = quota.QuotaDescription + " in this Organization:", 
-                                                                        QuotaTypeId = quota.QuotaTypeId,
-                                                                        QuotaValue = quota.QuotaAllocatedValue,
-                                                                        QuotaUsedValue = usedInOrgCount,
-                                                                        //QuotaUsedValue = quota.QuotaUsedValue,
-                                                                        QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue });
+                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo
+                {
+                    QuotaName = quota.QuotaName,
+                    QuotaDescription = quota.QuotaDescription + " in this Organization:",
+                    QuotaTypeId = quota.QuotaTypeId,
+                    QuotaValue = quota.QuotaAllocatedValue,
+                    QuotaUsedValue = quota.QuotaUsedValue,
+                    QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue
+                });
             }
             dlServiceLevelQuotas.DataSource = serviceLevelQuotas;
             dlServiceLevelQuotas.DataBind();

@@ -80,6 +80,8 @@ namespace WebsitePanel.Setup
 		    public const string Release = "Release";
             public const string SchedulerServiceFileName = "WebsitePanel.SchedulerService.exe";
             public const string SchedulerServiceName = "WebsitePanel Scheduler";
+            public const string DatabaseUser = "DatabaseUser";
+            public const string DatabaseUserPassword = "DatabaseUserPassword";
 		}
 
 		public abstract class Messages
@@ -199,6 +201,12 @@ namespace WebsitePanel.Setup
 				public const string DbServerAdminPassword = "dbapassw";
 			}
 		}
+
+        public abstract class Scheduler
+        {
+            public const string ComponentName = "Scheduler Service";
+            public const string ComponentCode = "scheduler service";
+        }
 
 		public abstract class CLI
 		{

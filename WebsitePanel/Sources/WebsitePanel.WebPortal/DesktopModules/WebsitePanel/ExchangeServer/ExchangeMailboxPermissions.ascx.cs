@@ -103,9 +103,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string[] fullAccess = fullAccessPermission.GetAccounts();
                 string[] sendAs = sendAsPermission.GetAccounts();
                 string[] onBehalf = onBehalfOfPermissions.GetAccounts();
-                string[] calendar = calendarPermissions.GetAccounts();
-                string[] contacts = contactsPermissions.GetAccounts();
-
+                var calendar = calendarPermissions.GetAccounts();
+                var contacts = contactsPermissions.GetAccounts();
+                
                 int result =
                     ES.Services.ExchangeServer.SetMailboxPermissions(PanelRequest.ItemID, PanelRequest.AccountID, sendAs, fullAccess, onBehalf, calendar, contacts);
 

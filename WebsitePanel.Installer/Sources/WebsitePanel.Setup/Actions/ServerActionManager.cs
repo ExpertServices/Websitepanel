@@ -568,6 +568,15 @@ namespace WebsitePanel.Setup.Actions
 				newSiteId = WebUtils.CreateSite(site);
 			}
 
+            try
+            {
+                Utils.OpenFirewallPort(vars.ComponentFullName, vars.WebSitePort, vars.IISVersion);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("Open windows firewall port error", ex);
+            }
+
 			vars.VirtualDirectory = String.Empty;
 			vars.NewWebSite = true;
 			vars.NewVirtualDirectory = false;

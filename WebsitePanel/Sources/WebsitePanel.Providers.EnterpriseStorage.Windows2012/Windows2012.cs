@@ -122,6 +122,42 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             return (SystemFile[]) items.ToArray(typeof (SystemFile));
         }
 
+        public SystemFile[] GetQuotasForOrganization(SystemFile[] folders)
+        {
+            var windows = new WebsitePanel.Providers.OS.Windows2012();
+
+            var quotasArray = new Dictionary<string, Dictionary<string, Quota>>();
+
+            foreach (var folder in folders)
+            {
+                var parentFolderPath = Directory.GetParent(folder.FullName).ToString();
+
+                var quotas = quotasArray.ContainsKey(parentFolderPath) 
+                    ? quotasArray[parentFolderPath] 
+                    : windows.GetQuotasForOrganization(parentFolderPath, string.Empty, string.Empty);
+
+                if (quotas.ContainsKey(folder.FullName) == false)
+                {
+                    continue;
+                }
+
+                var quota = quotas[folder.FullName];
+
+                if (quota != null)
+                {
+                    folder.Size = quota.Usage;
+                    folder.FsrmQuotaType = quota.QuotaType;
+
+                    if (folder.Size == -1)
+                    {
+                        folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(folder.FullName));
+                    }
+                }
+            }
+
+            return folders;
+        }
+
         public SystemFile[] GetFoldersWithoutFrsm(string organizationId, WebDavSetting[] settings)
         {
             ArrayList items = new ArrayList();
@@ -212,8 +248,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 webDavSetting.HomeFolder, organizationId, folder));
         }
 
-        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder,
-            WebDavSetting setting)
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)
         {
             var webDavSetting = GetWebDavSetting(setting);
 
@@ -230,6 +265,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             webdav.DeleteAllWebDavRules(organizationId, originalFolder);
 
             return GetFolder(organizationId, newFolder, webDavSetting);
+        }
+
+        public void MoveFolder(string oldPath, string newPath)
+        {
+            FileUtils.CopyFile(oldPath, newPath);
+
+            FileUtils.DeleteFile(oldPath);
         }
 
         public void DeleteFolder(string organizationId, string folder, WebDavSetting setting)
@@ -340,7 +382,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 searchPaths = searchPaths.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
 
-            //using (new WindowsIdentity(userPrincipalName).Impersonate())
             {
                 using (var conn = new OleDbConnection("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';"))
                 {
@@ -373,17 +414,9 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
                             file.FullName = (reader[4] as string ?? string.Empty);
 
-                            if (isRootSearch)
-                            {
-                                file.RelativeUrl = file.FullName.Replace(rootFolder, "").Trim('\\');
-                            }
-                            else
-                            {
-                                foreach (var searchPath in searchPaths)
-                                {
-                                    file.RelativeUrl = file.FullName.Replace(Path.Combine(rootFolder, searchPath), "").Trim('\\');
-                                }
-                            }
+                            
+                            file.RelativeUrl = file.FullName.Replace(rootFolder, "").Trim('\\');
+                        
 
                             file.Summary = SanitizeXmlString(reader[6] as string);
 

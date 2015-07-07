@@ -65,17 +65,19 @@
 	DataSourceID="odsObjectsPaged" EnableViewState="False"
 	EmptyDataText=<%# GetSharedLocalizedString("SearchObject.NOT_FOUND") %>>
 	<Columns>
-        <asp:TemplateField HeaderText="gvType" SortExpression="ColumnType">
-            <HeaderTemplate>
-                <a href="javascript: void(0)" onclick="CPopupDialog('mydialog',event)">Type</a>
-            </HeaderTemplate>
+        <asp:TemplateField HeaderText="gvUsername" SortExpression="Username" HeaderStyle-Wrap="false">
             <ItemTemplate>
-                <%# GetTypeDisplayName((string)Eval("ColumnType")) %>
+                <%# GetTypeDisplayName((string)Eval("Username")) %>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="gvFullname" SortExpression="Fullname" HeaderStyle-Wrap="false">
+            <ItemTemplate>
+                <%# GetTypeDisplayName((string)Eval("Fullname")) %>
             </ItemTemplate>
         </asp:TemplateField>
 		<asp:TemplateField SortExpression="TextSearch" HeaderText="gvText" HeaderStyle-Wrap="false">
 			<ItemTemplate>
-	            <asp:hyperlink id=lnkUser runat="server" NavigateUrl='<%# GetItemPageUrl((string)Eval("FullType"), (string)Eval("ColumnType"), (int)Eval("ItemID"), (int)Eval("PackageID"), (int)Eval("AccountID")) %>'>
+	            <asp:hyperlink id=lnkUser runat="server" NavigateUrl='<%# GetItemPageUrl((string)Eval("FullType"), (string)Eval("ColumnType"), (int)Eval("ItemID"), (int)Eval("PackageID"), (int)Eval("AccountID"), (string)Eval("TextSearch")) %>'>
 		            <%# Eval("TextSearch") %>
 	            </asp:hyperlink>
             </ItemTemplate>

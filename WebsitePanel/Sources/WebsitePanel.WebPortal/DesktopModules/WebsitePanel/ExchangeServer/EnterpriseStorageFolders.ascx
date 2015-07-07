@@ -13,7 +13,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="imgESS" SkinID="EnterpriseStorageSpace48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Folders"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Shared Folders"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -69,7 +69,7 @@
                             <asp:TemplateField HeaderText="gvFolderUrl">
 							    <ItemStyle Width="40%"></ItemStyle>
 							    <ItemTemplate>
-                                    <asp:Literal id="litFolderUrl" runat="server" Text='<%# Eval("Url").ToString() %>'></asp:Literal>
+                                    <asp:Literal id="litFolderUrl" runat="server" Text='<%# (Eval("UncPath") ?? Eval("Url")).ToString() %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvMappedDrive">

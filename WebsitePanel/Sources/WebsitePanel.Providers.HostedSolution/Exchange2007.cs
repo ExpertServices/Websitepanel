@@ -247,8 +247,8 @@ namespace WebsitePanel.Providers.HostedSolution
             return GetMailboxPermissionsInternal(organizationId, accountName, null);
         }
 
-        public void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts)
-        {
+        public void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, ExchangeAccount[] calendarAccounts, ExchangeAccount[] contactAccounts)
+        {                                                                                                                                                              
             SetMailboxPermissionsInternal(organizationId, accountName, sendAsAccounts, fullAccessAccounts, onBehalfOfAccounts, calendarAccounts, contactAccounts);
         }
 
@@ -1684,7 +1684,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        private void SetMailboxPermissionsInternal(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, string[] calendarAccounts, string[] contactAccounts)
+        private void SetMailboxPermissionsInternal(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts, string[] onBehalfOfAccounts, ExchangeAccount[] calendarAccounts, ExchangeAccount[] contactAccounts)
         {
             ExchangeLog.LogStart("SetMailboxPermissionsInternal");
 
@@ -1729,7 +1729,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetMailboxPermissionsInternal");
         }
 
-        protected virtual void SetMailboxFolderPermissions(Runspace runSpace, ExchangeAccount[] existingAccounts, string folderPath, string[] accounts)
+        protected virtual void SetMailboxFolderPermissions(Runspace runSpace, ExchangeAccount[] existingAccounts, string folderPath, ExchangeAccount[] accounts)
         {
             ExchangeLog.LogStart("SetMailboxFolderPermissions");
 
@@ -1829,11 +1829,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetMailboxOnBehalfOfPermissions");
         }
 
-        protected virtual void AddMailboxFolderPermission(Runspace runSpace, string folderPath, string account)
+        protected virtual void AddMailboxFolderPermission(Runspace runSpace, string folderPath, ExchangeAccount account)
         {
         }
 
-        protected virtual void RemoveMailboxFolderPermission(Runspace runSpace, string folderPath, string account)
+        protected virtual void RemoveMailboxFolderPermission(Runspace runSpace, string folderPath, ExchangeAccount account)
         {
         }
 
@@ -7090,10 +7090,10 @@ namespace WebsitePanel.Providers.HostedSolution
                     SetMailboxOnBehalfPermissions(runspace, action.Id, action.Accounts);
                     break;
                 case TransactionAction.TransactionActionTypes.RemoveMailboxFolderPermissions:
-                    AddMailboxFolderPermission(runspace, action.Id, action.Account);
+                    AddMailboxFolderPermission(runspace, action.Id, action.ExchangeAccount);
                     break;
                 case TransactionAction.TransactionActionTypes.AddMailboxFolderPermission:
-                    RemoveMailboxFolderPermission(runspace, action.Id, action.Account);
+                    RemoveMailboxFolderPermission(runspace, action.Id, action.ExchangeAccount);
                     break;
             }
         }

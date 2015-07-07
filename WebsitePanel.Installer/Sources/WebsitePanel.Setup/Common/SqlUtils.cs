@@ -246,11 +246,16 @@ namespace WebsitePanel.Setup
 		/// <param name="databaseName">Database name.</param>
 		/// <param name="connectionString">Connection string.</param>
 		/// <returns>Returns True if the database exists.</returns>
-		internal static bool DatabaseExists(string connectionString, string databaseName)
+		public static bool DatabaseExists(string connectionString, string databaseName)
 		{
 			return (ExecuteQuery(connectionString,
 				String.Format("select name from master..sysdatabases where name = '{0}'", databaseName)).Tables[0].Rows.Count > 0);
 		}
+        public static bool IsEmptyDatabase(string ConnStr, string DbName)
+        {
+            var Tmp = (int)ExecuteSql(ConnStr, string.Format("use [{0}]; select case when exists(select * from information_schema.tables) then 1 else 0 end;", DbName)).Tables[0].Rows[0][0];
+            return Tmp == 0;
+        }
 
 		/// <summary>
 		/// Creates database.

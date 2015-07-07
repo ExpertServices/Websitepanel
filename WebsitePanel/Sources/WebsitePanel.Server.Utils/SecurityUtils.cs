@@ -185,7 +185,7 @@ namespace WebsitePanel.Providers.Utils
 
         public static void GrantGroupNtfsPermissions(
             string path, UserPermission[] users, bool resetChildPermissions,
-            RemoteServerSettings serverSettings, string usersOU, string groupsOU)
+            RemoteServerSettings serverSettings, string usersOU, string groupsOU, bool isProteted = false, bool inheritePermissions = true)
         {
             // get file or directory security object
             FileSystemSecurity security = GetFileSystemSecurity(path);
@@ -233,7 +233,7 @@ namespace WebsitePanel.Providers.Utils
             }
 
             // allow inherited rules
-            security.SetAccessRuleProtection(false, true);
+            security.SetAccessRuleProtection(isProteted, inheritePermissions);
 
             // set security object
             SetFileSystemSecurity(path, security);

@@ -60,7 +60,7 @@ namespace WebsitePanel.Portal.HostedSolution
                     try
                     {
                         // read remote content
-                        buffer = ES.Services.Organizations.GetArchiveFileBinaryChunk(PanelSecurity.PackageId, downloadFile, offset, FILE_BUFFER_LENGTH);
+                        buffer = ES.Services.Organizations.GetArchiveFileBinaryChunk(PanelSecurity.PackageId, PanelRequest.ItemID, PanelRequest.AccountID, offset, FILE_BUFFER_LENGTH);
                     }
                     catch (Exception ex)
                     {
@@ -98,10 +98,9 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             // quota values
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             deletedUsersQuota.QuotaUsedValue = stats.DeletedUsers;
             deletedUsersQuota.QuotaValue = stats.AllocatedDeletedUsers;
-            if (stats.AllocatedUsers != -1) deletedUsersQuota.QuotaAvailable = tenantStats.AllocatedDeletedUsers - tenantStats.DeletedUsers;
+            if (stats.AllocatedUsers != -1) deletedUsersQuota.QuotaAvailable = stats.AllocatedDeletedUsers - stats.DeletedUsers;
         }
 
         public string GetUserEditUrl(string accountId)
@@ -332,14 +331,15 @@ namespace WebsitePanel.Portal.HostedSolution
             return serviceLevel;
         }
 
-        public string GetDownloadLink(string storagePath, string folderName, string fileName)
+        public string GetDownloadLink(int accountId, string fileName)
         {
             return NavigateURL(PortalUtils.SPACE_ID_PARAM,
                 PanelSecurity.PackageId.ToString(),
                 "ctl=" + PanelRequest.Ctl,
                 "ItemID=" + PanelRequest.ItemID,
                 "mid=" + this.ModuleID,
-                "DownloadFile=" + Server.UrlEncode(Path.Combine(storagePath, folderName, fileName)));
+                "AccountID=" + accountId,
+                "DownloadFile=" + Server.UrlEncode(fileName));
         }
     }
 }
