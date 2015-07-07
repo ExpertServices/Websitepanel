@@ -382,9 +382,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject ShadowSession(int itemId, string sessionId, bool control)
+        public ResultObject ShadowSession(int itemId, string sessionId, bool control, string fqdName)
         {
-            return RemoteDesktopServicesController.ShadowSession(itemId, sessionId, control);
+            return RemoteDesktopServicesController.ShadowSession(itemId, sessionId, control, fqdName);
         }
 
         [WebMethod]
@@ -397,6 +397,18 @@ namespace WebsitePanel.EnterpriseServer
         public int GetRemoteDesktopServiceId(int itemId)
         {
             return RemoteDesktopServicesController.GetRemoteDesktopServiceId(itemId);
+        }
+
+        [WebMethod]
+        public ResultObject SendMessage(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName)
+        {
+            return RemoteDesktopServicesController.SendMessage(recipients, text, itemId, rdsCollectionId, userName);
+        }
+
+        [WebMethod]
+        public List<RdsMessage> GetRdsMessagesByCollectionId(int rdsCollectionId)
+        {
+            return RemoteDesktopServicesController.GetRdsMessagesByCollectionId(rdsCollectionId);
         }
     }
 }

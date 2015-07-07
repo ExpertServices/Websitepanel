@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AjaxControlToolkit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -13,6 +14,8 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.OnRefreshClicked -= OnRefreshClicked;
+            users.OnRefreshClicked += OnRefreshClicked;
             users.Module = Module;
 
             if (!IsPostBack)
@@ -29,6 +32,11 @@ namespace WebsitePanel.Portal.RDS
 
                 users.SetUsers(collectionLocalAdmins);
             }
+        }
+
+        private void OnRefreshClicked(object sender, EventArgs e)
+        {
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();            
         }
 
         private bool SaveLocalAdmins()

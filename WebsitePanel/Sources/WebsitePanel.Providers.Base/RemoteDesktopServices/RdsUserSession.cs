@@ -5,6 +5,7 @@ using System.Text;
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
 {    
+    [Serializable]
     public class RdsUserSession
     {
         public string CollectionName { get; set; }

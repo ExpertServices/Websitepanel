@@ -1484,7 +1484,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region Shadow Session
 
-        public void ShadowSession(string sessionId, bool control)
+        public void ShadowSession(string sessionId, string fqdName, bool control)
         {
             Runspace runspace = null;
 
@@ -1494,7 +1494,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 var scripts = new List<string>
                 {
-                    string.Format("mstsc /Shadow:{0}{1}", sessionId, control ? " /Control" : "")
+                    string.Format("mstsc /Shadow:{0}{1} /v:{2}", sessionId, control ? " /Control" : "", fqdName)
                 };
 
                 object[] errors = null;
@@ -2791,14 +2791,21 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             foreach(var userSession in  userSessions)
             {
+                object collectionNameObj = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "CollectionName");
+                object domainName = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "DomainName");
+                object hostServer = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "HostServer");
+                object sessionState = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "SessionState");
+                object unifiedSessionId = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "UnifiedSessionId");
+                object samAccountName = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "UserName");
+
                 var session = new RdsUserSession
                 {
-                    CollectionName = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "CollectionName").ToString(),
-                    DomainName = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "DomainName").ToString(),
-                    HostServer = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "HostServer").ToString(),
-                    SessionState = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "SessionState").ToString(),
-                    UnifiedSessionId = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "UnifiedSessionId").ToString(),
-                    SamAccountName = RdsRunspaceExtensions.GetPSObjectProperty(userSession, "UserName").ToString(),
+                    CollectionName = collectionNameObj != null ? collectionNameObj.ToString() : "",
+                    DomainName = domainName != null ? domainName.ToString() : "",
+                    HostServer = hostServer != null ? hostServer.ToString() : "",
+                    SessionState = sessionState != null ? sessionState.ToString() : "",
+                    UnifiedSessionId = unifiedSessionId != null ? unifiedSessionId.ToString() : "",
+                    SamAccountName = samAccountName != null ? samAccountName.ToString() : ""
                 };                                
                                 
                 session.IsVip = false;
