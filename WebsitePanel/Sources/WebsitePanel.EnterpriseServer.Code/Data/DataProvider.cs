@@ -5412,5 +5412,38 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region RDS Messages        
+
+        public static DataSet GetRDSMessagesByCollectionId(int rdsCollectionId)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSMessages",                
+                new SqlParameter("@RDSCollectionId", rdsCollectionId)
+            );
+        }
+
+        public static int AddRDSMessage(int rdsCollectionId, string messageText, string userName)
+        {
+            SqlParameter rdsMessageId = new SqlParameter("@RDSMessageID", SqlDbType.Int);
+            rdsMessageId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSMessage",
+                rdsMessageId,
+                new SqlParameter("@RDSCollectionId", rdsCollectionId),
+                new SqlParameter("@MessageText", messageText),
+                new SqlParameter("@UserName", userName),
+                new SqlParameter("@Date", DateTime.Now)
+            );
+            
+            return Convert.ToInt32(rdsMessageId.Value);
+        }
+
+        #endregion
+
     }
 }

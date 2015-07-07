@@ -20,8 +20,8 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Diagnostics;
     using WebsitePanel.Providers.RemoteDesktopServices;
     using WebsitePanel.Providers.Common;
-    using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.EnterpriseServer.Base.RDS;
+    using WebsitePanel.Providers.HostedSolution;
     
     
     /// <remarks/>
@@ -142,6 +142,10 @@ namespace WebsitePanel.EnterpriseServer {
         private System.Threading.SendOrPostCallback ImportCollectionOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetRemoteDesktopServiceIdOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SendMessageOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetRdsMessagesByCollectionIdOperationCompleted;
         
         /// <remarks/>
         public esRemoteDesktopServices() {
@@ -315,6 +319,12 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetRemoteDesktopServiceIdCompletedEventHandler GetRemoteDesktopServiceIdCompleted;
+        
+        /// <remarks/>
+        public event SendMessageCompletedEventHandler SendMessageCompleted;
+        
+        /// <remarks/>
+        public event GetRdsMessagesByCollectionIdCompletedEventHandler GetRdsMessagesByCollectionIdCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsCollection", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2688,20 +2698,22 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ShadowSession", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResultObject ShadowSession(int itemId, string sessionId, bool control) {
+        public ResultObject ShadowSession(int itemId, string sessionId, bool control, string fqdName) {
             object[] results = this.Invoke("ShadowSession", new object[] {
                         itemId,
                         sessionId,
-                        control});
+                        control,
+                        fqdName});
             return ((ResultObject)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginShadowSession(int itemId, string sessionId, bool control, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginShadowSession(int itemId, string sessionId, bool control, string fqdName, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("ShadowSession", new object[] {
                         itemId,
                         sessionId,
-                        control}, callback, asyncState);
+                        control,
+                        fqdName}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -2711,19 +2723,20 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public void ShadowSessionAsync(int itemId, string sessionId, bool control) {
-            this.ShadowSessionAsync(itemId, sessionId, control, null);
+        public void ShadowSessionAsync(int itemId, string sessionId, bool control, string fqdName) {
+            this.ShadowSessionAsync(itemId, sessionId, control, fqdName, null);
         }
         
         /// <remarks/>
-        public void ShadowSessionAsync(int itemId, string sessionId, bool control, object userState) {
+        public void ShadowSessionAsync(int itemId, string sessionId, bool control, string fqdName, object userState) {
             if ((this.ShadowSessionOperationCompleted == null)) {
                 this.ShadowSessionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShadowSessionOperationCompleted);
             }
             this.InvokeAsync("ShadowSession", new object[] {
                         itemId,
                         sessionId,
-                        control}, this.ShadowSessionOperationCompleted, userState);
+                        control,
+                        fqdName}, this.ShadowSessionOperationCompleted, userState);
         }
         
         private void OnShadowSessionOperationCompleted(object arg) {
@@ -2815,6 +2828,100 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.GetRemoteDesktopServiceIdCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetRemoteDesktopServiceIdCompleted(this, new GetRemoteDesktopServiceIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SendMessage", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject SendMessage(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName) {
+            object[] results = this.Invoke("SendMessage", new object[] {
+                        recipients,
+                        text,
+                        itemId,
+                        rdsCollectionId,
+                        userName});
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSendMessage(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SendMessage", new object[] {
+                        recipients,
+                        text,
+                        itemId,
+                        rdsCollectionId,
+                        userName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ResultObject EndSendMessage(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SendMessageAsync(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName) {
+            this.SendMessageAsync(recipients, text, itemId, rdsCollectionId, userName, null);
+        }
+        
+        /// <remarks/>
+        public void SendMessageAsync(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName, object userState) {
+            if ((this.SendMessageOperationCompleted == null)) {
+                this.SendMessageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSendMessageOperationCompleted);
+            }
+            this.InvokeAsync("SendMessage", new object[] {
+                        recipients,
+                        text,
+                        itemId,
+                        rdsCollectionId,
+                        userName}, this.SendMessageOperationCompleted, userState);
+        }
+        
+        private void OnSendMessageOperationCompleted(object arg) {
+            if ((this.SendMessageCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SendMessageCompleted(this, new SendMessageCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetRdsMessagesByCollectionId", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public RdsMessage[] GetRdsMessagesByCollectionId(int rdsCollectionId) {
+            object[] results = this.Invoke("GetRdsMessagesByCollectionId", new object[] {
+                        rdsCollectionId});
+            return ((RdsMessage[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetRdsMessagesByCollectionId(int rdsCollectionId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetRdsMessagesByCollectionId", new object[] {
+                        rdsCollectionId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public RdsMessage[] EndGetRdsMessagesByCollectionId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((RdsMessage[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetRdsMessagesByCollectionIdAsync(int rdsCollectionId) {
+            this.GetRdsMessagesByCollectionIdAsync(rdsCollectionId, null);
+        }
+        
+        /// <remarks/>
+        public void GetRdsMessagesByCollectionIdAsync(int rdsCollectionId, object userState) {
+            if ((this.GetRdsMessagesByCollectionIdOperationCompleted == null)) {
+                this.GetRdsMessagesByCollectionIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRdsMessagesByCollectionIdOperationCompleted);
+            }
+            this.InvokeAsync("GetRdsMessagesByCollectionId", new object[] {
+                        rdsCollectionId}, this.GetRdsMessagesByCollectionIdOperationCompleted, userState);
+        }
+        
+        private void OnGetRdsMessagesByCollectionIdOperationCompleted(object arg) {
+            if ((this.GetRdsMessagesByCollectionIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetRdsMessagesByCollectionIdCompleted(this, new GetRdsMessagesByCollectionIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -4276,6 +4383,58 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SendMessageCompletedEventHandler(object sender, SendMessageCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SendMessageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SendMessageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResultObject Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetRdsMessagesByCollectionIdCompletedEventHandler(object sender, GetRdsMessagesByCollectionIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetRdsMessagesByCollectionIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetRdsMessagesByCollectionIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public RdsMessage[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((RdsMessage[])(this.results[0]));
             }
         }
     }

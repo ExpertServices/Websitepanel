@@ -85,6 +85,24 @@ namespace WebsitePanel.Portal.RDS {
         protected global::System.Web.UI.WebControls.Button btnRefresh;
         
         /// <summary>
+        /// btnRecentMessages control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRecentMessages;
+        
+        /// <summary>
+        /// btnSendMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSendMessage;
+        
+        /// <summary>
         /// secRdsUserSessions control.
         /// </summary>
         /// <remarks>
@@ -119,5 +137,131 @@ namespace WebsitePanel.Portal.RDS {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ItemButtonPanel buttonPanel;
+        
+        /// <summary>
+        /// MessagesHistoryPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel MessagesHistoryPanel;
+        
+        /// <summary>
+        /// headerMessagesHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize headerMessagesHistory;
+        
+        /// <summary>
+        /// MessagesHistoryUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel MessagesHistoryUpdatePanel;
+        
+        /// <summary>
+        /// gvMessagesHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView gvMessagesHistory;
+        
+        /// <summary>
+        /// btnCancelMessagesHistory control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelMessagesHistory;
+        
+        /// <summary>
+        /// EnterMessagePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel EnterMessagePanel;
+        
+        /// <summary>
+        /// headerEnterMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize headerEnterMessage;
+        
+        /// <summary>
+        /// txtMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMessage;
+        
+        /// <summary>
+        /// btnAddMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddMessage;
+        
+        /// <summary>
+        /// btnCancelEnterMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelEnterMessage;
+        
+        /// <summary>
+        /// btnEnterMessageFake control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnEnterMessageFake;
+        
+        /// <summary>
+        /// EnterMessageModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.ModalPopupExtender EnterMessageModal;
+        
+        /// <summary>
+        /// btnMessagesHistoryFake control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMessagesHistoryFake;
+        
+        /// <summary>
+        /// MessagesHistoryModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.ModalPopupExtender MessagesHistoryModal;
     }
 }

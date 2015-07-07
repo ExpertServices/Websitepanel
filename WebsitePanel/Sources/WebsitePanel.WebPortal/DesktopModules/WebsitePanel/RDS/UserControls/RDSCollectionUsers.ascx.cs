@@ -101,25 +101,27 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
 		protected void btnDelete_Click(object sender, EventArgs e)
 		{
+            List<string> lockedUsers = new List<string>();
+
             if (PanelRequest.Ctl == "rds_collection_edit_users")
             {
-                var lockedUsers = CheckDeletedUsers();
+                lockedUsers = CheckDeletedUsers();
 
                 if (!lockedUsers.Any())
                 {
                     List<OrganizationUser> selectedAccounts = GetGridViewUsers(SelectedState.Unselected);
                     BindAccounts(selectedAccounts.ToArray(), false);
-                }
-
-                if (OnRefreshClicked != null)
-                {
-                    OnRefreshClicked(lockedUsers, new EventArgs());
-                }
+                }                
             }
             else
             {
                 List<OrganizationUser> selectedAccounts = GetGridViewUsers(SelectedState.Unselected);
                 BindAccounts(selectedAccounts.ToArray(), false);
+            }
+
+            if (OnRefreshClicked != null)
+            {
+                OnRefreshClicked(lockedUsers, new EventArgs());
             }
 		}
 

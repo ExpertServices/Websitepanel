@@ -142,6 +142,7 @@
     <Compile Include="RemoteDesktopServices\RdsCollectionSetting.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionSettings.cs" />
     <Compile Include="RemoteDesktopServices\RdsEnums.cs" />
+    <Compile Include="RemoteDesktopServices\RdsMessage.cs" />
     <Compile Include="RemoteDesktopServices\RdsMessageRecipient.cs" />
     <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />

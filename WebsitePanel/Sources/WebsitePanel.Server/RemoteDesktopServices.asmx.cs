@@ -681,12 +681,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void ShadowSession(string sessionId, bool control)
+        public void ShadowSession(string sessionId, string fqdName, bool control)
         {
             try
             {
                 Log.WriteStart("'{0}' ShadowSession", ProviderSettings.ProviderName);
-                RDSProvider.ShadowSession(sessionId, control);
+                RDSProvider.ShadowSession(sessionId, fqdName, control);
                 Log.WriteEnd("'{0}' ShadowSession", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
