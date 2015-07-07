@@ -40,6 +40,7 @@ using System.Web.UI.HtmlControls;
 using WebsitePanel.Portal.ProviderControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -68,11 +69,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
                 {
-                    OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-
-                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace)/OneGb
+                    rangeFolderSize.MaximumValue = Math.Round((organizationStats.AllocatedEnterpriseStorageSpace - (decimal)organizationStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you�ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you've entered exceeds the available quota for organization ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
             }
         }

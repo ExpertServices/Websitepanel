@@ -199,5 +199,10 @@ namespace WebsitePanel.Providers.HostedSolution
         public bool Disabled { get; set; }
 
         public bool Locked { get; set; }
+
+        public override string ToString()
+        {
+            return !string.IsNullOrEmpty(accountName) ? accountName : base.ToString();
+        }
     }
 }

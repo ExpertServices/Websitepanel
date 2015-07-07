@@ -164,19 +164,6 @@ namespace WebsitePanel.Portal.HostedSolution
 
             if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
             {
-                List<ServiceLevel> enabledServiceLevels = new List<ServiceLevel>();
-
-                foreach (var quota in cntx.Quotas.Where(x => x.Key.Contains(Quotas.SERVICE_LEVELS)))
-                {
-                    foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
-                    {
-                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value))
-                        {
-                            enabledServiceLevels.Add(serviceLevel);
-                        }
-                    }
-                }
-
                 secServiceLevels.Visible = true;
             }
             else

@@ -37,8 +37,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-
-
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -60,10 +59,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 		private void BindStats()
 		{
 			OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 			foldersQuota.QuotaUsedValue = stats.CreatedPublicFolders;
 			foldersQuota.QuotaValue = stats.AllocatedPublicFolders;
-            if (stats.AllocatedPublicFolders != -1) foldersQuota.QuotaAvailable = tenantStats.AllocatedPublicFolders - tenantStats.CreatedPublicFolders;
+            if (stats.AllocatedPublicFolders != -1) foldersQuota.QuotaAvailable = stats.AllocatedPublicFolders - stats.CreatedPublicFolders;
 		}
 
         private void BuildFoldersTree()

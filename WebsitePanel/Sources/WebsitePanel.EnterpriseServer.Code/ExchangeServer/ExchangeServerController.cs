@@ -36,6 +36,8 @@ using System.Net.Mail;
 using System.Threading;
 using System.Drawing;
 using System.IO;
+using WebsitePanel.EnterpriseServer.Base;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.EnterpriseServer.Extensions;
 using WebsitePanel.Providers;
@@ -262,17 +264,33 @@ namespace WebsitePanel.EnterpriseServer
 
                 // allocated quotas
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
-                stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
-                stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
-                stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
-                stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                if (byOrganization)
+                {
+                    stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization;
 
-                stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue;
-                stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValuePerOrganization;
+                    stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValuePerOrganization;
+                }
+                else
+                {
+                    stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
+                    stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
+                    stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
+                    stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
 
+                    stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue;
+                    stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue;
+                }
+              
                 return stats;
             }
             catch (Exception ex)
@@ -701,13 +719,12 @@ namespace WebsitePanel.EnterpriseServer
                 // Log Extension
                 LogExtension.SetItemName(org.DistinguishedName);
 
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+                // load org quotas
+                OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
 
                 int maxDiskSpace = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue * 1024;
+                if (orgStats.AllocatedDiskSpace > 0)
+                    maxDiskSpace = orgStats.AllocatedDiskSpace * 1024;
 
                 if (maxDiskSpace > 0 && (issueWarningKB > maxDiskSpace || prohibitSendKB > maxDiskSpace || prohibitSendReceiveKB > maxDiskSpace || issueWarningKB == -1 || prohibitSendKB == -1 || prohibitSendReceiveKB == -1))
                     return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
@@ -1737,7 +1754,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (accountType == ExchangeAccountType.SharedMailbox)
             {
                 if ((orgStats.AllocatedSharedMailboxes > -1) && (orgStats.CreatedSharedMailboxes >= orgStats.AllocatedSharedMailboxes))
@@ -1815,16 +1832,12 @@ namespace WebsitePanel.EnterpriseServer
                 if (packageCheck < 0) return packageCheck;
 
                 //verify if the mailbox fits in the storage quota
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-
                 int maxDiskSpace = -1;
                 int quotaUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedDiskSpace > 0)
                 {
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                    quotaUsed = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaUsedValue;
+                    maxDiskSpace = orgStats.AllocatedDiskSpace;
+                    quotaUsed = orgStats.UsedDiskSpace;
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
@@ -1839,11 +1852,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxRecoverableItemsSpace = -1;
                 int quotaRecoverableItemsUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedLitigationHoldSpace > 0)
                 {
-                    maxRecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
                 }
 
                 if (maxRecoverableItemsSpace != -1)
@@ -1860,11 +1872,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxArchivingStorage = -1;
                 int quotaArchivingStorageUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_ARCHIVINGSTORAGE)
-                    && cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedArchingStorage > 0)
                 {
-                    maxArchivingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
-                    quotaArchivingStorageUsed = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaUsedValue;
+                    maxArchivingStorage = orgStats.AllocatedArchingStorage;
+                    quotaArchivingStorageUsed = orgStats.UsedArchingStorage;
                 }
 
                 if (maxArchivingStorage != -1)
@@ -1879,6 +1890,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 //GetServiceSettings
                 StringDictionary primSettings = ServerController.GetServiceSettings(exchangeServiceId);
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
                 string samAccountName = exchange.CreateMailEnableUser(email, org.OrganizationId, org.DistinguishedName,
                                                 org.SecurityGroup, org.DefaultDomain,
@@ -2266,10 +2278,17 @@ namespace WebsitePanel.EnterpriseServer
                 // Log Extension
                 LogExtension.WriteVariables(new { hideAddressBook });
 
+                var oldObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
                 exchange.SetMailboxGeneralSettings(
                     account.UserPrincipalName,
                     hideAddressBook,
                     disabled);
+
+                var newObj = exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -2560,6 +2579,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
+
                 exchange.SetMailboxMailFlowSettings(account.UserPrincipalName,
                     enableForwarding,
                     forwardingAccountName,
@@ -2568,6 +2589,11 @@ namespace WebsitePanel.EnterpriseServer
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newSettings = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldSettings, newSettings);
 
                 return 0;
             }
@@ -2644,12 +2670,17 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
                 
-                // Log Extension
-                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                var newAction = action;
 
                 // PMM settings
-                if (pmmAllowed) account.MailboxManagerActions |= action;
-                else account.MailboxManagerActions &= ~action;
+                if (pmmAllowed) newAction |= action;
+                else newAction &= ~action;
+
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+                account.LogPropertyIfChanged(a => a.MailboxManagerActions, newAction);
+
+                account.MailboxManagerActions = newAction;
 
                 // update account
                 UpdateAccount(account);
@@ -2869,6 +2900,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
+                // Log Extension
+                LogExtension.SetItemName(account.PrimaryEmailAddress);
+
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -2915,16 +2949,15 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+                // load org quotas
+                OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
 
                 int maxDiskSpace = -1;
                 int quotaUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_DISKSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedDiskSpace > 0)
                 {
-                    maxDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                    quotaUsed = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaUsedValue;
+                    maxDiskSpace = orgStats.AllocatedDiskSpace;
+                    quotaUsed = orgStats.UsedDiskSpace;
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
@@ -2951,11 +2984,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 int maxRecoverableItemsSpace = -1;
                 int quotaRecoverableItemsUsed = 0;
-                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
-                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                if (orgStats.AllocatedLitigationHoldSpace > 0)
                 {
-                    maxRecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
-                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
                 }
 
                 if (maxRecoverableItemsSpace != -1)
@@ -3154,15 +3186,15 @@ namespace WebsitePanel.EnterpriseServer
 
                     if (mailboxPlan.Archiving)
                     {
-                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue != -1)
-                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue)
-                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValuePerOrganization;
                     }
                     else
                     {
-                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
                     }
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
@@ -3181,9 +3213,9 @@ namespace WebsitePanel.EnterpriseServer
 
                     mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
-                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
                 }
 
                 return DataProvider.AddExchangeMailboxPlan(itemID, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
@@ -3214,7 +3246,16 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // Log Extension
                 LogExtension.WriteObject(mailboxPlan);
-                
+                ExchangeMailboxPlan oldMailboxPlan = null;
+                try
+                {
+                    oldMailboxPlan = ObjectUtils.Clone(mailboxPlan);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.Write("Can't clone mailbox: " + ex.Message);
+                } 
+
                 Organization org = GetOrganization(itemID);
                 if (org == null)
                     return -1;
@@ -3234,9 +3275,9 @@ namespace WebsitePanel.EnterpriseServer
                         if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
                             mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValuePerOrganization;
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
                         if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
@@ -3254,9 +3295,9 @@ namespace WebsitePanel.EnterpriseServer
 
                     mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
-                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValuePerOrganization;
 
                 }
 
@@ -3266,6 +3307,10 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
                                                         mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving,
                                                         mailboxPlan.ArchiveSizeMB, mailboxPlan.ArchiveWarningPct, mailboxPlan.EnableForceArchiveDeletion);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldMailboxPlan, mailboxPlan);
+
             }
             catch (Exception ex)
             {
@@ -3543,6 +3588,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                // Log Extension
+                LogExtension.WriteObject(tag);
+                
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3805,7 +3853,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedContacts > -1
                 && orgStats.CreatedContacts >= orgStats.AllocatedContacts)
                 return BusinessErrorCodes.ERROR_EXCHANGE_CONTACTS_QUOTA_LIMIT;
@@ -4006,6 +4054,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldContact = exchange.GetContactGeneralSettings(account.AccountName);
+
                 exchange.SetContactGeneralSettings(
                     account.AccountName,
                     displayName,
@@ -4033,9 +4083,12 @@ namespace WebsitePanel.EnterpriseServer
                     notes,
                     useMapiRichTextFormat, org.DefaultDomain);
 
+                var newContact = exchange.GetContactGeneralSettings(account.AccountName);
+
                 // Log Extension
                 account.LogPropertyIfChanged(a => a.DisplayName, displayName);
                 account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, emailAddress);
+                LogExtension.LogPropertiesIfChanged(oldContact, newContact);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4126,10 +4179,17 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
                 exchange.SetContactMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetContactMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -4152,7 +4212,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedDistributionLists > -1
                 && orgStats.CreatedDistributionLists >= orgStats.AllocatedDistributionLists)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DLISTS_QUOTA_LIMIT;
@@ -4365,6 +4425,8 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
                 exchange.SetDistributionListGeneralSettings(
                     account.AccountName,
                     displayName,
@@ -4373,6 +4435,12 @@ namespace WebsitePanel.EnterpriseServer
                     memberAccounts,
                     notes,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListGeneralSettings(account.AccountName);
+
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.DisplayName, displayName);
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 // update account
                 account.DisplayName = displayName;
@@ -4466,12 +4534,18 @@ namespace WebsitePanel.EnterpriseServer
                 addressLists.Add(org.GlobalAddressList);
                 addressLists.Add(org.AddressList);
 
+                var oldObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
 
                 exchange.SetDistributionListMailFlowSettings(account.AccountName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication,
                     addressLists.ToArray());
+
+                var newObj = exchange.GetDistributionListMailFlowSettings(account.AccountName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -4972,7 +5046,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check mailbox quota
-            OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
+            OrganizationStatistics orgStats = GetOrganizationStatisticsByOrganization(itemId);
             if (orgStats.AllocatedPublicFolders > -1
                 && orgStats.CreatedPublicFolders >= orgStats.AllocatedPublicFolders)
                 return BusinessErrorCodes.ERROR_EXCHANGE_PFOLDERS_QUOTA_LIMIT;
@@ -5177,6 +5251,10 @@ namespace WebsitePanel.EnterpriseServer
                     name,
                     domain);
 
+                // Log Extension
+                account.LogPropertyIfChanged(a => a.MailEnabledPublicFolder, accountName);
+                account.LogPropertyIfChanged(a => a.PrimaryEmailAddress, email, false);
+
                 // update and save account
                 account.AccountName = accountName;
                 account.MailEnabledPublicFolder = true;
@@ -5341,6 +5419,8 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
                 exchange.SetPublicFolderGeneralSettings(
                     org.OrganizationId,
                     account.DisplayName,
@@ -5348,6 +5428,11 @@ namespace WebsitePanel.EnterpriseServer
                     hideAddressBook,
                     accounts
                     );
+
+                var newObj = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 // update folder name
                 string origName = account.DisplayName;
@@ -5464,10 +5549,17 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
+
                 exchange.SetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName,
                     acceptAccounts,
                     rejectAccounts,
                     requireSenderAuthentication);
+
+                var newObj = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, newObj);
 
                 return 0;
             }
@@ -6107,8 +6199,13 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                var oldObj = GetExchangeDisclaimer(itemId, disclaimer.ExchangeDisclaimerId);
+
                 exchange.SetDisclaimer(disclaimer.WSPUniqueName, disclaimer.DisclaimerText);
                 DataProvider.UpdateExchangeDisclaimer(itemId, disclaimer);
+
+                // Log Extension
+                LogExtension.LogPropertiesIfChanged(oldObj, disclaimer);
             }
             catch (Exception ex)
             {

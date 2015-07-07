@@ -249,6 +249,7 @@ namespace WebsitePanel.EnterpriseServer
                     var quota = GetFolderQuota(closureSpace.Path, closureSpace.Id);
 
                     closureSpace.ActuallyUsedInBytes = ConvertMbToBytes(quota.Usage);
+                    closureSpace.DiskFreeSpaceInBytes = quota.DiskFreeSpaceInBytes;
                 });
 
                 task.Start();
@@ -408,40 +409,20 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static IntResult FindBestStorageSpaceService(string groupName, long quotaSizeBytes)
+        public static IntResult FindBestStorageSpaceService(IStorageSpaceSelector selector, string groupName, long quotaSizeBytes)
         {
-            return FindBestStorageSpaceServiceInternal(groupName, quotaSizeBytes);
+            return FindBestStorageSpaceServiceInternal(selector, groupName, quotaSizeBytes);
         }
 
-        private static IntResult FindBestStorageSpaceServiceInternal(string groupName, long quotaSizeBytes)
+        private static IntResult FindBestStorageSpaceServiceInternal(IStorageSpaceSelector selector, string groupName, long quotaSizeBytes)
         {
             var result = TaskManager.StartResultTask<IntResult>("STORAGE_SPACES", "FIND_BEST_STORAGE_SPACE_SERVICE");
 
             try
             {
-                if (string.IsNullOrEmpty(groupName))
-                {
-                    throw new ArgumentNullException("groupName");
-                }
-
-                var storages = ObjectUtils.CreateListFromDataReader<StorageSpace>(DataProvider.GetStorageSpacesByResourceGroupName(groupName));
-
-                if (!storages.Any())
-                {
-                    throw new Exception(string.Format("Storage spaces not found for '{0}' resource group", groupName));
-                }
-
-                var orderedStorages = storages.OrderByDescending(x => x.FsrmQuotaSizeBytes - x.UsedSizeBytes);
-
-                var bestStorage = orderedStorages.First();
-
-                if (bestStorage.FsrmQuotaSizeBytes - bestStorage.UsedSizeBytes < quotaSizeBytes)
-                {
-                    throw new Exception("Space storages was found, but available space not enough");
-                }
+                var bestStorage = selector.FindBest(groupName, quotaSizeBytes);
 
                 result.Value = bestStorage.Id;
-
             }
             catch (Exception exception)
             {
@@ -467,29 +448,22 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Storage Space Folders
 
-        public static IntResult CreateStorageSpaceFolder(string groupName, string organizationId, string folderName, long quotaInBytes, QuotaType quotaType)
+        public static IntResult CreateStorageSpaceFolder(int storageSpaceId, string groupName, string organizationId, string folderName, long quotaInBytes, QuotaType quotaType)
         {
-            return CreateStorageSpaceFolderInternal(groupName, organizationId,folderName, quotaInBytes, quotaType);
+            return CreateStorageSpaceFolderInternal(storageSpaceId, groupName, organizationId, folderName, quotaInBytes, quotaType);
         }
 
-        private static IntResult CreateStorageSpaceFolderInternal(string groupName, string organizationId, string folderName, long quotaInBytes, QuotaType quotaType)
+        private static IntResult CreateStorageSpaceFolderInternal(int storageSpaceId, string groupName, string organizationId, string folderName, long quotaInBytes, QuotaType quotaType)
         {
             var result = TaskManager.StartResultTask<IntResult>("STORAGE_SPACES", "CREATE_STORAGE_SPACE_FOLDER");
 
             try
             {
-                var storageId = StorageSpacesController.FindBestStorageSpaceService(groupName, quotaInBytes);
-
-                if (!storageId.IsSuccess)
-                {
-                    throw new Exception(storageId.ErrorCodes.First());
-                }
-
-                var storageSpace = StorageSpacesController.GetStorageSpaceById(storageId.Value);
+                var storageSpace = StorageSpacesController.GetStorageSpaceById(storageSpaceId);
 
                 if (storageSpace == null)
                 {
-                    throw new Exception(string.Format("Storage space with id={0} not found", storageId.Value));
+                    throw new Exception(string.Format("Storage space with id={0} not found", storageSpaceId));
                 }
 
                 var ss = GetStorageSpaceService(storageSpace.ServiceId);
@@ -1108,6 +1082,18 @@ namespace WebsitePanel.EnterpriseServer
             var ss = GetStorageSpaceService(storageSpace.ServiceId);
 
             return ss.GetFileBinaryChunk(path, offset, length);
+        }
+
+        public static string GetParentUnc(string uncPath)
+        {
+            var uri = new Uri(uncPath);
+
+            if (uri.Segments.Length == 2)
+            {
+                return string.Format("\\\\{0}", uri.Host);
+            }
+
+            return Directory.GetParent(uncPath).ToString();
         }
     }
 }

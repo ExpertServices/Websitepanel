@@ -93,34 +93,25 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             // quota values
             OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
             mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
             mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
-            if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = tenantStats.AllocatedMailboxes - tenantStats.CreatedMailboxes;
+            if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = stats.AllocatedMailboxes - stats.CreatedMailboxes;
 
-            if (cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
+            if (cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats(stats);
         }
 
-        private void BindServiceLevelsStats()
+        private void BindServiceLevelsStats(OrganizationStatistics stats)
         {
-            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
-            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
-
             List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
-            foreach (var quota in Array.FindAll<QuotaValueInfo>(
-                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            foreach (var quota in stats.ServiceLevels)
             {
-                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
-                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
-
                 serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo
                 {
                     QuotaName = quota.QuotaName,
                     QuotaDescription = quota.QuotaDescription + " in this Organization:",
                     QuotaTypeId = quota.QuotaTypeId,
                     QuotaValue = quota.QuotaAllocatedValue,
-                    QuotaUsedValue = usedInOrgCount,
-                    //QuotaUsedValue = quota.QuotaUsedValue,
+                    QuotaUsedValue = quota.QuotaUsedValue,
                     QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue
                 });
             }

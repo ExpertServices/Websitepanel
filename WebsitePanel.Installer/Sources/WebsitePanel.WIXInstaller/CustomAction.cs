@@ -46,17 +46,40 @@ using WebsitePanel.Setup;
 using WebsitePanel.Setup.Internal;
 using WebsitePanel.WIXInstaller.Common;
 using WebsitePanel.WIXInstaller.Common.Util;
+using System.Collections;
 
 namespace WebsitePanel.WIXInstaller
 {
     public class CustomActions
     {
         public static List<string> SysDb = new List<string> { "tempdb", "master", "model", "msdb" };
-        public const string CustomDataDelimiter = "-=del=-";
         public const string SQL_AUTH_WINDOWS = "Windows Authentication";
         public const string SQL_AUTH_SERVER = "SQL Server Authentication";
 
         #region CustomActions
+        [CustomAction]
+        public static ActionResult OnScpa(Session Ctx)
+        {
+            Func<Hashtable, string, string> GetParam = (s, x) => Utils.GetStringSetupParameter(s, x);
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("OnScpa");
+            var Hash = Ctx.CustomActionData.ToNonGenericDictionary() as Hashtable;
+            var Scpa = new WebsitePanel.Setup.Actions.ConfigureStandaloneServerAction();
+            Scpa.ServerSetup = new SetupVariables { };
+            Scpa.EnterpriseServerSetup = new SetupVariables { };
+            Scpa.PortalSetup = new SetupVariables { };
+            Scpa.EnterpriseServerSetup.ServerAdminPassword = GetParam(Hash, "ServerAdminPassword");
+            Scpa.EnterpriseServerSetup.PeerAdminPassword = Scpa.EnterpriseServerSetup.ServerAdminPassword;
+            Scpa.PortalSetup.EnterpriseServerURL = GetParam(Hash, "EnterpriseServerUrl");
+            Scpa.PortalSetup.WebSiteIP = GetParam(Hash, "PortalWebSiteIP");
+            Scpa.ServerSetup.WebSiteIP = GetParam(Hash, "ServerWebSiteIP");
+            Scpa.ServerSetup.WebSitePort = GetParam(Hash, "ServerWebSitePort");
+            Scpa.ServerSetup.ServerPassword = GetParam(Hash, "ServerPassword");
+            var Make = Scpa as WebsitePanel.Setup.Actions.IInstallAction;
+            Make.Run(null);
+            Log.WriteEnd("OnScpa");
+            return ActionResult.Success;
+        }
         [CustomAction]
         public static ActionResult OnServerPrepare(Session Ctx)
         {
@@ -87,6 +110,22 @@ namespace WebsitePanel.WIXInstaller
             Ctx.AttachToSetupLog();
             Log.WriteStart("OnPortalPrepare");
             GetPrepareScript(Ctx).Run();
+            Log.WriteEnd("OnPortalPrepare");
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult OnSchedulerPrepare(Session Ctx)
+        {
+            PopUpDebugger();
+
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("OnPortalPrepare");
+            var Script = GetPrepareScript(Ctx);
+            Script.Actions.Clear();
+            Script.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = Script.Context });
+            Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService));
+            Script.Context.ServiceName = Global.Parameters.SchedulerServiceName;
+            Script.Run();
             Log.WriteEnd("OnPortalPrepare");
             return ActionResult.Success;
         }
@@ -468,6 +507,12 @@ namespace WebsitePanel.WIXInstaller
             PopUpDebugger();
             return ProcessInstall(session, WiXInstallType.InstallPortal);
         }
+        [CustomAction]
+        public static ActionResult OnSchedulerInstall(Session session)
+        {
+            PopUpDebugger();
+            return ProcessInstall(session, WiXInstallType.InstallScheduler);
+        }
         // Remove.
         [CustomAction]
         public static ActionResult OnServerRemove(Session session)
@@ -486,6 +531,12 @@ namespace WebsitePanel.WIXInstaller
         {
             PopUpDebugger();
             return ProcessInstall(session, WiXInstallType.RemovePortal);
+        }
+        [CustomAction]
+        public static ActionResult OnSchedulerRemove(Session session)
+        {
+            PopUpDebugger();
+            return ProcessInstall(session, WiXInstallType.RemoveScheduler);
         }
         // Other.
         [CustomAction]
@@ -554,6 +605,18 @@ namespace WebsitePanel.WIXInstaller
             string Msg;
             ValidationReset(Ctx);
             Valid = ValidateDbNameUI(Ctx, out Msg);
+            ValidationMsg(Ctx, Msg);
+            ValidationStatus(Ctx, Valid);
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult SchedulerValidateUI(Session session)
+        {
+            var Ctx = session;
+            bool Valid = true;
+            string Msg;
+            ValidationReset(Ctx);
+            Valid = ValidateCryptoKeyUI(Ctx, out Msg);
             ValidationMsg(Ctx, Msg);
             ValidationStatus(Ctx, Valid);
             return ActionResult.Success;
@@ -673,6 +736,27 @@ namespace WebsitePanel.WIXInstaller
                 }
             else
                 session["DB_SELECT"] = "";
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult CheckConnectionSchedulerUI(Session Ctx)
+        {
+            PopUpDebugger();
+            Ctx.AttachToSetupLog();
+            Log.WriteStart("CheckConnectionSchedulerUI");
+            var Result = default(bool);
+            var Msg = default(string);
+            var DbServer = Ctx["PI_SCHEDULER_DB_SERVER"];
+            var DbUser = Ctx["PI_SCHEDULER_DB_LOGIN"];
+            var DbPass = Ctx["PI_SCHEDULER_DB_PASSWORD"];
+            var DbBase = Ctx["PI_SCHEDULER_DB_DATABASE"];
+            if (new string[] { DbServer, DbUser, DbPass, DbBase }.Any(x => string.IsNullOrWhiteSpace(x)))
+                Msg = "Please check all fields again.";
+            else
+                Result = Adapter.CheckSql(new SetupVariables { InstallConnectionString = GetConnectionString(DbServer, DbBase, DbUser, DbPass) }, out Msg) == CheckStatuses.Success;
+            Ctx["DB_CONN_CORRECT"] = Result ? YesNo.Yes : YesNo.No;
+            Ctx["DB_CONN_MSG"] = string.Format(Result ? "Success. {0}" : "Error. {0}", Msg);
+            Log.WriteEnd("CheckConnectionSchedulerUI");
             return ActionResult.Success;
         }
         [CustomAction]
@@ -927,7 +1011,18 @@ namespace WebsitePanel.WIXInstaller
             {
                 Result = false;
                 Msg = "The database name can't be empty.";
-
+            }
+            return Result;
+        }
+        internal static bool ValidateCryptoKeyUI(Session Ctx, out string Msg)
+        {
+            Msg = string.Empty;
+            var Result = true;
+            string DbName = Ctx["PI_SCHEDULER_CRYPTO_KEY"];
+            if (string.IsNullOrWhiteSpace(DbName))
+            {
+                Result = false;
+                Msg = "The crypto key can't be empty.";
             }
             return Result;
         }
@@ -974,6 +1069,12 @@ namespace WebsitePanel.WIXInstaller
                         break;
                     case WiXInstallType.MaintenancePortal:
                         Install = PortalSetup.Create(Ctx.CustomActionData, SetupActions.Setup);
+                        break;
+                    case WiXInstallType.InstallScheduler:
+                        Install = SchedulerSetup.Create(Ctx.CustomActionData, SetupActions.Install);
+                        break;
+                    case WiXInstallType.RemoveScheduler:
+                        Install = SchedulerSetup.Create(Ctx.CustomActionData, SetupActions.Uninstall);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -1038,14 +1139,6 @@ namespace WebsitePanel.WIXInstaller
             SetupScript Result = new ExpressScript(CtxVars);
             Result.Actions.Add(new InstallAction(ActionTypes.StopApplicationPool) { SetupVariables = CtxVars });
             Result.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = CtxVars });
-            var ServiceCtx = new SetupVariables() { ComponentId = CtxVars.ComponentId };
-            AppConfig.LoadComponentSettings(ServiceCtx);
-            if (!string.IsNullOrWhiteSpace(ServiceCtx.ServiceName))
-            {
-                CtxVars.ServiceName = ServiceCtx.ServiceName;
-                CtxVars.ServiceFile = ServiceCtx.ServiceFile;
-                Result.Actions.Add(new InstallAction(ActionTypes.StopWindowsService));
-            }
             Result.Actions.Add(new InstallAction(ActionTypes.DeleteDirectory) { SetupVariables = CtxVars, Path = CtxVars.InstallFolder });
             return Result;
         }
@@ -1085,9 +1178,11 @@ namespace WebsitePanel.WIXInstaller
         InstallServer,
         InstallEnterpriseServer,
         InstallPortal,
+        InstallScheduler,
         RemoveServer,
         RemoveEnterpriseServer,
         RemovePortal,
+        RemoveScheduler,
         MaintenanceServer,
         MaintenanceEnterpriseServer,
         MaintenancePortal

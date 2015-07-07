@@ -29,6 +29,7 @@
 using System;
 using System.Text.RegularExpressions;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -54,18 +55,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
                 if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
                 {
-                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace) / OneGb
+                    rangeFolderSize.MaximumValue = Math.Round((organizationStats.AllocatedEnterpriseStorageSpace - (decimal)organizationStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you�ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you've entered exceeds the available quota for organization ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
 
                 if (organizationStats.AllocatedGroups != -1)
                 {
-                    int groupsAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+                    int groupsAvailable = organizationStats.AllocatedGroups - organizationStats.CreatedGroups;
 
                     if (groupsAvailable <= 0)
                     {

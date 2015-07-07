@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -71,13 +72,12 @@ namespace WebsitePanel.Portal.RDS
         {
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             usersQuota.QuotaUsedValue = stats.CreatedRdsUsers;
             usersQuota.QuotaValue = stats.AllocatedRdsUsers;
 
             if (stats.AllocatedUsers != -1)
             {
-                usersQuota.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+                usersQuota.QuotaAvailable = stats.AllocatedRdsUsers - stats.CreatedRdsUsers;
             }
             
             if (cntx.Quotas.ContainsKey(Quotas.RDS_USERS))

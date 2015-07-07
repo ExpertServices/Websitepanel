@@ -29,6 +29,7 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
@@ -57,13 +58,12 @@ namespace WebsitePanel.Portal.RDS
         private void BindQuota(PackageContext cntx)
         {
             OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             rdsServersQuota.QuotaUsedValue = stats.CreatedRdsServers;
             rdsServersQuota.QuotaValue = stats.AllocatedRdsServers;
 
             if (stats.AllocatedUsers != -1)
             {
-                rdsServersQuota.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
+                rdsServersQuota.QuotaAvailable = stats.AllocatedRdsServers - stats.CreatedRdsServers;
             }
         }
 

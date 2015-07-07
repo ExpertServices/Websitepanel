@@ -250,7 +250,10 @@ namespace WebsitePanel.Setup.Internal
             Dst.ComponentId = Utils.GetStringSetupParameter(Hash, Global.Parameters.ComponentId);
             Dst.ComponentExists = string.IsNullOrWhiteSpace(Dst.ComponentId) ? false : true;
 
-            Dst.UpdateVersion = Utils.GetStringSetupParameter(Hash, "Version");
+            Dst.UpdateVersion = Utils.GetStringSetupParameter(Hash, Global.Parameters.Version);
+            Dst.DatabaseUser = Utils.GetStringSetupParameter(Hash, Global.Parameters.DatabaseUser);
+            Dst.DatabaseUserPassword = Utils.GetStringSetupParameter(Hash, Global.Parameters.DatabaseUserPassword);
+            Dst.CryptoKey = Utils.GetStringSetupParameter(Hash, Global.Parameters.CryptoKey);
             Dst.SessionVariables = Src;
         }
         public static string GetFullConfigPath(SetupVariables Ctx)
@@ -496,6 +499,9 @@ namespace WebsitePanel.Setup.Internal
                         case ActionTypes.UpdateXml:
                             UpdateXml(Execute.Path, Execute.SetupVariables.XmlData);
                             break;
+                        case ActionTypes.SaveConfig:
+                            SaveComponentConfig(Context);
+                            break;
                     }
                 }
                 catch (Exception ex)
@@ -540,7 +546,7 @@ namespace WebsitePanel.Setup.Internal
                 {
                     ManagedInstallerClass.InstallHelper(new[] { "/u", path, "/LogFile=" });
                 }
-                catch (Exception ex)
+                catch
                 {
                     Log.WriteError(string.Format("Unable to remove \"{0}\" Windows service.", serviceName), null);
                     InstallLog.AppendLine(string.Format("- Failed to remove \"{0}\" Windows service", serviceName));
@@ -2302,7 +2308,7 @@ namespace WebsitePanel.Setup.Internal
                         AppConfig.SetComponentSettingStringValue(componentId, "ServiceFile", path);
                         AppConfig.SaveConfiguration();
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         Log.WriteError(string.Format("Unable to register \"{0}\" Windows service.", service), null);
                         InstallLog.AppendLine(string.Format("- Failed to register \"{0}\" windows service ", service));
@@ -4161,6 +4167,25 @@ namespace WebsitePanel.Setup.Internal
                 Log.WriteEnd(Msg);
             }
         }
+        private void SaveComponentConfig(SetupVariables CompCtx)
+        {
+            const string Msg = "Updating system configuration...";
+            Log.WriteStart(Msg);
+            AppConfig.EnsureComponentConfig(CompCtx.ComponentId);
+            var TypeInfo = CompCtx.GetType();
+            foreach (var Field in CompCtx.SysFields)
+            {
+                var TypeField = TypeInfo.GetProperty(Field);
+                if (TypeField.PropertyType.Equals(typeof(string)))
+                    AppConfig.SetComponentSettingStringValue(CompCtx.ComponentId, Field, Convert.ToString(TypeField.GetValue(CompCtx, null)));
+                else if (TypeField.PropertyType.Equals(typeof(bool)))
+                    AppConfig.SetComponentSettingBooleanValue(CompCtx.ComponentId, Field, Convert.ToBoolean(TypeField.GetValue(CompCtx, null)));
+                else
+                    Log.WriteError(string.Format("Unknown type '{1}' for field '{0}' in system configuration of '{2}'.", Field, TypeField.PropertyType.FullName, CompCtx.ComponentCode));
+            }
+            AppConfig.SaveConfiguration();
+            Log.WriteEnd(Msg);            
+        }
     }
     public class UninstallScript : SetupScript // UninstallPage
     {
@@ -4499,23 +4524,9 @@ namespace WebsitePanel.Setup.Internal
             {
                 Context.ComponentId = GetComponentID(Context);
                 Context.UseUserCredentials = false;
-                AppConfig.LoadComponentSettings(Context);
-                if (string.IsNullOrWhiteSpace(Context.ServiceName) || string.IsNullOrWhiteSpace(Context.ServiceFile))
-                {
-                    Context.ServiceName = Global.Parameters.SchedulerServiceName;
-                    Context.ServiceFile = Path.Combine(Context.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName);
-                }                
+                AppConfig.LoadComponentSettings(Context);            
                 SetupScript Script = new RestoreScript(Context);
-                Script.Run();
-                Script = new ExpressScript(Context);
-                var XmlUp = new Dictionary<string, string[]>();
-                XmlUp.Add("configuration/connectionStrings/add[@name='EnterpriseServer']", new string[] {"connectionString", Context.ConnectionString});
-                XmlUp.Add("configuration/appSettings/add[@key='WebsitePanel.CryptoKey']", new string[] {"value", Context.CryptoKey });
-                Context.XmlData = XmlUp;
-                Script.Actions.Add(new InstallAction(ActionTypes.UpdateXml) { SetupVariables = Context, Path = string.Format("{0}.config", Context.ServiceFile) });
-                Script.Actions.Add(new InstallAction(ActionTypes.RegisterWindowsService));
-                Script.Actions.Add(new InstallAction(ActionTypes.StartWindowsService));                
-                Script.Run();                
+                Script.Run();          
             }
             else
                 throw new NotImplementedException("Install " + ModeExtension.ToString());
@@ -4630,6 +4641,127 @@ namespace WebsitePanel.Setup.Internal
             SetupScript Script = new MaintenanceScript(Context);
             Script.Actions.Add(new InstallAction(ActionTypes.UpdateEnterpriseServerUrl) { Description = "Updating site settings..." });
             Script.Run();
+        }
+    }
+    public class SchedulerSetup : WiXSetup
+    {
+        public SchedulerSetup(SetupVariables Ctx, ModeExtension Ext)
+            : base(Ctx, Ext)
+        {
+            Ctx.SysFields = new string[]
+            {
+                "ApplicationName",                			
+			    "ComponentCode", 
+			    "ComponentName", 
+			    "ComponentDescription",
+			    "Release", 
+			    "Instance",
+			    "InstallFolder",
+			    "Installer", 
+			    "InstallerType",
+			    "InstallerPath",
+                "ConnectionString",
+                "CryptoKey",
+                "ServiceName",
+                "ServiceFile"
+            };
+        }
+        public static IWiXSetup Create(IDictionary<string, string> Ctx, SetupActions Action)
+        {
+            var SetupVars = new SetupVariables();
+            FillFromSession(Ctx, SetupVars);
+            SetupVars.SetupAction = Action;
+            SetupVars.IISVersion = Global.IISVersion;
+            AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = GetFullConfigPath(SetupVars) });
+            return new SchedulerSetup(SetupVars, GetModeExtension(Ctx));
+        }
+        protected override void Install()
+        {
+            if (ModeExtension == ModeExtension.Normal)
+            {
+                Context.ComponentId = Guid.NewGuid().ToString();
+                Context.Instance = String.Empty;
+                try
+                {
+                    var XmlUp = new Dictionary<string, string[]>();
+                    XmlUp.Add("configuration/connectionStrings/add[@name='EnterpriseServer']", new string[] { "connectionString", Context.ConnectionString });
+                    XmlUp.Add("configuration/appSettings/add[@key='WebsitePanel.CryptoKey']", new string[] { "value", Context.CryptoKey });
+                    Context.XmlData = XmlUp;
+                    if (string.IsNullOrWhiteSpace(Context.ServiceName) || string.IsNullOrWhiteSpace(Context.ServiceFile))
+                    {
+                        Context.ServiceName = Global.Parameters.SchedulerServiceName;
+                        Context.ServiceFile = Path.Combine(Context.InstallationFolder, Global.Parameters.SchedulerServiceFileName);
+                    }
+                    Context.ConnectionString = string.Format(Context.ConnectionString, Context.DatabaseServer, Context.Database, Context.DatabaseUser, Context.DatabaseUserPassword);
+                    var Script = new ExpressScript(Context);
+                    Script.Actions.Add(new InstallAction(ActionTypes.UpdateXml) { SetupVariables = Context, Path = string.Format("{0}.config", Context.ServiceFile) });
+                    Script.Actions.Add(new InstallAction(ActionTypes.RegisterWindowsService));
+                    Script.Actions.Add(new InstallAction(ActionTypes.StartWindowsService));
+                    Script.Actions.Add(new InstallAction(ActionTypes.SaveConfig));                    
+                    Script.Run();
+                }
+                catch (Exception ex)
+                {
+                    Log.WriteError("Failed to install the component", ex);
+                }
+            }
+            else if (ModeExtension == ModeExtension.Restore)
+            {
+                Context.ComponentId = GetComponentID(Context);
+                AppConfig.LoadComponentSettings(Context);
+                var Script = new ExpressScript(Context);
+                Script.Actions.Add(new InstallAction(ActionTypes.RestoreConfig) { SetupVariables = Context, Description = "Restoring xml configuration files..." });
+                Script.Actions.Add(new InstallAction(ActionTypes.UpdateConfig) { Description = "Updating system configuration..." });
+                Script.Actions.Add(new InstallAction(ActionTypes.RegisterWindowsService));
+                Script.Actions.Add(new InstallAction(ActionTypes.StartWindowsService));
+                Script.Run();
+            }
+            else
+                throw new NotImplementedException("Install " + ModeExtension.ToString());
+        }
+        protected override void Uninstall()
+        {
+            Context.ComponentId = GetComponentID(Context);
+            AppConfig.LoadComponentSettings(Context);
+            SetupScript Script = null;
+            switch (ModeExtension)
+            {
+                case ModeExtension.Normal:
+                    {
+                        var ServiceName = AppConfig.GetComponentSettingStringValue(Context.ComponentId, "ServiceName");
+                        var ServiceFile = AppConfig.GetComponentSettingStringValue(Context.ComponentId, "ServiceFile");
+                        Script = new ExpressScript(Context);
+                        Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService)
+                        {
+                            Name = ServiceName,
+                            Path = ServiceFile,
+                            Description = "Removing Windows service...",
+                            Log = string.Format("- Remove {0} Windows service", ServiceName)
+                        });
+                        Script.Actions.Add(new InstallAction(ActionTypes.UpdateConfig)
+                        {
+                            Key = Context.ComponentId,
+                            Description = "Updating configuration settings...",
+                            Log = "- Update configuration settings"
+                        });
+                    }
+                    break;
+                case ModeExtension.Backup:
+                    {
+                        Script = new ExpressScript(Context);
+                        Script.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = Script.Context });
+                        Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService));
+                        Script.Context.ServiceName = Global.Parameters.SchedulerServiceName;
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException("Uninstall " + ModeExtension.ToString());
+            }
+            Script.Run();
+        }
+        protected override void Maintenance()
+        {
+            throw new NotImplementedException("Maintenance");
         }
     }
 #region WiXActionManagers
