@@ -12218,6 +12218,7 @@ DECLARE @FullTypeAll nvarchar(50)
 DECLARE @PackageID int
 DECLARE @AccountID int
 DECLARE @Username nvarchar(50)
+DECLARE @Fullname nvarchar(50)
 DECLARE @ItemsAll TABLE
  (
   ItemID int,
@@ -12226,7 +12227,8 @@ DECLARE @ItemsAll TABLE
   FullType nvarchar(50),
   PackageID int,
   AccountID int,
-  Username nvarchar(50)
+  Username nvarchar(50),
+  Fullname nvarchar(50)
  )
 DECLARE @sql nvarchar(4000)
 
@@ -12251,12 +12253,14 @@ DECLARE @Users TABLE
 (
  ItemPosition int IDENTITY(0,1),
  UserID int,
- Username nvarchar(50)
+ Username nvarchar(50),
+ Fullname nvarchar(50)
 )
-INSERT INTO @Users (UserID, Username)
+INSERT INTO @Users (UserID, Username, Fullname)
 SELECT 
  U.UserID,
- U.Username
+ U.Username,
+ U.FirstName + '' '' + U.LastName as Fullname
 FROM UsersDetailed AS U
 WHERE 
  U.UserID <> @UserID AND U.IsPeer = 0 AND
@@ -12279,7 +12283,8 @@ SET @sql = @sql + 'U.ItemID,
  ''AccountHome'' as FullType,
  0 as PackageID,
  0 as AccountID,
- TU.Username
+ TU.Username,
+ TU.Fullname
 FROM @Users AS TU
 INNER JOIN 
 (
@@ -12328,12 +12333,14 @@ SET @sql = '
  DECLARE @ItemsService TABLE
  (
   ItemID int,
-  Username nvarchar(50)
+  Username nvarchar(50),
+  Fullname nvarchar(50)
  )
- INSERT INTO @ItemsService (ItemID, Username)
+ INSERT INTO @ItemsService (ItemID, Username, Fullname)
  SELECT
   SI.ItemID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
  FROM ServiceItems AS SI
  INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
  INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
@@ -12342,12 +12349,14 @@ SET @sql = '
  DECLARE @ItemsDomain TABLE
  (
   ItemID int,
-  Username nvarchar(50)
+  Username nvarchar(50),
+  Fullname nvarchar(50)
  )
- INSERT INTO @ItemsDomain (ItemID, Username)
+ INSERT INTO @ItemsDomain (ItemID, Username, Fullname)
  SELECT
   D.DomainID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
  FROM Domains AS D
  INNER JOIN Packages AS P ON P.PackageID = D.PackageID
  INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
@@ -12367,7 +12376,8 @@ SET @sql = @sql + '
   STYPE.DisplayName as FullType,
   SI.PackageID as PackageID,
   0 as AccountID,
-  I.Username
+  I.Username,
+  I.Fullname
  FROM @ItemsService AS I
  INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
  INNER JOIN ServiceItemTypes AS STYPE ON SI.ItemTypeID = STYPE.ItemTypeID
@@ -12389,7 +12399,8 @@ SET @sql = @sql + '
   ''Domains'' as FullType,
   D.PackageID as PackageID,
   0 as AccountID,
-  I.Username
+  I.Username,
+  I.Fullname
  FROM @ItemsDomain AS I
  INNER JOIN Domains AS D ON I.ItemID = D.DomainID
  WHERE (D.IsDomainPointer=0)'
@@ -12409,7 +12420,8 @@ SET @sql = @sql + '
   FullType = CASE EA.AccountType ' + @sqlNameAccountType + ' ELSE CAST(EA.AccountType AS varchar(12)) END,
   SI2.PackageID as PackageID,
   EA.AccountID as AccountID,
-  I2.Username
+  I2.Username,
+  I2.Fullname
  FROM @ItemsService AS I2
  INNER JOIN ServiceItems AS SI2 ON I2.ItemID = SI2.ItemID
  INNER JOIN ExchangeAccounts AS EA ON I2.ItemID = EA.ItemID'
@@ -12429,7 +12441,8 @@ SET @sql = @sql + '
   FullType = CASE EA4.AccountType ' + @sqlNameAccountType + ' ELSE CAST(EA4.AccountType AS varchar(12)) END,
   SI4.PackageID as PackageID,
   EA4.AccountID as AccountID,
-  I4.Username
+  I4.Username,
+  I4.Fullname
  FROM @ItemsService AS I4
  INNER JOIN ServiceItems AS SI4 ON I4.ItemID = SI4.ItemID
  INNER JOIN ExchangeAccounts AS EA4 ON I4.ItemID = EA4.ItemID'
@@ -12449,7 +12462,8 @@ SET @sql = @sql + '
   ''Mailbox'' as FullType,
   SI3.PackageID as PackageID,
   EAEA.AccountID as AccountID,
-  I3.Username
+  I3.Username,
+  I3.Fullname
  FROM @ItemsService AS I3
  INNER JOIN ServiceItems AS SI3 ON I3.ItemID = SI3.ItemID
  INNER JOIN ExchangeAccountEmailAddresses AS EAEA ON I3.ItemID = EAEA.AccountID'
@@ -12464,12 +12478,12 @@ SET @sql = @sql + ';open @curValue'
 exec sp_executesql @sql, N'@UserID int, @FilterValue nvarchar(50), @curValue cursor output',
 @UserID, @FilterValue, @curAll output
 
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 END
 
 /*-------------------------------------------Lync-----------------------------------------------------*/
@@ -12490,7 +12504,8 @@ SET @sql = @sql + '
   ''LyncUsers'' as FullType,
   SI.PackageID as PackageID,
   ea.AccountID as AccountID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
  FROM 
   ExchangeAccounts as ea 
  INNER JOIN 
@@ -12519,12 +12534,12 @@ CLOSE @curAll
 DEALLOCATE @curAll
 exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 END
 
 /*------------------------------------RDS------------------------------------------------*/
@@ -12544,7 +12559,8 @@ BEGIN
 	  ''RDSCollections'' as FullType,
 	  P.PackageID as PackageID,
 	  RDSCol.ID as AccountID,
-	  U.Username
+	  U.Username,
+	  U.FirstName + '' '' + U.LastName as Fullname
 	 FROM
 	  RDSCollections AS RDSCol
 	 INNER JOIN
@@ -12565,12 +12581,12 @@ BEGIN
 	DEALLOCATE @curAll
 	exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-	INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-	VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+	INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+	VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 	END
 END
 
@@ -12589,7 +12605,8 @@ SET @sql = @sql + '
   ''CRMSites'' as FullType,
   SI.PackageID as PackageID,
   ea.AccountID as AccountID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
  FROM 
   ExchangeAccounts as ea 
  INNER JOIN 
@@ -12612,12 +12629,12 @@ CLOSE @curAll
 DEALLOCATE @curAll
 exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 END
 
 /*------------------------------------VirtualServer------------------------------------------------*/
@@ -12637,7 +12654,8 @@ BEGIN
 	  ''VirtualServers'' as FullType,
 	  (SELECT MIN(PackageID) FROM Packages WHERE UserID = @UserID) as PackageID,
 	  0 as AccountID,
-	  U.Username
+	  U.Username,
+	  U.FirstName + '' '' + U.LastName as Fullname
 	 FROM 
 	  Servers AS S
 	 INNER JOIN
@@ -12656,12 +12674,12 @@ BEGIN
 	DEALLOCATE @curAll
 	exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-	INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-	VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+	INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+	VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+	FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 	END
 END
 
@@ -12680,7 +12698,8 @@ SET @sql = @sql + '
   ''Folders'' as FullType,
   P.PackageID as PackageID,
   EF.EnterpriseFolderID as AccountID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
  FROM 
   EnterpriseFolders as EF
  INNER JOIN
@@ -12701,12 +12720,12 @@ CLOSE @curAll
 DEALLOCATE @curAll
 exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 END
 
 /*------------------------------------SharePoint------------------------------------------------*/
@@ -12724,7 +12743,8 @@ SET @sql = @sql + '
   ''SharePointSiteCollections'' as FullType,
   P.PackageID as PackageID,
   SI.ItemID as AccountID,
-  U.Username
+  U.Username,
+  U.FirstName + '' '' + U.LastName as Fullname
 FROM ServiceItems AS SI
 INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
 INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
@@ -12747,12 +12767,12 @@ CLOSE @curAll
 DEALLOCATE @curAll
 exec sp_executesql @sql, N'@UserID int, @curValue cursor output', @UserID, @curAll output
 
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
-INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username)
-FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username
+INSERT INTO @ItemsAll(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+VALUES(@ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname)
+FETCH NEXT FROM @curAll INTO @ItemID, @TextSearch, @ColumnType, @FullTypeAll, @PackageID, @AccountID, @Username, @Fullname
 END
 
 /*-------------------------------------------@curAll-------------------------------------------------------*/
@@ -12766,7 +12786,8 @@ SET @curAll = CURSOR LOCAL FOR
 	FullType,
 	PackageID,
 	AccountID,
-	Username
+	Username,
+	Fullname
  FROM @ItemsAll
 OPEN @curAll
 
@@ -12783,6 +12804,7 @@ DECLARE @PackageID int
 DECLARE @AccountID int
 DECLARE @EndRow int
 DECLARE @Username nvarchar(50)
+DECLARE @Fullname nvarchar(50)
 SET @EndRow = @StartRow + @MaximumRows'
 
 IF (@ColType = '' OR @ColType IN ('AccountHome'))
@@ -12796,10 +12818,11 @@ BEGIN
 		FullType nvarchar(50),
 		PackageID int,
 		AccountID int,
-		Username nvarchar(50)
+		Username nvarchar(50),
+		Fullname nvarchar(50)
 	)
 
-	FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username
+	FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		IF (1 = 1)'
@@ -12809,10 +12832,10 @@ BEGIN
 
 	SET @sql = @sql + '
 		BEGIN
-			INSERT INTO @ItemsUser(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-			VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username)
+			INSERT INTO @ItemsUser(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+			VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname)
 		END
-		FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username
+		FETCH NEXT FROM @curUsersValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname
 	END'
 END
 
@@ -12825,10 +12848,11 @@ DECLARE @ItemsFilter TABLE
   FullType nvarchar(50),
   PackageID int,
   AccountID int,
-  Username nvarchar(50)
+  Username nvarchar(50),
+  Fullname nvarchar(50)
  )
 
-FETCH NEXT FROM @curAllValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username
+FETCH NEXT FROM @curAllValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname
 WHILE @@FETCH_STATUS = 0
 BEGIN
 	IF (1 = 1)'
@@ -12841,10 +12865,10 @@ SET @sql = @sql + ' AND @FullType = ''' + @FullType + '''';
 
 SET @sql = @sql + '
 	BEGIN
-		INSERT INTO @ItemsFilter(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-		VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username)
+		INSERT INTO @ItemsFilter(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+		VALUES(@ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname)
 	END
-	FETCH NEXT FROM @curAllValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username
+	FETCH NEXT FROM @curAllValue INTO @ItemID, @TextSearch, @ColumnType, @FullType, @PackageID, @AccountID, @Username, @Fullname
 END
 
 DECLARE @ItemsReturn TABLE
@@ -12856,7 +12880,8 @@ DECLARE @ItemsReturn TABLE
   FullType nvarchar(50),
   PackageID int,
   AccountID int,
-  Username nvarchar(50)
+  Username nvarchar(50),
+  Fullname nvarchar(50)
  )'
 
 IF (@ColType = '' OR @ColType IN ('AccountHome'))
@@ -12867,13 +12892,13 @@ BEGIN
 		SET @sql = @sql + '@ItemsReturn'
 	ELSE
 		SET @sql = @sql + '@ItemsFilter'
-	SET @sql = @sql + ' (ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
-		SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username
+	SET @sql = @sql + ' (ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
+		SELECT ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname
 		FROM @ItemsUser'
 END
 
 SET @sql = @sql + '
-INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username)
+INSERT INTO @ItemsReturn(ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname)
 SELECT 
 	ItemID,
 	TextSearch,
@@ -12881,7 +12906,8 @@ SELECT
 	FullType,
 	PackageID,
 	AccountID,
-	Username
+	Username,
+	Fullname
 FROM @ItemsFilter'
 SET @sql = @sql + ' ORDER BY ' +  @SortColumn
 
@@ -12892,7 +12918,7 @@ IF @FullType <> ''
 	SET @sql = @sql + ' WHERE FullType = ''' + @FullType + '''';
 
 SET @sql = @sql + ';
-SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username
+SELECT ItemPosition, ItemID, TextSearch, ColumnType, FullType, PackageID, AccountID, Username, Fullname
 FROM @ItemsReturn AS IR'
 
 IF  @MaximumRows > 0

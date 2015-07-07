@@ -98,6 +98,12 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="gvUsername.Header" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="gvFullname.Header" xml:space="preserve">
+    <value>Full name</value>
+  </data>
   <data name="gvType.Header" xml:space="preserve">
     <value>Type</value>
   </data>
