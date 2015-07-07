@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using AjaxControlToolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,8 @@ namespace WebsitePanel.Portal.RDS
     {        
         protected void Page_Load(object sender, EventArgs e)
         {
+            users.OnRefreshClicked -= OnRefreshClicked;
+            users.OnRefreshClicked += OnRefreshClicked;
             users.Module = Module;
             WriteScriptBlock();
 
@@ -88,6 +91,11 @@ namespace WebsitePanel.Portal.RDS
 
                 users.SetUsers(remoteAppUsers.ToArray());
             }
+        }
+
+        private void OnRefreshClicked(object sender, EventArgs e)
+        {
+            ((ModalPopupExtender)asyncTasks.FindControl("ModalPopupProperties")).Hide();            
         }
 
         private bool SaveApplicationUsers()

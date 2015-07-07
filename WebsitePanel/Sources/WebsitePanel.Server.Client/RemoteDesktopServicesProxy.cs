@@ -26,6 +26,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="RemoteDesktopServicesSoap", Namespace="http://smbsaas/websitepanel/server/")]
+    [System.Xml.Serialization.XmlIncludeAttribute(typeof(RdsCollectionSetting[]))]
     public partial class RemoteDesktopServices : Microsoft.Web.Services3.WebServicesClientProtocol {
         
         public ServiceProviderSettingsSoapHeader ServiceProviderSettingsSoapHeaderValue;
@@ -111,6 +112,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         private System.Threading.SendOrPostCallback GetExistingCollectionOperationCompleted;
         
         private System.Threading.SendOrPostCallback ImportCollectionOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SendMessageOperationCompleted;
         
         /// <remarks/>
         public RemoteDesktopServices() {
@@ -239,6 +242,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event ImportCollectionCompletedEventHandler ImportCollectionCompleted;
+        
+        /// <remarks/>
+        public event SendMessageCompletedEventHandler SendMessageCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1857,16 +1863,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ShadowSession", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void ShadowSession(string sessionId, bool control) {
+        public void ShadowSession(string sessionId, string fqdName, bool control) {
             this.Invoke("ShadowSession", new object[] {
                         sessionId,
+                        fqdName,
                         control});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginShadowSession(string sessionId, bool control, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginShadowSession(string sessionId, string fqdName, bool control, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("ShadowSession", new object[] {
                         sessionId,
+                        fqdName,
                         control}, callback, asyncState);
         }
         
@@ -1876,17 +1884,18 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void ShadowSessionAsync(string sessionId, bool control) {
-            this.ShadowSessionAsync(sessionId, control, null);
+        public void ShadowSessionAsync(string sessionId, string fqdName, bool control) {
+            this.ShadowSessionAsync(sessionId, fqdName, control, null);
         }
         
         /// <remarks/>
-        public void ShadowSessionAsync(string sessionId, bool control, object userState) {
+        public void ShadowSessionAsync(string sessionId, string fqdName, bool control, object userState) {
             if ((this.ShadowSessionOperationCompleted == null)) {
                 this.ShadowSessionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnShadowSessionOperationCompleted);
             }
             this.InvokeAsync("ShadowSession", new object[] {
                         sessionId,
+                        fqdName,
                         control}, this.ShadowSessionOperationCompleted, userState);
         }
         
@@ -2028,6 +2037,49 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             if ((this.ImportCollectionCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.ImportCollectionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SendMessage", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SendMessage(RdsMessageRecipient[] recipients, string text) {
+            this.Invoke("SendMessage", new object[] {
+                        recipients,
+                        text});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSendMessage(RdsMessageRecipient[] recipients, string text, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SendMessage", new object[] {
+                        recipients,
+                        text}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndSendMessage(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void SendMessageAsync(RdsMessageRecipient[] recipients, string text) {
+            this.SendMessageAsync(recipients, text, null);
+        }
+        
+        /// <remarks/>
+        public void SendMessageAsync(RdsMessageRecipient[] recipients, string text, object userState) {
+            if ((this.SendMessageOperationCompleted == null)) {
+                this.SendMessageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSendMessageOperationCompleted);
+            }
+            this.InvokeAsync("SendMessage", new object[] {
+                        recipients,
+                        text}, this.SendMessageOperationCompleted, userState);
+        }
+        
+        private void OnSendMessageOperationCompleted(object arg) {
+            if ((this.SendMessageCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SendMessageCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -2706,4 +2758,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void ImportCollectionCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SendMessageCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
