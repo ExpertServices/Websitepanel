@@ -751,7 +751,28 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (esFolder.StorageSpaceFolderId == null)
                 {
-                    return es.GetFolder(org.OrganizationId, folderName, new WebDavSetting(esFolder.LocationDrive, esFolder.HomeFolder, esFolder.Domain));
+                    var folder = es.GetFolder(org.OrganizationId, folderName, new WebDavSetting(esFolder.LocationDrive, esFolder.HomeFolder, esFolder.Domain));
+
+                    if (folder == null)
+                    {
+                        return folder;
+                    }
+
+                    if (loadDriveMapInfo)
+                    {
+                        Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                        List<MappedDrive> mappedDrives = orgProxy.GetDriveMaps(org.OrganizationId).ToList();
+
+                        var drive = GetFolderMappedDrive(mappedDrives, folder);
+
+                        if (drive != null)
+                        {
+                            folder.DriveLetter = drive.DriveLetter;
+                        }
+                    }
+
+                    return folder;
                 }
                 else
                 {
