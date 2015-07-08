@@ -340,6 +340,7 @@
     <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.dll.config" />
     <Content Include="bin\WebsitePanel.Portal.Modules.dll.config" />
     <Content Include="bin\WebsitePanel.WebPortal.dll.config" />
+    <Content Include="EnterpriseFolderDataHandler.ashx" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
   </ItemGroup>
   <ItemGroup>

@@ -170,6 +170,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\EnterpriseFolderDataHandler.cs" />
     <Compile Include="Code\Helpers\HostedSharePointEnterpriseSiteCollectionsHelper.cs" />
     <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />

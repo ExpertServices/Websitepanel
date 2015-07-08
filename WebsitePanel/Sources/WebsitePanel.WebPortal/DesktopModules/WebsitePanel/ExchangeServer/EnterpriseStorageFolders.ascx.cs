@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Text;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
@@ -52,6 +53,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (ES.Services.EnterpriseStorage.CheckUsersDomainExists(PanelRequest.ItemID))
                 {
                     BindEnterpriseStorageStats();
+                    RegisterStatusScript();
+                    hdnItemId.Value = PanelRequest.ItemID.ToString();
+
+                    gvFolders.DataBound -= OnDataBound;
+                    gvFolders.DataBound += OnDataBound;
                 }
                 else
                 {
@@ -62,6 +68,53 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private void RegisterStatusScript()
+        {
+            if (!Page.ClientScript.IsClientScriptBlockRegistered("ESAjaxQuery"))
+            {
+                var builder = new StringBuilder();
+                builder.AppendLine("function getFolderData() {");
+                builder.AppendFormat("var hidden = document.getElementById('{0}').value;", hdnGridState.ClientID);
+                builder.AppendFormat("var grid = document.getElementById('{0}');", gvFolders.ClientID);
+                builder.AppendFormat("var itemId = document.getElementById('{0}').value;", hdnItemId.ClientID);
+                builder.AppendLine("if (hidden === 'True'){");
+                builder.AppendFormat("$('#{0}').val('false');", hdnGridState.ClientID);
+                builder.AppendLine("for (i = 1; i < grid.rows.length; i++) {");
+                builder.AppendLine("var folderName = grid.rows[i].cells[0].children[0].value;");
+                builder.AppendLine("$.ajax({");
+                builder.AppendLine("type: 'post',");
+                builder.AppendLine("dataType: 'json',");
+                builder.AppendLine("data: { folderName: folderName, itemIndex: i, itemId: itemId },");
+                builder.AppendLine("url: 'EnterpriseFolderDataHandler.ashx',");
+                builder.AppendLine("success: function (data) {");
+                builder.AppendLine("var array = data.split(':');");
+                builder.AppendLine("var usage = array[0];");
+                builder.AppendLine("var index = array[1];");
+                builder.AppendLine("var driveLetter = array[2];");
+                builder.AppendLine("grid.rows[index].cells[3].childNodes[0].data = usage;");
+                builder.AppendLine("var driveImage = grid.rows[index].cells[5].children[0];");
+                builder.AppendLine("driveImage.style.display = driveLetter.length < 3 ? 'inline' : 'none';");
+                builder.AppendLine("grid.rows[index].cells[5].childNodes[2].data = ' ' + driveLetter +':';");
+                builder.AppendLine("}");
+                builder.AppendLine("}");
+                builder.AppendLine(")}");
+                builder.AppendLine("}");
+                builder.AppendLine("}");
+
+                Page.ClientScript.RegisterClientScriptInclude("jquery", ResolveUrl("~/JavaScript/jquery-1.4.4.min.js"));
+                Page.ClientScript.RegisterClientScriptBlock(typeof(EnterpriseStorageFolders), "ESAjaxQuery", builder.ToString(), true);
+            }
+        }
+
+
+        private void OnDataBound(object sender, EventArgs e)
+        {
+            if (gvFolders.Rows.Count > 0)
+            {
+                hdnGridState.Value = true.ToString();
+            }
+        }
+
         public string GetFolderEditUrl(string folderName)
         {
             return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folder_settings",
@@ -69,7 +122,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID);
         }
 
-        public decimal ConvertMBytesToGB(object size)
+        public static decimal ConvertMBytesToGB(object size)
         {
             return Math.Round(Convert.ToDecimal(size) / OneGb, 2);
         }
@@ -78,7 +131,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             btnAddFolder.Enabled = true;
 
-            OrganizationStatistics organizationStats = ES.Services.EnterpriseStorage.GetStatisticsByOrganization/*ES.Services.Organizations.GetOrganizationStatisticsByOrganization*/(PanelRequest.ItemID);
+            OrganizationStatistics organizationStats = ES.Services.EnterpriseStorage.GetStatisticsByOrganization(PanelRequest.ItemID);
 
             foldersQuota.QuotaUsedValue = organizationStats.CreatedEnterpriseStorageFolders;
             foldersQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageFolders;
