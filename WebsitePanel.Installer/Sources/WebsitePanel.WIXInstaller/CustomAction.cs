@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -35,8 +36,10 @@ using System.Diagnostics;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.ServiceProcess;
 using System.Text;
 using System.Xml;
 
@@ -46,7 +49,6 @@ using WebsitePanel.Setup;
 using WebsitePanel.Setup.Internal;
 using WebsitePanel.WIXInstaller.Common;
 using WebsitePanel.WIXInstaller.Common.Util;
-using System.Collections;
 
 namespace WebsitePanel.WIXInstaller
 {
@@ -60,23 +62,35 @@ namespace WebsitePanel.WIXInstaller
         [CustomAction]
         public static ActionResult OnScpa(Session Ctx)
         {
+            PopUpDebugger();
             Func<Hashtable, string, string> GetParam = (s, x) => Utils.GetStringSetupParameter(s, x);
             Ctx.AttachToSetupLog();
             Log.WriteStart("OnScpa");
-            var Hash = Ctx.CustomActionData.ToNonGenericDictionary() as Hashtable;
-            var Scpa = new WebsitePanel.Setup.Actions.ConfigureStandaloneServerAction();
-            Scpa.ServerSetup = new SetupVariables { };
-            Scpa.EnterpriseServerSetup = new SetupVariables { };
-            Scpa.PortalSetup = new SetupVariables { };
-            Scpa.EnterpriseServerSetup.ServerAdminPassword = GetParam(Hash, "ServerAdminPassword");
-            Scpa.EnterpriseServerSetup.PeerAdminPassword = Scpa.EnterpriseServerSetup.ServerAdminPassword;
-            Scpa.PortalSetup.EnterpriseServerURL = GetParam(Hash, "EnterpriseServerUrl");
-            Scpa.PortalSetup.WebSiteIP = GetParam(Hash, "PortalWebSiteIP");
-            Scpa.ServerSetup.WebSiteIP = GetParam(Hash, "ServerWebSiteIP");
-            Scpa.ServerSetup.WebSitePort = GetParam(Hash, "ServerWebSitePort");
-            Scpa.ServerSetup.ServerPassword = GetParam(Hash, "ServerPassword");
-            var Make = Scpa as WebsitePanel.Setup.Actions.IInstallAction;
-            Make.Run(null);
+
+            try
+            {
+                var Hash = Ctx.CustomActionData.ToNonGenericDictionary() as Hashtable;
+                var Scpa = new WebsitePanel.Setup.Actions.ConfigureStandaloneServerAction();
+                Scpa.ServerSetup = new SetupVariables { };
+                Scpa.EnterpriseServerSetup = new SetupVariables { };
+                Scpa.PortalSetup = new SetupVariables { };
+                Scpa.EnterpriseServerSetup.ServerAdminPassword = GetParam(Hash, "ServerAdminPassword");
+                Scpa.EnterpriseServerSetup.PeerAdminPassword = Scpa.EnterpriseServerSetup.ServerAdminPassword;
+                Scpa.PortalSetup.InstallerFolder = GetParam(Hash, "InstallerFolder");
+                Scpa.PortalSetup.ComponentId = WiXSetup.GetComponentID(Scpa.PortalSetup);
+                AppConfig.LoadConfiguration(new ExeConfigurationFileMap { ExeConfigFilename = WiXSetup.GetFullConfigPath(Scpa.PortalSetup) });
+                Scpa.PortalSetup.EnterpriseServerURL = GetParam(Hash, "EnterpriseServerUrl");
+                Scpa.PortalSetup.WebSiteIP = GetParam(Hash, "PortalWebSiteIP");
+                Scpa.ServerSetup.WebSiteIP = GetParam(Hash, "ServerWebSiteIP");
+                Scpa.ServerSetup.WebSitePort = GetParam(Hash, "ServerWebSitePort");
+                Scpa.ServerSetup.ServerPassword = GetParam(Hash, "ServerPassword");
+                var Make = Scpa as WebsitePanel.Setup.Actions.IInstallAction;
+                Make.Run(null);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+            }
             Log.WriteEnd("OnScpa");
             return ActionResult.Success;
         }
@@ -117,16 +131,41 @@ namespace WebsitePanel.WIXInstaller
         public static ActionResult OnSchedulerPrepare(Session Ctx)
         {
             PopUpDebugger();
-
             Ctx.AttachToSetupLog();
-            Log.WriteStart("OnPortalPrepare");
-            var Script = GetPrepareScript(Ctx);
-            Script.Actions.Clear();
-            Script.Actions.Add(new InstallAction(ActionTypes.Backup) { SetupVariables = Script.Context });
-            Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService));
-            Script.Context.ServiceName = Global.Parameters.SchedulerServiceName;
-            Script.Run();
-            Log.WriteEnd("OnPortalPrepare");
+            Log.WriteStart("OnSchedulerPrepare");
+            try
+            {
+                var ServiceName = Global.Parameters.SchedulerServiceName;
+                var ServiceFile = string.Empty;
+                ManagementClass WmiService = new ManagementClass("Win32_Service");
+                foreach (var MObj in WmiService.GetInstances())
+                {
+                    if (MObj.GetPropertyValue("Name").ToString().Equals(ServiceName, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ServiceFile = MObj.GetPropertyValue("PathName").ToString();
+                        break;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(ServiceName) && !string.IsNullOrWhiteSpace(ServiceFile))
+                {
+                    var CtxVars = new SetupVariables() { ServiceName = ServiceName, ServiceFile = ServiceFile };
+                    var Script = new BackupSchedulerScript(CtxVars);
+                    Script.Actions.Add(new InstallAction(ActionTypes.UnregisterWindowsService)
+                    {
+                        Name = ServiceName,
+                        Path = ServiceFile,
+                        Description = "Removing Windows service...",
+                        Log = string.Format("- Remove {0} Windows service", ServiceName)
+                    });
+                    Script.Context.ServiceName = Global.Parameters.SchedulerServiceName;
+                    Script.Run();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex.ToString());
+            }
+            Log.WriteEnd("OnSchedulerPrepare");
             return ActionResult.Success;
         }
         [CustomAction]
@@ -307,6 +346,8 @@ namespace WebsitePanel.WIXInstaller
                             }
                             ConnStr = new SqlConnectionStringBuilder(CtxVars.ConnectionString);
                             SetProperty(Ctx, "DB_DATABASE", ConnStr.InitialCatalog);
+                            SetProperty(Ctx, "PI_ESERVER_CONN_STR", ConnStr.ToString());
+                            SetProperty(Ctx, "PI_ESERVER_CRYPTO_KEY", CtxVars.CryptoKey);
 
                             try
                             {
@@ -357,6 +398,45 @@ namespace WebsitePanel.WIXInstaller
                             bool HavePool = Tool.AppPoolExists(CtxVars.ApplicationPool);
 
                             Ctx["COMPFOUND_PORTAL"] = (HaveAccount && HavePool) ? YesNo.Yes : YesNo.No;
+                        }
+                        CtxVars.ComponentId = WiXSetup.GetComponentID(CfgPath, Global.Scheduler.ComponentCode);
+                        var HaveComponentId = !string.IsNullOrWhiteSpace(CtxVars.ComponentId);
+                        var HaveSchedulerService = ServiceController.GetServices().Any(x => x.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase));
+                        var EServerConnStr = Ctx["PI_ESERVER_CONN_STR"];
+                        var HaveConn = !string.IsNullOrWhiteSpace(EServerConnStr);
+                        if (HaveComponentId || HaveSchedulerService || HaveConn)
+                        {
+                            Ctx["COMPFOUND_SCHEDULER"] = YesNo.No;
+                            try
+                            {
+                                SqlConnectionStringBuilder ConnInfo = null;
+                                if (HaveComponentId)
+                                {
+                                    AppConfig.LoadComponentSettings(CtxVars);
+                                    VersionGuard(Ctx, CtxVars);
+                                    SetProperty(Ctx, "COMPFOUND_SCHEDULER_ID", CtxVars.ComponentId);
+                                    SetProperty(Ctx, "COMPFOUND_SCHEDULER_MAIN_CFG", CfgPath);
+                                    SetProperty(Ctx, "PI_SCHEDULER_CRYPTO_KEY", CtxVars.CryptoKey);
+                                    ConnInfo = new SqlConnectionStringBuilder(CtxVars.ConnectionString);                                    
+                                }
+                                else if (HaveConn)
+                                {                                    
+                                    SetProperty(Ctx, "PI_SCHEDULER_CRYPTO_KEY", Ctx["PI_ESERVER_CRYPTO_KEY"]);
+                                    ConnInfo = new SqlConnectionStringBuilder(EServerConnStr);
+                                }
+                                if(ConnInfo != null)
+                                {
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_SERVER", ConnInfo.DataSource);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_DATABASE", ConnInfo.InitialCatalog);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_LOGIN", ConnInfo.UserID);
+                                    SetProperty(Ctx, "PI_SCHEDULER_DB_PASSWORD", ConnInfo.Password);
+                                }
+                                Ctx["COMPFOUND_SCHEDULER"] = HaveSchedulerService? YesNo.Yes : YesNo.No;
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.WriteError("Detection of existing Scheduler Service failed.", ex);
+                            }                                
                         }
                     }
                     catch (InvalidOperationException ioex)

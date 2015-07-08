@@ -82,7 +82,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         void InstallCertificate(byte[] certificate, string password, List<string> hostNames);
         void MoveSessionHostToRdsOU(string hostName);
         void ApplyGPO(string organizationId, string collectionName, RdsServerSettings serverSettings);
-        void ShadowSession(string sessionId, bool control);
+        void ShadowSession(string sessionId, string fqdName, bool control);
         void MoveSessionHostsToCollectionOU(List<RdsServer> servers, string collectionName, string organizationId);
         ImportedRdsCollection GetExistingCollection(string collectionName);
         void ImportCollection(string organizationId, RdsCollection collection, List<string> users);

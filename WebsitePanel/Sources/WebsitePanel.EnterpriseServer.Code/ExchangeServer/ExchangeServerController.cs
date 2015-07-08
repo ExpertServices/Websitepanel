@@ -1850,43 +1850,48 @@ namespace WebsitePanel.EnterpriseServer
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
 
-                int maxRecoverableItemsSpace = -1;
-                int quotaRecoverableItemsUsed = 0;
-                if (orgStats.AllocatedLitigationHoldSpace > 0)
+                if (plan.AllowLitigationHold)
                 {
-                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
-                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
+                    int maxRecoverableItemsSpace = -1;
+                    int quotaRecoverableItemsUsed = 0;
+                    if (orgStats.AllocatedLitigationHoldSpace > 0)
+                    {
+                        maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                        quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
+                    }
+
+                    if (maxRecoverableItemsSpace != -1)
+                    {
+                        if (plan.RecoverableItemsSpace == -1)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                        if (plan.RecoverableItemsSpace < 6144)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
+
+                        if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
                 }
 
-                if (maxRecoverableItemsSpace != -1)
+                if (plan.EnableArchiving)
                 {
-                    if (plan.RecoverableItemsSpace == -1)
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    int maxArchivingStorage = -1;
+                    int quotaArchivingStorageUsed = 0;
+                    if (orgStats.AllocatedArchingStorage > 0)
+                    {
+                        maxArchivingStorage = orgStats.AllocatedArchingStorage;
+                        quotaArchivingStorageUsed = orgStats.UsedArchingStorage;
+                    }
 
-                    if (plan.RecoverableItemsSpace < 6144)
-                        return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
+                    if (maxArchivingStorage != -1)
+                    {
+                        if (plan.ArchiveSizeMB == -1)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
 
-                    if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                        if ((quotaArchivingStorageUsed + plan.ArchiveSizeMB) > (maxArchivingStorage))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
                 }
-
-                int maxArchivingStorage = -1;
-                int quotaArchivingStorageUsed = 0;
-                if (orgStats.AllocatedArchingStorage > 0)
-                {
-                    maxArchivingStorage = orgStats.AllocatedArchingStorage;
-                    quotaArchivingStorageUsed = orgStats.UsedArchingStorage;
-                }
-
-                if (maxArchivingStorage != -1)
-                {
-                    if (plan.ArchiveSizeMB == -1)
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
-
-                    if ((quotaArchivingStorageUsed + plan.ArchiveSizeMB) > (maxArchivingStorage))
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
-                }
-
 
                 //GetServiceSettings
                 StringDictionary primSettings = ServerController.GetServiceSettings(exchangeServiceId);

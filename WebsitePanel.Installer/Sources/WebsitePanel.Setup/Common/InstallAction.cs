@@ -91,7 +91,8 @@ namespace WebsitePanel.Setup
         ConfigureSecureSessionModuleInWebConfig,
         RestoreConfig,
         UpdateXml,
-        SaveConfig
+        SaveConfig,
+        DeleteDirectoryFiles
 	}
 	
 	public class InstallAction
@@ -153,6 +154,8 @@ namespace WebsitePanel.Setup
 
 		
 		public string Url { get; set; }
+
+        public Func<string, bool> FileFilter { get; set; }
 	
 	}
 }

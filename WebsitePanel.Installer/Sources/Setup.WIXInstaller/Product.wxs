@@ -400,15 +400,15 @@
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="2" />
                 <Control Id="Description" Type="Text" X="20" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="Select [ProductName]'s component to change settings" />
                 <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Component to change" />
-                <Control Id="ServerCheck" Type="CheckBox" X="55" Y="110" Width="202" Height="17" CheckBoxValue="[PI_SERVER_ALLOW_CHANGE]" Property="PI_SERVER_ALLOW_CHANGE" Text="Change settings for Servers component">
+                <Control Id="ServerCheck" Type="CheckBox" X="55" Y="110" Width="202" Height="17" CheckBoxValue="1" Property="PI_SERVER_ALLOW_CHANGE" Text="Change settings for Servers component">
                     <Condition Action="hide"><![CDATA[NOT (&ServerFeature=-1 AND !ServerFeature=3)]]></Condition>
                     <Condition Action="show"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Condition>
                 </Control>
-                <Control Id="EServerCheck" Type="CheckBox" X="55" Y="127" Width="202" Height="17" CheckBoxValue="[PI_ESERVER_ALLOW_CHANGE]" Property="PI_ESERVER_ALLOW_CHANGE" Text="Change settings for Enterprise Server component">
+                <Control Id="EServerCheck" Type="CheckBox" X="55" Y="127" Width="202" Height="17" CheckBoxValue="1" Property="PI_ESERVER_ALLOW_CHANGE" Text="Change settings for Enterprise Server component">
                     <Condition Action="hide"><![CDATA[NOT (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3)]]></Condition>
                     <Condition Action="show"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Condition>
                 </Control>
-                <Control Id="PortalCheck" Type="CheckBox" X="55" Y="144" Width="202" Height="17" CheckBoxValue="[PI_PORTAL_ALLOW_CHANGE]" Property="PI_PORTAL_ALLOW_CHANGE" Text="Change settings for Portal component">
+                <Control Id="PortalCheck" Type="CheckBox" X="55" Y="144" Width="202" Height="17" CheckBoxValue="1" Property="PI_PORTAL_ALLOW_CHANGE" Text="Change settings for Portal component">
                     <Condition Action="hide"><![CDATA[NOT (&PortalFeature=-1 AND !PortalFeature=3)]]></Condition>
                     <Condition Action="show"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Condition>
                 </Control>
@@ -458,7 +458,7 @@
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="15"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="14"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="13"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
-            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="12"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0]]></Publish>
+            <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="12"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0 AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="7">1</Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Property="PI_ALLOW_CHANGE" Value="1" Order="2"><![CDATA[(&ServerFeature=-1 AND !ServerFeature=3) OR (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) OR (&PortalFeature=-1 AND !PortalFeature=3)]]></Publish>
             <Publish Dialog="CustomizeDlg" Control="Next" Event="DoAction" Value="CA_RecapListUI" Order="1">1</Publish>
@@ -468,7 +468,7 @@
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="SWebDlg" Order="15"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER=0]]></Publish>
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="14"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0]]></Publish>
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="13"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0]]></Publish>
-            <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="12"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0]]></Publish>
+            <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="12"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0 AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="11"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="10"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ComponentToChangeDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="9"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND PI_PORTAL_ALLOW_CHANGE="1"]]></Publish>
@@ -496,7 +496,7 @@
             <Publish Dialog="ServerPasswordDlg" Control="Back" Event="NewDialog" Value="SUserAccountDlg" Order="1">1</Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESWebDlg" Order="8"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=0 AND VALIDATE_OK = "1"]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="PWebDlg" Order="7"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0 AND VALIDATE_OK = "1"]]></Publish>
-            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0 AND VALIDATE_OK = "1"]]></Publish>
+            <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=0 AND VALIDATE_OK = "1" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="5"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="4"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND PI_PORTAL_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ServerPasswordDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="3"><![CDATA[VALIDATE_OK = "1"]]></Publish>
@@ -577,7 +577,7 @@
             <Publish Dialog="PUserAccountDlg" Control="SelectUserButton" Property="PI_PORTAL_LOGIN" Value="[DSOP_NAME]" Order="3"><![CDATA[DSOP_NAME <> "" AND DSOP_UPN = ""]]></Publish>
             <!--ESUrlDlg-->
             <Publish Dialog="ESUrlDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="1"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
-            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="4"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="SchedulerDlg" Order="4"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="3"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="2"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Publish>
             <Publish Dialog="ESUrlDlg" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
@@ -600,7 +600,7 @@
             <Publish Dialog="SchedulerDlg" Control="CheckConnButton" Event="DoAction" Value="CA_CheckConnectionSchedulerUI" Order="1">1</Publish>
             <!--Maintenance dialogues.-->
             <!--ServerPasswordDlg_Mtn-->
-            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0")]]></Publish>
+            <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="4"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
             <Publish Dialog="ServerPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="3"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
@@ -613,8 +613,8 @@
             <Publish Dialog="ServerPasswordDlg_Mtn" Control="Next" Event="DoAction" Value="CA_ServerAccessValidateMtnUI" Order="1">1</Publish>
             <Publish Dialog="ServerPasswordDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--ServerAdminPasswordDlg_Mtn-->
-            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="7"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="7"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="6"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="4"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0"]]></Publish>
             <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
@@ -626,9 +626,9 @@
             <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Next" Event="DoAction" Value="CA_ServerAdminValidateUI" Order="1">1</Publish>
             <Publish Dialog="ServerAdminPasswordDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--ESUrlDlg_Mtn-->
-            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="7"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="6"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="5"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="7"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="6"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="5"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="4"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
             <Publish Dialog="ESUrlDlg_Mtn" Control="Back" Event="NewDialog" Value="ComponentToChangeDlg" Order="2">PI_ALLOW_CHANGE="1"</Publish>
@@ -636,10 +636,10 @@
             <Publish Dialog="ESUrlDlg_Mtn" Control="Next" Event="NewDialog" Value="CustomVerifyReadyDlg" Order="1">1</Publish>
             <Publish Dialog="ESUrlDlg_Mtn" Control="Cancel" Event="SpawnDialog" Value="CancelDlg">1</Publish>
             <!--CustomVerifyReadyDlg-->
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="22"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="21"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="20"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Publish>
-            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="19"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg_Mtn" Order="22"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND PI_PORTAL_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="21"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ServerAdminPasswordDlg_Mtn" Order="20"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Publish>
+            <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="SchedulerDlg" Order="19"><![CDATA[&SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER="0" AND NOT(&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="18"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="PUserAccountDlg" Order="17"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL=0 AND &EnterpriseServerFeature=3  AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="CustomVerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="16"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
@@ -714,7 +714,6 @@
         <Property Id="PI_SERVER_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_SERVER_DOMAIN" Secure="yes" />
         <Property Id="PI_SERVER_CREATE_AD" Secure="yes" />
-        <Property Id="PI_SERVER_ALLOW_CHANGE" Secure="yes" Value="0" />
 
         <Property Id="PI_ESERVER_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_ESERVER_PORT" Secure="yes" Value="9002" />
@@ -725,7 +724,8 @@
         <Property Id="PI_ESERVER_DOMAIN" Secure="yes" />
         <Property Id="PI_ESERVER_CREATE_AD" Secure="yes" />
         <Property Id="PI_ESERVER_URL" Secure="yes" />
-        <Property Id="PI_ESERVER_ALLOW_CHANGE" Secure="yes" Value="0" />
+        <Property Id="PI_ESERVER_CONN_STR" Secure="yes" />
+        <Property Id="PI_ESERVER_CRYPTO_KEY" Secure="yes" />
 
         <Property Id="PI_PORTAL_IP" Secure="yes" Value="127.0.0.1" />
         <Property Id="PI_PORTAL_PORT" Secure="yes" Value="9001" />
@@ -735,7 +735,6 @@
         <Property Id="PI_PORTAL_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_PORTAL_DOMAIN" Secure="yes" />
         <Property Id="PI_PORTAL_CREATE_AD" Secure="yes"/>
-        <Property Id="PI_PORTAL_ALLOW_CHANGE" Secure="yes" Value="0" />
         
         <Property Id="PI_SCHEDULER_CRYPTO_KEY" Secure="yes" />
         <Property Id="PI_SCHEDULER_DB_SERVER" Secure="yes" />
@@ -811,7 +810,7 @@
         <CustomAction Id="CA_OnSchedulerPrepare" BinaryKey="Assembly_CA" DllEntry="OnSchedulerPrepare" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!--Install scripts.-->
         <!--SCPA.-->
-        <CustomAction Id="CA_OnScpaProperty" Property="CA_OnScpa" Value="ServerAdminPassword=[SERVERADMIN_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerWebSiteIP=[PI_SERVER_IP];ServerWebSitePort=[PI_SERVER_PORT];ServerPassword=[SERVER_ACCESS_PASSWORD];PortalWebSiteIP=[PI_PORTAL_IP]" />
+        <CustomAction Id="CA_OnScpaProperty" Property="CA_OnScpa" Value="InstallerFolder=[WSP_INSTALL_DIR];ServerAdminPassword=[SERVERADMIN_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerWebSiteIP=[PI_SERVER_IP];ServerWebSitePort=[PI_SERVER_PORT];ServerPassword=[SERVER_ACCESS_PASSWORD];PortalWebSiteIP=[PI_PORTAL_IP]" />
         <CustomAction Id="CA_OnScpa" BinaryKey="Assembly_CA" DllEntry="OnScpa" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!--Server.-->
         <CustomAction Id="CA_PropertyOnServerInstall" Property="CA_OnServerInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.ServerTitle);ComponentCode=server;ComponentDescription=$(var.ServerDescription);Version=$(var.VERSION);InstallationFolder=[PI_SERVER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_SERVER_IP];WebSitePort=[PI_SERVER_PORT];WebSiteDomain=[PI_SERVER_HOST];UserDomain=[PI_SERVER_DOMAIN];UserAccount=[PI_SERVER_LOGIN];UserPassword=[PI_SERVER_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];DbAuth=[DB_AUTH];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE];ComponentId=[COMPFOUND_SERVER_ID]" />
@@ -823,7 +822,7 @@
         <CustomAction Id="CA_PropertyOnPortalInstall" Property="CA_OnPortalInstall" Value="ApplicationName=$(var.NAME);ComponentName=$(var.PortalTitle);ComponentCode=portal;ComponentDescription=$(var.PortalDescription);Version=$(var.VERSION);InstallationFolder=[PI_PORTAL_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];WebSiteIP=[PI_PORTAL_IP];WebSitePort=[PI_PORTAL_PORT];WebSiteDomain=[PI_PORTAL_HOST];UserDomain=[PI_PORTAL_DOMAIN];UserAccount=[PI_PORTAL_LOGIN];UserPassword=[PI_PORTAL_PASSWORD];ServerPassword=[SERVER_ACCESS_PASSWORD];EnterpriseServerUrl=[PI_ESERVER_URL];ServerAdminPassword=[SERVERADMIN_PASSWORD];DatabaseServer=[DB_SERVER];DatabaseName=[DB_DATABASE];DbServerAdmin=[DB_LOGIN];DbServerAdminPassword=[DB_PASSWORD];DbAuth=[DB_AUTH];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE];ComponentId=[COMPFOUND_PORTAL_ID]" />
         <CustomAction Id="CA_OnPortalInstall" BinaryKey ="Assembly_CA" DllEntry="OnPortalInstall" Impersonate="no" Execute="deferred" HideTarget="no"/>
         <!--Scheduler.-->
-        <CustomAction Id="CA_PropertyOnSchedulerInstall" Property="CA_OnSchedulerInstall" Value ="ApplicationName=$(var.NAME);ComponentName=$(var.SchedulerTitle);ComponentCode=scheduler service;ComponentDescription=$(var.SchedulerDescription);Version=$(var.VERSION);InstallationFolder=[PI_SCHEDULER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];CryptoKey=[PI_SCHEDULER_CRYPTO_KEY];DatabaseServer=[PI_SCHEDULER_DB_SERVER];DatabaseName=[PI_SCHEDULER_DB_DATABASE];DatabaseUser=[PI_SCHEDULER_DB_LOGIN];DatabaseUserPassword=[PI_SCHEDULER_DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE];ComponentId=[COMPFOUND_SCHEDULER_ID];EServerRequestInstall=&amp;EnterpriseServerFeature; EServerLocalInstall=!EnterpriseServerFeature" />
+        <CustomAction Id="CA_PropertyOnSchedulerInstall" Property="CA_OnSchedulerInstall" Value ="ApplicationName=$(var.NAME);ComponentName=$(var.SchedulerTitle);ComponentCode=scheduler service;ComponentDescription=$(var.SchedulerDescription);Version=$(var.VERSION);InstallationFolder=[PI_SCHEDULER_INSTALL_DIR];InstallerFolder=[WSP_INSTALL_DIR];Installer=Microsoft Windows Installer;InstallerType=MSI;InstallerPath=[OriginalDatabase];IISVersion=[];SetupXml=[];CryptoKey=[PI_SCHEDULER_CRYPTO_KEY];DatabaseServer=[PI_SCHEDULER_DB_SERVER];DatabaseName=[PI_SCHEDULER_DB_DATABASE];DatabaseUser=[PI_SCHEDULER_DB_LOGIN];DatabaseUserPassword=[PI_SCHEDULER_DB_PASSWORD];BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE];ComponentId=[COMPFOUND_SCHEDULER_ID]" />
         <CustomAction Id="CA_OnSchedulerInstall" BinaryKey="Assembly_CA" DllEntry="OnSchedulerInstall" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!--Run corresponding uninstall scripts.-->
         <CustomAction Id="CA_PropertyOnServerRemove" Property="CA_OnServerRemove" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=server;BaseDirectory=[WSP_INSTALL_DIR];MODE_UP=[WIX_UPGRADE_DETECTED];MODE_RUP=[UPGRADINGPRODUCTCODE]" />
@@ -862,14 +861,14 @@
         <InstallExecuteSequence>
             <!--Preinstall.-->
             <!--Preparation when "old to new installer update". Also disabled in Maintenance mode.-->
-            <Custom Action="CA_PropertyOnServerPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3) AND NOT (&ServerFeature=2 AND !ServerFeature=3)]]></Custom>
-            <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT(&ServerFeature=-1 AND !ServerFeature=3) AND NOT (&ServerFeature=2 AND !ServerFeature=3)]]></Custom>
-            <Custom Action="CA_PropertyOnEServerPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) AND NOT (&EnterpriseServerFeature=2 AND !EnterpriseServerFeature=3)]]></Custom>
-            <Custom Action="CA_OnEServerPrepare" After="CA_PropertyOnEServerPrepare"><![CDATA[COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3) AND NOT (&EnterpriseServerFeature=2 AND !EnterpriseServerFeature=3)]]></Custom>
-            <Custom Action="CA_PropertyOnPortalPrepare" Before="RemoveFiles"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&PortalFeature=-1 AND !PortalFeature=3) AND NOT (&PortalFeature=2 AND !PortalFeature=3)]]></Custom>
-            <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&PortalFeature=-1 AND !PortalFeature=3) AND NOT (&PortalFeature=2 AND !PortalFeature=3)]]></Custom>
-            <Custom Action="CA_PropertyOnSchedulerPrepare" Before="CA_OnEServerPrepare"><![CDATA[COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&SchedulerServiceFeature=-1 AND !SchedulerServiceFeature=3) AND NOT (&SchedulerServiceFeature=2 AND !SchedulerServiceFeature=3)]]></Custom>
-            <Custom Action="CA_OnSchedulerPrepare" After="CA_PropertyOnSchedulerPrepare"><![CDATA[COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT (&SchedulerServiceFeature=-1 AND !SchedulerServiceFeature=3) AND NOT (&SchedulerServiceFeature=2 AND !SchedulerServiceFeature=3)]]></Custom>            
+            <Custom Action="CA_PropertyOnServerPrepare" Before="RemoveFiles"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnServerPrepare" After="CA_PropertyOnServerPrepare"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_PropertyOnEServerPrepare" Before="RemoveFiles"><![CDATA[&EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnEServerPrepare" After="CA_PropertyOnEServerPrepare"><![CDATA[&EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND COMPFOUND_ESERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_PropertyOnPortalPrepare" Before="RemoveFiles"><![CDATA[&PortalFeature=3 AND NOT !PortalFeature=3 AND COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[&PortalFeature=3 AND NOT !PortalFeature=3 AND COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_PropertyOnSchedulerPrepare" Before="RemoveDuplicateFiles"><![CDATA[&SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
+            <Custom Action="CA_OnSchedulerPrepare" After="CA_PropertyOnSchedulerPrepare"><![CDATA[&SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>            
             <!--First Install. [Installed] property not used here because we distinguish per feature basis.-->
             <Custom Action="CA_PropertyOnServerInstall" After="InstallValidate"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerInstall" After="InstallFiles"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
@@ -879,8 +878,8 @@
             <Custom Action="CA_OnPortalInstall" After="InstallFiles"><![CDATA[(&PortalFeature=3) AND NOT(!PortalFeature=3)]]></Custom>
             <Custom Action="CA_PropertyOnSchedulerInstall" After="InstallValidate"><![CDATA[(&SchedulerServiceFeature=3) AND NOT(!SchedulerServiceFeature=3)]]></Custom>
             <Custom Action="CA_OnSchedulerInstall" After="RegisterTypeLibraries"><![CDATA[(&SchedulerServiceFeature=3) AND NOT(!SchedulerServiceFeature=3)]]></Custom> <!--After install odbc and enterprise server.-->
-            <Custom Action="CA_OnScpaProperty" After="InstallValidate"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND &EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND &PortalFeature=3 AND NOT !PortalFeature=3 AND &SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3]]></Custom>
-            <Custom Action="CA_OnScpa" After="CA_OnSchedulerInstall"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND &EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND &PortalFeature=3 AND NOT !PortalFeature=3 AND &SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3]]></Custom>
+            <Custom Action="CA_OnScpaProperty" After="InstallValidate"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND &EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND &PortalFeature=3 AND NOT !PortalFeature=3 AND &SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT COMPFOUND_SERVER=1 AND NOT COMPFOUND_ESERVER=1 AND NOT COMPFOUND_PORTAL=1 AND NOT COMPFOUND_SCHEDULER=1 AND DB_SKIP_CREATE=0]]></Custom>
+            <Custom Action="CA_OnScpa" After="SelfRegModules"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND &EnterpriseServerFeature=3 AND NOT !EnterpriseServerFeature=3 AND &PortalFeature=3 AND NOT !PortalFeature=3 AND &SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE AND NOT COMPFOUND_SERVER=1 AND NOT COMPFOUND_ESERVER=1 AND NOT COMPFOUND_PORTAL=1 AND NOT COMPFOUND_SCHEDULER=1 AND DB_SKIP_CREATE=0]]></Custom>
             <!--Complete Remove.-->
             <Custom Action="CA_PropertyOnServerRemove" After="InstallInitialize"><![CDATA[(&ServerFeature=2) AND (!ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerRemove" After="CA_PropertyOnServerRemove"><![CDATA[(&ServerFeature=2) AND (!ServerFeature=3)]]></Custom>
@@ -891,12 +890,12 @@
             <Custom Action="CA_PropertyOnSchedulerRemove" After="InstallInitialize"><![CDATA[(&SchedulerServiceFeature=2) AND (!SchedulerServiceFeature=3)]]></Custom>
             <Custom Action="CA_OnSchedulerRemove" After="CA_PropertyOnSchedulerRemove"><![CDATA[(&SchedulerServiceFeature=2) AND (!SchedulerServiceFeature=3)]]></Custom>
             <!--Maintenance.-->
-            <Custom Action="CA_PropertyMaintenanceServer" After="InstallInitialize"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Custom>
-            <Custom Action="CA_MaintenanceServer" After="CA_PropertyMaintenanceServer"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3]]></Custom>
-            <Custom Action="CA_PropertyMaintenanceEServer" After="InstallInitialize"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Custom>
-            <Custom Action="CA_MaintenanceEServer" After="CA_PropertyMaintenanceEServer"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3]]></Custom>
-            <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
-            <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3]]></Custom>
+            <Custom Action="CA_PropertyMaintenanceServer" After="InstallInitialize"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Custom>
+            <Custom Action="CA_MaintenanceServer" After="CA_PropertyMaintenanceServer"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND PI_SERVER_ALLOW_CHANGE="1"]]></Custom>
+            <Custom Action="CA_PropertyMaintenanceEServer" After="InstallInitialize"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Custom>
+            <Custom Action="CA_MaintenanceEServer" After="CA_PropertyMaintenanceEServer"><![CDATA[&EnterpriseServerFeature=-1 AND !EnterpriseServerFeature=3 AND PI_ESERVER_ALLOW_CHANGE="1"]]></Custom>
+            <Custom Action="CA_PropertyMaintenancePortal" After="InstallInitialize"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND PI_PORTAL_ALLOW_CHANGE="1"]]></Custom>
+            <Custom Action="CA_MaintenancePortal" After="CA_PropertyMaintenancePortal"><![CDATA[&PortalFeature=-1 AND !PortalFeature=3 AND PI_PORTAL_ALLOW_CHANGE="1"]]></Custom>
             <!---->
             <Custom Action="CA_PropertyInstallWebFeaturesDeferred" After="InstallValidate"><![CDATA[NOT REMOVE AND (PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1)]]></Custom>
             <Custom Action="CA_InstallWebFeatures" After="InstallInitialize"><![CDATA[NOT REMOVE AND (PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1)]]></Custom>

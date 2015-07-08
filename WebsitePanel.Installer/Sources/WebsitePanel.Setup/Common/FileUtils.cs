@@ -271,7 +271,18 @@ namespace WebsitePanel.Setup
 				}
 			}
 		}
-
+        internal static void DeleteDirectoryFiles(string Dir, Func<string, bool> Predicate)
+        {
+            if (!Directory.Exists(Dir))
+                return;
+            string[] Dirs = Directory.GetDirectories(Dir);
+            foreach (string Item in Dirs)
+                DeleteDirectoryFiles(Item, Predicate);
+            string[] Files = Directory.GetFiles(Dir);
+            foreach (string Item in Files)
+                if(Predicate(Item))
+                    DeleteFile(Item);
+        }
 		/// <summary>
 		/// Deletes the specified directory.
 		/// </summary>

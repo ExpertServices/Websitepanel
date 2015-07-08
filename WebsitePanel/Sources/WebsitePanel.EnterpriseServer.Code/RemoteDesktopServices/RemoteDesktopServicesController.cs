@@ -331,14 +331,68 @@ namespace WebsitePanel.EnterpriseServer
             return UpdateRdsServerSettingsInternal(serverId, settingsName, settings);
         }
 
-        public static ResultObject ShadowSession(int itemId, string sessionId, bool control)
+        public static ResultObject ShadowSession(int itemId, string sessionId, bool control, string fqdName)
         {
-            return ShadowSessionInternal(itemId, sessionId, control);
+            return ShadowSessionInternal(itemId, sessionId, control, fqdName);
         }
 
         public static ResultObject ImportCollection(int itemId, string collectionName)
         {
             return ImportCollectionInternal(itemId, collectionName);
+        }
+
+        public static ResultObject SendMessage(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName)
+        {
+            return SendMessageInternal(recipients, text, itemId, rdsCollectionId, userName);
+        }
+
+        public static List<RdsMessage> GetRdsMessagesByCollectionId(int rdsCollectionId)
+        {
+            return GetRdsMessagesByCollectionIdInternal(rdsCollectionId);
+        }
+
+        private static ResultObject SendMessageInternal(RdsMessageRecipient[] recipients, string text, int itemId, int rdsCollectionId, string userName)
+        {
+            var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "SEND_MESSAGE");
+
+            try
+            {
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("SEND_MESSAGE", new NullReferenceException("Organization not found"));                    
+
+                    return result;
+                }
+
+                var rds = RemoteDesktopServicesHelpers.GetRemoteDesktopServices(RemoteDesktopServicesHelpers.GetRemoteDesktopServiceID(org.PackageId));
+                rds.SendMessage(recipients, text);
+                DataProvider.AddRDSMessage(rdsCollectionId, text, userName);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("REMOTE_DESKTOP_SERVICES_SHADOW_RDS_SESSION", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }        
+
+        private static List<RdsMessage> GetRdsMessagesByCollectionIdInternal(int rdsCollectionId)
+        {
+            return ObjectUtils.CreateListFromDataSet<RdsMessage>(DataProvider.GetRDSMessagesByCollectionId(rdsCollectionId));
         }
 
         private static ResultObject ImportCollectionInternal(int itemId, string collectionName)
@@ -410,7 +464,7 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        private static ResultObject ShadowSessionInternal(int itemId, string sessionId, bool control)
+        private static ResultObject ShadowSessionInternal(int itemId, string sessionId, bool control, string fqdName)
         {
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "SHADOW_RDS_SESSION");
 
@@ -427,7 +481,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 var rds = RemoteDesktopServicesHelpers.GetRemoteDesktopServices(RemoteDesktopServicesHelpers.GetRemoteDesktopServiceID(org.PackageId));
-                rds.ShadowSession(sessionId, control);
+                rds.ShadowSession(sessionId, fqdName, control);
             }
             catch (Exception ex)
             {
