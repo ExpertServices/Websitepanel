@@ -120,7 +120,7 @@
   <data name="gvHostServer.HeaderText" xml:space="preserve">
     <value>Host Server</value>
   </data>
-  <data name="gvRDSUserSessions.Empty" xml:space="preserve">
+  <data name="gvRDSUserSessions.EmptyDataText" xml:space="preserve">
     <value>No user sessions.</value>
   </data>
   <data name="gvSessionState.HeaderText" xml:space="preserve">
@@ -161,5 +161,32 @@
   </data>
   <data name="cmdViewSession.ToolTip" xml:space="preserve">
     <value>View Session</value>
+  </data>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="btnRecentMessages.Text" xml:space="preserve">
+    <value>Recent Messages</value>
+  </data>
+  <data name="cmdSendMessage.Text" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
+  <data name="gvMessagesHistory.EmptyDataText" xml:space="preserve">
+    <value>No recent messages</value>
+  </data>
+  <data name="gvMessageText.HeaderText" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="gvUser.HeaderText" xml:space="preserve">
+    <value>User Name</value>
+  </data>
+  <data name="headerEnterMessage.Text" xml:space="preserve">
+    <value>Enter Message:</value>
+  </data>
+  <data name="headerMessagesHistory.Text" xml:space="preserve">
+    <value>Recent Messages</value>
   </data>
 </root>
