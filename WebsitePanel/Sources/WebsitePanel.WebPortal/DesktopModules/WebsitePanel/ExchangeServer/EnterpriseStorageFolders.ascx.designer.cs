@@ -103,6 +103,24 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
         
         /// <summary>
+        /// hdnGridState control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnGridState;
+        
+        /// <summary>
+        /// hdnItemId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdnItemId;
+        
+        /// <summary>
         /// gvFolders control.
         /// </summary>
         /// <remarks>

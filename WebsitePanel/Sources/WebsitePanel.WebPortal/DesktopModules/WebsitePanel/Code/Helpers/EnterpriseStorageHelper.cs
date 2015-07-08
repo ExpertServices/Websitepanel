@@ -52,7 +52,7 @@ namespace WebsitePanel.Portal
         {
             filterValue = filterValue ?? string.Empty;
 
-            folders = ES.Services.EnterpriseStorage.GetEnterpriseFoldersPaged(itemId, true, false, true, filterValue, sortColumn, startRowIndex, maximumRows);
+            folders = ES.Services.EnterpriseStorage.GetEnterpriseFoldersPaged(itemId, false, false, false, filterValue, sortColumn, startRowIndex, maximumRows);
 
             return folders.PageItems;
         }

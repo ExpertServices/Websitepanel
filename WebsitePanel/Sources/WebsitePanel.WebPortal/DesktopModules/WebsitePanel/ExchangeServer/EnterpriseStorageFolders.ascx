@@ -5,6 +5,14 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function () {        
+        setTimeout(getFolderData, 3000);        
+    });    
+    //]]>
+</script>
+
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
@@ -40,11 +48,19 @@
                         </div>
                     </div>
 
+                    <asp:HiddenField runat="server" ID="hdnGridState" Value="false" />
+                    <asp:HiddenField runat="server" ID="hdnItemId"  />
 				    <asp:GridView ID="gvFolders" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 					    Width="100%" EmptyDataText="gvFolders" CssSelectorClass="NormalGridView"
 					    OnRowCommand="gvFolders_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsEnterpriseFoldersPaged" PageSize="20">
                         <Columns>
+                            <asp:TemplateField>
+                                <ItemStyle Width="0%" />
+                                <ItemTemplate>                        
+                                    <asp:HiddenField ID="hdnFolderName" runat="server" Value='<%# Eval("Name") %>' />
+                                </ItemTemplate>
+                            </asp:TemplateField>
 						    <asp:TemplateField HeaderText="gvFolderName" SortExpression="Name">
                                 <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
@@ -63,7 +79,7 @@
                             <asp:TemplateField HeaderText="gvFolderSize" SortExpression="Size">
 							    <ItemStyle Width="15%"></ItemStyle>
 							    <ItemTemplate>
-                                    <asp:Literal id="litFolderSize" runat="server" Text='<%# (ConvertMBytesToGB(Eval("Size"))).ToString() + " Gb" %>'></asp:Literal>
+                                    <asp:Literal id="litFolderSize" runat="server" Text='...'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderUrl">
@@ -75,15 +91,15 @@
                             <asp:TemplateField HeaderText="gvMappedDrive">
 							    <ItemStyle Width="10%"></ItemStyle>
 							    <ItemTemplate>
-                                     <asp:Image ID="img1" runat="server" ImageUrl='<%# GetDriveImage() %>' ImageAlign="AbsMiddle"  Visible ='<%# Eval("DriveLetter") != null %>'/>
-                                    <asp:Literal id="litMappedDrive" runat="server" Text='<%# Eval("DriveLetter") != null? string.Format("{0}:", Eval("DriveLetter")) : "not mapped" %>'></asp:Literal>
+                                     <asp:Image ID="img1" runat="server" ImageUrl='<%# GetDriveImage() %>' ImageAlign="AbsMiddle"  style="display:none"/>
+                                    <asp:Literal id="litMappedDrive" runat="server" Text='...'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:TemplateField>
 							    <ItemTemplate>
 									<asp:ImageButton ID="imgDelFolder" runat="server" Text="Delete" SkinID="ExchangeDelete"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("Name") %>' 
-                                        meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected folder?')"></asp:ImageButton>
+                                        meta:resourcekey="cmdDelete" OnClientClick="return confirm('Confirming Deletion will result in the deletion of all files on this share.')"></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 					    </Columns>

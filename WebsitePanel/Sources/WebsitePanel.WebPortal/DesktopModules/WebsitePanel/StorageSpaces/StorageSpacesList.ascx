@@ -106,7 +106,7 @@
             <ItemTemplate>
                 <asp:LinkButton ID="lnkRemove" runat="server" Text="Remove" Visible='<%# CheckStorageIsInUse(Utils.ParseInt(Eval("Id"), -1)) == false %>'
                     CommandName="DeleteItem" CommandArgument='<%# Eval("Id") %>'
-                    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected storage space?');"></asp:LinkButton>
+                    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Confirming Deletion will result in the deletion of all files on this share.');"></asp:LinkButton>
             </ItemTemplate>
         </asp:TemplateField>
     </Columns>
