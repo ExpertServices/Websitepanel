@@ -121,7 +121,7 @@
     <value>Create New Folder</value>
   </data>
   <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>if(!confirm('Are you sure you want to delete selected folder?')) return false; else ShowProgressDialog('Deleting Folder...');</value>
+    <value>if(!confirm('Confirming Deletion will result in the deletion of all files on this share.')) return false; else ShowProgressDialog('Deleting Folder...');</value>
   </data>
   <data name="cmdDelete.Text" xml:space="preserve">
     <value>Delete</value>

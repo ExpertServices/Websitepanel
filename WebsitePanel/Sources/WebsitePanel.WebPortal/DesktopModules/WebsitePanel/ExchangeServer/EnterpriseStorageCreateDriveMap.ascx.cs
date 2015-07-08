@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
@@ -54,7 +55,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindFolders()
         {
-            ddlFolders.DataSource = ES.Services.EnterpriseStorage.GetNotMappedEnterpriseFolders(PanelRequest.ItemID);
+            ddlFolders.DataSource = ES.Services.EnterpriseStorage.GetNotMappedEnterpriseFolders(PanelRequest.ItemID).Select(x=> new {Name = x.Name, Url = x.UncPath ?? x.Url});
             ddlFolders.DataTextField = "Name";
             ddlFolders.DataValueField = "Url";
             ddlFolders.DataBind();
