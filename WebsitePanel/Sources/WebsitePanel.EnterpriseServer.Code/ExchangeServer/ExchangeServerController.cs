@@ -2966,45 +2966,65 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
+                ExchangeAccount exchangeAccount = GetAccount(itemId, accountId);
+                ExchangeMailboxPlan oldPlan = GetExchangeMailboxPlan(itemId, exchangeAccount.MailboxPlanId);
 
                 if (maxDiskSpace != -1)
                 {
                     if (plan.MailboxSizeMB == -1)
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
 
-                    ExchangeAccount exchangeAccount = GetAccount(itemId, accountId);
-                    if (exchangeAccount.MailboxPlanId > 0)
-                    {
-                        ExchangeMailboxPlan oldPlan = GetExchangeMailboxPlan(itemId, exchangeAccount.MailboxPlanId);
+                    var oldPlanValue = exchangeAccount.MailboxPlanId > 0 ? oldPlan.MailboxSizeMB : 0;
 
-                        if (((quotaUsed - oldPlan.MailboxSizeMB) + plan.MailboxSizeMB) > (maxDiskSpace))
-                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
-                    }
-                    else
+                    if (((quotaUsed - oldPlanValue) + plan.MailboxSizeMB) > maxDiskSpace)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                }
+
+                if (plan.AllowLitigationHold)
+                {
+                    int maxRecoverableItemsSpace = -1;
+                    int quotaRecoverableItemsUsed = 0;
+                    if (orgStats.AllocatedLitigationHoldSpace > 0)
                     {
-                        if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
+                        maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
+                        quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
+                    }
+
+                    if (maxRecoverableItemsSpace != -1)
+                    {
+                        if (plan.RecoverableItemsSpace == -1)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                        if (plan.RecoverableItemsSpace < 6144)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
+
+                        var oldPlanValue = exchangeAccount.MailboxPlanId > 0 && oldPlan.AllowLitigationHold ? oldPlan.RecoverableItemsSpace : 0;
+
+                        if (((quotaRecoverableItemsUsed - oldPlanValue) + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
                             return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                     }
                 }
 
-                int maxRecoverableItemsSpace = -1;
-                int quotaRecoverableItemsUsed = 0;
-                if (orgStats.AllocatedLitigationHoldSpace > 0)
+                if (plan.EnableArchiving)
                 {
-                    maxRecoverableItemsSpace = orgStats.AllocatedLitigationHoldSpace;
-                    quotaRecoverableItemsUsed = orgStats.UsedLitigationHoldSpace;
-                }
+                    int maxArchivingStorage = -1;
+                    int quotaArchivingStorageUsed = 0;
+                    if (orgStats.AllocatedArchingStorage > 0)
+                    {
+                        maxArchivingStorage = orgStats.AllocatedArchingStorage;
+                        quotaArchivingStorageUsed = orgStats.UsedArchingStorage;
+                    }
 
-                if (maxRecoverableItemsSpace != -1)
-                {
-                    if (plan.RecoverableItemsSpace == -1)
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    if (maxArchivingStorage != -1)
+                    {
+                        if (plan.ArchiveSizeMB == -1)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
 
-                    if (plan.RecoverableItemsSpace < 6144)
-                        return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
+                        var oldPlanValue = exchangeAccount.MailboxPlanId > 0 && oldPlan.EnableArchiving ? oldPlan.ArchiveSizeMB : 0;
 
-                    if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                        if (((quotaArchivingStorageUsed - oldPlanValue) + plan.ArchiveSizeMB) > maxArchivingStorage)
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
                 }
 
                 // get mailbox settings
