@@ -29,12 +29,19 @@
                             <asp:Button ID="btnReplicaStates" runat="server" meta:resourcekey="btnReplicaStates"
                                 Text="Show Replication Statuses" CssClass="Button1" CausesValidation="False"
                                 OnClick="btnReplicaStates_Click" />
+                            <asp:Label runat="server" Text="Page size:" CssClass="Normal"></asp:Label>
+							<asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"                                   onselectedindexchanged="ddlPageSize_SelectedIndexChanged"> 
+                                <asp:ListItem>10</asp:ListItem>
+                                <asp:ListItem Selected="True">20</asp:ListItem>
+                                <asp:ListItem>50</asp:ListItem>
+                                <asp:ListItem>100</asp:ListItem>
+                            </asp:DropDownList>
                         </div>
                     </div>
 
 			        <asp:GridView ID="gvServers" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 				        Width="100%" EmptyDataText="gvServers" CssSelectorClass="NormalGridView"
-				        AllowPaging="True" AllowSorting="True" DataSourceID="odsServersPaged" 
+				        AllowPaging="True" AllowSorting="True" DataSourceID="odsServersPaged" PageSize="20"
                         onrowcommand="gvServers_RowCommand">
 				        <Columns>
 					        <asp:TemplateField HeaderText="gvServersName" SortExpression="ItemName" meta:resourcekey="gvServersName">
