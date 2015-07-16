@@ -85,6 +85,15 @@ namespace WebsitePanel.Portal.VPS {
         protected global::WebsitePanel.Portal.SearchBox searchBox;
         
         /// <summary>
+        /// ddlPageSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPageSize;
+        
+        /// <summary>
         /// gvServers control.
         /// </summary>
         /// <remarks>

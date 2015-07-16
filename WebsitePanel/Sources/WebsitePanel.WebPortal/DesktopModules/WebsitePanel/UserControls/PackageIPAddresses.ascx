@@ -22,13 +22,25 @@
             onclick="btnAllocateAddress_Click" />
     </div>
     <div class="FormButtonsBarCleanRight">
-        <wsp:SearchBox ID="searchBox" runat="server" />
-    </div>
+		<div style="float: right;"> <!-- In the future, make it more elegant way -->
+			<wsp:SearchBox ID="searchBox" runat="server" />	 
+		</div>
+		<div style="float: right;">
+			<asp:Label runat="server" Text="Page size:" CssClass="Normal"></asp:Label>
+			<asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"
+				onselectedindexchanged="ddlPageSize_SelectedIndexChanged">   
+				<asp:ListItem>10</asp:ListItem>   
+				<asp:ListItem Selected="True">20</asp:ListItem>   
+				<asp:ListItem>50</asp:ListItem>   
+				<asp:ListItem>100</asp:ListItem>   
+			</asp:DropDownList> 
+		</div>
+	</div>
 </div>
 
 <asp:GridView ID="gvAddresses" runat="server" AutoGenerateColumns="False"
     Width="100%" EmptyDataText="gvAddresses" CssSelectorClass="NormalGridView"
-    AllowPaging="True" AllowSorting="True" DataSourceID="odsExternalAddressesPaged" 
+    AllowPaging="True" AllowSorting="True" DataSourceID="odsExternalAddressesPaged" PageSize="20"
     onrowdatabound="gvAddresses_RowDataBound" DataKeyNames="PackageAddressID" >
     <Columns>
         <asp:TemplateField>
