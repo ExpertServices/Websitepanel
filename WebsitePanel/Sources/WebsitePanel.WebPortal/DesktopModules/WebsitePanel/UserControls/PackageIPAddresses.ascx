@@ -15,19 +15,22 @@
 
 <wsp:SimpleMessageBox id="messageBox" runat="server" />
 
-<div class="FormButtonsBar">
-    <div class="Left">
-		<asp:Button ID="btnAllocateAddress" runat="server" meta:resourcekey="btnAllocateAddress"
-			Text="Allocate IP Addresses" CssClass="Button1" CausesValidation="False" 
-			onclick="btnAllocateAddress_Click" />
+<div class="FormButtonsBarClean">
+    <div class="FormButtonsBarCleanLeft">
+        <asp:Button ID="btnAllocateAddress" runat="server" meta:resourcekey="btnAllocateAddress"
+        Text="Allocate IP Addresses" CssClass="Button1" CausesValidation="False" 
+            onclick="btnAllocateAddress_Click" />
+    </div>
+    <div class="FormButtonsBarCleanRight">
+		<div style="float: right;"> <!-- In the future, make it more elegant way -->
+			<wsp:SearchBox ID="searchBox" runat="server" />	 
+		</div>
+		<div style="float: right;">
+			<asp:Label runat="server" Text="Page size:" CssClass="Normal"></asp:Label>
+			<asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"
+				onselectedindexchanged="ddlPageSize_SelectedIndexChanged">   				<asp:ListItem>10</asp:ListItem>   				<asp:ListItem Selected="True">20</asp:ListItem>   				<asp:ListItem>50</asp:ListItem>   				<asp:ListItem>100</asp:ListItem>   			</asp:DropDownList> 
+		</div>
 	</div>
-	<div class="Right">
-		<wsp:SearchBox ID="searchBox" runat="server" />	 
-	</div>
-	<div class="Right" style="margin-right: 20px">
-	<asp:Label runat="server" Text="Page size:" CssClass="Normal"></asp:Label>
-	<asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"
-		onselectedindexchanged="ddlPageSize_SelectedIndexChanged">   		<asp:ListItem>10</asp:ListItem>   		<asp:ListItem Selected="True">20</asp:ListItem>   		<asp:ListItem>50</asp:ListItem>   		<asp:ListItem>100</asp:ListItem>   		</asp:DropDownList>  	</div>
 </div>
 
 <asp:GridView ID="gvAddresses" runat="server" AutoGenerateColumns="False"
