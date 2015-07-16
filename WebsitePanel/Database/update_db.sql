@@ -15450,7 +15450,10 @@ CREATE PROCEDURE [dbo].[GetRDSMessages]
 )
 AS
 SELECT Id, RDSCollectionId, MessageText, UserName, [Date] FROM [dbo].[RDSMessages] WHERE RDSCollectionId = @RDSCollectionId
-GO-- Exchange2013 Shared and resource mailboxes Organization statistics
+RETURN
+GO
+
+-- Exchange2013 Shared and resource mailboxes Organization statistics
 
 ALTER PROCEDURE [dbo].[GetExchangeOrganizationStatistics] 
 (
