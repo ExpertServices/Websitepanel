@@ -7,7 +7,6 @@
     <Product Id="*" Name="$(var.NAME)" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation"
              UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
         <Package  InstallerVersion="200" Compressed="yes" InstallPrivileges="elevated" InstallScope="perMachine" Description="$(var.NAME) $(var.VERSION)" Comments="$(var.DESCRIPTION)" />
-        <Condition Message="The [ProductName] package requires Microsoft .NET 4.0 Full. Please install it and try again."><![CDATA[NETFRAMEWORK40FULL="#1"]]></Condition>
         <Media Id="1" EmbedCab="yes" Cabinet="websitepanel_cab" />
         <!-- Use WIX_UPGRADE_DETECTED -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed."  AllowSameVersionUpgrades="yes" />
@@ -585,7 +584,7 @@
             <!--SchedulerDlg-->
             <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="ESUrlDlg" Order="5"><![CDATA[&PortalFeature=3 AND COMPFOUND_PORTAL="0" AND NOT &EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
             <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg" Order="4"><![CDATA[&EnterpriseServerFeature=3 AND COMPFOUND_ESERVER="0"]]></Publish>
-            <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>            
+            <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="ServerPasswordDlg" Order="3"><![CDATA[&ServerFeature=3 AND COMPFOUND_SERVER="0"]]></Publish>
             <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="ComponentToChangeDlg" Order="2">PI_ALLOW_CHANGE="1"</Publish>
             <Publish Dialog="SchedulerDlg" Control="Back" Event="NewDialog" Value="CustomizeDlg" Order="1">1</Publish>
             <Publish Dialog="SchedulerDlg" Control="Next" Event="NewDialog" Value="ServerPasswordDlg_Mtn" Order="9"><![CDATA[&ServerFeature=-1 AND !ServerFeature=3 AND DB_CONN_CORRECT = "1" AND VALIDATE_OK = "1" AND PI_SERVER_ALLOW_CHANGE="1"]]></Publish>
@@ -735,7 +734,7 @@
         <Property Id="PI_PORTAL_PASSWORD_CONFIRM" Secure="yes" />
         <Property Id="PI_PORTAL_DOMAIN" Secure="yes" />
         <Property Id="PI_PORTAL_CREATE_AD" Secure="yes"/>
-        
+
         <Property Id="PI_SCHEDULER_CRYPTO_KEY" Secure="yes" />
         <Property Id="PI_SCHEDULER_DB_SERVER" Secure="yes" />
         <Property Id="PI_SCHEDULER_DB_LOGIN" Secure="yes" />
@@ -845,6 +844,9 @@
         <!---->
         <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
         <!---->
+        <CustomAction Id="CA_NeedNetFx" Error="The [ProductName] package requires Microsoft .NET 4.0 Full. Please install it and try again." />
+        <CustomAction Id="CA_DisableUpdate" Error="Previous version was found, please do uninstall first." />
+        <!---->
         <SetProperty Id="WSP_INSTALL_DIR" After="AppSearch" Value="[WSP_BASE]">WSP_BASE</SetProperty>
         <SetProperty Id="ARPINSTALLLOCATION" Value="[WSP_INSTALL_DIR]" After="InstallValidate" Sequence="execute" />
         <SetProperty Id="PI_ESERVER_URL" Value="http://[PI_ESERVER_IP]:[PI_ESERVER_PORT]/" Before="CostInitialize" />
@@ -859,6 +861,8 @@
         <SetProperty Id="SKIPUNINSTALLSQLDATA" Before="InstallValidate" Value="1" Sequence="execute"><![CDATA[NOT (&EnterpriseServerFeature=3 OR !EnterpriseServerFeature=3)]]></SetProperty>
         <!--Exe sequence.-->
         <InstallExecuteSequence>
+            <Custom Action="CA_NeedNetFx" Before="LaunchConditions"><![CDATA[NETFRAMEWORK40FULL="#0"]]></Custom>
+            <Custom Action="CA_DisableUpdate" Before="LaunchConditions"><![CDATA[WIX_UPGRADE_DETECTED OR UPGRADINGPRODUCTCODE]]></Custom>
             <!--Preinstall.-->
             <!--Preparation when "old to new installer update". Also disabled in Maintenance mode.-->
             <Custom Action="CA_PropertyOnServerPrepare" Before="RemoveFiles"><![CDATA[&ServerFeature=3 AND NOT !ServerFeature=3 AND COMPFOUND_SERVER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
@@ -868,7 +872,7 @@
             <Custom Action="CA_PropertyOnPortalPrepare" Before="RemoveFiles"><![CDATA[&PortalFeature=3 AND NOT !PortalFeature=3 AND COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
             <Custom Action="CA_OnPortalPrepare" After="CA_PropertyOnPortalPrepare"><![CDATA[&PortalFeature=3 AND NOT !PortalFeature=3 AND COMPFOUND_PORTAL=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
             <Custom Action="CA_PropertyOnSchedulerPrepare" Before="RemoveDuplicateFiles"><![CDATA[&SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
-            <Custom Action="CA_OnSchedulerPrepare" After="CA_PropertyOnSchedulerPrepare"><![CDATA[&SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>            
+            <Custom Action="CA_OnSchedulerPrepare" After="CA_PropertyOnSchedulerPrepare"><![CDATA[&SchedulerServiceFeature=3 AND NOT !SchedulerServiceFeature=3 AND COMPFOUND_SCHEDULER=1 AND NOT WIX_UPGRADE_DETECTED AND NOT UPGRADINGPRODUCTCODE]]></Custom>
             <!--First Install. [Installed] property not used here because we distinguish per feature basis.-->
             <Custom Action="CA_PropertyOnServerInstall" After="InstallValidate"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
             <Custom Action="CA_OnServerInstall" After="InstallFiles"><![CDATA[(&ServerFeature=3) AND NOT(!ServerFeature=3)]]></Custom>
@@ -902,6 +906,8 @@
             <Custom Action="CA_InstallWebFeaturesDeferred" After="CA_InstallWebFeatures"><![CDATA[NOT REMOVE AND (PI_PREREQ_IIS_INSTALL=1 OR PI_PREREQ_ASPNET_INSTALL=1 OR PI_PREREQ_NETFX_INSTALL=1)]]></Custom>
         </InstallExecuteSequence>
         <InstallUISequence>
+            <Custom Action="CA_NeedNetFx" Before="LaunchConditions"><![CDATA[NETFRAMEWORK40FULL="#0"]]></Custom>
+            <Custom Action="CA_DisableUpdate" Before="LaunchConditions"><![CDATA[WIX_UPGRADE_DETECTED OR UPGRADINGPRODUCTCODE]]></Custom>
             <Custom Action="CA_PrereqCheck" After ="CostInitialize" />
             <Custom Action="CA_PrereqCheckUI" After ="CA_PrereqCheck" />
             <Custom Action="CA_FillIpListUI" After="CA_PrereqCheck" />
