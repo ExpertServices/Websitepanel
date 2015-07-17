@@ -773,28 +773,28 @@
         <Property Id="COMPFOUND_WDPORTAL_MAIN_CFG" Secure="yes" />
         <Property Id="COMPFOUND_SCHEDULER_MAIN_CFG" Secure="yes" />
         <!--CustomActions.-->
-        <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" Impersonate="no" />
-        <CustomAction Id="CA_CheckConnectionSchedulerUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionSchedulerUI" Impersonate="no" />
-        <CustomAction Id="CA_PrereqCheck" BinaryKey="Assembly_CA" DllEntry="PrereqCheck" Impersonate="no" />
-        <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" Impersonate="no" />
-        <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" Impersonate="no" />
-        <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" Impersonate="no" />
-        <CustomAction Id="CA_FillDomainListUI" BinaryKey="Assembly_CA" DllEntry="FillDomainListUI" Impersonate="no" />
-        <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" Impersonate="no" />
-        <CustomAction Id="CA_ServerAccessValidateMtnUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateMtnUI" Impersonate="no" />
-        <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" Impersonate="no" />
-        <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" Impersonate="no" />
-        <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" Impersonate="no" />
-        <CustomAction Id="CA_ServerAdminValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAdminValidateUI" Impersonate="no" />
-        <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" Impersonate="no" />
-        <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" Impersonate="no" />
-        <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" Impersonate="no" />
-        <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" Impersonate="no" />
-        <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" Impersonate="no" />
-        <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures"  Impersonate="no" />
+        <CustomAction Id="CA_CheckConnectionUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionUI" />
+        <CustomAction Id="CA_CheckConnectionSchedulerUI" BinaryKey="Assembly_CA" DllEntry="CheckConnectionSchedulerUI" />
+        <CustomAction Id="CA_PrereqCheck" BinaryKey="Assembly_CA" DllEntry="PrereqCheck" />
+        <CustomAction Id="CA_PrereqCheckUI" BinaryKey="Assembly_CA" DllEntry="PrereqCheckUI" />
+        <CustomAction Id="CA_FillIpListUI" BinaryKey="Assembly_CA" DllEntry="FillIpListUI" />
+        <CustomAction Id="CA_DbListUI" BinaryKey="Assembly_CA" DllEntry="DbListUI" />
+        <CustomAction Id="CA_FillDomainListUI" BinaryKey="Assembly_CA" DllEntry="FillDomainListUI" />
+        <CustomAction Id="CA_ServerAccessValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateUI" />
+        <CustomAction Id="CA_ServerAccessValidateMtnUI" BinaryKey="Assembly_CA" DllEntry="ServerAccessValidateMtnUI" />
+        <CustomAction Id="CA_ServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="ServerValidateADUI" />
+        <CustomAction Id="CA_EServerValidateADUI" BinaryKey="Assembly_CA" DllEntry="EServerValidateADUI" />
+        <CustomAction Id="CA_PortalValidateADUI" BinaryKey="Assembly_CA" DllEntry="PortalValidateADUI" />
+        <CustomAction Id="CA_ServerAdminValidateUI" BinaryKey="Assembly_CA" DllEntry="ServerAdminValidateUI" />
+        <CustomAction Id="CA_DatabaseConnectionValidateUI" BinaryKey="Assembly_CA" DllEntry="DatabaseConnectionValidateUI" />
+        <CustomAction Id="CA_RecapListUI" BinaryKey="Assembly_CA" DllEntry="RecapListUI" />
+        <CustomAction Id="CA_SqlServerListUI" BinaryKey="Assembly_CA" DllEntry="SqlServerListUI" />
+        <CustomAction Id="CA_DirectoryObjectPicker" BinaryKey="MsiExt.ActiveDirectory" DllEntry="DirectoryObjectPicker" />
+        <CustomAction Id="CA_SetEServerUrlUI" BinaryKey ="Assembly_CA" DllEntry="SetEServerUrlUI" />
+        <CustomAction Id="CA_InstallWebFeatures" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" />
         <CustomAction Id="CA_InstallWebFeaturesDeferred" BinaryKey="Assembly_CA" DllEntry="InstallWebFeatures" Impersonate="no"  Execute="deferred" />
         <CustomAction Id="CA_PropertyInstallWebFeaturesDeferred" Property="CA_InstallWebFeaturesDeferred" Value="PI_PREREQ_IIS_INSTALL=[PI_PREREQ_IIS_INSTALL];PI_PREREQ_ASPNET_INSTALL=[PI_PREREQ_ASPNET_INSTALL];PI_PREREQ_NETFX_INSTALL=[PI_PREREQ_NETFX_INSTALL]" />
-        <CustomAction Id="CA_GetDbSkip" BinaryKey="Assembly_CA" DllEntry="GetDbSkip" Impersonate="no" />
+        <CustomAction Id="CA_GetDbSkip" BinaryKey="Assembly_CA" DllEntry="GetDbSkip" />
         <!--Run corresponding install scripts.-->
         <!-- Prepare and backup when upgrading from old to new installer type.
              Yes, session variables and custom action data are identical almost for corresponding WebsitePanel components in prepare and install scripts.
@@ -840,7 +840,7 @@
         <CustomAction Id="CA_PropertyMaintenancePortal" Property="CA_MaintenancePortal" Value="InstallerFolder=[WSP_INSTALL_DIR];ComponentCode=portal;BaseDirectory=[WSP_INSTALL_DIR];EnterpriseServerUrl=[PI_ESERVER_URL]" />
         <CustomAction Id="CA_MaintenancePortal" BinaryKey="Assembly_CA" DllEntry="MaintenancePortal" Impersonate="no" Execute="deferred" HideTarget="no" />
         <!---->
-        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" Impersonate="no" />
+        <CustomAction Id="CA_PreFillSettings" BinaryKey="Assembly_CA" DllEntry="PreFillSettings" />
         <!---->
         <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
         <!---->
