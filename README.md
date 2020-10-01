@@ -5,5 +5,6 @@ WebsitePanel is a complete portal for Cloud Computing Companies and IT Providers
 To download the lasest Binaries or find more information visit our website at: 
 
 http://www.websitepanel.net/
+click on this link
 
 Virtuworks
