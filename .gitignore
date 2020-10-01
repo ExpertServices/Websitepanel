@@ -15,7 +15,7 @@ WebsitePanel/Sources/WebsitePanel.WebPortal/DesktopModules/Ecommerce/Bin
 WebsitePanel/Sources/Tools/WebsitePanel.LocalizationToolkit.Setup/Release
 WebsitePanel/Deploy
 WebsitePanel/Build
-WebsitePanel.Installer/Build
+WebsitePanel.Installer/Buildnot
 WebsitePanel/Bin
 msbuild.log
 _ReSharper.*
