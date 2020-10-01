@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation. use without permission is a offense
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
