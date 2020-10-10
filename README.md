@@ -7,3 +7,5 @@ To download the lasest Binaries or find more information visit our website at:
 http://www.websitepanel.net/
 
 Virtuworks
+
+made with love
